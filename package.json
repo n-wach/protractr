@@ -1,0 +1,17 @@
+{
+  "name": "protractr",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "browserify": "browserify -r kiwi.js > build/bundle.js",
+    "typescript": "typescript tsconfig.json"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "kiwi.js": "latest",
+    "browserify": "latest"
+  }
+}
