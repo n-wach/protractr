@@ -1,21 +1,100 @@
-import * as kiwi from 'kiwi.js';
+import {CircleTool, LineTool, PointTool, Tool} from "./ui/tools";
+import {Figure, Point} from "./gcs/figures";
 
-// Create a solver
-var solver = new kiwi.Solver();
+let canvas: HTMLCanvasElement;
+export let ctx: CanvasRenderingContext2D;
+let tools: HTMLUListElement;
+let sidePane: HTMLDivElement;
+export let protractr: Protractr;
 
-// Create edit variables
-var left = new kiwi.Variable();
-var width = new kiwi.Variable();
-solver.addEditVariable(left, kiwi.Strength.strong);
-solver.addEditVariable(width, kiwi.Strength.strong);
-solver.suggestValue(left, 100);
-solver.suggestValue(width, 400);
+let adjustCanvasResolution = function(event) {
+    canvas.width = canvas.parentElement.clientWidth;
+    canvas.height = canvas.parentElement.clientHeight;
+};
+window.addEventListener("resize", adjustCanvasResolution);
 
-// Create and add a constraint
-var right = new kiwi.Variable();
-solver.addConstraint(new kiwi.Constraint(new kiwi.Expression([-1, right], left, width), kiwi.Operator.Eq));
+window.addEventListener("load", function() {
+    canvas = document.getElementById("canvas") as HTMLCanvasElement;
+    ctx = canvas.getContext("2d");
+    sidePane = document.getElementById("side-pane") as HTMLDivElement;
+    tools = document.getElementById("tools") as HTMLUListElement;
+    protractr = new Protractr(ctx, sidePane, tools);
+    adjustCanvasResolution(null);
+});
 
-// Solve the constraints
-solver.updateVariables();
-console.log(solver);
+function getRelativeCoords(event) {
+    return new Point(event.offsetX, event.offsetY);
+}
+
+export class Protractr {
+    ctx: CanvasRenderingContext2D;
+    tools: HTMLUListElement;
+    sidePane: HTMLDivElement;
+    toolList: Tool[] = [];
+    figures: Figure[] = [];
+    activeTool: Tool = null;
+    constructor(ctx: CanvasRenderingContext2D, sidePane: HTMLDivElement, toolbar: HTMLUListElement) {
+        console.debug(this);
+        this.ctx = ctx;
+        this.tools = tools;
+        this.sidePane = sidePane;
+        this.registerTool(new PointTool());
+        this.registerTool(new LineTool());
+        this.registerTool(new CircleTool());
+        this.registerTool(new Tool("Arc", "Create an arc"));
+        this.ctx.canvas.addEventListener("touchdown", this.canvasDown.bind(this));
+        this.ctx.canvas.addEventListener("mousedown", this.canvasDown.bind(this));
+        this.ctx.canvas.addEventListener("touchup", this.canvasUp.bind(this));
+        this.ctx.canvas.addEventListener("mouseup", this.canvasUp.bind(this));
+        this.ctx.canvas.addEventListener("touchmove", this.canvasMove.bind(this));
+        this.ctx.canvas.addEventListener("mousemove", this.canvasMove.bind(this));
+    }
+    canvasDown(event) {
+        let point = getRelativeCoords(event);
+        if(this.activeTool) {
+            this.activeTool.down(point);
+        }
+        this.draw();
+    }
+    canvasUp(event) {
+        let point = getRelativeCoords(event);
+        if(this.activeTool) {
+            this.activeTool.up(point);
+        }
+        this.draw();
+    }
+    canvasMove(event) {
+        let point = getRelativeCoords(event);
+        if(this.activeTool) {
+            this.activeTool.move(point);
+        }
+        this.draw();
+    }
+    draw() {
+        this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+        for(let fig of this.figures) {
+            fig.draw();
+        }
+    }
+    registerTool(tool: Tool) {
+        this.toolList.push(tool);
+        tool.li = document.createElement("li");
+        tool.li.title = tool.tooltip;
+        tool.li.classList.add("tool");
+        tool.li.style.backgroundImage = "url(" + tool.imageUrl + ")";
+        tool.li.addEventListener("click", this.activateTool.bind(this, tool));
+        this.tools.appendChild(tool.li);
+    }
+    activateTool(tool) {
+        if(this.activeTool !== null) {
+            this.activeTool.deactivate();
+        }
+        this.activeTool = tool;
+        if(this.activeTool !== null) {
+            this.activeTool.activate();
+        }
+    }
+}
+
+
 

@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "browserify": "browserify -r kiwi.js > build/bundle.js",
-    "typescript": "typescript tsconfig.json"
+    "browserify": "browserify build/main.js -o build/bundle.js"
   },
   "keywords": [],
   "author": "",

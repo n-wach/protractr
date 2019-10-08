@@ -1,0 +1,44 @@
+html, body, canvas {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    border: 0;
+    padding: 0;
+}
+table, tbody {
+    height: 100%;
+    width: 100%;
+    border: 0;
+}
+table, tbody, tr, td {
+    padding: 0;
+    border: 0;
+}
+.title {
+    height: 30pt;
+    width: 20%;
+    margin: 0;
+    text-align: center;
+}
+.toolbar {
+    height: 30pt;
+    width: 80%;
+    background: gray;
+    margin: 0;
+}
+.side-pane-td {
+    background: lightgray;
+    margin: 0;
+}
+.tool {
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    background-size: contain;
+    border-radius: 2px;
+    border: 1px solid white;
+    margin: 3px;
+}
+.tool-active {
+    border-color: red;
+}
