@@ -1,22 +1,18 @@
 import {CircleFigure, Figure, LineFigure, PointFigure} from "../gcs/figures";
 import {protractr} from "../main";
+import {Toolbar} from "./toolbar";
 
 export class Tool {
     name: string;
     tooltip: string;
-    li: HTMLLIElement;
-    imageUrl: string;
     currentFigure: Figure;
+    toolbar: Toolbar;
     constructor(name: string, tooltip: string) {
         this.name = name;
         this.tooltip = tooltip;
-        this.imageUrl = "../image/" + name.toLowerCase() + ".png";
     }
-    activate() {
-        this.li.classList.add("tool-active");
-    }
-    deactivate() {
-        this.li.classList.remove("tool-active");
+    used() {
+
     }
     down(point) {
 
@@ -24,12 +20,37 @@ export class Tool {
     up(point) {
 
     }
+
     move(point) {
 
     }
 }
 
-export class PointTool extends Tool {
+export class UndoTool extends Tool {
+    constructor() {
+        super("Undo", "Undo the most recent action");
+    }
+    used() {
+        alert("Undo");
+    }
+}
+
+export class RedoTool extends Tool {
+    constructor() {
+        super("Redo", "Redo the most recent undo");
+    }
+    used() {
+        alert("Redo");
+    }
+}
+
+class ActivatableTool extends Tool {
+    used() {
+        this.toolbar.setActive(this);
+    }
+}
+
+export class PointTool extends ActivatableTool {
     constructor() {
         super("Point", "Create a point");
     }
@@ -51,7 +72,7 @@ export class PointTool extends Tool {
     }
 }
 
-export class LineTool extends Tool {
+export class LineTool extends ActivatableTool {
     constructor() {
         super("Line", "Create a line");
     }
@@ -77,7 +98,7 @@ export class LineTool extends Tool {
 }
 
 
-export class CircleTool extends Tool {
+export class CircleTool extends ActivatableTool {
     currentFigure: CircleFigure;
     constructor() {
         super("Circle", "Create a circle");

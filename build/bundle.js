@@ -33,6 +33,9 @@ var PointFigure = /** @class */ (function () {
         main_1.ctx.fill();
         main_1.ctx.closePath();
     };
+    PointFigure.prototype.getSnappablePoints = function () {
+        return [this.p];
+    };
     return PointFigure;
 }());
 exports.PointFigure = PointFigure;
@@ -51,6 +54,9 @@ var LineFigure = /** @class */ (function () {
         this.p1.draw();
         this.p2.draw();
     };
+    LineFigure.prototype.getSnappablePoints = function () {
+        return [this.p1.p, this.p2.p];
+    };
     return LineFigure;
 }());
 exports.LineFigure = LineFigure;
@@ -67,6 +73,9 @@ var CircleFigure = /** @class */ (function () {
         main_1.ctx.closePath();
         this.c.draw();
     };
+    CircleFigure.prototype.getSnappablePoints = function () {
+        return [this.c.p];
+    };
     return CircleFigure;
 }());
 exports.CircleFigure = CircleFigure;
@@ -74,8 +83,7 @@ exports.CircleFigure = CircleFigure;
 },{"../main":2}],2:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var tools_1 = require("./ui/tools");
-var figures_1 = require("./gcs/figures");
+var protractr_1 = require("./protractr");
 var canvas;
 var tools;
 var sidePane;
@@ -89,25 +97,23 @@ window.addEventListener("load", function () {
     exports.ctx = canvas.getContext("2d");
     sidePane = document.getElementById("side-pane");
     tools = document.getElementById("tools");
-    exports.protractr = new Protractr(exports.ctx, sidePane, tools);
+    exports.protractr = new protractr_1.Protractr(exports.ctx, sidePane, tools);
     adjustCanvasResolution(null);
 });
-function getRelativeCoords(event) {
-    return new figures_1.Point(event.offsetX, event.offsetY);
-}
+
+},{"./protractr":3}],3:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var figures_1 = require("./gcs/figures");
+var toolbar_1 = require("./ui/toolbar");
+var main_1 = require("./main");
 var Protractr = /** @class */ (function () {
     function Protractr(ctx, sidePane, toolbar) {
-        this.toolList = [];
         this.figures = [];
-        this.activeTool = null;
         console.debug(this);
         this.ctx = ctx;
-        this.tools = tools;
+        this.toolbar = new toolbar_1.Toolbar(this, toolbar);
         this.sidePane = sidePane;
-        this.registerTool(new tools_1.PointTool());
-        this.registerTool(new tools_1.LineTool());
-        this.registerTool(new tools_1.CircleTool());
-        this.registerTool(new tools_1.Tool("Arc", "Create an arc"));
         this.ctx.canvas.addEventListener("touchdown", this.canvasDown.bind(this));
         this.ctx.canvas.addEventListener("mousedown", this.canvasDown.bind(this));
         this.ctx.canvas.addEventListener("touchup", this.canvasUp.bind(this));
@@ -117,22 +123,22 @@ var Protractr = /** @class */ (function () {
     }
     Protractr.prototype.canvasDown = function (event) {
         var point = getRelativeCoords(event);
-        if (this.activeTool) {
-            this.activeTool.down(point);
+        if (this.toolbar.activeTool) {
+            this.toolbar.activeTool.down(snapCoords(point));
         }
         this.draw();
     };
     Protractr.prototype.canvasUp = function (event) {
         var point = getRelativeCoords(event);
-        if (this.activeTool) {
-            this.activeTool.up(point);
+        if (this.toolbar.activeTool) {
+            this.toolbar.activeTool.up(snapCoords(point));
         }
         this.draw();
     };
     Protractr.prototype.canvasMove = function (event) {
         var point = getRelativeCoords(event);
-        if (this.activeTool) {
-            this.activeTool.move(point);
+        if (this.toolbar.activeTool) {
+            this.toolbar.activeTool.move(snapCoords(point));
         }
         this.draw();
     };
@@ -143,29 +149,99 @@ var Protractr = /** @class */ (function () {
             fig.draw();
         }
     };
-    Protractr.prototype.registerTool = function (tool) {
-        this.toolList.push(tool);
-        tool.li = document.createElement("li");
-        tool.li.title = tool.tooltip;
-        tool.li.classList.add("tool");
-        tool.li.style.backgroundImage = "url(" + tool.imageUrl + ")";
-        tool.li.addEventListener("click", this.activateTool.bind(this, tool));
-        this.tools.appendChild(tool.li);
-    };
-    Protractr.prototype.activateTool = function (tool) {
-        if (this.activeTool !== null) {
-            this.activeTool.deactivate();
+    Protractr.prototype.getAllSnappablePoints = function () {
+        var points = [];
+        for (var _i = 0, _a = this.figures; _i < _a.length; _i++) {
+            var fig = _a[_i];
+            if (fig.selected)
+                continue;
+            for (var _b = 0, _c = fig.getSnappablePoints(); _b < _c.length; _b++) {
+                var p = _c[_b];
+                points.push(p);
+            }
         }
-        this.activeTool = tool;
-        if (this.activeTool !== null) {
-            this.activeTool.activate();
-        }
+        return points;
     };
     return Protractr;
 }());
 exports.Protractr = Protractr;
+function snapCoords(point) {
+    var points = main_1.protractr.getAllSnappablePoints();
+    var closest = point;
+    var closestDist = 10;
+    for (var _i = 0, points_1 = points; _i < points_1.length; _i++) {
+        var p = points_1[_i];
+        var d = p.distTo(point);
+        if (d < closestDist) {
+            closest = p;
+            closestDist = d;
+        }
+    }
+    return closest.copy();
+}
+function getRelativeCoords(event) {
+    return new figures_1.Point(event.offsetX, event.offsetY);
+}
 
-},{"./gcs/figures":1,"./ui/tools":3}],3:[function(require,module,exports){
+},{"./gcs/figures":1,"./main":2,"./ui/toolbar":4}],4:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var tools_1 = require("./tools");
+var Toolbar = /** @class */ (function () {
+    function Toolbar(protractr, toolbarElement) {
+        this.protractr = protractr;
+        this.toolbarElement = toolbarElement;
+        this.toolElements = [];
+        this.initializeTools();
+    }
+    Toolbar.prototype.initializeTools = function () {
+        this.addTool(new tools_1.PointTool(), "point.png");
+        this.addTool(new tools_1.LineTool(), "line.png");
+        this.addTool(new tools_1.CircleTool(), "circle.png");
+        this.addTool(new tools_1.Tool("Arc", "Create an arc"), "arc.png");
+        this.addTool(new tools_1.UndoTool(), "undo.png");
+        this.addTool(new tools_1.RedoTool(), "redo.png");
+    };
+    Toolbar.prototype.addTool = function (tool, image) {
+        var e = new ToolElement(tool, image);
+        e.tool.toolbar = this;
+        this.toolElements.push(e);
+        this.toolbarElement.appendChild(e.li);
+    };
+    Toolbar.prototype.setActive = function (tool) {
+        this.activeTool = tool;
+        for (var _i = 0, _a = this.toolElements; _i < _a.length; _i++) {
+            var e = _a[_i];
+            if (e.tool == tool) {
+                e.activate();
+            }
+            else {
+                e.deactivate();
+            }
+        }
+    };
+    return Toolbar;
+}());
+exports.Toolbar = Toolbar;
+var ToolElement = /** @class */ (function () {
+    function ToolElement(tool, image) {
+        this.tool = tool;
+        this.li = document.createElement("li");
+        this.li.title = tool.tooltip;
+        this.li.classList.add("tool");
+        this.li.style.backgroundImage = "url('../image/" + image + "')";
+        this.li.addEventListener("click", this.tool.used.bind(tool));
+    }
+    ToolElement.prototype.activate = function () {
+        this.li.classList.add("tool-active");
+    };
+    ToolElement.prototype.deactivate = function () {
+        this.li.classList.remove("tool-active");
+    };
+    return ToolElement;
+}());
+
+},{"./tools":5}],5:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -187,13 +263,8 @@ var Tool = /** @class */ (function () {
     function Tool(name, tooltip) {
         this.name = name;
         this.tooltip = tooltip;
-        this.imageUrl = "../image/" + name.toLowerCase() + ".png";
     }
-    Tool.prototype.activate = function () {
-        this.li.classList.add("tool-active");
-    };
-    Tool.prototype.deactivate = function () {
-        this.li.classList.remove("tool-active");
+    Tool.prototype.used = function () {
     };
     Tool.prototype.down = function (point) {
     };
@@ -204,6 +275,38 @@ var Tool = /** @class */ (function () {
     return Tool;
 }());
 exports.Tool = Tool;
+var UndoTool = /** @class */ (function (_super) {
+    __extends(UndoTool, _super);
+    function UndoTool() {
+        return _super.call(this, "Undo", "Undo the most recent action") || this;
+    }
+    UndoTool.prototype.used = function () {
+        alert("Undo");
+    };
+    return UndoTool;
+}(Tool));
+exports.UndoTool = UndoTool;
+var RedoTool = /** @class */ (function (_super) {
+    __extends(RedoTool, _super);
+    function RedoTool() {
+        return _super.call(this, "Redo", "Redo the most recent undo") || this;
+    }
+    RedoTool.prototype.used = function () {
+        alert("Redo");
+    };
+    return RedoTool;
+}(Tool));
+exports.RedoTool = RedoTool;
+var ActivatableTool = /** @class */ (function (_super) {
+    __extends(ActivatableTool, _super);
+    function ActivatableTool() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    ActivatableTool.prototype.used = function () {
+        this.toolbar.setActive(this);
+    };
+    return ActivatableTool;
+}(Tool));
 var PointTool = /** @class */ (function (_super) {
     __extends(PointTool, _super);
     function PointTool() {
@@ -226,7 +329,7 @@ var PointTool = /** @class */ (function (_super) {
         }
     };
     return PointTool;
-}(Tool));
+}(ActivatableTool));
 exports.PointTool = PointTool;
 var LineTool = /** @class */ (function (_super) {
     __extends(LineTool, _super);
@@ -253,7 +356,7 @@ var LineTool = /** @class */ (function (_super) {
         }
     };
     return LineTool;
-}(Tool));
+}(ActivatableTool));
 exports.LineTool = LineTool;
 var CircleTool = /** @class */ (function (_super) {
     __extends(CircleTool, _super);
@@ -278,7 +381,7 @@ var CircleTool = /** @class */ (function (_super) {
         }
     };
     return CircleTool;
-}(Tool));
+}(ActivatableTool));
 exports.CircleTool = CircleTool;
 
 },{"../gcs/figures":1,"../main":2}]},{},[2]);

@@ -35,6 +35,9 @@ export class PointFigure implements Figure {
         ctx.fill();
         ctx.closePath();
     }
+    getSnappablePoints(): Point[] {
+        return [this.p];
+    }
 }
 
 export class LineFigure implements Figure {
@@ -55,6 +58,9 @@ export class LineFigure implements Figure {
         this.p1.draw();
         this.p2.draw();
     }
+    getSnappablePoints(): Point[] {
+        return [this.p1.p, this.p2.p];
+    }
 }
 
 export class CircleFigure implements Figure {
@@ -73,10 +79,15 @@ export class CircleFigure implements Figure {
         ctx.closePath();
         this.c.draw();
     }
+    getSnappablePoints(): Point[] {
+        return [this.c.p];
+    }
 }
 
 
 export interface Figure {
     selected: boolean;
     draw();
+
+    getSnappablePoints(): Point[];
 }

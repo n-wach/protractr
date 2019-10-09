@@ -32,6 +32,9 @@ var PointFigure = /** @class */ (function () {
         main_1.ctx.fill();
         main_1.ctx.closePath();
     };
+    PointFigure.prototype.getSnappablePoints = function () {
+        return [this.p];
+    };
     return PointFigure;
 }());
 exports.PointFigure = PointFigure;
@@ -50,6 +53,9 @@ var LineFigure = /** @class */ (function () {
         this.p1.draw();
         this.p2.draw();
     };
+    LineFigure.prototype.getSnappablePoints = function () {
+        return [this.p1.p, this.p2.p];
+    };
     return LineFigure;
 }());
 exports.LineFigure = LineFigure;
@@ -65,6 +71,9 @@ var CircleFigure = /** @class */ (function () {
         main_1.ctx.stroke();
         main_1.ctx.closePath();
         this.c.draw();
+    };
+    CircleFigure.prototype.getSnappablePoints = function () {
+        return [this.c.p];
     };
     return CircleFigure;
 }());

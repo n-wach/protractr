@@ -19,13 +19,8 @@ var Tool = /** @class */ (function () {
     function Tool(name, tooltip) {
         this.name = name;
         this.tooltip = tooltip;
-        this.imageUrl = "../image/" + name.toLowerCase() + ".png";
     }
-    Tool.prototype.activate = function () {
-        this.li.classList.add("tool-active");
-    };
-    Tool.prototype.deactivate = function () {
-        this.li.classList.remove("tool-active");
+    Tool.prototype.used = function () {
     };
     Tool.prototype.down = function (point) {
     };
@@ -36,6 +31,38 @@ var Tool = /** @class */ (function () {
     return Tool;
 }());
 exports.Tool = Tool;
+var UndoTool = /** @class */ (function (_super) {
+    __extends(UndoTool, _super);
+    function UndoTool() {
+        return _super.call(this, "Undo", "Undo the most recent action") || this;
+    }
+    UndoTool.prototype.used = function () {
+        alert("Undo");
+    };
+    return UndoTool;
+}(Tool));
+exports.UndoTool = UndoTool;
+var RedoTool = /** @class */ (function (_super) {
+    __extends(RedoTool, _super);
+    function RedoTool() {
+        return _super.call(this, "Redo", "Redo the most recent undo") || this;
+    }
+    RedoTool.prototype.used = function () {
+        alert("Redo");
+    };
+    return RedoTool;
+}(Tool));
+exports.RedoTool = RedoTool;
+var ActivatableTool = /** @class */ (function (_super) {
+    __extends(ActivatableTool, _super);
+    function ActivatableTool() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    ActivatableTool.prototype.used = function () {
+        this.toolbar.setActive(this);
+    };
+    return ActivatableTool;
+}(Tool));
 var PointTool = /** @class */ (function (_super) {
     __extends(PointTool, _super);
     function PointTool() {
@@ -58,7 +85,7 @@ var PointTool = /** @class */ (function (_super) {
         }
     };
     return PointTool;
-}(Tool));
+}(ActivatableTool));
 exports.PointTool = PointTool;
 var LineTool = /** @class */ (function (_super) {
     __extends(LineTool, _super);
@@ -85,7 +112,7 @@ var LineTool = /** @class */ (function (_super) {
         }
     };
     return LineTool;
-}(Tool));
+}(ActivatableTool));
 exports.LineTool = LineTool;
 var CircleTool = /** @class */ (function (_super) {
     __extends(CircleTool, _super);
@@ -110,6 +137,6 @@ var CircleTool = /** @class */ (function (_super) {
         }
     };
     return CircleTool;
-}(Tool));
+}(ActivatableTool));
 exports.CircleTool = CircleTool;
 //# sourceMappingURL=tools.js.map
