@@ -46,7 +46,6 @@ export class Protractr {
         for(let fig of this.figures) {
             fig.draw();
         }
-
     }
     getAllSnappablePoints(): Point[] {
         let points: Point[] = [];
