@@ -1,4 +1,4 @@
-import {CircleFigure, Figure, LineFigure, PointFigure} from "../gcs/figures";
+import {CircleFigure, Figure, LineFigure, Point, PointFigure} from "../gcs/figures";
 import {protractr} from "../main";
 import {Toolbar} from "./toolbar";
 
@@ -20,7 +20,6 @@ export class Tool {
     up(point) {
 
     }
-
     move(point) {
 
     }
@@ -50,14 +49,21 @@ class ActivatableTool extends Tool {
     }
 }
 
-export class PointTool extends ActivatableTool {
+export class FigureTool extends ActivatableTool {
+    points: Point[];
+    used() {
+        super.used();
+    }
+}
+
+export class PointTool extends FigureTool {
     constructor() {
         super("Point", "Create a point");
     }
     down(point) {
         this.currentFigure = new PointFigure(point);
         this.currentFigure.selected = true;
-        protractr.figures.push(this.currentFigure);
+        protractr.sketch.figures.push(this.currentFigure);
     }
     up(point) {
         if(this.currentFigure) {
@@ -72,7 +78,7 @@ export class PointTool extends ActivatableTool {
     }
 }
 
-export class LineTool extends ActivatableTool {
+export class LineTool extends FigureTool {
     constructor() {
         super("Line", "Create a line");
     }
@@ -81,7 +87,7 @@ export class LineTool extends ActivatableTool {
         this.currentFigure = new LineFigure(new PointFigure(point), new PointFigure(point.copy()));
         this.currentFigure.selected = true;
         (this.currentFigure as LineFigure).p2.selected = true;
-        protractr.figures.push(this.currentFigure);
+        protractr.sketch.figures.push(this.currentFigure);
     }
     up(point) {
         if(this.currentFigure) {
@@ -98,7 +104,7 @@ export class LineTool extends ActivatableTool {
 }
 
 
-export class CircleTool extends ActivatableTool {
+export class CircleTool extends FigureTool {
     currentFigure: CircleFigure;
     constructor() {
         super("Circle", "Create a circle");
@@ -107,7 +113,7 @@ export class CircleTool extends ActivatableTool {
         this.up(point);
         this.currentFigure = new CircleFigure(new PointFigure(point), point.copy());
         this.currentFigure.selected = true;
-        protractr.figures.push(this.currentFigure);
+        protractr.sketch.figures.push(this.currentFigure);
     }
     up(point) {
         if(this.currentFigure) {

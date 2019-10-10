@@ -14,14 +14,9 @@ window.addEventListener("resize", adjustCanvasResolution);
 
 window.addEventListener("load", function() {
     canvas = document.getElementById("canvas") as HTMLCanvasElement;
-    ctx = canvas.getContext("2d");
     sidePane = document.getElementById("side-pane") as HTMLDivElement;
     tools = document.getElementById("tools") as HTMLUListElement;
-    protractr = new Protractr(ctx, sidePane, tools);
     adjustCanvasResolution(null);
+    protractr = new Protractr(canvas, sidePane, tools);
+    console.log("Protractr: ", protractr);
 });
-
-
-
-
-

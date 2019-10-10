@@ -10,7 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "kiwi.js": "latest",
     "browserify": "latest"
   }
 }

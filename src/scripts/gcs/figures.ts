@@ -28,7 +28,7 @@ export class PointFigure implements Figure {
     constructor(p: Point) {
         this.p = p;
     }
-    draw() {
+    draw(ctx) {
         ctx.fillStyle = this.selected ? "red" : "black";
         ctx.beginPath();
         ctx.arc(this.p.x, this.p.y, 3, 0, Math.PI * 2);
@@ -48,15 +48,15 @@ export class LineFigure implements Figure {
         this.p1 = p1;
         this.p2 = p2;
     }
-    draw() {
+    draw(ctx) {
         ctx.strokeStyle = this.selected ? "red" : "black";
         ctx.beginPath();
         ctx.moveTo(this.p1.p.x, this.p1.p.y);
         ctx.lineTo(this.p2.p.x, this.p2.p.y);
         ctx.stroke();
         ctx.closePath();
-        this.p1.draw();
-        this.p2.draw();
+        this.p1.draw(ctx);
+        this.p2.draw(ctx);
     }
     getSnappablePoints(): Point[] {
         return [this.p1.p, this.p2.p];
@@ -71,13 +71,13 @@ export class CircleFigure implements Figure {
         this.c = c;
         this.r = r;
     }
-    draw() {
+    draw(ctx) {
         ctx.strokeStyle = this.selected ? "red" : "black";
         ctx.beginPath();
         ctx.arc(this.c.p.x, this.c.p.y, this.r, 0, Math.PI * 2);
         ctx.stroke();
         ctx.closePath();
-        this.c.draw();
+        this.c.draw(ctx);
     }
     getSnappablePoints(): Point[] {
         return [this.c.p];
@@ -87,7 +87,7 @@ export class CircleFigure implements Figure {
 
 export interface Figure {
     selected: boolean;
-    draw();
+    draw(ctx);
 
     getSnappablePoints(): Point[];
 }

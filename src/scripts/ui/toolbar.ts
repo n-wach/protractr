@@ -1,13 +1,15 @@
 import {CircleTool, LineTool, PointTool, RedoTool, Tool, UndoTool} from "./tools";
 import {Protractr} from "../protractr";
+import {SketchView} from "./sketchview";
 
 export class Toolbar {
     toolElements: ToolElement[];
     protractr: Protractr;
     toolbarElement: HTMLUListElement;
-    activeTool: Tool;
-    constructor(protractr: Protractr, toolbarElement: HTMLUListElement) {
-        this.protractr = protractr;
+    sketchView: SketchView;
+
+    constructor(toolbarElement: HTMLUListElement, sketchView: SketchView) {
+        this.sketchView = sketchView;
         this.toolbarElement = toolbarElement;
         this.toolElements = [];
         this.initializeTools();
@@ -27,7 +29,7 @@ export class Toolbar {
         this.toolbarElement.appendChild(e.li);
     }
     setActive(tool: Tool) {
-        this.activeTool = tool;
+        this.sketchView.subscribeTool(tool);
         for(let e of this.toolElements) {
             if(e.tool == tool) {
                 e.activate();
