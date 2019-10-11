@@ -14,14 +14,14 @@ export class Tool {
     used() {
 
     }
-    down(point) {
-
+    down(point): boolean {
+        return false;
     }
-    up(point) {
-
+    up(point): boolean {
+        return false;
     }
-    move(point) {
-
+    move(point): boolean {
+        return false;
     }
 }
 
@@ -49,10 +49,36 @@ class ActivatableTool extends Tool {
     }
 }
 
+export class SelectionTool extends ActivatableTool {
+    constructor() {
+        super("Select", "Select stuff");
+    }
+    move(point) {
+
+        return false;
+    }
+    up(point) {
+
+        return true;
+    }
+}
+
 export class FigureTool extends ActivatableTool {
     points: Point[];
-    used() {
-        super.used();
+    currentPoint: Point;
+    move(point) {
+        if(!this.currentPoint) {
+            this.currentPoint = point.copy();
+            this.points.push(this.currentPoint);
+        }
+        this.currentPoint.set(point);
+        return true;
+    }
+    up(point) {
+        if(!this.currentPoint) return;
+        this.currentPoint = point.copy();
+        this.points.push(this.currentPoint);
+        return true;
     }
 }
 
@@ -62,19 +88,21 @@ export class PointTool extends FigureTool {
     }
     down(point) {
         this.currentFigure = new PointFigure(point);
-        this.currentFigure.selected = true;
         protractr.sketch.figures.push(this.currentFigure);
+        return true;
     }
     up(point) {
         if(this.currentFigure) {
-            this.currentFigure.selected = false;
             this.currentFigure = null;
         }
+        return true;
     }
     move(point) {
         if(this.currentFigure) {
             (this.currentFigure as PointFigure).p.set(point);
+            return true;
         }
+        return false;
     }
 }
 
@@ -84,22 +112,22 @@ export class LineTool extends FigureTool {
     }
     down(point) {
         this.up(point);
-        this.currentFigure = new LineFigure(new PointFigure(point), new PointFigure(point.copy()));
-        this.currentFigure.selected = true;
-        (this.currentFigure as LineFigure).p2.selected = true;
+        this.currentFigure = new LineFigure(point, point.copy());
         protractr.sketch.figures.push(this.currentFigure);
+        return true;
     }
     up(point) {
         if(this.currentFigure) {
-            (this.currentFigure as LineFigure).p2.selected = false;
-            this.currentFigure.selected = false;
             this.currentFigure = null;
         }
+        return true;
     }
     move(point) {
         if(this.currentFigure) {
-            (this.currentFigure as LineFigure).p2.p.set(point);
+            (this.currentFigure as LineFigure).p2.set(point);
+            return true;
         }
+        return false;
     }
 }
 
@@ -111,20 +139,22 @@ export class CircleTool extends FigureTool {
     }
     down(point) {
         this.up(point);
-        this.currentFigure = new CircleFigure(new PointFigure(point), point.copy());
-        this.currentFigure.selected = true;
+        this.currentFigure = new CircleFigure(point, point.copy());
         protractr.sketch.figures.push(this.currentFigure);
+        return true;
     }
     up(point) {
         if(this.currentFigure) {
-            this.currentFigure.selected = false;
             this.currentFigure = null;
         }
+        return true;
     }
     move(point) {
         if(this.currentFigure) {
-            this.currentFigure.r = point.distTo(this.currentFigure.c.p);
+            this.currentFigure.r = point.distTo(this.currentFigure.c);
+            return true;
         }
+        return false;
     }
 }
 

@@ -14,66 +14,92 @@ var Point = /** @class */ (function () {
         return new Point(this.x, this.y);
     };
     Point.prototype.distTo = function (o) {
+        return Math.sqrt(this.distTo2(o));
+    };
+    Point.prototype.distTo2 = function (o) {
         var dx = o.x - this.x;
         var dy = o.y - this.y;
-        return Math.sqrt(dx * dx + dy * dy);
+        return dx * dx + dy * dy;
+    };
+    Point.prototype.normalizeSelf = function () {
+        var length = this.distTo(ORIGIN);
+        this.x /= length;
+        this.y /= length;
+    };
+    Point.prototype.pointTowards = function (target, dist) {
+        var diff = new Point(target.x - this.x, target.y - this.y);
+        diff.normalizeSelf();
+        return new Point(this.x + diff.x * dist, this.y + diff.y * dist);
+    };
+    Point.prototype.equals = function (o) {
+        return o.x == this.x && o.y == this.y;
     };
     return Point;
 }());
 exports.Point = Point;
+var ORIGIN = new Point(0, 0);
 var PointFigure = /** @class */ (function () {
     function PointFigure(p) {
+        this.type = "point";
         this.p = p;
     }
-    PointFigure.prototype.draw = function (ctx) {
-        ctx.fillStyle = this.selected ? "red" : "black";
-        ctx.beginPath();
-        ctx.arc(this.p.x, this.p.y, 3, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.closePath();
-    };
-    PointFigure.prototype.getSnappablePoints = function () {
-        return [this.p];
+    PointFigure.prototype.getClosestPoint = function (point) {
+        return this.p.copy();
     };
     return PointFigure;
 }());
 exports.PointFigure = PointFigure;
 var LineFigure = /** @class */ (function () {
     function LineFigure(p1, p2) {
+        this.type = "line";
         this.p1 = p1;
         this.p2 = p2;
     }
-    LineFigure.prototype.draw = function (ctx) {
-        ctx.strokeStyle = this.selected ? "red" : "black";
-        ctx.beginPath();
-        ctx.moveTo(this.p1.p.x, this.p1.p.y);
-        ctx.lineTo(this.p2.p.x, this.p2.p.y);
-        ctx.stroke();
-        ctx.closePath();
-        this.p1.draw(ctx);
-        this.p2.draw(ctx);
+    LineFigure.prototype.projectionFactor = function (point) {
+        if (this.p1.equals(point))
+            return 0;
+        if (this.p2.equals(point))
+            return 1;
+        var dx = this.p1.x - this.p2.x;
+        var dy = this.p1.y - this.p2.y;
+        var len2 = dx * dx + dy * dy;
+        return -((point.x - this.p1.x) * dx + (point.y - this.p1.y) * dy) / len2;
     };
-    LineFigure.prototype.getSnappablePoints = function () {
-        return [this.p1.p, this.p2.p];
+    LineFigure.prototype.segmentFraction = function (point) {
+        var segFrac = this.projectionFactor(point);
+        if (segFrac < 0)
+            return 0;
+        if (segFrac > 1 || isNaN(segFrac))
+            return 1;
+        return segFrac;
+    };
+    LineFigure.prototype.project = function (point) {
+        var r = this.segmentFraction(point);
+        var px = this.p1.x + r * (this.p2.x - this.p1.x);
+        var py = this.p1.y + r * (this.p2.y - this.p1.y);
+        return new Point(px, py);
+    };
+    LineFigure.prototype.getClosestPoint = function (point) {
+        return this.project(point);
     };
     return LineFigure;
 }());
 exports.LineFigure = LineFigure;
 var CircleFigure = /** @class */ (function () {
     function CircleFigure(c, r) {
+        this.type = "circle";
         this.c = c;
         this.r = r;
     }
-    CircleFigure.prototype.draw = function (ctx) {
-        ctx.strokeStyle = this.selected ? "red" : "black";
-        ctx.beginPath();
-        ctx.arc(this.c.p.x, this.c.p.y, this.r, 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.closePath();
-        this.c.draw(ctx);
-    };
-    CircleFigure.prototype.getSnappablePoints = function () {
-        return [this.c.p];
+    CircleFigure.prototype.getClosestPoint = function (point) {
+        var dist = point.distTo(this.c);
+        var radDist = Math.abs(dist - this.r);
+        if (dist < radDist) {
+            return this.c.copy();
+        }
+        else {
+            return this.c.pointTowards(point, this.r);
+        }
     };
     return CircleFigure;
 }());
@@ -83,6 +109,7 @@ exports.CircleFigure = CircleFigure;
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var solver_1 = require("./solver");
+var main_1 = require("../main");
 var Sketch = /** @class */ (function () {
     function Sketch() {
         this.constraints = [];
@@ -90,11 +117,30 @@ var Sketch = /** @class */ (function () {
         this.figures = [];
         this.solver = new solver_1.Solver();
     }
+    Sketch.prototype.getClosestFigure = function (point) {
+        if (this.figures.length == 0)
+            return null;
+        var dist = this.figures[0].getClosestPoint(point).distTo(point);
+        var closest = this.figures[0];
+        for (var _i = 0, _a = this.figures; _i < _a.length; _i++) {
+            var fig = _a[_i];
+            if (fig == main_1.protractr.ui.sketchView.subscribedTool.currentFigure)
+                continue;
+            var p = fig.getClosestPoint(point);
+            main_1.protractr.ui.sketchView.drawPoint(p, 3, "blue");
+            var d = p.distTo(point);
+            if (d < dist) {
+                closest = fig;
+                dist = d;
+            }
+        }
+        return closest;
+    };
     return Sketch;
 }());
 exports.Sketch = Sketch;
 
-},{"./solver":3}],3:[function(require,module,exports){
+},{"../main":4,"./solver":3}],3:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Solver = /** @class */ (function () {
@@ -153,75 +199,104 @@ exports.InfoPane = InfoPane;
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var figures_1 = require("../gcs/figures");
-function eventToRelative(event) {
-    return new figures_1.Point(event.offsetX, event.offsetY);
-}
 var SketchView = /** @class */ (function () {
     function SketchView(sketch, canvas) {
         this.sketch = sketch;
         this.canvas = canvas;
         this.ctx = this.canvas.getContext("2d");
         var eventHandler = this.handleEvent.bind(this);
-        this.canvas.addEventListener("touchdown", eventHandler);
-        this.canvas.addEventListener("touchup", eventHandler);
-        this.canvas.addEventListener("touchmove", eventHandler);
-        this.canvas.addEventListener("mousedown", eventHandler);
-        this.canvas.addEventListener("mouseup", eventHandler);
-        this.canvas.addEventListener("mousemove", eventHandler);
+        var events = ["touchdown", "touchup", "touchmove", "mousemove", "mousedown", "mouseup"];
+        for (var _i = 0, events_1 = events; _i < events_1.length; _i++) {
+            var event_1 = events_1[_i];
+            this.canvas.addEventListener(event_1, eventHandler);
+        }
     }
     SketchView.prototype.handleEvent = function (event) {
-        if (!this.subscribedTool)
-            return;
-        var point = eventToRelative(event);
+        var point = new figures_1.Point(event.offsetX, event.offsetY);
         var snapPoint = this.snapPoint(point);
         switch (event.type) {
             case "mousedown":
             case "touchdown":
-                this.subscribedTool.down(snapPoint);
+                if (this.subscribedTool)
+                    this.subscribedTool.down(snapPoint);
                 break;
             case "mousemove":
             case "touchmove":
-                this.subscribedTool.move(snapPoint);
+                if (this.subscribedTool)
+                    this.subscribedTool.move(snapPoint);
                 break;
             case "touchup":
             case "mouseup":
-                this.subscribedTool.up(snapPoint);
+                if (this.subscribedTool)
+                    this.subscribedTool.up(snapPoint);
                 break;
         }
         this.draw();
+        this.updateHover(point);
+    };
+    SketchView.prototype.updateHover = function (point) {
+        var closest = this.sketch.getClosestFigure(point);
+        if (closest != null && closest.getClosestPoint(point).distTo(point) > 10) {
+            closest = null;
+        }
+        if (this.hoveredFigure != closest) {
+            this.hoveredFigure = closest;
+            return true;
+        }
+        return false;
     };
     SketchView.prototype.subscribeTool = function (tool) {
         this.subscribedTool = tool;
     };
     SketchView.prototype.draw = function () {
+        console.log(this.sketch.figures);
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
         for (var _i = 0, _a = this.sketch.figures; _i < _a.length; _i++) {
             var fig = _a[_i];
-            fig.draw(this.ctx);
+            this.ctx.strokeStyle = "black";
+            this.ctx.lineWidth = 2;
+            var pointSize = 3;
+            if (this.hoveredFigure == fig) {
+                pointSize = 5;
+                this.ctx.lineWidth = 5;
+            }
+            switch (fig.type) {
+                case "line":
+                    var line = fig;
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(line.p1.x, line.p1.y);
+                    this.ctx.lineTo(line.p2.x, line.p2.y);
+                    this.ctx.stroke();
+                    this.drawPoint(line.p1, pointSize);
+                    this.drawPoint(line.p2, pointSize);
+                    break;
+                case "point":
+                    var point = fig;
+                    this.drawPoint(point.p, pointSize);
+                    break;
+                case "circle":
+                    var circle = fig;
+                    this.ctx.beginPath();
+                    this.ctx.arc(circle.c.x, circle.c.y, circle.r, 0, Math.PI * 2);
+                    this.ctx.stroke();
+                    this.drawPoint(circle.c, pointSize);
+                    break;
+            }
         }
     };
+    SketchView.prototype.drawPoint = function (point, size, color) {
+        if (size === void 0) { size = 3; }
+        if (color === void 0) { color = "black"; }
+        this.ctx.fillStyle = color;
+        this.ctx.beginPath();
+        this.ctx.moveTo(point.x, point.y);
+        this.ctx.arc(point.x, point.y, size, 0, Math.PI * 2);
+        this.ctx.fill();
+    };
     SketchView.prototype.snapPoint = function (point) {
-        var points = [];
-        for (var _i = 0, _a = this.sketch.figures; _i < _a.length; _i++) {
-            var fig = _a[_i];
-            if (fig.selected)
-                continue;
-            for (var _b = 0, _c = fig.getSnappablePoints(); _b < _c.length; _b++) {
-                var p = _c[_b];
-                points.push(p);
-            }
-        }
-        var closest = point;
-        var closestDist = 10;
-        for (var _d = 0, points_1 = points; _d < points_1.length; _d++) {
-            var p = points_1[_d];
-            var d = p.distTo(point);
-            if (d < closestDist) {
-                closest = p;
-                closestDist = d;
-            }
-        }
-        return closest.copy();
+        if (this.hoveredFigure && this.hoveredFigure != this.subscribedTool.currentFigure)
+            return this.hoveredFigure.getClosestPoint(point);
+        return point;
     };
     return SketchView;
 }());
@@ -311,10 +386,13 @@ var Tool = /** @class */ (function () {
     Tool.prototype.used = function () {
     };
     Tool.prototype.down = function (point) {
+        return false;
     };
     Tool.prototype.up = function (point) {
+        return false;
     };
     Tool.prototype.move = function (point) {
+        return false;
     };
     return Tool;
 }());
@@ -351,13 +429,39 @@ var ActivatableTool = /** @class */ (function (_super) {
     };
     return ActivatableTool;
 }(Tool));
+var SelectionTool = /** @class */ (function (_super) {
+    __extends(SelectionTool, _super);
+    function SelectionTool() {
+        return _super.call(this, "Select", "Select stuff") || this;
+    }
+    SelectionTool.prototype.move = function (point) {
+        return false;
+    };
+    SelectionTool.prototype.up = function (point) {
+        return true;
+    };
+    return SelectionTool;
+}(ActivatableTool));
+exports.SelectionTool = SelectionTool;
 var FigureTool = /** @class */ (function (_super) {
     __extends(FigureTool, _super);
     function FigureTool() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    FigureTool.prototype.used = function () {
-        _super.prototype.used.call(this);
+    FigureTool.prototype.move = function (point) {
+        if (!this.currentPoint) {
+            this.currentPoint = point.copy();
+            this.points.push(this.currentPoint);
+        }
+        this.currentPoint.set(point);
+        return true;
+    };
+    FigureTool.prototype.up = function (point) {
+        if (!this.currentPoint)
+            return;
+        this.currentPoint = point.copy();
+        this.points.push(this.currentPoint);
+        return true;
     };
     return FigureTool;
 }(ActivatableTool));
@@ -369,19 +473,21 @@ var PointTool = /** @class */ (function (_super) {
     }
     PointTool.prototype.down = function (point) {
         this.currentFigure = new figures_1.PointFigure(point);
-        this.currentFigure.selected = true;
         main_1.protractr.sketch.figures.push(this.currentFigure);
+        return true;
     };
     PointTool.prototype.up = function (point) {
         if (this.currentFigure) {
-            this.currentFigure.selected = false;
             this.currentFigure = null;
         }
+        return true;
     };
     PointTool.prototype.move = function (point) {
         if (this.currentFigure) {
             this.currentFigure.p.set(point);
+            return true;
         }
+        return false;
     };
     return PointTool;
 }(FigureTool));
@@ -393,22 +499,22 @@ var LineTool = /** @class */ (function (_super) {
     }
     LineTool.prototype.down = function (point) {
         this.up(point);
-        this.currentFigure = new figures_1.LineFigure(new figures_1.PointFigure(point), new figures_1.PointFigure(point.copy()));
-        this.currentFigure.selected = true;
-        this.currentFigure.p2.selected = true;
+        this.currentFigure = new figures_1.LineFigure(point, point.copy());
         main_1.protractr.sketch.figures.push(this.currentFigure);
+        return true;
     };
     LineTool.prototype.up = function (point) {
         if (this.currentFigure) {
-            this.currentFigure.p2.selected = false;
-            this.currentFigure.selected = false;
             this.currentFigure = null;
         }
+        return true;
     };
     LineTool.prototype.move = function (point) {
         if (this.currentFigure) {
-            this.currentFigure.p2.p.set(point);
+            this.currentFigure.p2.set(point);
+            return true;
         }
+        return false;
     };
     return LineTool;
 }(FigureTool));
@@ -420,20 +526,22 @@ var CircleTool = /** @class */ (function (_super) {
     }
     CircleTool.prototype.down = function (point) {
         this.up(point);
-        this.currentFigure = new figures_1.CircleFigure(new figures_1.PointFigure(point), point.copy());
-        this.currentFigure.selected = true;
+        this.currentFigure = new figures_1.CircleFigure(point, point.copy());
         main_1.protractr.sketch.figures.push(this.currentFigure);
+        return true;
     };
     CircleTool.prototype.up = function (point) {
         if (this.currentFigure) {
-            this.currentFigure.selected = false;
             this.currentFigure = null;
         }
+        return true;
     };
     CircleTool.prototype.move = function (point) {
         if (this.currentFigure) {
-            this.currentFigure.r = point.distTo(this.currentFigure.c.p);
+            this.currentFigure.r = point.distTo(this.currentFigure.c);
+            return true;
         }
+        return false;
     };
     return CircleTool;
 }(FigureTool));
