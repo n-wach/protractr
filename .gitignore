@@ -2,5 +2,5 @@ node_modules/
 .idea/
 *.js.map
 *.js
-!build/bundle.js
+!dist/bundle.js
 

@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "browserify": "browserify build/main.js -o build/bundle.js"
+    "browserify": "browserify dist/main.js -o dist/bundle.js"
   },
   "keywords": [],
   "author": "",
