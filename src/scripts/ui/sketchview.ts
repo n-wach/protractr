@@ -36,7 +36,7 @@ export class SketchView {
         event.preventDefault();
         let offset = new Point(event.offsetX, event.offsetY);
         let scaled = new Point(offset.x / this.ctxScale, offset.y / this.ctxScale);
-        let point = new Point(scaled.x - this.ctxOrigin.x, scaled.y - this.ctxOrigin.y);
+        let point = new Point(scaled.x - this.ctxOrigin.x / this.ctxScale, scaled.y - this.ctxOrigin.y / this.ctxScale);
         console.log(point);
         let snapPoint = this.snapPoint(point);
         switch (event.type) {
@@ -63,9 +63,8 @@ export class SketchView {
                 let originalScale = this.ctxScale;
                 this.ctxScale = this.ctxScale - (event.deltaY * 0.01 * this.ctxScale);
                 let scaleChange = originalScale - this.ctxScale;
-                //TODO this doesn't work perfectly.
-                this.ctxOrigin.x += (scaled.x * scaleChange);
-                this.ctxOrigin.y += (scaled.y * scaleChange);
+                this.ctxOrigin.x += (point.x * scaleChange);
+                this.ctxOrigin.y += (point.y * scaleChange);
                 break;
             case "mousemove":
             case "touchmove":
@@ -73,8 +72,8 @@ export class SketchView {
                 if(this.lastDrag != null) {
                     console.log("This", offset);
                     console.log("Last", this.lastDrag);
-                    this.ctxOrigin.x += (offset.x - this.lastDrag.x) / this.ctxScale;
-                    this.ctxOrigin.y += (offset.y - this.lastDrag.y) / this.ctxScale;
+                    this.ctxOrigin.x += offset.x - this.lastDrag.x;
+                    this.ctxOrigin.y += offset.y - this.lastDrag.y;
                     this.lastDrag = offset.copy();
                     console.log("Origin", this.ctxOrigin);
                 }
@@ -157,8 +156,8 @@ export class SketchView {
     draw() {
         this.ctx.resetTransform();
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-        this.ctx.scale(this.ctxScale, this.ctxScale);
         this.ctx.translate(this.ctxOrigin.x, this.ctxOrigin.y);
+        this.ctx.scale(this.ctxScale, this.ctxScale);
         console.log(this.ctxScale);
         for(let fig of this.sketch.figures) {
             this.drawFigure(fig);

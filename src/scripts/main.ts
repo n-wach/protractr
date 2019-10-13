@@ -6,8 +6,9 @@ let sidePane: HTMLDivElement;
 export let protractr: Protractr;
 
 let adjustCanvasResolution = function(event) {
-    canvas.width = canvas.parentElement.clientWidth;
-    canvas.height = canvas.parentElement.clientHeight;
+    canvas.width = canvas.parentElement.clientWidth - 1;
+    canvas.height = canvas.parentElement.clientHeight - 1;
+    protractr.ui.sketchView.draw();
 };
 window.addEventListener("resize", adjustCanvasResolution);
 
@@ -15,7 +16,7 @@ window.addEventListener("load", function() {
     canvas = document.getElementById("canvas") as HTMLCanvasElement;
     sidePane = document.getElementById("side-pane") as HTMLDivElement;
     tools = document.getElementById("tools") as HTMLUListElement;
-    adjustCanvasResolution(null);
     protractr = new Protractr(canvas, sidePane, tools);
+    adjustCanvasResolution(null);
     console.log("Protractr: ", protractr);
 });

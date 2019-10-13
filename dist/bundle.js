@@ -213,16 +213,17 @@ var canvas;
 var tools;
 var sidePane;
 var adjustCanvasResolution = function (event) {
-    canvas.width = canvas.parentElement.clientWidth;
-    canvas.height = canvas.parentElement.clientHeight;
+    canvas.width = canvas.parentElement.clientWidth - 1;
+    canvas.height = canvas.parentElement.clientHeight - 1;
+    exports.protractr.ui.sketchView.draw();
 };
 window.addEventListener("resize", adjustCanvasResolution);
 window.addEventListener("load", function () {
     canvas = document.getElementById("canvas");
     sidePane = document.getElementById("side-pane");
     tools = document.getElementById("tools");
-    adjustCanvasResolution(null);
     exports.protractr = new protractr_1.Protractr(canvas, sidePane, tools);
+    adjustCanvasResolution(null);
     console.log("Protractr: ", exports.protractr);
 });
 
@@ -304,7 +305,7 @@ var SketchView = /** @class */ (function () {
         event.preventDefault();
         var offset = new figures_1.Point(event.offsetX, event.offsetY);
         var scaled = new figures_1.Point(offset.x / this.ctxScale, offset.y / this.ctxScale);
-        var point = new figures_1.Point(scaled.x - this.ctxOrigin.x, scaled.y - this.ctxOrigin.y);
+        var point = new figures_1.Point(scaled.x - this.ctxOrigin.x / this.ctxScale, scaled.y - this.ctxOrigin.y / this.ctxScale);
         console.log(point);
         var snapPoint = this.snapPoint(point);
         switch (event.type) {
@@ -331,10 +332,11 @@ var SketchView = /** @class */ (function () {
                 break;
             case "wheel":
                 var originalScale = this.ctxScale;
-                this.ctxScale = Math.min(10, Math.max(0.1, this.ctxScale - (event.deltaY * 0.01 * this.ctxScale)));
+                this.ctxScale = this.ctxScale - (event.deltaY * 0.01 * this.ctxScale);
                 var scaleChange = originalScale - this.ctxScale;
-                this.ctxOrigin.x += (scaled.x * scaleChange);
-                this.ctxOrigin.y += (scaled.y * scaleChange);
+                //TODO this doesn't work perfectly.
+                this.ctxOrigin.x += (point.x * scaleChange);
+                this.ctxOrigin.y += (point.y * scaleChange);
                 break;
             case "mousemove":
             case "touchmove":
@@ -343,8 +345,8 @@ var SketchView = /** @class */ (function () {
                 if (this.lastDrag != null) {
                     console.log("This", offset);
                     console.log("Last", this.lastDrag);
-                    this.ctxOrigin.x += (offset.x - this.lastDrag.x) / this.ctxScale;
-                    this.ctxOrigin.y += (offset.y - this.lastDrag.y) / this.ctxScale;
+                    this.ctxOrigin.x += offset.x - this.lastDrag.x;
+                    this.ctxOrigin.y += offset.y - this.lastDrag.y;
                     this.lastDrag = offset.copy();
                     console.log("Origin", this.ctxOrigin);
                 }
@@ -426,8 +428,8 @@ var SketchView = /** @class */ (function () {
     SketchView.prototype.draw = function () {
         this.ctx.resetTransform();
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-        this.ctx.scale(this.ctxScale, this.ctxScale);
         this.ctx.translate(this.ctxOrigin.x, this.ctxOrigin.y);
+        this.ctx.scale(this.ctxScale, this.ctxScale);
         console.log(this.ctxScale);
         for (var _i = 0, _a = this.sketch.figures; _i < _a.length; _i++) {
             var fig = _a[_i];
