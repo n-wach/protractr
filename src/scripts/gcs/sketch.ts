@@ -12,14 +12,14 @@ export class Sketch {
         this.solver = new Solver();
     }
 
-    getClosestFigure(point: Point): Figure {
+    getClosestFigure(point: Point, ignoreFigures: Figure[] = []): Figure {
         if(this.figures.length == 0) return null;
         let dist = this.figures[0].getClosestPoint(point).distTo(point);
         let closest = this.figures[0];
         for(let fig of this.figures) {
-            if(fig == protractr.ui.sketchView.subscribedTool.currentFigure) continue;
+            if(ignoreFigures.indexOf(fig) != -1) continue;
             let p = fig.getClosestPoint(point);
-            protractr.ui.sketchView.drawPoint(p, 3, "blue");
+            //protractr.ui.sketchView.drawPoint(p, 3, "blue");
             let d = p.distTo(point);
             if(d < dist) {
                 closest = fig;

@@ -44,8 +44,15 @@ export class RedoTool extends Tool {
 }
 
 class ActivatableTool extends Tool {
+    active: boolean = false;
     used() {
-        this.toolbar.setActive(this);
+        if(this.active) {
+            this.toolbar.setActive(null);
+            this.active = false;
+        } else {
+            this.toolbar.setActive(this);
+            this.active = true;
+        }
     }
 }
 

@@ -1,6 +1,61 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var Variable = /** @class */ (function () {
+    function Variable() {
+    }
+    return Variable;
+}());
+exports.Variable = Variable;
+var ConstraintPossibility = /** @class */ (function () {
+    function ConstraintPossibility(requiredTypes, possibleConstraint) {
+        this.requiredTypes = requiredTypes;
+        this.possibleConstraint = possibleConstraint;
+    }
+    ConstraintPossibility.prototype.satisfiesTypes = function (s) {
+        console.log(s, this.requiredTypes);
+        return s.sort().join("") == this.requiredTypes.sort().join("");
+    };
+    return ConstraintPossibility;
+}());
+var possibleConstraints = [
+    new ConstraintPossibility(["point", "point"], "coincident"),
+    new ConstraintPossibility(["point"], "lock"),
+    new ConstraintPossibility(["line", "point"], "coincident"),
+    new ConstraintPossibility(["line", "point"], "midpoint"),
+    new ConstraintPossibility(["line"], "horizontal"),
+    new ConstraintPossibility(["line"], "vertical"),
+    new ConstraintPossibility(["line"], "lock"),
+    new ConstraintPossibility(["line", "line"], "perpendicular"),
+    new ConstraintPossibility(["line", "line"], "parallel"),
+    new ConstraintPossibility(["line", "circle"], "tangent"),
+    new ConstraintPossibility(["line", "circle"], "coincident"),
+    new ConstraintPossibility(["line", "circle"], "equal"),
+    new ConstraintPossibility(["circle"], "lock"),
+    new ConstraintPossibility(["circle", "circle"], "equal"),
+    new ConstraintPossibility(["circle", "circle"], "concentric"),
+    new ConstraintPossibility(["circle", "point"], "center"),
+    new ConstraintPossibility(["circle", "point"], "tangent"),
+];
+function getPossibleConstraints(figs) {
+    var shapes = [];
+    for (var _i = 0, figs_1 = figs; _i < figs_1.length; _i++) {
+        var fig = figs_1[_i];
+        shapes.push(fig.type);
+    }
+    var possibilities = [];
+    for (var _a = 0, possibleConstraints_1 = possibleConstraints; _a < possibleConstraints_1.length; _a++) {
+        var pc = possibleConstraints_1[_a];
+        if (pc.satisfiesTypes(shapes))
+            possibilities.push(pc.possibleConstraint);
+    }
+    return possibilities;
+}
+exports.getPossibleConstraints = getPossibleConstraints;
+
+},{}],2:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var Point = /** @class */ (function () {
     function Point(x, y) {
         this.x = x;
@@ -105,11 +160,10 @@ var CircleFigure = /** @class */ (function () {
 }());
 exports.CircleFigure = CircleFigure;
 
-},{}],2:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var solver_1 = require("./solver");
-var main_1 = require("../main");
 var Sketch = /** @class */ (function () {
     function Sketch() {
         this.constraints = [];
@@ -117,17 +171,18 @@ var Sketch = /** @class */ (function () {
         this.figures = [];
         this.solver = new solver_1.Solver();
     }
-    Sketch.prototype.getClosestFigure = function (point) {
+    Sketch.prototype.getClosestFigure = function (point, ignoreFigures) {
+        if (ignoreFigures === void 0) { ignoreFigures = []; }
         if (this.figures.length == 0)
             return null;
         var dist = this.figures[0].getClosestPoint(point).distTo(point);
         var closest = this.figures[0];
         for (var _i = 0, _a = this.figures; _i < _a.length; _i++) {
             var fig = _a[_i];
-            if (fig == main_1.protractr.ui.sketchView.subscribedTool.currentFigure)
+            if (ignoreFigures.indexOf(fig) != -1)
                 continue;
             var p = fig.getClosestPoint(point);
-            main_1.protractr.ui.sketchView.drawPoint(p, 3, "blue");
+            //protractr.ui.sketchView.drawPoint(p, 3, "blue");
             var d = p.distTo(point);
             if (d < dist) {
                 closest = fig;
@@ -140,7 +195,7 @@ var Sketch = /** @class */ (function () {
 }());
 exports.Sketch = Sketch;
 
-},{"../main":4,"./solver":3}],3:[function(require,module,exports){
+},{"./solver":4}],4:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Solver = /** @class */ (function () {
@@ -150,7 +205,7 @@ var Solver = /** @class */ (function () {
 }());
 exports.Solver = Solver;
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var protractr_1 = require("./protractr");
@@ -171,7 +226,7 @@ window.addEventListener("load", function () {
     console.log("Protractr: ", exports.protractr);
 });
 
-},{"./protractr":5}],5:[function(require,module,exports){
+},{"./protractr":6}],6:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var sketch_1 = require("./gcs/sketch");
@@ -185,40 +240,89 @@ var Protractr = /** @class */ (function () {
 }());
 exports.Protractr = Protractr;
 
-},{"./gcs/sketch":2,"./ui/ui":10}],6:[function(require,module,exports){
+},{"./gcs/sketch":3,"./ui/ui":11}],7:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var constraint_1 = require("../gcs/constraint");
 var InfoPane = /** @class */ (function () {
     function InfoPane(sidePane) {
+        this.sidePane = sidePane;
+        this.title = document.createElement("p");
+        this.sidePane.appendChild(this.title);
+        var d = document.createElement("p");
+        d.innerText = "Possible Constraints:";
+        this.sidePane.appendChild(d);
+        this.possibleConstraints = document.createElement("ul");
+        this.sidePane.appendChild(this.possibleConstraints);
     }
+    InfoPane.prototype.setFocusedFigures = function (figures) {
+        if (figures === null || figures.length == 0) {
+            this.title.innerText = "Nothing selected";
+        }
+        else if (figures.length == 1) {
+            this.title.innerText = "Selected " + figures[0].type;
+        }
+        else {
+            this.title.innerText = "Multiple things selected";
+        }
+        while (this.possibleConstraints.lastChild) {
+            this.possibleConstraints.removeChild(this.possibleConstraints.lastChild);
+        }
+        for (var _i = 0, _a = constraint_1.getPossibleConstraints(figures); _i < _a.length; _i++) {
+            var pc = _a[_i];
+            var child = document.createElement("li");
+            child.innerText = pc;
+            this.possibleConstraints.appendChild(child);
+        }
+    };
     return InfoPane;
 }());
 exports.InfoPane = InfoPane;
 
-},{}],7:[function(require,module,exports){
+},{"../gcs/constraint":1}],8:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var figures_1 = require("../gcs/figures");
 var SketchView = /** @class */ (function () {
-    function SketchView(sketch, canvas) {
+    function SketchView(ui, sketch, canvas) {
+        this.ui = ui;
         this.sketch = sketch;
         this.canvas = canvas;
+        this.selectedFigures = [];
+        this.zoom = 1;
+        this.updateSelected();
         this.ctx = this.canvas.getContext("2d");
         var eventHandler = this.handleEvent.bind(this);
-        var events = ["touchdown", "touchup", "touchmove", "mousemove", "mousedown", "mouseup"];
+        var events = ["touchdown", "touchup", "touchmove", "mousemove", "mousedown", "mouseup", "wheel"];
         for (var _i = 0, events_1 = events; _i < events_1.length; _i++) {
             var event_1 = events_1[_i];
             this.canvas.addEventListener(event_1, eventHandler);
         }
     }
     SketchView.prototype.handleEvent = function (event) {
+        event.preventDefault();
         var point = new figures_1.Point(event.offsetX, event.offsetY);
         var snapPoint = this.snapPoint(point);
         switch (event.type) {
             case "mousedown":
             case "touchdown":
-                if (this.subscribedTool)
+                if (this.subscribedTool) {
                     this.subscribedTool.down(snapPoint);
+                }
+                else {
+                    if (this.hoveredFigure) {
+                        this.toggleSelected(this.hoveredFigure);
+                    }
+                    else {
+                        this.selectedFigures = [];
+                        this.updateSelected();
+                    }
+                }
+                break;
+            case "wheel":
+                console.log("Wheel!");
+                console.log(event);
+                this.zoom += event.deltaY * 0.01;
                 break;
             case "mousemove":
             case "touchmove":
@@ -235,53 +339,71 @@ var SketchView = /** @class */ (function () {
         this.updateHover(point);
     };
     SketchView.prototype.updateHover = function (point) {
-        var closest = this.sketch.getClosestFigure(point);
+        var closest;
+        if (this.subscribedTool != null) {
+            closest = this.sketch.getClosestFigure(point, [this.subscribedTool.currentFigure]);
+        }
+        else {
+            closest = this.sketch.getClosestFigure(point);
+        }
         if (closest != null && closest.getClosestPoint(point).distTo(point) > 10) {
             closest = null;
         }
         if (this.hoveredFigure != closest) {
             this.hoveredFigure = closest;
-            return true;
         }
-        return false;
+        if (this.hoveredFigure != null) {
+            this.setCursor("move");
+        }
+        else {
+            this.setCursor("default");
+        }
     };
     SketchView.prototype.subscribeTool = function (tool) {
         this.subscribedTool = tool;
     };
+    SketchView.prototype.drawFigure = function (fig) {
+        this.ctx.strokeStyle = "black";
+        this.ctx.lineWidth = 2;
+        var pointSize = 3;
+        if (this.hoveredFigure == fig) {
+            pointSize = 5;
+            this.ctx.lineWidth = 5;
+        }
+        if (this.selectedFigures.indexOf(fig) != -1) {
+            this.ctx.strokeStyle = "#5e9cff";
+        }
+        switch (fig.type) {
+            case "line":
+                var line = fig;
+                this.ctx.beginPath();
+                this.ctx.moveTo(line.p1.x, line.p1.y);
+                this.ctx.lineTo(line.p2.x, line.p2.y);
+                this.ctx.stroke();
+                this.drawPoint(line.p1, pointSize, this.ctx.strokeStyle);
+                this.drawPoint(line.p2, pointSize, this.ctx.strokeStyle);
+                break;
+            case "point":
+                var point = fig;
+                this.drawPoint(point.p, pointSize, this.ctx.strokeStyle);
+                break;
+            case "circle":
+                var circle = fig;
+                this.ctx.beginPath();
+                this.ctx.arc(circle.c.x, circle.c.y, circle.r, 0, Math.PI * 2);
+                this.ctx.stroke();
+                this.drawPoint(circle.c, pointSize, this.ctx.strokeStyle);
+                break;
+        }
+    };
     SketchView.prototype.draw = function () {
-        console.log(this.sketch.figures);
+        this.ctx.resetTransform();
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+        this.ctx.scale(this.zoom, this.zoom);
+        console.log(this.zoom);
         for (var _i = 0, _a = this.sketch.figures; _i < _a.length; _i++) {
             var fig = _a[_i];
-            this.ctx.strokeStyle = "black";
-            this.ctx.lineWidth = 2;
-            var pointSize = 3;
-            if (this.hoveredFigure == fig) {
-                pointSize = 5;
-                this.ctx.lineWidth = 5;
-            }
-            switch (fig.type) {
-                case "line":
-                    var line = fig;
-                    this.ctx.beginPath();
-                    this.ctx.moveTo(line.p1.x, line.p1.y);
-                    this.ctx.lineTo(line.p2.x, line.p2.y);
-                    this.ctx.stroke();
-                    this.drawPoint(line.p1, pointSize);
-                    this.drawPoint(line.p2, pointSize);
-                    break;
-                case "point":
-                    var point = fig;
-                    this.drawPoint(point.p, pointSize);
-                    break;
-                case "circle":
-                    var circle = fig;
-                    this.ctx.beginPath();
-                    this.ctx.arc(circle.c.x, circle.c.y, circle.r, 0, Math.PI * 2);
-                    this.ctx.stroke();
-                    this.drawPoint(circle.c, pointSize);
-                    break;
-            }
+            this.drawFigure(fig);
         }
     };
     SketchView.prototype.drawPoint = function (point, size, color) {
@@ -294,15 +416,32 @@ var SketchView = /** @class */ (function () {
         this.ctx.fill();
     };
     SketchView.prototype.snapPoint = function (point) {
-        if (this.hoveredFigure && this.hoveredFigure != this.subscribedTool.currentFigure)
+        if (this.hoveredFigure && this.subscribedTool && this.hoveredFigure != this.subscribedTool.currentFigure)
             return this.hoveredFigure.getClosestPoint(point);
         return point;
+    };
+    SketchView.prototype.toggleSelected = function (fig) {
+        if (this.selectedFigures.indexOf(fig) == -1) {
+            this.selectedFigures.push(fig);
+        }
+        else {
+            this.selectedFigures = this.selectedFigures.filter(function (value, index, arr) {
+                return value != fig;
+            });
+        }
+        this.updateSelected();
+    };
+    SketchView.prototype.updateSelected = function () {
+        this.ui.infoPane.setFocusedFigures(this.selectedFigures);
+    };
+    SketchView.prototype.setCursor = function (cursor) {
+        this.canvas.style.cursor = cursor;
     };
     return SketchView;
 }());
 exports.SketchView = SketchView;
 
-},{"../gcs/figures":1}],8:[function(require,module,exports){
+},{"../gcs/figures":2}],9:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var tools_1 = require("./tools");
@@ -360,7 +499,7 @@ var ToolElement = /** @class */ (function () {
     return ToolElement;
 }());
 
-},{"./tools":9}],9:[function(require,module,exports){
+},{"./tools":10}],10:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -422,10 +561,19 @@ exports.RedoTool = RedoTool;
 var ActivatableTool = /** @class */ (function (_super) {
     __extends(ActivatableTool, _super);
     function ActivatableTool() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.active = false;
+        return _this;
     }
     ActivatableTool.prototype.used = function () {
-        this.toolbar.setActive(this);
+        if (this.active) {
+            this.toolbar.setActive(null);
+            this.active = false;
+        }
+        else {
+            this.toolbar.setActive(this);
+            this.active = true;
+        }
     };
     return ActivatableTool;
 }(Tool));
@@ -547,7 +695,7 @@ var CircleTool = /** @class */ (function (_super) {
 }(FigureTool));
 exports.CircleTool = CircleTool;
 
-},{"../gcs/figures":1,"../main":4}],10:[function(require,module,exports){
+},{"../gcs/figures":2,"../main":5}],11:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var toolbar_1 = require("./toolbar");
@@ -556,12 +704,12 @@ var sketchview_1 = require("./sketchview");
 var UI = /** @class */ (function () {
     function UI(protractr, canvas, sidePane, toolbar) {
         this.protractr = protractr;
-        this.sketchView = new sketchview_1.SketchView(this.protractr.sketch, canvas);
-        this.toolbar = new toolbar_1.Toolbar(toolbar, this.sketchView);
         this.infoPane = new infopane_1.InfoPane(sidePane);
+        this.sketchView = new sketchview_1.SketchView(this, this.protractr.sketch, canvas);
+        this.toolbar = new toolbar_1.Toolbar(toolbar, this.sketchView);
     }
     return UI;
 }());
 exports.UI = UI;
 
-},{"./infopane":6,"./sketchview":7,"./toolbar":8}]},{},[4]);
+},{"./infopane":7,"./sketchview":8,"./toolbar":9}]},{},[5]);

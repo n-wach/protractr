@@ -1,7 +1,6 @@
 import {Protractr} from "./protractr";
 
 let canvas: HTMLCanvasElement;
-export let ctx: CanvasRenderingContext2D;
 let tools: HTMLUListElement;
 let sidePane: HTMLDivElement;
 export let protractr: Protractr;

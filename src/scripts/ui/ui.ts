@@ -10,8 +10,8 @@ export class UI {
     sketchView: SketchView;
     constructor(protractr: Protractr, canvas: HTMLCanvasElement, sidePane: HTMLDivElement, toolbar: HTMLUListElement) {
         this.protractr = protractr;
-        this.sketchView = new SketchView(this.protractr.sketch, canvas);
-        this.toolbar = new Toolbar(toolbar, this.sketchView);
         this.infoPane = new InfoPane(sidePane);
+        this.sketchView = new SketchView(this, this.protractr.sketch, canvas);
+        this.toolbar = new Toolbar(toolbar, this.sketchView);
     }
 }

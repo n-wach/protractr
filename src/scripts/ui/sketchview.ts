@@ -1,6 +1,7 @@
 import {CircleFigure, Figure, LineFigure, Point, PointFigure} from "../gcs/figures";
 import {Sketch} from "../gcs/sketch";
 import {Tool} from "./tools";
+import {UI} from "./ui";
 
 export class SketchView {
     canvas: HTMLCanvasElement;
@@ -8,23 +9,45 @@ export class SketchView {
     sketch: Sketch;
     subscribedTool: Tool;
     hoveredFigure: Figure;
-    constructor(sketch: Sketch, canvas: HTMLCanvasElement) {
+    selectedFigures: Figure[];
+    ui: UI;
+    zoom: number;
+    constructor(ui: UI, sketch: Sketch, canvas: HTMLCanvasElement) {
+        this.ui = ui;
         this.sketch = sketch;
         this.canvas = canvas;
+        this.selectedFigures = [];
+        this.zoom = 1;
+        this.updateSelected();
         this.ctx = this.canvas.getContext("2d");
         let eventHandler = this.handleEvent.bind(this);
-        let events = ["touchdown", "touchup", "touchmove", "mousemove", "mousedown", "mouseup"];
+        let events = ["touchdown", "touchup", "touchmove", "mousemove", "mousedown", "mouseup", "wheel"];
         for(let event of events) {
             this.canvas.addEventListener(event, eventHandler);
         }
     }
     handleEvent(event) {
+        event.preventDefault();
         let point = new Point(event.offsetX, event.offsetY);
         let snapPoint = this.snapPoint(point);
         switch (event.type) {
             case "mousedown":
             case "touchdown":
-                if(this.subscribedTool) this.subscribedTool.down(snapPoint);
+                if(this.subscribedTool) {
+                    this.subscribedTool.down(snapPoint);
+                } else {
+                    if (this.hoveredFigure) {
+                        this.toggleSelected(this.hoveredFigure);
+                    } else {
+                        this.selectedFigures = [];
+                        this.updateSelected();
+                    }
+                }
+                break;
+            case "wheel":
+                console.log("Wheel!");
+                console.log(event);
+                this.zoom += event.deltaY * 0.01;
                 break;
             case "mousemove":
             case "touchmove":
@@ -40,54 +63,71 @@ export class SketchView {
     }
 
     updateHover(point) {
-        let closest = this.sketch.getClosestFigure(point);
+        let closest;
+        if (this.subscribedTool != null) {
+            closest = this.sketch.getClosestFigure(point, [this.subscribedTool.currentFigure]);
+        } else {
+            closest = this.sketch.getClosestFigure(point);
+        }
         if(closest != null && closest.getClosestPoint(point).distTo(point) > 10) {
             closest = null;
         }
         if(this.hoveredFigure != closest) {
             this.hoveredFigure = closest;
-            return true;
         }
-        return false;
+        if(this.hoveredFigure != null) {
+            this.setCursor("move");
+        } else {
+            this.setCursor("default");
+        }
     }
 
     subscribeTool(tool: Tool) {
         this.subscribedTool = tool;
     }
 
+    drawFigure(fig: Figure) {
+        this.ctx.strokeStyle = "black";
+        this.ctx.lineWidth = 2;
+        let pointSize = 3;
+        if(this.hoveredFigure == fig) {
+            pointSize = 5;
+            this.ctx.lineWidth = 5;
+        }
+        if (this.selectedFigures.indexOf(fig) != -1) {
+            this.ctx.strokeStyle = "#5e9cff";
+        }
+        switch(fig.type) {
+            case "line":
+                let line = (fig as LineFigure);
+                this.ctx.beginPath();
+                this.ctx.moveTo(line.p1.x, line.p1.y);
+                this.ctx.lineTo(line.p2.x, line.p2.y);
+                this.ctx.stroke();
+                this.drawPoint(line.p1, pointSize, this.ctx.strokeStyle);
+                this.drawPoint(line.p2, pointSize, this.ctx.strokeStyle);
+                break;
+            case "point":
+                let point = (fig as PointFigure);
+                this.drawPoint(point.p, pointSize, this.ctx.strokeStyle);
+                break;
+            case "circle":
+                let circle = (fig as CircleFigure);
+                this.ctx.beginPath();
+                this.ctx.arc(circle.c.x, circle.c.y, circle.r, 0, Math.PI * 2);
+                this.ctx.stroke();
+                this.drawPoint(circle.c, pointSize, this.ctx.strokeStyle);
+                break;
+        }
+    }
+
     draw() {
-        console.log(this.sketch.figures);
+        this.ctx.resetTransform();
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+        this.ctx.scale(this.zoom, this.zoom);
+        console.log(this.zoom);
         for(let fig of this.sketch.figures) {
-            this.ctx.strokeStyle = "black";
-            this.ctx.lineWidth = 2;
-            let pointSize = 3;
-            if(this.hoveredFigure == fig) {
-                pointSize = 5;
-                this.ctx.lineWidth = 5;
-            }
-            switch(fig.type) {
-                case "line":
-                    let line = (fig as LineFigure);
-                    this.ctx.beginPath();
-                    this.ctx.moveTo(line.p1.x, line.p1.y);
-                    this.ctx.lineTo(line.p2.x, line.p2.y);
-                    this.ctx.stroke();
-                    this.drawPoint(line.p1, pointSize);
-                    this.drawPoint(line.p2, pointSize);
-                    break;
-                case "point":
-                    let point = (fig as PointFigure);
-                    this.drawPoint(point.p, pointSize);
-                    break;
-                case "circle":
-                    let circle = (fig as CircleFigure);
-                    this.ctx.beginPath();
-                    this.ctx.arc(circle.c.x, circle.c.y, circle.r, 0, Math.PI * 2);
-                    this.ctx.stroke();
-                    this.drawPoint(circle.c, pointSize);
-                    break;
-            }
+            this.drawFigure(fig);
         }
     }
 
@@ -100,7 +140,26 @@ export class SketchView {
     }
 
     snapPoint(point: Point): Point {
-        if (this.hoveredFigure && this.hoveredFigure != this.subscribedTool.currentFigure) return this.hoveredFigure.getClosestPoint(point);
+        if (this.hoveredFigure && this.subscribedTool && this.hoveredFigure != this.subscribedTool.currentFigure) return this.hoveredFigure.getClosestPoint(point);
         return point;
+    }
+
+    toggleSelected(fig: Figure) {
+        if(this.selectedFigures.indexOf(fig) == -1) {
+            this.selectedFigures.push(fig);
+        } else {
+            this.selectedFigures = this.selectedFigures.filter(function(value, index, arr){
+                return value != fig;
+            });
+        }
+        this.updateSelected();
+    }
+
+    updateSelected() {
+        this.ui.infoPane.setFocusedFigures(this.selectedFigures);
+    }
+
+    setCursor(cursor: string) {
+        this.canvas.style.cursor = cursor;
     }
 }
