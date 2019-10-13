@@ -6,18 +6,24 @@ import {UI} from "./ui";
 export class SketchView {
     canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
+
+    ctxOrigin: Point;
+    ctxScale: number;
+
     sketch: Sketch;
     subscribedTool: Tool;
     hoveredFigure: Figure;
     selectedFigures: Figure[];
     ui: UI;
-    zoom: number;
+    lastDrag: Point;
+
     constructor(ui: UI, sketch: Sketch, canvas: HTMLCanvasElement) {
         this.ui = ui;
         this.sketch = sketch;
         this.canvas = canvas;
         this.selectedFigures = [];
-        this.zoom = 1;
+        this.ctxScale = 1;
+        this.ctxOrigin = new Point(0, 0);
         this.updateSelected();
         this.ctx = this.canvas.getContext("2d");
         let eventHandler = this.handleEvent.bind(this);
@@ -28,34 +34,61 @@ export class SketchView {
     }
     handleEvent(event) {
         event.preventDefault();
-        let point = new Point(event.offsetX, event.offsetY);
+        let offset = new Point(event.offsetX, event.offsetY);
+        let scaled = new Point(offset.x / this.ctxScale, offset.y / this.ctxScale);
+        let point = new Point(scaled.x - this.ctxOrigin.x, scaled.y - this.ctxOrigin.y);
+        console.log(point);
         let snapPoint = this.snapPoint(point);
         switch (event.type) {
             case "mousedown":
             case "touchdown":
-                if(this.subscribedTool) {
-                    this.subscribedTool.down(snapPoint);
-                } else {
-                    if (this.hoveredFigure) {
-                        this.toggleSelected(this.hoveredFigure);
-                    } else {
-                        this.selectedFigures = [];
-                        this.updateSelected();
-                    }
+                switch(event.which) {
+                    case 1:
+                        if(this.subscribedTool) {
+                            this.subscribedTool.down(snapPoint);
+                        } else {
+                            if (this.hoveredFigure) {
+                                this.toggleSelected(this.hoveredFigure);
+                            } else {
+                                this.selectedFigures = [];
+                                this.updateSelected();
+                            }
+                        }
+                        break;
+                    case 2:
+                        this.lastDrag = offset.copy();
                 }
                 break;
             case "wheel":
-                console.log("Wheel!");
-                console.log(event);
-                this.zoom += event.deltaY * 0.01;
+                let originalScale = this.ctxScale;
+                this.ctxScale = this.ctxScale - (event.deltaY * 0.01 * this.ctxScale);
+                let scaleChange = originalScale - this.ctxScale;
+                //TODO this doesn't work perfectly.
+                this.ctxOrigin.x += (scaled.x * scaleChange);
+                this.ctxOrigin.y += (scaled.y * scaleChange);
                 break;
             case "mousemove":
             case "touchmove":
                 if(this.subscribedTool) this.subscribedTool.move(snapPoint);
+                if(this.lastDrag != null) {
+                    console.log("This", offset);
+                    console.log("Last", this.lastDrag);
+                    this.ctxOrigin.x += (offset.x - this.lastDrag.x) / this.ctxScale;
+                    this.ctxOrigin.y += (offset.y - this.lastDrag.y) / this.ctxScale;
+                    this.lastDrag = offset.copy();
+                    console.log("Origin", this.ctxOrigin);
+                }
                 break;
             case "touchup":
             case "mouseup":
-                if(this.subscribedTool) this.subscribedTool.up(snapPoint);
+                switch(event.which) {
+                    case 1:
+                        if (this.subscribedTool) this.subscribedTool.up(snapPoint);
+                        break;
+                    case 2:
+                        this.lastDrag = null;
+                        break;
+                }
                 break;
         }
         this.draw();
@@ -69,7 +102,7 @@ export class SketchView {
         } else {
             closest = this.sketch.getClosestFigure(point);
         }
-        if(closest != null && closest.getClosestPoint(point).distTo(point) > 10) {
+        if(closest != null && closest.getClosestPoint(point).distTo(point) > 10 / this.ctxScale) {
             closest = null;
         }
         if(this.hoveredFigure != closest) {
@@ -88,11 +121,11 @@ export class SketchView {
 
     drawFigure(fig: Figure) {
         this.ctx.strokeStyle = "black";
-        this.ctx.lineWidth = 2;
-        let pointSize = 3;
+        this.ctx.lineWidth = 2 / this.ctxScale;
+        let pointSize = 3 / this.ctxScale;
         if(this.hoveredFigure == fig) {
-            pointSize = 5;
-            this.ctx.lineWidth = 5;
+            pointSize = 5 / this.ctxScale;
+            this.ctx.lineWidth = 5 / this.ctxScale;
         }
         if (this.selectedFigures.indexOf(fig) != -1) {
             this.ctx.strokeStyle = "#5e9cff";
@@ -124,8 +157,9 @@ export class SketchView {
     draw() {
         this.ctx.resetTransform();
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-        this.ctx.scale(this.zoom, this.zoom);
-        console.log(this.zoom);
+        this.ctx.scale(this.ctxScale, this.ctxScale);
+        this.ctx.translate(this.ctxOrigin.x, this.ctxOrigin.y);
+        console.log(this.ctxScale);
         for(let fig of this.sketch.figures) {
             this.drawFigure(fig);
         }
