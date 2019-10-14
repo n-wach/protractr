@@ -1,4 +1,4 @@
-import {CircleTool, LineTool, PointTool, RedoTool, Tool, UndoTool} from "./tools";
+import {ActivatableTool, CircleTool, LineTool, PointTool, RedoTool, Tool, UndoTool} from "./tools";
 import {Protractr} from "../protractr";
 import {SketchView} from "./sketchview";
 
@@ -53,8 +53,10 @@ class ToolElement {
     }
     activate() {
         this.li.classList.add("tool-active");
+        (this.tool as ActivatableTool).active = true;
     }
     deactivate() {
         this.li.classList.remove("tool-active");
+        (this.tool as ActivatableTool).active = false;
     }
 }

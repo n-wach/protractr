@@ -8,6 +8,7 @@ export class Point {
     set(p: Point) {
         this.x = p.x;
         this.y = p.y;
+        return this;
     }
     copy() {
         return new Point(this.x, this.y);
@@ -24,6 +25,7 @@ export class Point {
         let length = this.distTo(ORIGIN);
         this.x /= length;
         this.y /= length;
+        return this;
     }
     pointTowards(target: Point, dist: number) {
         let diff = new Point(target.x - this.x, target.y - this.y);
@@ -32,6 +34,16 @@ export class Point {
     }
     equals(o: Point) {
         return o.x == this.x && o.y == this.y;
+    }
+    add(point: Point) {
+        this.x += point.x;
+        this.y += point.y;
+        return this;
+    }
+    sub(point: Point) {
+        this.x -= point.x;
+        this.y -= point.y;
+        return this;
     }
 }
 
@@ -46,6 +58,9 @@ export class PointFigure implements Figure {
     }
     getClosestPoint(point: Point): Point {
         return this.p.copy();
+    }
+    translate(from: Point, to: Point) {
+        this.p.set(to);
     }
 }
 
@@ -80,6 +95,11 @@ export class LineFigure implements Figure {
     getClosestPoint(point: Point): Point {
         return this.project(point);
     }
+    translate(from: Point, to: Point) {
+        let diff = to.sub(from).copy();
+        this.p1.add(diff);
+        this.p2.add(diff);
+    }
 }
 
 export class CircleFigure implements Figure {
@@ -99,9 +119,14 @@ export class CircleFigure implements Figure {
             return this.c.pointTowards(point, this.r);
         }
     }
+    translate(from: Point, to: Point) {
+        let diff = to.sub(from).copy();
+        this.c.add(diff);
+    }
 }
 
 export interface Figure {
     type: string;
     getClosestPoint(point: Point): Point;
+    translate(from: Point, to: Point);
 }

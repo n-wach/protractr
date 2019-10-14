@@ -16,7 +16,6 @@ class ConstraintPossibility {
         this.possibleConstraint = possibleConstraint;
     }
     satisfiesTypes(s: string[]): boolean {
-        console.log(s, this.requiredTypes);
         return s.sort().join("") == this.requiredTypes.sort().join("");
     }
 }
