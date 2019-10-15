@@ -118,17 +118,19 @@ export class SketchView {
 
     updateHover(point) {
         let closest;
-        if (this.subscribedTool != null) {
-            closest = this.sketch.getClosestFigure(point, [this.subscribedTool.currentFigure]);
+        if (this.subscribedTool != null && this.subscribedTool.currentFigure) {
+            let ignoredFigures = [this.subscribedTool.currentFigure];
+            for(let child of this.subscribedTool.currentFigure.childFigures) {
+                ignoredFigures.push(child);
+            }
+            closest = this.sketch.getClosestFigure(point, ignoredFigures);
         } else {
             closest = this.sketch.getClosestFigure(point);
         }
         if(closest != null && closest.getClosestPoint(point).distTo(point) > 10 / this.ctxScale) {
             closest = null;
         }
-        if(this.hoveredFigure != closest) {
-            this.hoveredFigure = closest;
-        }
+        this.hoveredFigure = closest;
         if(this.hoveredFigure != null) {
             this.setCursor("move");
         } else {
@@ -158,8 +160,6 @@ export class SketchView {
                 this.ctx.moveTo(line.p1.x, line.p1.y);
                 this.ctx.lineTo(line.p2.x, line.p2.y);
                 this.ctx.stroke();
-                this.drawPoint(line.p1, pointSize, this.ctx.strokeStyle);
-                this.drawPoint(line.p2, pointSize, this.ctx.strokeStyle);
                 break;
             case "point":
                 let point = (fig as PointFigure);
@@ -170,7 +170,6 @@ export class SketchView {
                 this.ctx.beginPath();
                 this.ctx.arc(circle.c.x, circle.c.y, circle.r, 0, Math.PI * 2);
                 this.ctx.stroke();
-                this.drawPoint(circle.c, pointSize, this.ctx.strokeStyle);
                 break;
         }
     }
@@ -183,6 +182,9 @@ export class SketchView {
         console.log(this.ctxScale);
         for(let fig of this.sketch.figures) {
             this.drawFigure(fig);
+            for(let child of fig.childFigures) {
+                this.drawFigure(child);
+            }
         }
     }
 
@@ -194,8 +196,9 @@ export class SketchView {
         this.ctx.fill();
     }
     snapPoint(point: Point): Point {
-        if (this.hoveredFigure && this.subscribedTool && this.hoveredFigure != this.subscribedTool.currentFigure) return this.hoveredFigure.getClosestPoint(point);
-        return point;
+        if(!this.hoveredFigure) return point;
+
+        return this.hoveredFigure.getClosestPoint(point);
     }
     toggleSelected(fig: Figure) {
         if(this.selectedFigures.indexOf(fig) == -1) {

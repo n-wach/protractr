@@ -53,7 +53,10 @@ let ORIGIN = new Point(0, 0);
 export class PointFigure implements Figure {
     type = "point";
     p: Point;
-    constructor(p: Point) {
+    childFigures: Figure[] = [];
+    parentFigure: Figure = null;
+
+    constructor(p: Point, name: string="point") {
         this.p = p;
     }
     getClosestPoint(point: Point): Point {
@@ -68,9 +71,15 @@ export class LineFigure implements Figure {
     type = "line";
     p1: Point;
     p2: Point;
+    childFigures: Figure[];
+    parentFigure: Figure;
+
     constructor(p1: Point, p2: Point) {
         this.p1 = p1;
         this.p2 = p2;
+        this.childFigures = [new PointFigure(this.p1, "p1"), new PointFigure(this.p2, "p2")];
+        this.childFigures[0].parentFigure = this;
+        this.childFigures[1].parentFigure = this;
     }
     projectionFactor(point: Point) {
         if(this.p1.equals(point)) return 0;
@@ -106,27 +115,27 @@ export class CircleFigure implements Figure {
     type = "circle";
     c: Point;
     r: number;
+    childFigures: Figure[];
+    parentFigure: Figure;
+
     constructor(c: Point, r: number) {
         this.c = c;
         this.r = r;
+        this.childFigures = [new PointFigure(this.c, "center")];
+        this.childFigures[0].parentFigure = this;
     }
     getClosestPoint(point: Point): Point {
-        let dist = point.distTo(this.c);
-        let radDist = Math.abs(dist - this.r);
-        if(dist < radDist) {
-            return this.c.copy();
-        } else {
-            return this.c.pointTowards(point, this.r);
-        }
+        return this.c.pointTowards(point, this.r);
     }
     translate(from: Point, to: Point) {
-        let diff = to.sub(from).copy();
-        this.c.add(diff);
+        this.r = to.distTo(this.c);
     }
 }
 
 export interface Figure {
     type: string;
+    parentFigure: Figure;
+    childFigures: Figure[];
     getClosestPoint(point: Point): Point;
     translate(from: Point, to: Point);
 }

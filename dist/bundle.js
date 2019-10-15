@@ -105,8 +105,11 @@ var Point = /** @class */ (function () {
 exports.Point = Point;
 var ORIGIN = new Point(0, 0);
 var PointFigure = /** @class */ (function () {
-    function PointFigure(p) {
+    function PointFigure(p, name) {
+        if (name === void 0) { name = "point"; }
         this.type = "point";
+        this.childFigures = [];
+        this.parentFigure = null;
         this.p = p;
     }
     PointFigure.prototype.getClosestPoint = function (point) {
@@ -123,6 +126,9 @@ var LineFigure = /** @class */ (function () {
         this.type = "line";
         this.p1 = p1;
         this.p2 = p2;
+        this.childFigures = [new PointFigure(this.p1, "p1"), new PointFigure(this.p2, "p2")];
+        this.childFigures[0].parentFigure = this;
+        this.childFigures[1].parentFigure = this;
     }
     LineFigure.prototype.projectionFactor = function (point) {
         if (this.p1.equals(point))
@@ -164,20 +170,14 @@ var CircleFigure = /** @class */ (function () {
         this.type = "circle";
         this.c = c;
         this.r = r;
+        this.childFigures = [new PointFigure(this.c, "center")];
+        this.childFigures[0].parentFigure = this;
     }
     CircleFigure.prototype.getClosestPoint = function (point) {
-        var dist = point.distTo(this.c);
-        var radDist = Math.abs(dist - this.r);
-        if (dist < radDist) {
-            return this.c.copy();
-        }
-        else {
-            return this.c.pointTowards(point, this.r);
-        }
+        return this.c.pointTowards(point, this.r);
     };
     CircleFigure.prototype.translate = function (from, to) {
-        var diff = to.sub(from).copy();
-        this.c.add(diff);
+        this.r = to.distTo(this.c);
     };
     return CircleFigure;
 }());
@@ -187,6 +187,11 @@ exports.CircleFigure = CircleFigure;
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var solver_1 = require("./solver");
+var typeMagnetism = {
+    circle: 0,
+    line: 0,
+    point: 5,
+};
 var Sketch = /** @class */ (function () {
     function Sketch() {
         this.constraints = [];
@@ -200,13 +205,21 @@ var Sketch = /** @class */ (function () {
             return null;
         var dist = this.figures[0].getClosestPoint(point).distTo(point);
         var closest = this.figures[0];
+        var allFigures = [];
         for (var _i = 0, _a = this.figures; _i < _a.length; _i++) {
             var fig = _a[_i];
+            allFigures.push(fig);
+            for (var _b = 0, _c = fig.childFigures; _b < _c.length; _b++) {
+                var child = _c[_b];
+                allFigures.push(child);
+            }
+        }
+        for (var _d = 0, allFigures_1 = allFigures; _d < allFigures_1.length; _d++) {
+            var fig = allFigures_1[_d];
             if (ignoreFigures.indexOf(fig) != -1)
                 continue;
             var p = fig.getClosestPoint(point);
-            //protractr.ui.sketchView.drawPoint(p, 3, "blue");
-            var d = p.distTo(point);
+            var d = p.distTo(point) - typeMagnetism[fig.type];
             if (d < dist) {
                 closest = fig;
                 dist = d;
@@ -408,8 +421,13 @@ var SketchView = /** @class */ (function () {
     };
     SketchView.prototype.updateHover = function (point) {
         var closest;
-        if (this.subscribedTool != null) {
-            closest = this.sketch.getClosestFigure(point, [this.subscribedTool.currentFigure]);
+        if (this.subscribedTool != null && this.subscribedTool.currentFigure) {
+            var ignoredFigures = [this.subscribedTool.currentFigure];
+            for (var _i = 0, _a = this.subscribedTool.currentFigure.childFigures; _i < _a.length; _i++) {
+                var child = _a[_i];
+                ignoredFigures.push(child);
+            }
+            closest = this.sketch.getClosestFigure(point, ignoredFigures);
         }
         else {
             closest = this.sketch.getClosestFigure(point);
@@ -417,9 +435,7 @@ var SketchView = /** @class */ (function () {
         if (closest != null && closest.getClosestPoint(point).distTo(point) > 10 / this.ctxScale) {
             closest = null;
         }
-        if (this.hoveredFigure != closest) {
-            this.hoveredFigure = closest;
-        }
+        this.hoveredFigure = closest;
         if (this.hoveredFigure != null) {
             this.setCursor("move");
         }
@@ -448,8 +464,6 @@ var SketchView = /** @class */ (function () {
                 this.ctx.moveTo(line.p1.x, line.p1.y);
                 this.ctx.lineTo(line.p2.x, line.p2.y);
                 this.ctx.stroke();
-                this.drawPoint(line.p1, pointSize, this.ctx.strokeStyle);
-                this.drawPoint(line.p2, pointSize, this.ctx.strokeStyle);
                 break;
             case "point":
                 var point = fig;
@@ -460,7 +474,6 @@ var SketchView = /** @class */ (function () {
                 this.ctx.beginPath();
                 this.ctx.arc(circle.c.x, circle.c.y, circle.r, 0, Math.PI * 2);
                 this.ctx.stroke();
-                this.drawPoint(circle.c, pointSize, this.ctx.strokeStyle);
                 break;
         }
     };
@@ -473,6 +486,10 @@ var SketchView = /** @class */ (function () {
         for (var _i = 0, _a = this.sketch.figures; _i < _a.length; _i++) {
             var fig = _a[_i];
             this.drawFigure(fig);
+            for (var _b = 0, _c = fig.childFigures; _b < _c.length; _b++) {
+                var child = _c[_b];
+                this.drawFigure(child);
+            }
         }
     };
     SketchView.prototype.drawPoint = function (point, size, color) {
@@ -485,9 +502,9 @@ var SketchView = /** @class */ (function () {
         this.ctx.fill();
     };
     SketchView.prototype.snapPoint = function (point) {
-        if (this.hoveredFigure && this.subscribedTool && this.hoveredFigure != this.subscribedTool.currentFigure)
-            return this.hoveredFigure.getClosestPoint(point);
-        return point;
+        if (!this.hoveredFigure)
+            return point;
+        return this.hoveredFigure.getClosestPoint(point);
     };
     SketchView.prototype.toggleSelected = function (fig) {
         if (this.selectedFigures.indexOf(fig) == -1) {
