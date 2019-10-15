@@ -41,6 +41,7 @@ export class SketchView {
         let offset = new Point(event.offsetX, event.offsetY);
         let scaled = new Point(offset.x / this.ctxScale, offset.y / this.ctxScale);
         let point = new Point(scaled.x - this.ctxOrigin.x / this.ctxScale, scaled.y - this.ctxOrigin.y / this.ctxScale);
+        this.updateHover(point);
         let snapPoint = this.snapPoint(point);
         switch (event.type) {
             case "mousedown":
@@ -53,7 +54,7 @@ export class SketchView {
                             if(this.hoveredFigure) {
                                 this.dragging = false;
                                 this.draggedFigure = this.hoveredFigure;
-                                this.lastFigureDrag = point.copy();
+                                this.lastFigureDrag = snapPoint.copy();
                             }
                         }
                         break;
@@ -75,8 +76,8 @@ export class SketchView {
                 } else {
                     if (this.draggedFigure != null) {
                         this.dragging = true;
-                        this.draggedFigure.translate(this.lastFigureDrag, point.copy());
-                        this.lastFigureDrag = point.copy();
+                        this.draggedFigure.translate(this.lastFigureDrag, snapPoint.copy());
+                        this.lastFigureDrag = snapPoint.copy();
                     }
                 }
 
@@ -93,7 +94,8 @@ export class SketchView {
                         if (this.subscribedTool) {
                             this.subscribedTool.up(snapPoint);
                         } else {
-                            if(this.draggedFigure === null || this.dragging === false) {
+                            if(this.dragging === false) {
+                                console.log(this.hoveredFigure);
                                 if (this.hoveredFigure) {
                                     this.toggleSelected(this.hoveredFigure);
                                 } else {
@@ -113,20 +115,19 @@ export class SketchView {
                 break;
         }
         this.draw();
-        this.updateHover(point);
     }
 
     updateHover(point) {
         let closest;
-        if (this.subscribedTool != null && this.subscribedTool.currentFigure) {
-            let ignoredFigures = [this.subscribedTool.currentFigure];
-            for(let child of this.subscribedTool.currentFigure.childFigures) {
-                ignoredFigures.push(child);
-            }
-            closest = this.sketch.getClosestFigure(point, ignoredFigures);
-        } else {
-            closest = this.sketch.getClosestFigure(point);
+        let ignoredFigures = [];
+        if (this.subscribedTool && this.subscribedTool.currentFigure) {
+            ignoredFigures.push.apply(ignoredFigures, this.subscribedTool.currentFigure.getRelatedFigures());
         }
+        if(this.draggedFigure && this.dragging) {
+            ignoredFigures.push.apply(ignoredFigures, this.draggedFigure.getRelatedFigures());
+        }
+        console.log("Ignored figures", ignoredFigures);
+        closest = this.sketch.getClosestFigure(point, ignoredFigures);
         if(closest != null && closest.getClosestPoint(point).distTo(point) > 10 / this.ctxScale) {
             closest = null;
         }
@@ -180,9 +181,8 @@ export class SketchView {
         this.ctx.translate(this.ctxOrigin.x, this.ctxOrigin.y);
         this.ctx.scale(this.ctxScale, this.ctxScale);
         console.log(this.ctxScale);
-        for(let fig of this.sketch.figures) {
-            this.drawFigure(fig);
-            for(let child of fig.childFigures) {
+        for(let fig of this.sketch.rootFigures) {
+            for(let child of fig.getRelatedFigures()) {
                 this.drawFigure(child);
             }
         }

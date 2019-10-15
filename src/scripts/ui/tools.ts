@@ -51,7 +51,7 @@ export class ActivatableTool extends Tool {
             this.active = false;
             if(this.currentFigure != null) {
                 this.currentFigure = null;
-                protractr.sketch.figures.pop();
+                protractr.sketch.rootFigures.pop();
             }
         } else {
             this.toolbar.setActive(this);
@@ -92,7 +92,7 @@ export class PointTool extends FigureTool {
             this.currentFigure.p.set(point);
         } else {
             this.currentFigure = new PointFigure(point);
-            protractr.sketch.figures.push(this.currentFigure);
+            protractr.sketch.rootFigures.push(this.currentFigure);
         }
     }
 }
@@ -123,7 +123,7 @@ export class LineTool extends FigureTool {
         } else {
             this.hasSetP1 = false;
             this.currentFigure = new LineFigure(point, point.copy());
-            protractr.sketch.figures.push(this.currentFigure);
+            protractr.sketch.rootFigures.push(this.currentFigure);
         }
     }
 }
@@ -156,7 +156,7 @@ export class CircleTool extends FigureTool {
         } else {
             this.hasSetC = false;
             this.currentFigure = new CircleFigure(point, 0);
-            protractr.sketch.figures.push(this.currentFigure);
+            protractr.sketch.rootFigures.push(this.currentFigure);
         }
     }
 }

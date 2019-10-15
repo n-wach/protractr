@@ -47,16 +47,61 @@ export class Point {
     }
 }
 
+export interface Figure {
+    type: string;
+    parentFigure: Figure;
+    childFigures: Figure[];
+    getClosestPoint(point: Point): Point;
+    getRelatedFigures(): Figure[];
+    getDescendants(): Figure[];
+    getRootFigure(): Figure;
+    translate(from: Point, to: Point);
+}
+
+export class BasicFigure implements Figure {
+    childFigures: Figure[];
+    parentFigure: Figure;
+    type: string;
+
+    getClosestPoint(point: Point): Point {
+        return undefined;
+    }
+    translate(from: Point, to: Point) {
+
+    }
+    getRelatedFigures(): Figure[] {
+        return this.getRootFigure().getDescendants();
+    }
+    getRootFigure(): Figure {
+        if(this.parentFigure) {
+            return this.parentFigure.getRootFigure();
+        } else {
+            return (this as Figure);
+        }
+    }
+    getDescendants(): Figure[] {
+        let children = [(this as Figure)];
+        for(let child of this.childFigures) {
+            children.push(child);
+            let descendants = child.getDescendants();
+            for(let descendant of descendants) {
+                children.push(descendant);
+            }
+        }
+        return children;
+    }
+}
 
 let ORIGIN = new Point(0, 0);
 
-export class PointFigure implements Figure {
+export class PointFigure extends BasicFigure {
     type = "point";
     p: Point;
     childFigures: Figure[] = [];
     parentFigure: Figure = null;
 
     constructor(p: Point, name: string="point") {
+        super();
         this.p = p;
     }
     getClosestPoint(point: Point): Point {
@@ -67,7 +112,7 @@ export class PointFigure implements Figure {
     }
 }
 
-export class LineFigure implements Figure {
+export class LineFigure extends BasicFigure {
     type = "line";
     p1: Point;
     p2: Point;
@@ -75,6 +120,7 @@ export class LineFigure implements Figure {
     parentFigure: Figure;
 
     constructor(p1: Point, p2: Point) {
+        super();
         this.p1 = p1;
         this.p2 = p2;
         this.childFigures = [new PointFigure(this.p1, "p1"), new PointFigure(this.p2, "p2")];
@@ -111,7 +157,7 @@ export class LineFigure implements Figure {
     }
 }
 
-export class CircleFigure implements Figure {
+export class CircleFigure extends BasicFigure {
     type = "circle";
     c: Point;
     r: number;
@@ -119,6 +165,7 @@ export class CircleFigure implements Figure {
     parentFigure: Figure;
 
     constructor(c: Point, r: number) {
+        super();
         this.c = c;
         this.r = r;
         this.childFigures = [new PointFigure(this.c, "center")];
@@ -130,12 +177,4 @@ export class CircleFigure implements Figure {
     translate(from: Point, to: Point) {
         this.r = to.distTo(this.c);
     }
-}
-
-export interface Figure {
-    type: string;
-    parentFigure: Figure;
-    childFigures: Figure[];
-    getClosestPoint(point: Point): Point;
-    translate(from: Point, to: Point);
 }
