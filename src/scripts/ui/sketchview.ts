@@ -21,6 +21,8 @@ export class SketchView {
     lastFigureDrag: Point;
     dragging: boolean = false;
 
+    lastPanPoint: Point = null;
+
     constructor(ui: UI, sketch: Sketch, canvas: HTMLCanvasElement) {
         this.ui = ui;
         this.sketch = sketch;
@@ -30,89 +32,96 @@ export class SketchView {
         this.ctxOrigin = new Point(0, 0);
         this.updateSelected();
         this.ctx = this.canvas.getContext("2d");
-        let eventHandler = this.handleEvent.bind(this);
-        let events = ["touchdown", "touchup", "touchmove", "mousemove", "mousedown", "mouseup", "wheel"];
+        let mouseEventHandler = this.handleMouseEvent.bind(this);
+        let events = ["mousemove", "mousedown", "mouseup", "wheel"];
         for(let event of events) {
-            this.canvas.addEventListener(event, eventHandler);
+            this.canvas.addEventListener(event, mouseEventHandler);
         }
     }
-    handleEvent(event) {
+    handleZoomEvent(deltaY: number, point: Point) {
+        let originalScale = this.ctxScale;
+        this.ctxScale = this.ctxScale - (deltaY * 0.05 * this.ctxScale);
+        let scaleChange = originalScale - this.ctxScale;
+        this.ctxOrigin.x += (point.x * scaleChange);
+        this.ctxOrigin.y += (point.y * scaleChange);
+    }
+    handlePanEvent(type: string, offset: Point) {
+        switch(type) {
+            case "mousedown":
+                this.lastPanPoint = offset.copy();
+                break;
+            case "mousemove":
+                this.ctxOrigin.x += offset.x - this.lastPanPoint.x;
+                this.ctxOrigin.y += offset.y - this.lastPanPoint.y;
+                this.lastPanPoint = offset.copy();
+                break;
+            case "mouseup":
+                this.lastPanPoint = null;
+                break;
+        }
+    }
+    handleToolEvent(type: string, point: Point) {
+        switch(type) {
+            case "mousedown":
+                this.subscribedTool.down(point);
+                break;
+            case "mousemove":
+                this.subscribedTool.move(point);
+                break;
+            case "mouseup":
+                this.subscribedTool.up(point);
+                break;
+        }
+    }
+    handleDragEvent(type: string, point: Point) {
+        switch (type) {
+            case "mousedown":
+                if (this.hoveredFigure) {
+                    this.dragging = false;
+                    this.draggedFigure = this.hoveredFigure;
+                    this.lastFigureDrag = point.copy();
+                }
+                break;
+            case "mousemove":
+                if (this.draggedFigure != null) {
+                    this.dragging = true;
+                    this.draggedFigure.translate(this.lastFigureDrag, point.copy());
+                    this.lastFigureDrag = point.copy();
+                }
+                break;
+            case "mouseup":
+                if (this.dragging === false) {
+                    if (this.hoveredFigure) {
+                        this.toggleSelected(this.hoveredFigure);
+                    } else {
+                        this.selectedFigures = [];
+                        this.updateSelected();
+                    }
+                }
+                this.draggedFigure = null;
+                this.dragging = false;
+                break;
+        }
+    }
+    handleMouseEvent(event) {
         event.preventDefault();
         let offset = new Point(event.offsetX, event.offsetY);
         let scaled = new Point(offset.x / this.ctxScale, offset.y / this.ctxScale);
         let point = new Point(scaled.x - this.ctxOrigin.x / this.ctxScale, scaled.y - this.ctxOrigin.y / this.ctxScale);
         this.updateHover(point);
         let snapPoint = this.snapPoint(point);
-        switch (event.type) {
-            case "mousedown":
-            case "touchdown":
-                switch(event.which) {
-                    case 1:
-                        if(this.subscribedTool) {
-                            this.subscribedTool.down(snapPoint);
-                        } else {
-                            if(this.hoveredFigure) {
-                                this.dragging = false;
-                                this.draggedFigure = this.hoveredFigure;
-                                this.lastFigureDrag = snapPoint.copy();
-                            }
-                        }
-                        break;
-                    case 2:
-                        this.lastDrag = offset.copy();
-                }
-                break;
-            case "wheel":
-                let originalScale = this.ctxScale;
-                this.ctxScale = this.ctxScale - (event.deltaY * 0.05 * this.ctxScale);
-                let scaleChange = originalScale - this.ctxScale;
-                this.ctxOrigin.x += (point.x * scaleChange);
-                this.ctxOrigin.y += (point.y * scaleChange);
-                break;
-            case "mousemove":
-            case "touchmove":
-                if(this.subscribedTool) {
-                    this.subscribedTool.move(snapPoint);
-                } else {
-                    if (this.draggedFigure != null) {
-                        this.dragging = true;
-                        this.draggedFigure.translate(this.lastFigureDrag, snapPoint.copy());
-                        this.lastFigureDrag = snapPoint.copy();
-                    }
-                }
-
-                if(this.lastDrag != null) {
-                    this.ctxOrigin.x += offset.x - this.lastDrag.x;
-                    this.ctxOrigin.y += offset.y - this.lastDrag.y;
-                    this.lastDrag = offset.copy();
-                }
-                break;
-            case "touchup":
-            case "mouseup":
-                switch(event.which) {
-                    case 1:
-                        if (this.subscribedTool) {
-                            this.subscribedTool.up(snapPoint);
-                        } else {
-                            if(this.dragging === false) {
-                                console.log(this.hoveredFigure);
-                                if (this.hoveredFigure) {
-                                    this.toggleSelected(this.hoveredFigure);
-                                } else {
-                                    this.selectedFigures = [];
-                                    this.updateSelected();
-                                }
-                            }
-                            this.draggedFigure = null;
-                            this.dragging = false;
-                        }
-                        break;
-                    case 2:
-                        this.lastDrag = null;
-                        break;
-
-                }
-                break;
+        if(event.type == "wheel") {
+            this.handleZoomEvent(event.deltaY, point);
+        }
+        if(event.which == 2 || (event.type == "mousemove" && this.lastPanPoint != null)) {
+            this.handlePanEvent(event.type, offset);
+        }
+        if(event.which == 1) {
+            if(this.subscribedTool) {
+                this.handleToolEvent(event.type, snapPoint);
+            } else {
+                this.handleDragEvent(event.type, snapPoint);
+            }
         }
         this.draw();
     }

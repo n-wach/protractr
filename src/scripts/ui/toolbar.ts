@@ -37,6 +37,7 @@ export class Toolbar {
                 e.deactivate();
             }
         }
+        this.sketchView.draw();
     }
 }
 
