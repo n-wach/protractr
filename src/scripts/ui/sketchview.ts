@@ -85,7 +85,9 @@ export class SketchView {
             case "mousemove":
                 if (this.draggedFigure != null) {
                     this.dragging = true;
+                    this.draggedFigure.setLocked(false);
                     this.draggedFigure.translate(this.lastFigureDrag, point.copy());
+                    this.draggedFigure.setLocked(true);
                     this.lastFigureDrag = point.copy();
                 }
                 break;
@@ -98,7 +100,10 @@ export class SketchView {
                         this.updateSelected();
                     }
                 }
-                this.draggedFigure = null;
+                if(this.draggedFigure) {
+                    this.draggedFigure.setLocked(false);
+                    this.draggedFigure = null;
+                }
                 this.dragging = false;
                 break;
         }

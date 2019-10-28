@@ -17,7 +17,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Variable = /** @class */ (function () {
     function Variable(v) {
         this.value = v;
+        this.constant = false;
     }
+    Object.defineProperty(Variable.prototype, "value", {
+        get: function () {
+            return this._value;
+        },
+        set: function (v) {
+            if (!this.constant)
+                this._value = v;
+        },
+        enumerable: true,
+        configurable: true
+    });
     return Variable;
 }());
 exports.Variable = Variable;
@@ -37,8 +49,15 @@ function sum(vals) {
     }
     return sum;
 }
-function average(vals) {
-    return sum(vals) / vals.length;
+function equalGoal(vals) {
+    var sum = 0;
+    for (var _i = 0, vals_2 = vals; _i < vals_2.length; _i++) {
+        var v = vals_2[_i];
+        if (v.constant)
+            return v._value;
+        sum += v._value;
+    }
+    return sum / vals.length;
 }
 var EqualConstraint = /** @class */ (function () {
     function EqualConstraint(vals) {
@@ -46,7 +65,7 @@ var EqualConstraint = /** @class */ (function () {
     }
     EqualConstraint.prototype.getError = function () {
         var error = 0;
-        var avg = average(this.variables);
+        var avg = equalGoal(this.variables);
         for (var _i = 0, _a = this.variables; _i < _a.length; _i++) {
             var v = _a[_i];
             error += Math.abs(avg - v.value);
@@ -56,7 +75,7 @@ var EqualConstraint = /** @class */ (function () {
     EqualConstraint.prototype.getGradient = function (v) {
         if (this.variables.indexOf(v) == -1)
             return 0;
-        var avg = average(this.variables);
+        var avg = equalGoal(this.variables);
         return avg - v.value;
     };
     return EqualConstraint;
@@ -315,6 +334,12 @@ var BasicFigure = /** @class */ (function () {
         }
         return children;
     };
+    BasicFigure.prototype.setLocked = function (lock) {
+        for (var _i = 0, _a = this.childFigures; _i < _a.length; _i++) {
+            var fig = _a[_i];
+            fig.setLocked(lock);
+        }
+    };
     return BasicFigure;
 }());
 exports.BasicFigure = BasicFigure;
@@ -337,6 +362,11 @@ var PointFigure = /** @class */ (function (_super) {
     };
     PointFigure.prototype.translate = function (from, to) {
         this.p.set(to);
+    };
+    PointFigure.prototype.setLocked = function (lock) {
+        _super.prototype.setLocked.call(this, lock);
+        this.p.variablePoint.x.constant = lock;
+        this.p.variablePoint.y.constant = lock;
     };
     return PointFigure;
 }(BasicFigure));
@@ -404,6 +434,10 @@ var CircleFigure = /** @class */ (function (_super) {
     };
     CircleFigure.prototype.translate = function (from, to) {
         this.r.value = to.distTo(this.c);
+    };
+    CircleFigure.prototype.setLocked = function (lock) {
+        _super.prototype.setLocked.call(this, lock);
+        this.r.constant = lock;
     };
     return CircleFigure;
 }(BasicFigure));
@@ -656,7 +690,9 @@ var SketchView = /** @class */ (function () {
             case "mousemove":
                 if (this.draggedFigure != null) {
                     this.dragging = true;
+                    this.draggedFigure.setLocked(false);
                     this.draggedFigure.translate(this.lastFigureDrag, point.copy());
+                    this.draggedFigure.setLocked(true);
                     this.lastFigureDrag = point.copy();
                 }
                 break;
@@ -670,7 +706,10 @@ var SketchView = /** @class */ (function () {
                         this.updateSelected();
                     }
                 }
-                this.draggedFigure = null;
+                if (this.draggedFigure) {
+                    this.draggedFigure.setLocked(false);
+                    this.draggedFigure = null;
+                }
                 this.dragging = false;
                 break;
         }

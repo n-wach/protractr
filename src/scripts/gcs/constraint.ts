@@ -1,9 +1,17 @@
 import {Figure, LineFigure, PointFigure} from "./figures";
 
 export class Variable {
-    value: number;
+    _value: number;
+    constant: boolean;
+    get value() {
+        return this._value;
+    }
+    set value(v: number) {
+        if(!this.constant) this._value = v;
+    }
     constructor(v: number) {
         this.value = v;
+        this.constant = false;
     }
 }
 
@@ -24,8 +32,13 @@ function sum(vals: Variable[]): number {
     return sum;
 }
 
-function average(vals: Variable[]): number {
-    return sum(vals) / vals.length;
+function equalGoal(vals: Variable[]): number {
+    let sum = 0;
+    for(let v of vals) {
+        if(v.constant) return v._value;
+        sum += v._value;
+    }
+    return sum / vals.length;
 }
 
 
@@ -41,7 +54,7 @@ class EqualConstraint implements Constraint {
     }
     getError(): number {
         let error = 0;
-        let avg = average(this.variables);
+        let avg = equalGoal(this.variables);
         for(let v of this.variables) {
             error += Math.abs(avg - v.value);
         }
@@ -49,7 +62,7 @@ class EqualConstraint implements Constraint {
     }
     getGradient(v: Variable): number {
         if(this.variables.indexOf(v) == -1) return 0;
-        let avg = average(this.variables);
+        let avg = equalGoal(this.variables);
         return avg - v.value;
     }
 }

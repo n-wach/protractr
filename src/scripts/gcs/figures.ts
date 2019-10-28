@@ -69,6 +69,7 @@ export interface Figure {
     getDescendants(): Figure[];
     getRootFigure(): Figure;
     translate(from: Point, to: Point);
+    setLocked(lock: boolean);
 }
 
 export class BasicFigure implements Figure {
@@ -103,6 +104,11 @@ export class BasicFigure implements Figure {
         }
         return children;
     }
+    setLocked(lock: boolean) {
+        for(let fig of this.childFigures) {
+            fig.setLocked(lock);
+        }
+    }
 }
 
 let ORIGIN = new Point(0, 0);
@@ -124,6 +130,11 @@ export class PointFigure extends BasicFigure {
     }
     translate(from: Point, to: Point) {
         this.p.set(to);
+    }
+    setLocked(lock: boolean) {
+        super.setLocked(lock);
+        this.p.variablePoint.x.constant = lock;
+        this.p.variablePoint.y.constant = lock;
     }
 }
 
@@ -191,5 +202,9 @@ export class CircleFigure extends BasicFigure {
     }
     translate(from: Point, to: Point) {
         this.r.value = to.distTo(this.c);
+    }
+    setLocked(lock: boolean) {
+        super.setLocked(lock);
+        this.r.constant = lock;
     }
 }
