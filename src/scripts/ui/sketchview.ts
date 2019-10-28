@@ -121,11 +121,11 @@ export class SketchView {
                 this.handleToolEvent(event.type, snapPoint);
             } else {
                 this.handleDragEvent(event.type, snapPoint);
+                this.sketch.solveConstraints();
             }
         }
         this.draw();
     }
-
     updateHover(point) {
         let closest;
         let ignoredFigures = [];
@@ -147,9 +147,29 @@ export class SketchView {
             this.setCursor("default");
         }
     }
-
     subscribeTool(tool: Tool) {
         this.subscribedTool = tool;
+    }
+    snapPoint(point: Point): Point {
+        if(!this.hoveredFigure) return point;
+
+        return this.hoveredFigure.getClosestPoint(point);
+    }
+    toggleSelected(fig: Figure) {
+        if(this.selectedFigures.indexOf(fig) == -1) {
+            this.selectedFigures.push(fig);
+        } else {
+            this.selectedFigures = this.selectedFigures.filter(function(value, index, arr){
+                return value != fig;
+            });
+        }
+        this.updateSelected();
+    }
+    updateSelected() {
+        this.ui.infoPane.setFocusedFigures(this.selectedFigures);
+    }
+    setCursor(cursor: string) {
+        this.canvas.style.cursor = cursor;
     }
 
     drawFigure(fig: Figure) {
@@ -178,12 +198,11 @@ export class SketchView {
             case "circle":
                 let circle = (fig as CircleFigure);
                 this.ctx.beginPath();
-                this.ctx.arc(circle.c.x, circle.c.y, circle.r, 0, Math.PI * 2);
+                this.ctx.arc(circle.c.x, circle.c.y, circle.r.value, 0, Math.PI * 2);
                 this.ctx.stroke();
                 break;
         }
     }
-
     draw() {
         this.ctx.resetTransform();
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
@@ -196,33 +215,11 @@ export class SketchView {
             }
         }
     }
-
     drawPoint(point: Point, size: number = 3, color: string = "black") {
         this.ctx.fillStyle = color;
         this.ctx.beginPath();
         this.ctx.moveTo(point.x, point.y);
         this.ctx.arc(point.x, point.y, size, 0, Math.PI * 2);
         this.ctx.fill();
-    }
-    snapPoint(point: Point): Point {
-        if(!this.hoveredFigure) return point;
-
-        return this.hoveredFigure.getClosestPoint(point);
-    }
-    toggleSelected(fig: Figure) {
-        if(this.selectedFigures.indexOf(fig) == -1) {
-            this.selectedFigures.push(fig);
-        } else {
-            this.selectedFigures = this.selectedFigures.filter(function(value, index, arr){
-                return value != fig;
-            });
-        }
-        this.updateSelected();
-    }
-    updateSelected() {
-        this.ui.infoPane.setFocusedFigures(this.selectedFigures);
-    }
-    setCursor(cursor: string) {
-        this.canvas.style.cursor = cursor;
     }
 }

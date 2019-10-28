@@ -13,10 +13,6 @@ export class Sketch {
     constraints: Constraint[] = [];
     variables: Variable[] = [];
     rootFigures: Figure[] = [];
-    solver: Solver;
-    constructor() {
-        this.solver = new Solver();
-    }
     getClosestFigure(point: Point, ignoreFigures: Figure[] = []): Figure {
         let allFigures = [];
         for(let fig of this.rootFigures) {
@@ -40,6 +36,49 @@ export class Sketch {
             }
         }
         return closest;
+    }
+    addConstraint(constraint) {
+        this.constraints.push(constraint);
+        this.solveConstraints();
+    }
+    removeConstraint(constraint) {
+        this.constraints = this.constraints.filter(function(value, index, arr) {
+            return value != constraint;
+        });
+    }
+    addVariable(variable: Variable) {
+        this.variables.push(variable);
+    }
+    removeVariable(variable) {
+        this.variables = this.variables.filter(function(value, index, arr) {
+            return value != variable;
+        });
+    }
+    solveConstraints(): boolean {
+        let count = 0;
+        let previousError = 0;
+        while(true) {
+            let totalError = 0;
+            for (let constraint of this.constraints) {
+                totalError += constraint.getError();
+            }
+            if (totalError < 1) return true;
+            if (count > 30) return false;
+            let variableGradients = [];
+            for (let variable of this.variables) {
+                let gradient = 0;
+                for (let constraint of this.constraints) {
+                    gradient += constraint.getGradient(variable);
+                }
+                variableGradients.push(gradient);
+            }
+            for (let i = 0; i < variableGradients.length; i++) {
+                this.variables[i].value += variableGradients[i] / (count + 1);
+            }
+            count += 1;
+            previousError = totalError;
+            protractr.ui.sketchView.draw();
+        }
     }
 }
 

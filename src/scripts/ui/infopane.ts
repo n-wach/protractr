@@ -1,10 +1,11 @@
 import {Figure} from "../gcs/figures";
 import {getPossibleConstraints} from "../gcs/constraint";
+import {protractr} from "../main";
 
 export class InfoPane {
     sidePane: HTMLDivElement;
     title: HTMLParagraphElement;
-    possibleConstraints: HTMLUListElement;
+    possibleConstraints: HTMLDivElement;
     constructor(sidePane: HTMLDivElement) {
         this.sidePane = sidePane;
 
@@ -15,7 +16,7 @@ export class InfoPane {
         d.innerText = "Possible Constraints:";
         this.sidePane.appendChild(d);
 
-        this.possibleConstraints = document.createElement("ul");
+        this.possibleConstraints = document.createElement("div");
         this.sidePane.appendChild(this.possibleConstraints);
     }
     setFocusedFigures(figures: Figure[]) {
@@ -30,8 +31,12 @@ export class InfoPane {
             this.possibleConstraints.removeChild(this.possibleConstraints.lastChild);
         }
         for(let pc of getPossibleConstraints(figures)) {
-            let child = document.createElement("li");
-            child.innerText = pc;
+            let child = document.createElement("button");
+            child.innerText = pc.possibleConstraint;
+            child.addEventListener("click", function () {
+                let constraint = pc.makeConstraint(figures);
+                if(constraint != undefined) protractr.sketch.addConstraint(constraint);
+            });
             this.possibleConstraints.appendChild(child);
         }
     }

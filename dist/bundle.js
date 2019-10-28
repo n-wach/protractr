@@ -1,12 +1,129 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 Object.defineProperty(exports, "__esModule", { value: true });
 var Variable = /** @class */ (function () {
-    function Variable() {
+    function Variable(v) {
+        this.value = v;
     }
     return Variable;
 }());
 exports.Variable = Variable;
+var VariablePoint = /** @class */ (function () {
+    function VariablePoint(x, y) {
+        this.x = new Variable(x);
+        this.y = new Variable(y);
+    }
+    return VariablePoint;
+}());
+exports.VariablePoint = VariablePoint;
+function sum(vals) {
+    var sum = 0;
+    for (var _i = 0, vals_1 = vals; _i < vals_1.length; _i++) {
+        var v = vals_1[_i];
+        sum += v.value;
+    }
+    return sum;
+}
+function average(vals) {
+    return sum(vals) / vals.length;
+}
+var EqualConstraint = /** @class */ (function () {
+    function EqualConstraint(vals) {
+        this.variables = vals;
+    }
+    EqualConstraint.prototype.getError = function () {
+        var error = 0;
+        var avg = average(this.variables);
+        for (var _i = 0, _a = this.variables; _i < _a.length; _i++) {
+            var v = _a[_i];
+            error += Math.abs(avg - v.value);
+        }
+        return error;
+    };
+    EqualConstraint.prototype.getGradient = function (v) {
+        if (this.variables.indexOf(v) == -1)
+            return 0;
+        var avg = average(this.variables);
+        return avg - v.value;
+    };
+    return EqualConstraint;
+}());
+var CoincidentConstraint = /** @class */ (function () {
+    function CoincidentConstraint(points) {
+        var xs = [];
+        var ys = [];
+        for (var _i = 0, points_1 = points; _i < points_1.length; _i++) {
+            var p = points_1[_i];
+            xs.push(p.x);
+            ys.push(p.y);
+        }
+        this.xEqual = new EqualConstraint(xs);
+        this.yEqual = new EqualConstraint(ys);
+    }
+    CoincidentConstraint.prototype.getError = function () {
+        return this.xEqual.getError() + this.yEqual.getError();
+    };
+    CoincidentConstraint.prototype.getGradient = function (v) {
+        return this.xEqual.getGradient(v) + this.yEqual.getGradient(v);
+    };
+    return CoincidentConstraint;
+}());
+var LockConstraint = /** @class */ (function () {
+    function LockConstraint(val) {
+        this.variable = val;
+        this.value = val.value;
+    }
+    LockConstraint.prototype.getError = function () {
+        return Math.abs(this.variable.value - this.value);
+    };
+    LockConstraint.prototype.getGradient = function (v) {
+        if (this.variable != v)
+            return 0;
+        return this.value - this.variable.value;
+    };
+    return LockConstraint;
+}());
+var HorizontalConstraint = /** @class */ (function (_super) {
+    __extends(HorizontalConstraint, _super);
+    function HorizontalConstraint(points) {
+        var _this = this;
+        var ys = [];
+        for (var _i = 0, points_2 = points; _i < points_2.length; _i++) {
+            var p = points_2[_i];
+            ys.push(p.y);
+        }
+        _this = _super.call(this, ys) || this;
+        return _this;
+    }
+    return HorizontalConstraint;
+}(EqualConstraint));
+var VerticalConstraint = /** @class */ (function (_super) {
+    __extends(VerticalConstraint, _super);
+    function VerticalConstraint(points) {
+        var _this = this;
+        var xs = [];
+        for (var _i = 0, points_3 = points; _i < points_3.length; _i++) {
+            var p = points_3[_i];
+            xs.push(p.x);
+        }
+        _this = _super.call(this, xs) || this;
+        return _this;
+    }
+    return VerticalConstraint;
+}(EqualConstraint));
 var ConstraintPossibility = /** @class */ (function () {
     function ConstraintPossibility(requiredTypes, possibleConstraint) {
         this.requiredTypes = requiredTypes;
@@ -15,12 +132,41 @@ var ConstraintPossibility = /** @class */ (function () {
     ConstraintPossibility.prototype.satisfiesTypes = function (s) {
         return s.sort().join("") == this.requiredTypes.sort().join("");
     };
+    ConstraintPossibility.prototype.makeConstraint = function (figures) {
+        if (this.possibleConstraint == "horizontal") {
+            var points = [];
+            for (var _i = 0, figures_1 = figures; _i < figures_1.length; _i++) {
+                var fig = figures_1[_i];
+                points.push(fig.p1.variablePoint);
+                points.push(fig.p2.variablePoint);
+            }
+            return new HorizontalConstraint(points);
+        }
+        if (this.possibleConstraint == "vertical") {
+            var points = [];
+            for (var _a = 0, figures_2 = figures; _a < figures_2.length; _a++) {
+                var fig = figures_2[_a];
+                points.push(fig.p1.variablePoint);
+                points.push(fig.p2.variablePoint);
+            }
+            return new VerticalConstraint(points);
+        }
+        if (this.possibleConstraint == "coincident") {
+            var points = [];
+            for (var _b = 0, figures_3 = figures; _b < figures_3.length; _b++) {
+                var fig = figures_3[_b];
+                points.push(fig.p.variablePoint);
+            }
+            return new CoincidentConstraint(points);
+        }
+        return undefined;
+    };
     return ConstraintPossibility;
 }());
 var possibleConstraints = [
     new ConstraintPossibility(["point", "point"], "coincident"),
     new ConstraintPossibility(["point"], "lock"),
-    new ConstraintPossibility(["line", "point"], "coincident"),
+    //new ConstraintPossibility(["line", "point"], "coincident"),
     new ConstraintPossibility(["line", "point"], "midpoint"),
     new ConstraintPossibility(["line"], "horizontal"),
     new ConstraintPossibility(["line"], "vertical"),
@@ -28,7 +174,7 @@ var possibleConstraints = [
     new ConstraintPossibility(["line", "line"], "perpendicular"),
     new ConstraintPossibility(["line", "line"], "parallel"),
     new ConstraintPossibility(["line", "circle"], "tangent"),
-    new ConstraintPossibility(["line", "circle"], "coincident"),
+    //new ConstraintPossibility(["line", "circle"], "coincident"),
     new ConstraintPossibility(["line", "circle"], "equal"),
     new ConstraintPossibility(["circle"], "lock"),
     new ConstraintPossibility(["circle", "circle"], "equal"),
@@ -46,7 +192,7 @@ function getPossibleConstraints(figs) {
     for (var _a = 0, possibleConstraints_1 = possibleConstraints; _a < possibleConstraints_1.length; _a++) {
         var pc = possibleConstraints_1[_a];
         if (pc.satisfiesTypes(shapes))
-            possibilities.push(pc.possibleConstraint);
+            possibilities.push(pc);
     }
     return possibilities;
 }
@@ -68,11 +214,32 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+var constraint_1 = require("./constraint");
+var main_1 = require("../main");
 var Point = /** @class */ (function () {
     function Point(x, y) {
-        this.x = x;
-        this.y = y;
+        this.variablePoint = new constraint_1.VariablePoint(x, y);
     }
+    Object.defineProperty(Point.prototype, "x", {
+        get: function () {
+            return this.variablePoint.x.value;
+        },
+        set: function (v) {
+            this.variablePoint.x.value = v;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Point.prototype, "y", {
+        get: function () {
+            return this.variablePoint.y.value;
+        },
+        set: function (v) {
+            this.variablePoint.y.value = v;
+        },
+        enumerable: true,
+        configurable: true
+    });
     Point.prototype.set = function (p) {
         this.x = p.x;
         this.y = p.y;
@@ -161,6 +328,8 @@ var PointFigure = /** @class */ (function (_super) {
         _this.childFigures = [];
         _this.parentFigure = null;
         _this.p = p;
+        main_1.protractr.sketch.addVariable(_this.p.variablePoint.x);
+        main_1.protractr.sketch.addVariable(_this.p.variablePoint.y);
         return _this;
     }
     PointFigure.prototype.getClosestPoint = function (point) {
@@ -225,25 +394,25 @@ var CircleFigure = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.type = "circle";
         _this.c = c;
-        _this.r = r;
+        _this.r = new constraint_1.Variable(r);
         _this.childFigures = [new PointFigure(_this.c, "center")];
         _this.childFigures[0].parentFigure = _this;
         return _this;
     }
     CircleFigure.prototype.getClosestPoint = function (point) {
-        return this.c.pointTowards(point, this.r);
+        return this.c.pointTowards(point, this.r.value);
     };
     CircleFigure.prototype.translate = function (from, to) {
-        this.r = to.distTo(this.c);
+        this.r.value = to.distTo(this.c);
     };
     return CircleFigure;
 }(BasicFigure));
 exports.CircleFigure = CircleFigure;
 
-},{}],3:[function(require,module,exports){
+},{"../main":4,"./constraint":1}],3:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var solver_1 = require("./solver");
+var main_1 = require("../main");
 var typeMagnetism = {
     circle: 0,
     line: 0,
@@ -254,7 +423,6 @@ var Sketch = /** @class */ (function () {
         this.constraints = [];
         this.variables = [];
         this.rootFigures = [];
-        this.solver = new solver_1.Solver();
     }
     Sketch.prototype.getClosestFigure = function (point, ignoreFigures) {
         if (ignoreFigures === void 0) { ignoreFigures = []; }
@@ -281,21 +449,59 @@ var Sketch = /** @class */ (function () {
         }
         return closest;
     };
+    Sketch.prototype.addConstraint = function (constraint) {
+        this.constraints.push(constraint);
+        this.solveConstraints();
+    };
+    Sketch.prototype.removeConstraint = function (constraint) {
+        this.constraints = this.constraints.filter(function (value, index, arr) {
+            return value != constraint;
+        });
+    };
+    Sketch.prototype.addVariable = function (variable) {
+        this.variables.push(variable);
+    };
+    Sketch.prototype.removeVariable = function (variable) {
+        this.variables = this.variables.filter(function (value, index, arr) {
+            return value != variable;
+        });
+    };
+    Sketch.prototype.solveConstraints = function () {
+        var count = 0;
+        var previousError = 0;
+        while (true) {
+            var totalError = 0;
+            for (var _i = 0, _a = this.constraints; _i < _a.length; _i++) {
+                var constraint = _a[_i];
+                totalError += constraint.getError();
+            }
+            if (totalError < 1)
+                return true;
+            if (count > 30)
+                return false;
+            var variableGradients = [];
+            for (var _b = 0, _c = this.variables; _b < _c.length; _b++) {
+                var variable = _c[_b];
+                var gradient = 0;
+                for (var _d = 0, _e = this.constraints; _d < _e.length; _d++) {
+                    var constraint = _e[_d];
+                    gradient += constraint.getGradient(variable);
+                }
+                variableGradients.push(gradient);
+            }
+            for (var i = 0; i < variableGradients.length; i++) {
+                this.variables[i].value += variableGradients[i] / (count + 1);
+            }
+            count += 1;
+            previousError = totalError;
+            main_1.protractr.ui.sketchView.draw();
+        }
+    };
     return Sketch;
 }());
 exports.Sketch = Sketch;
 
-},{"./solver":4}],4:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var Solver = /** @class */ (function () {
-    function Solver() {
-    }
-    return Solver;
-}());
-exports.Solver = Solver;
-
-},{}],5:[function(require,module,exports){
+},{"../main":4}],4:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var protractr_1 = require("./protractr");
@@ -317,7 +523,7 @@ window.addEventListener("load", function () {
     console.log("Protractr: ", exports.protractr);
 });
 
-},{"./protractr":6}],6:[function(require,module,exports){
+},{"./protractr":5}],5:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var sketch_1 = require("./gcs/sketch");
@@ -331,10 +537,11 @@ var Protractr = /** @class */ (function () {
 }());
 exports.Protractr = Protractr;
 
-},{"./gcs/sketch":3,"./ui/ui":11}],7:[function(require,module,exports){
+},{"./gcs/sketch":3,"./ui/ui":10}],6:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var constraint_1 = require("../gcs/constraint");
+var main_1 = require("../main");
 var InfoPane = /** @class */ (function () {
     function InfoPane(sidePane) {
         this.sidePane = sidePane;
@@ -343,7 +550,7 @@ var InfoPane = /** @class */ (function () {
         var d = document.createElement("p");
         d.innerText = "Possible Constraints:";
         this.sidePane.appendChild(d);
-        this.possibleConstraints = document.createElement("ul");
+        this.possibleConstraints = document.createElement("div");
         this.sidePane.appendChild(this.possibleConstraints);
     }
     InfoPane.prototype.setFocusedFigures = function (figures) {
@@ -359,18 +566,27 @@ var InfoPane = /** @class */ (function () {
         while (this.possibleConstraints.lastChild) {
             this.possibleConstraints.removeChild(this.possibleConstraints.lastChild);
         }
+        var _loop_1 = function (pc) {
+            var child = document.createElement("button");
+            child.innerText = pc.possibleConstraint;
+            child.addEventListener("click", function () {
+                var constraint = pc.makeConstraint(figures);
+                if (constraint != undefined)
+                    main_1.protractr.sketch.addConstraint(constraint);
+            });
+            this_1.possibleConstraints.appendChild(child);
+        };
+        var this_1 = this;
         for (var _i = 0, _a = constraint_1.getPossibleConstraints(figures); _i < _a.length; _i++) {
             var pc = _a[_i];
-            var child = document.createElement("li");
-            child.innerText = pc;
-            this.possibleConstraints.appendChild(child);
+            _loop_1(pc);
         }
     };
     return InfoPane;
 }());
 exports.InfoPane = InfoPane;
 
-},{"../gcs/constraint":1}],8:[function(require,module,exports){
+},{"../gcs/constraint":1,"../main":4}],7:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var figures_1 = require("../gcs/figures");
@@ -478,6 +694,7 @@ var SketchView = /** @class */ (function () {
             }
             else {
                 this.handleDragEvent(event.type, snapPoint);
+                this.sketch.solveConstraints();
             }
         }
         this.draw();
@@ -507,6 +724,28 @@ var SketchView = /** @class */ (function () {
     SketchView.prototype.subscribeTool = function (tool) {
         this.subscribedTool = tool;
     };
+    SketchView.prototype.snapPoint = function (point) {
+        if (!this.hoveredFigure)
+            return point;
+        return this.hoveredFigure.getClosestPoint(point);
+    };
+    SketchView.prototype.toggleSelected = function (fig) {
+        if (this.selectedFigures.indexOf(fig) == -1) {
+            this.selectedFigures.push(fig);
+        }
+        else {
+            this.selectedFigures = this.selectedFigures.filter(function (value, index, arr) {
+                return value != fig;
+            });
+        }
+        this.updateSelected();
+    };
+    SketchView.prototype.updateSelected = function () {
+        this.ui.infoPane.setFocusedFigures(this.selectedFigures);
+    };
+    SketchView.prototype.setCursor = function (cursor) {
+        this.canvas.style.cursor = cursor;
+    };
     SketchView.prototype.drawFigure = function (fig) {
         this.ctx.strokeStyle = "black";
         this.ctx.lineWidth = 2 / this.ctxScale;
@@ -533,7 +772,7 @@ var SketchView = /** @class */ (function () {
             case "circle":
                 var circle = fig;
                 this.ctx.beginPath();
-                this.ctx.arc(circle.c.x, circle.c.y, circle.r, 0, Math.PI * 2);
+                this.ctx.arc(circle.c.x, circle.c.y, circle.r.value, 0, Math.PI * 2);
                 this.ctx.stroke();
                 break;
         }
@@ -561,33 +800,11 @@ var SketchView = /** @class */ (function () {
         this.ctx.arc(point.x, point.y, size, 0, Math.PI * 2);
         this.ctx.fill();
     };
-    SketchView.prototype.snapPoint = function (point) {
-        if (!this.hoveredFigure)
-            return point;
-        return this.hoveredFigure.getClosestPoint(point);
-    };
-    SketchView.prototype.toggleSelected = function (fig) {
-        if (this.selectedFigures.indexOf(fig) == -1) {
-            this.selectedFigures.push(fig);
-        }
-        else {
-            this.selectedFigures = this.selectedFigures.filter(function (value, index, arr) {
-                return value != fig;
-            });
-        }
-        this.updateSelected();
-    };
-    SketchView.prototype.updateSelected = function () {
-        this.ui.infoPane.setFocusedFigures(this.selectedFigures);
-    };
-    SketchView.prototype.setCursor = function (cursor) {
-        this.canvas.style.cursor = cursor;
-    };
     return SketchView;
 }());
 exports.SketchView = SketchView;
 
-},{"../gcs/figures":2}],9:[function(require,module,exports){
+},{"../gcs/figures":2}],8:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var tools_1 = require("./tools");
@@ -648,7 +865,7 @@ var ToolElement = /** @class */ (function () {
     return ToolElement;
 }());
 
-},{"./tools":10}],10:[function(require,module,exports){
+},{"./tools":9}],9:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -716,6 +933,7 @@ var ActivatableTool = /** @class */ (function (_super) {
             this.toolbar.setActive(null);
             this.active = false;
             if (this.currentFigure != null) {
+                console.log("Pop", this.currentFigure);
                 this.currentFigure = null;
                 main_1.protractr.sketch.rootFigures.pop();
             }
@@ -816,7 +1034,7 @@ var CircleTool = /** @class */ (function (_super) {
     CircleTool.prototype.up = function (point) {
         if (this.currentFigure) {
             if (this.hasSetC) {
-                this.currentFigure.r = this.currentFigure.c.distTo(point);
+                this.currentFigure.r.value = this.currentFigure.c.distTo(point);
                 this.currentFigure = null;
             }
             else {
@@ -831,7 +1049,7 @@ var CircleTool = /** @class */ (function (_super) {
             if (!this.hasSetC) {
                 this.currentFigure.c.set(point);
             }
-            this.currentFigure.r = this.currentFigure.c.distTo(point);
+            this.currentFigure.r.value = this.currentFigure.c.distTo(point);
         }
         else {
             this.hasSetC = false;
@@ -843,7 +1061,7 @@ var CircleTool = /** @class */ (function (_super) {
 }(FigureTool));
 exports.CircleTool = CircleTool;
 
-},{"../gcs/figures":2,"../main":5}],11:[function(require,module,exports){
+},{"../gcs/figures":2,"../main":4}],10:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var toolbar_1 = require("./toolbar");
@@ -860,4 +1078,4 @@ var UI = /** @class */ (function () {
 }());
 exports.UI = UI;
 
-},{"./infopane":7,"./sketchview":8,"./toolbar":9}]},{},[5]);
+},{"./infopane":6,"./sketchview":7,"./toolbar":8}]},{},[4]);

@@ -1,9 +1,22 @@
+import {Variable, VariablePoint} from "./constraint";
+import {protractr} from "../main";
+
 export class Point {
-    x: number;
-    y: number;
+    variablePoint: VariablePoint;
+    get x() {
+        return this.variablePoint.x.value;
+    }
+    get y() {
+        return this.variablePoint.y.value;
+    }
+    set x(v: number) {
+        this.variablePoint.x.value = v;
+    }
+    set y(v: number) {
+        this.variablePoint.y.value = v;
+    }
     constructor(x: number, y: number) {
-        this.x = x;
-        this.y = y;
+        this.variablePoint = new VariablePoint(x, y);
     }
     set(p: Point) {
         this.x = p.x;
@@ -103,6 +116,8 @@ export class PointFigure extends BasicFigure {
     constructor(p: Point, name: string="point") {
         super();
         this.p = p;
+        protractr.sketch.addVariable(this.p.variablePoint.x);
+        protractr.sketch.addVariable(this.p.variablePoint.y);
     }
     getClosestPoint(point: Point): Point {
         return this.p.copy();
@@ -160,21 +175,21 @@ export class LineFigure extends BasicFigure {
 export class CircleFigure extends BasicFigure {
     type = "circle";
     c: Point;
-    r: number;
+    r: Variable;
     childFigures: Figure[];
     parentFigure: Figure;
 
     constructor(c: Point, r: number) {
         super();
         this.c = c;
-        this.r = r;
+        this.r = new Variable(r);
         this.childFigures = [new PointFigure(this.c, "center")];
         this.childFigures[0].parentFigure = this;
     }
     getClosestPoint(point: Point): Point {
-        return this.c.pointTowards(point, this.r);
+        return this.c.pointTowards(point, this.r.value);
     }
     translate(from: Point, to: Point) {
-        this.r = to.distTo(this.c);
+        this.r.value = to.distTo(this.c);
     }
 }

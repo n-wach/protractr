@@ -50,6 +50,7 @@ export class ActivatableTool extends Tool {
             this.toolbar.setActive(null);
             this.active = false;
             if(this.currentFigure != null) {
+                console.log("Pop", this.currentFigure);
                 this.currentFigure = null;
                 protractr.sketch.rootFigures.pop();
             }
@@ -138,7 +139,7 @@ export class CircleTool extends FigureTool {
     up(point) {
         if(this.currentFigure) {
             if(this.hasSetC) {
-                this.currentFigure.r = this.currentFigure.c.distTo(point);
+                this.currentFigure.r.value = this.currentFigure.c.distTo(point);
                 this.currentFigure = null;
             } else {
                 this.hasSetC = true;
@@ -152,7 +153,7 @@ export class CircleTool extends FigureTool {
             if(!this.hasSetC) {
                 this.currentFigure.c.set(point);
             }
-            this.currentFigure.r = this.currentFigure.c.distTo(point);
+            this.currentFigure.r.value = this.currentFigure.c.distTo(point);
         } else {
             this.hasSetC = false;
             this.currentFigure = new CircleFigure(point, 0);
@@ -160,6 +161,4 @@ export class CircleTool extends FigureTool {
         }
     }
 }
-
-
 
