@@ -104,7 +104,7 @@ export class SketchView {
                 if(this.draggedFigure) {
                     this.draggedFigure.setLocked(false);
                     this.draggedFigure = null;
-                    this.sketch.solveConstraints();
+                    this.sketch.solveConstraints(true);
                 }
                 this.dragging = false;
                 break;

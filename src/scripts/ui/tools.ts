@@ -50,7 +50,6 @@ export class ActivatableTool extends Tool {
             this.toolbar.setActive(null);
             this.active = false;
             if(this.currentFigure != null) {
-                console.log("Pop", this.currentFigure);
                 this.currentFigure = null;
                 protractr.sketch.rootFigures.pop();
             }

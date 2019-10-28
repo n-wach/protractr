@@ -146,14 +146,9 @@ class TangentConstraint implements Constraint {
     getGradient(v: Variable): number {
         for(let p of this.points) {
             if(p.x === v || p.y === v) {
-                console.log(this);
                 let center = new Point(this.center.x.value, this.center.y.value);
                 let target = new Point(p.x.value, p.y.value);
                 let goal = center.pointTowards(target, this.radius.value);
-                console.log(center.x, center.y);
-                console.log(target.x, target.y);
-                console.log(goal.x, goal.y);
-                console.log(this.radius.value);
                 if(p.x == v) {
                     return goal.x - v.value;
                 } else {

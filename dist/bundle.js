@@ -164,14 +164,9 @@ var TangentConstraint = /** @class */ (function () {
         for (var _i = 0, _a = this.points; _i < _a.length; _i++) {
             var p = _a[_i];
             if (p.x === v || p.y === v) {
-                console.log(this);
                 var center = new figures_1.Point(this.center.x.value, this.center.y.value);
                 var target = new figures_1.Point(p.x.value, p.y.value);
                 var goal = center.pointTowards(target, this.radius.value);
-                console.log(center.x, center.y);
-                console.log(target.x, target.y);
-                console.log(goal.x, goal.y);
-                console.log(this.radius.value);
                 if (p.x == v) {
                     return goal.x - v.value;
                 }
@@ -519,7 +514,6 @@ exports.CircleFigure = CircleFigure;
 },{"../main":4,"./constraint":1}],3:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var main_1 = require("../main");
 var typeMagnetism = {
     circle: 0,
     line: 0,
@@ -573,7 +567,8 @@ var Sketch = /** @class */ (function () {
             return value != variable;
         });
     };
-    Sketch.prototype.solveConstraints = function () {
+    Sketch.prototype.solveConstraints = function (tirelessSolve) {
+        if (tirelessSolve === void 0) { tirelessSolve = false; }
         var count = 0;
         var previousError = 0;
         while (true) {
@@ -584,31 +579,37 @@ var Sketch = /** @class */ (function () {
             }
             if (totalError < 1)
                 return true;
-            if (count > 30)
+            if (count > 30 && !tirelessSolve)
                 return false;
             var variableGradients = [];
+            var contributorCount = [];
             for (var _b = 0, _c = this.variables; _b < _c.length; _b++) {
                 var variable = _c[_b];
                 var gradient = 0;
+                var count_1 = 0;
                 for (var _d = 0, _e = this.constraints; _d < _e.length; _d++) {
                     var constraint = _e[_d];
-                    gradient += constraint.getGradient(variable);
+                    var g = constraint.getGradient(variable);
+                    if (g != 0) {
+                        gradient += g;
+                        count_1++;
+                    }
                 }
                 variableGradients.push(gradient);
+                contributorCount.push(count_1);
             }
             for (var i = 0; i < variableGradients.length; i++) {
-                this.variables[i].value += variableGradients[i] / (count + 1);
+                this.variables[i].value += variableGradients[i] / (1 + contributorCount[i]);
             }
             count += 1;
             previousError = totalError;
-            main_1.protractr.ui.sketchView.draw();
         }
     };
     return Sketch;
 }());
 exports.Sketch = Sketch;
 
-},{"../main":4}],4:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var protractr_1 = require("./protractr");
@@ -783,7 +784,7 @@ var SketchView = /** @class */ (function () {
                 if (this.draggedFigure) {
                     this.draggedFigure.setLocked(false);
                     this.draggedFigure = null;
-                    this.sketch.solveConstraints();
+                    this.sketch.solveConstraints(true);
                 }
                 this.dragging = false;
                 break;
@@ -1044,7 +1045,6 @@ var ActivatableTool = /** @class */ (function (_super) {
             this.toolbar.setActive(null);
             this.active = false;
             if (this.currentFigure != null) {
-                console.log("Pop", this.currentFigure);
                 this.currentFigure = null;
                 main_1.protractr.sketch.rootFigures.pop();
             }

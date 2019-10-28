@@ -54,7 +54,7 @@ export class Sketch {
             return value != variable;
         });
     }
-    solveConstraints(): boolean {
+    solveConstraints(tirelessSolve:boolean=false): boolean {
         let count = 0;
         let previousError = 0;
         while(true) {
@@ -63,21 +63,27 @@ export class Sketch {
                 totalError += constraint.getError();
             }
             if (totalError < 1) return true;
-            if (count > 30) return false;
+            if (count > 30 && !tirelessSolve) return false;
             let variableGradients = [];
+            let contributorCount = [];
             for (let variable of this.variables) {
                 let gradient = 0;
+                let count = 0;
                 for (let constraint of this.constraints) {
-                    gradient += constraint.getGradient(variable);
+                    let g = constraint.getGradient(variable);
+                    if(g != 0) {
+                        gradient += g;
+                        count++;
+                    }
                 }
                 variableGradients.push(gradient);
+                contributorCount.push(count);
             }
             for (let i = 0; i < variableGradients.length; i++) {
-                this.variables[i].value += variableGradients[i] / (count + 1);
+                this.variables[i].value += variableGradients[i] / (1 + contributorCount[i]);
             }
             count += 1;
             previousError = totalError;
-            protractr.ui.sketchView.draw();
         }
     }
 }
