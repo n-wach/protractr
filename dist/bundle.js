@@ -14,6 +14,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+var figures_1 = require("./figures");
 var Variable = /** @class */ (function () {
     function Variable(v) {
         this.value = v;
@@ -143,6 +144,57 @@ var VerticalConstraint = /** @class */ (function (_super) {
     }
     return VerticalConstraint;
 }(EqualConstraint));
+var TangentConstraint = /** @class */ (function () {
+    function TangentConstraint(center, radius, points) {
+        this.center = center;
+        this.radius = radius;
+        this.points = points;
+    }
+    TangentConstraint.prototype.getError = function () {
+        var error = 0;
+        for (var _i = 0, _a = this.points; _i < _a.length; _i++) {
+            var p = _a[_i];
+            var dx = p.x.value - this.center.x.value;
+            var dy = p.y.value - this.center.y.value;
+            error += Math.abs(this.radius.value - Math.sqrt(dx * dx + dy * dy));
+        }
+        return error;
+    };
+    TangentConstraint.prototype.getGradient = function (v) {
+        for (var _i = 0, _a = this.points; _i < _a.length; _i++) {
+            var p = _a[_i];
+            if (p.x === v || p.y === v) {
+                console.log(this);
+                var center = new figures_1.Point(this.center.x.value, this.center.y.value);
+                var target = new figures_1.Point(p.x.value, p.y.value);
+                var goal = center.pointTowards(target, this.radius.value);
+                console.log(center.x, center.y);
+                console.log(target.x, target.y);
+                console.log(goal.x, goal.y);
+                console.log(this.radius.value);
+                if (p.x == v) {
+                    return goal.x - v.value;
+                }
+                else {
+                    return goal.y - v.value;
+                }
+            }
+        }
+        if (v === this.radius) {
+            var totalDist = 0;
+            for (var _b = 0, _c = this.points; _b < _c.length; _b++) {
+                var p = _c[_b];
+                var dx = p.x.value - this.center.x.value;
+                var dy = p.y.value - this.center.y.value;
+                totalDist += Math.sqrt(dx * dx + dy * dy);
+            }
+            var averageRadius = totalDist / this.points.length;
+            return averageRadius - v.value;
+        }
+        return 0;
+    };
+    return TangentConstraint;
+}());
 var ConstraintPossibility = /** @class */ (function () {
     function ConstraintPossibility(requiredTypes, possibleConstraint) {
         this.requiredTypes = requiredTypes;
@@ -154,8 +206,8 @@ var ConstraintPossibility = /** @class */ (function () {
     ConstraintPossibility.prototype.makeConstraint = function (figures) {
         if (this.possibleConstraint == "horizontal") {
             var points = [];
-            for (var _i = 0, figures_1 = figures; _i < figures_1.length; _i++) {
-                var fig = figures_1[_i];
+            for (var _i = 0, figures_2 = figures; _i < figures_2.length; _i++) {
+                var fig = figures_2[_i];
                 points.push(fig.p1.variablePoint);
                 points.push(fig.p2.variablePoint);
             }
@@ -163,8 +215,8 @@ var ConstraintPossibility = /** @class */ (function () {
         }
         if (this.possibleConstraint == "vertical") {
             var points = [];
-            for (var _a = 0, figures_2 = figures; _a < figures_2.length; _a++) {
-                var fig = figures_2[_a];
+            for (var _a = 0, figures_3 = figures; _a < figures_3.length; _a++) {
+                var fig = figures_3[_a];
                 points.push(fig.p1.variablePoint);
                 points.push(fig.p2.variablePoint);
             }
@@ -172,11 +224,26 @@ var ConstraintPossibility = /** @class */ (function () {
         }
         if (this.possibleConstraint == "coincident") {
             var points = [];
-            for (var _b = 0, figures_3 = figures; _b < figures_3.length; _b++) {
-                var fig = figures_3[_b];
+            for (var _b = 0, figures_4 = figures; _b < figures_4.length; _b++) {
+                var fig = figures_4[_b];
                 points.push(fig.p.variablePoint);
             }
             return new CoincidentConstraint(points);
+        }
+        if (this.possibleConstraint == "tangent") {
+            var points = [];
+            var circle = null;
+            for (var _c = 0, figures_5 = figures; _c < figures_5.length; _c++) {
+                var fig = figures_5[_c];
+                if (fig.type == "point") {
+                    points.push(fig.p.variablePoint);
+                    continue;
+                }
+                if (fig.type == "circle") {
+                    circle = fig;
+                }
+            }
+            return new TangentConstraint(circle.c.variablePoint, circle.r, points);
         }
         return undefined;
     };
@@ -217,7 +284,7 @@ function getPossibleConstraints(figs) {
 }
 exports.getPossibleConstraints = getPossibleConstraints;
 
-},{}],2:[function(require,module,exports){
+},{"./figures":2}],2:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -277,6 +344,11 @@ var Point = /** @class */ (function () {
     };
     Point.prototype.normalizeSelf = function () {
         var length = this.distTo(ORIGIN);
+        if (length == 0) {
+            this.x = 0;
+            this.y = 1;
+            return this;
+        }
         this.x /= length;
         this.y /= length;
         return this;
@@ -425,6 +497,7 @@ var CircleFigure = /** @class */ (function (_super) {
         _this.type = "circle";
         _this.c = c;
         _this.r = new constraint_1.Variable(r);
+        main_1.protractr.sketch.addVariable(_this.r);
         _this.childFigures = [new PointFigure(_this.c, "center")];
         _this.childFigures[0].parentFigure = _this;
         return _this;
@@ -694,6 +767,7 @@ var SketchView = /** @class */ (function () {
                     this.draggedFigure.translate(this.lastFigureDrag, point.copy());
                     this.draggedFigure.setLocked(true);
                     this.lastFigureDrag = point.copy();
+                    this.sketch.solveConstraints();
                 }
                 break;
             case "mouseup":
@@ -709,6 +783,7 @@ var SketchView = /** @class */ (function () {
                 if (this.draggedFigure) {
                     this.draggedFigure.setLocked(false);
                     this.draggedFigure = null;
+                    this.sketch.solveConstraints();
                 }
                 this.dragging = false;
                 break;
@@ -720,7 +795,7 @@ var SketchView = /** @class */ (function () {
         var scaled = new figures_1.Point(offset.x / this.ctxScale, offset.y / this.ctxScale);
         var point = new figures_1.Point(scaled.x - this.ctxOrigin.x / this.ctxScale, scaled.y - this.ctxOrigin.y / this.ctxScale);
         this.updateHover(point);
-        var snapPoint = this.snapPoint(point);
+        var snapPoint = point; //this.snapPoint(point);
         if (event.type == "wheel") {
             this.handleZoomEvent(event.deltaY, point);
         }
@@ -733,7 +808,6 @@ var SketchView = /** @class */ (function () {
             }
             else {
                 this.handleDragEvent(event.type, snapPoint);
-                this.sketch.solveConstraints();
             }
         }
         this.draw();
@@ -747,7 +821,6 @@ var SketchView = /** @class */ (function () {
         if (this.draggedFigure && this.dragging) {
             ignoredFigures.push.apply(ignoredFigures, this.draggedFigure.getRelatedFigures());
         }
-        console.log("Ignored figures", ignoredFigures);
         closest = this.sketch.getClosestFigure(point, ignoredFigures);
         if (closest != null && closest.getClosestPoint(point).distTo(point) > 10 / this.ctxScale) {
             closest = null;
@@ -821,7 +894,6 @@ var SketchView = /** @class */ (function () {
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
         this.ctx.translate(this.ctxOrigin.x, this.ctxOrigin.y);
         this.ctx.scale(this.ctxScale, this.ctxScale);
-        console.log(this.ctxScale);
         for (var _i = 0, _a = this.sketch.rootFigures; _i < _a.length; _i++) {
             var fig = _a[_i];
             for (var _b = 0, _c = fig.getRelatedFigures(); _b < _c.length; _b++) {

@@ -89,6 +89,7 @@ export class SketchView {
                     this.draggedFigure.translate(this.lastFigureDrag, point.copy());
                     this.draggedFigure.setLocked(true);
                     this.lastFigureDrag = point.copy();
+                    this.sketch.solveConstraints();
                 }
                 break;
             case "mouseup":
@@ -103,6 +104,7 @@ export class SketchView {
                 if(this.draggedFigure) {
                     this.draggedFigure.setLocked(false);
                     this.draggedFigure = null;
+                    this.sketch.solveConstraints();
                 }
                 this.dragging = false;
                 break;
@@ -114,7 +116,7 @@ export class SketchView {
         let scaled = new Point(offset.x / this.ctxScale, offset.y / this.ctxScale);
         let point = new Point(scaled.x - this.ctxOrigin.x / this.ctxScale, scaled.y - this.ctxOrigin.y / this.ctxScale);
         this.updateHover(point);
-        let snapPoint = this.snapPoint(point);
+        let snapPoint = point; //this.snapPoint(point);
         if(event.type == "wheel") {
             this.handleZoomEvent(event.deltaY, point);
         }
@@ -126,7 +128,6 @@ export class SketchView {
                 this.handleToolEvent(event.type, snapPoint);
             } else {
                 this.handleDragEvent(event.type, snapPoint);
-                this.sketch.solveConstraints();
             }
         }
         this.draw();
@@ -140,7 +141,6 @@ export class SketchView {
         if(this.draggedFigure && this.dragging) {
             ignoredFigures.push.apply(ignoredFigures, this.draggedFigure.getRelatedFigures());
         }
-        console.log("Ignored figures", ignoredFigures);
         closest = this.sketch.getClosestFigure(point, ignoredFigures);
         if(closest != null && closest.getClosestPoint(point).distTo(point) > 10 / this.ctxScale) {
             closest = null;
@@ -157,7 +157,6 @@ export class SketchView {
     }
     snapPoint(point: Point): Point {
         if(!this.hoveredFigure) return point;
-
         return this.hoveredFigure.getClosestPoint(point);
     }
     toggleSelected(fig: Figure) {
@@ -213,7 +212,6 @@ export class SketchView {
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
         this.ctx.translate(this.ctxOrigin.x, this.ctxOrigin.y);
         this.ctx.scale(this.ctxScale, this.ctxScale);
-        console.log(this.ctxScale);
         for(let fig of this.sketch.rootFigures) {
             for(let child of fig.getRelatedFigures()) {
                 this.drawFigure(child);

@@ -1,4 +1,4 @@
-import {Figure, LineFigure, PointFigure} from "./figures";
+import {CircleFigure, Figure, LineFigure, Point, PointFigure} from "./figures";
 
 export class Variable {
     _value: number;
@@ -125,6 +125,56 @@ class VerticalConstraint extends EqualConstraint {
 }
 
 
+class TangentConstraint implements Constraint {
+    center: VariablePoint;
+    radius: Variable;
+    points: VariablePoint[];
+    constructor(center: VariablePoint, radius: Variable, points: VariablePoint[]) {
+        this.center = center;
+        this.radius = radius;
+        this.points = points;
+    }
+    getError(): number {
+        let error = 0;
+        for(let p of this.points) {
+            let dx = p.x.value - this.center.x.value;
+            let dy = p.y.value - this.center.y.value;
+            error += Math.abs(this.radius.value - Math.sqrt(dx * dx + dy * dy));
+        }
+        return error;
+    }
+    getGradient(v: Variable): number {
+        for(let p of this.points) {
+            if(p.x === v || p.y === v) {
+                console.log(this);
+                let center = new Point(this.center.x.value, this.center.y.value);
+                let target = new Point(p.x.value, p.y.value);
+                let goal = center.pointTowards(target, this.radius.value);
+                console.log(center.x, center.y);
+                console.log(target.x, target.y);
+                console.log(goal.x, goal.y);
+                console.log(this.radius.value);
+                if(p.x == v) {
+                    return goal.x - v.value;
+                } else {
+                    return goal.y - v.value;
+                }
+            }
+        }
+        if(v === this.radius) {
+            let totalDist = 0;
+            for(let p of this.points) {
+                let dx = p.x.value - this.center.x.value;
+                let dy = p.y.value - this.center.y.value;
+                totalDist += Math.sqrt(dx * dx + dy * dy);
+            }
+            let averageRadius = totalDist / this.points.length;
+            return averageRadius - v.value;
+        }
+        return 0;
+    }
+}
+
 class ConstraintPossibility {
     requiredTypes: string[];
     possibleConstraint: string;
@@ -158,6 +208,20 @@ class ConstraintPossibility {
                 points.push((fig as PointFigure).p.variablePoint);
             }
             return new CoincidentConstraint(points)
+        }
+        if(this.possibleConstraint == "tangent") {
+            let points: VariablePoint[] = [];
+            let circle: CircleFigure = null;
+            for(let fig of figures) {
+                if(fig.type == "point") {
+                    points.push((fig as PointFigure).p.variablePoint);
+                    continue;
+                }
+                if(fig.type == "circle") {
+                    circle = fig as CircleFigure;
+                }
+            }
+            return new TangentConstraint(circle.c.variablePoint, circle.r, points);
         }
         return undefined;
     }

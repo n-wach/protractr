@@ -36,6 +36,11 @@ export class Point {
     }
     normalizeSelf() {
         let length = this.distTo(ORIGIN);
+        if(length == 0) {
+            this.x = 0;
+            this.y = 1;
+            return this;
+        }
         this.x /= length;
         this.y /= length;
         return this;
@@ -194,6 +199,7 @@ export class CircleFigure extends BasicFigure {
         super();
         this.c = c;
         this.r = new Variable(r);
+        protractr.sketch.addVariable(this.r);
         this.childFigures = [new PointFigure(this.c, "center")];
         this.childFigures[0].parentFigure = this;
     }
