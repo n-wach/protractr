@@ -22,6 +22,9 @@ export class VariablePoint {
         this.x = new Variable(x);
         this.y = new Variable(y);
     }
+    toPoint(): Point {
+        return new Point(this.x.value, this.y.value);
+    }
 }
 
 function sum(vals: Variable[]): number {
@@ -146,8 +149,8 @@ export class TangentConstraint implements Constraint {
     getGradient(v: Variable): number {
         for(let p of this.points) {
             if(p.x === v || p.y === v) {
-                let center = new Point(this.center.x.value, this.center.y.value);
-                let target = new Point(p.x.value, p.y.value);
+                let center = this.center.toPoint();
+                let target = p.toPoint()
                 let goal = center.pointTowards(target, this.radius.value);
                 if(p.x == v) {
                     return goal.x - v.value;
@@ -165,6 +168,60 @@ export class TangentConstraint implements Constraint {
             }
             let averageRadius = totalDist / this.points.length;
             return averageRadius - v.value;
+        }
+        //TODO add gradients for center of circle.  look for that one stack overflow post again
+        return 0;
+    }
+}
+
+export class LineMidpointConstraint implements Constraint {
+    p1: VariablePoint;
+    p2: VariablePoint;
+    midpoint: VariablePoint;
+    constructor(p1: VariablePoint, p2: VariablePoint, midpoint: VariablePoint) {
+        this.p1 = p1;
+        this.p2 = p2;
+        this.midpoint = midpoint;
+    }
+    getError(): number {
+        //distance between midpoint and average of two points
+        let avgX = (this.p1.x.value + this.p2.x.value) / 2;
+        let avgY = (this.p1.y.value + this.p2.y.value) / 2;
+        let dx = this.midpoint.x.value - avgX;
+        let dy = this.midpoint.y.value - avgY;
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+    getGradient(v: Variable): number {
+        if(v === this.midpoint.x) {
+            let avgX = (this.p1.x.value + this.p2.x.value) / 2;
+            return avgX - v.value;
+        } else if (v === this.midpoint.y) {
+            let avgY = (this.p1.y.value + this.p2.y.value) / 2;
+            return avgY - v.value;
+        } else if (v === this.p1.x || v === this.p1.y) {
+            let p2 = this.p2.toPoint();
+            let midpoint = this.midpoint.toPoint();
+            let halfDist = p2.distTo(midpoint);
+            let fullDist = halfDist * 2;
+            let goalP1 = p2.pointTowards(midpoint, fullDist);
+
+            if(this.p1.x == v) {
+                return goalP1.x - v.value;
+            } else {
+                return goalP1.y - v.value;
+            }
+        } else if (v === this.p2.x || v === this.p2.y) {
+            let p1 = this.p1.toPoint();
+            let midpoint = this.midpoint.toPoint();
+            let halfDist = p1.distTo(midpoint);
+            let fullDist = halfDist * 2;
+            let goalP2 = p1.pointTowards(midpoint, fullDist);
+
+            if(this.p2.x == v) {
+                return goalP2.x - v.value;
+            } else {
+                return goalP2.y - v.value;
+            }
         }
         return 0;
     }

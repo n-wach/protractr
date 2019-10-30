@@ -1,7 +1,7 @@
 import {CircleFigure, Figure, LineFigure, PointFigure} from "./figures";
 import {
     CoincidentPointConstraint, Constraint,
-    HorizontalConstraint, LockConstraint,
+    HorizontalConstraint, LineMidpointConstraint, LockConstraint,
     TangentConstraint,
     VariablePoint,
     VerticalConstraint
@@ -109,6 +109,7 @@ class ArcPointCoincidentFilter implements ConstraintFilter {
             if(fig.type == "point") {
                 hasPoints = true;
             } else if (fig.type == "circle") {
+                if(hasCircle) return false;
                 hasCircle = true;
             }
         }
@@ -128,6 +129,36 @@ class ArcPointCoincidentFilter implements ConstraintFilter {
     }
 }
 
+class LineMidpointCoincidentFilter implements ConstraintFilter {
+    name: string = "midpoint";
+    validFigures(figs: Figure[]) {
+        let hasLine = false;
+        let hasPoint = false;
+        for(let fig of figs) {
+            if(fig.type == "point") {
+                if(hasPoint) return false;
+                hasPoint = true;
+            } else if (fig.type == "line") {
+                if(hasLine) return false;
+                hasLine = true;
+            }
+        }
+        return hasPoint && hasLine;
+    }
+    createConstraints(figs: Figure[]) {
+        let point: PointFigure = null;
+        let line: LineFigure = null;
+        for(let fig of figs) {
+            if(fig.type == "point") {
+                point = fig as PointFigure;
+            } else if(fig.type == "line") {
+                line = fig as LineFigure;
+            }
+        }
+        return [new LineMidpointConstraint(line.p1.variablePoint, line.p2.variablePoint, point.p.variablePoint)];
+    }
+}
+
 let possibleConstraints = [
     new CoincidentPointFilter(),
     new HorizontalPointFilter(),
@@ -135,6 +166,7 @@ let possibleConstraints = [
     new VerticalPointFilter(),
     new VerticalLineFilter(),
     new ArcPointCoincidentFilter(),
+    new LineMidpointCoincidentFilter(),
 ];
 
 export function getSatisfiedConstraintFilters(figs: Figure[]): ConstraintFilter[] {

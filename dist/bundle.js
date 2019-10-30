@@ -39,6 +39,9 @@ var VariablePoint = /** @class */ (function () {
         this.x = new Variable(x);
         this.y = new Variable(y);
     }
+    VariablePoint.prototype.toPoint = function () {
+        return new figures_1.Point(this.x.value, this.y.value);
+    };
     return VariablePoint;
 }());
 exports.VariablePoint = VariablePoint;
@@ -169,8 +172,8 @@ var TangentConstraint = /** @class */ (function () {
         for (var _i = 0, _a = this.points; _i < _a.length; _i++) {
             var p = _a[_i];
             if (p.x === v || p.y === v) {
-                var center = new figures_1.Point(this.center.x.value, this.center.y.value);
-                var target = new figures_1.Point(p.x.value, p.y.value);
+                var center = this.center.toPoint();
+                var target = p.toPoint();
                 var goal = center.pointTowards(target, this.radius.value);
                 if (p.x == v) {
                     return goal.x - v.value;
@@ -191,11 +194,66 @@ var TangentConstraint = /** @class */ (function () {
             var averageRadius = totalDist / this.points.length;
             return averageRadius - v.value;
         }
+        //TODO add gradients for center of circle.  look for that one stack overflow post again
         return 0;
     };
     return TangentConstraint;
 }());
 exports.TangentConstraint = TangentConstraint;
+var LineMidpointConstraint = /** @class */ (function () {
+    function LineMidpointConstraint(p1, p2, midpoint) {
+        this.p1 = p1;
+        this.p2 = p2;
+        this.midpoint = midpoint;
+    }
+    LineMidpointConstraint.prototype.getError = function () {
+        //distance between midpoint and average of two points
+        var avgX = (this.p1.x.value + this.p2.x.value) / 2;
+        var avgY = (this.p1.y.value + this.p2.y.value) / 2;
+        var dx = this.midpoint.x.value - avgX;
+        var dy = this.midpoint.y.value - avgY;
+        return Math.sqrt(dx * dx + dy * dy);
+    };
+    LineMidpointConstraint.prototype.getGradient = function (v) {
+        if (v === this.midpoint.x) {
+            var avgX = (this.p1.x.value + this.p2.x.value) / 2;
+            return avgX - v.value;
+        }
+        else if (v === this.midpoint.y) {
+            var avgY = (this.p1.y.value + this.p2.y.value) / 2;
+            return avgY - v.value;
+        }
+        else if (v === this.p1.x || v === this.p1.y) {
+            var p2 = this.p2.toPoint();
+            var midpoint = this.midpoint.toPoint();
+            var halfDist = p2.distTo(midpoint);
+            var fullDist = halfDist * 2;
+            var goalP1 = p2.pointTowards(midpoint, fullDist);
+            if (this.p1.x == v) {
+                return goalP1.x - v.value;
+            }
+            else {
+                return goalP1.y - v.value;
+            }
+        }
+        else if (v === this.p2.x || v === this.p2.y) {
+            var p1 = this.p1.toPoint();
+            var midpoint = this.midpoint.toPoint();
+            var halfDist = p1.distTo(midpoint);
+            var fullDist = halfDist * 2;
+            var goalP2 = p1.pointTowards(midpoint, fullDist);
+            if (this.p2.x == v) {
+                return goalP2.x - v.value;
+            }
+            else {
+                return goalP2.y - v.value;
+            }
+        }
+        return 0;
+    };
+    return LineMidpointConstraint;
+}());
+exports.LineMidpointConstraint = LineMidpointConstraint;
 
 },{"./figures":3}],2:[function(require,module,exports){
 "use strict";
@@ -327,6 +385,8 @@ var ArcPointCoincidentFilter = /** @class */ (function () {
                 hasPoints = true;
             }
             else if (fig.type == "circle") {
+                if (hasCircle)
+                    return false;
                 hasCircle = true;
             }
         }
@@ -348,15 +408,54 @@ var ArcPointCoincidentFilter = /** @class */ (function () {
     };
     return ArcPointCoincidentFilter;
 }());
+var LineMidpointCoincidentFilter = /** @class */ (function () {
+    function LineMidpointCoincidentFilter() {
+        this.name = "midpoint";
+    }
+    LineMidpointCoincidentFilter.prototype.validFigures = function (figs) {
+        var hasLine = false;
+        var hasPoint = false;
+        for (var _i = 0, figs_8 = figs; _i < figs_8.length; _i++) {
+            var fig = figs_8[_i];
+            if (fig.type == "point") {
+                if (hasPoint)
+                    return false;
+                hasPoint = true;
+            }
+            else if (fig.type == "line") {
+                if (hasLine)
+                    return false;
+                hasLine = true;
+            }
+        }
+        return hasPoint && hasLine;
+    };
+    LineMidpointCoincidentFilter.prototype.createConstraints = function (figs) {
+        var point = null;
+        var line = null;
+        for (var _i = 0, figs_9 = figs; _i < figs_9.length; _i++) {
+            var fig = figs_9[_i];
+            if (fig.type == "point") {
+                point = fig;
+            }
+            else if (fig.type == "line") {
+                line = fig;
+            }
+        }
+        return [new constraint_1.LineMidpointConstraint(line.p1.variablePoint, line.p2.variablePoint, point.p.variablePoint)];
+    };
+    return LineMidpointCoincidentFilter;
+}());
 var possibleConstraints = [
     new CoincidentPointFilter(),
     new HorizontalPointFilter(),
     new HorizontalLineFilter(),
     new VerticalPointFilter(),
     new VerticalLineFilter(),
-    new ArcPointCoincidentFilter()
+    new ArcPointCoincidentFilter(),
+    new LineMidpointCoincidentFilter(),
 ];
-function getPossibleConstraints(figs) {
+function getSatisfiedConstraintFilters(figs) {
     var possibilities = [];
     for (var _i = 0, possibleConstraints_1 = possibleConstraints; _i < possibleConstraints_1.length; _i++) {
         var pc = possibleConstraints_1[_i];
@@ -365,7 +464,7 @@ function getPossibleConstraints(figs) {
     }
     return possibilities;
 }
-exports.getPossibleConstraints = getPossibleConstraints;
+exports.getSatisfiedConstraintFilters = getSatisfiedConstraintFilters;
 
 },{"./constraint":1}],3:[function(require,module,exports){
 "use strict";
@@ -776,7 +875,7 @@ var InfoPane = /** @class */ (function () {
             this_1.possibleConstraints.appendChild(child);
         };
         var this_1 = this;
-        for (var _i = 0, _a = constraint_filter_1.getPossibleConstraints(figures); _i < _a.length; _i++) {
+        for (var _i = 0, _a = constraint_filter_1.getSatisfiedConstraintFilters(figures); _i < _a.length; _i++) {
             var pc = _a[_i];
             _loop_1(pc);
         }
