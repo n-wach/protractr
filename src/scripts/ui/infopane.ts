@@ -1,6 +1,6 @@
 import {Figure} from "../gcs/figures";
-import {getPossibleConstraints} from "../gcs/constraint";
 import {protractr} from "../main";
+import {getSatisfiedConstraintFilters} from "../gcs/constraint_filter";
 
 export class InfoPane {
     sidePane: HTMLDivElement;
@@ -30,12 +30,11 @@ export class InfoPane {
         while(this.possibleConstraints.lastChild) {
             this.possibleConstraints.removeChild(this.possibleConstraints.lastChild);
         }
-        for(let pc of getPossibleConstraints(figures)) {
+        for(let pc of getSatisfiedConstraintFilters(figures)) {
             let child = document.createElement("button");
-            child.innerText = pc.possibleConstraint;
+            child.innerText = pc.name;
             child.addEventListener("click", function () {
-                let constraint = pc.makeConstraint(figures);
-                if(constraint != undefined) protractr.sketch.addConstraint(constraint);
+                protractr.sketch.addConstraints(pc.createConstraints(figures));
             });
             this.possibleConstraints.appendChild(child);
         }

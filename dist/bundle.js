@@ -81,8 +81,9 @@ var EqualConstraint = /** @class */ (function () {
     };
     return EqualConstraint;
 }());
-var CoincidentConstraint = /** @class */ (function () {
-    function CoincidentConstraint(points) {
+exports.EqualConstraint = EqualConstraint;
+var CoincidentPointConstraint = /** @class */ (function () {
+    function CoincidentPointConstraint(points) {
         var xs = [];
         var ys = [];
         for (var _i = 0, points_1 = points; _i < points_1.length; _i++) {
@@ -93,14 +94,15 @@ var CoincidentConstraint = /** @class */ (function () {
         this.xEqual = new EqualConstraint(xs);
         this.yEqual = new EqualConstraint(ys);
     }
-    CoincidentConstraint.prototype.getError = function () {
+    CoincidentPointConstraint.prototype.getError = function () {
         return this.xEqual.getError() + this.yEqual.getError();
     };
-    CoincidentConstraint.prototype.getGradient = function (v) {
+    CoincidentPointConstraint.prototype.getGradient = function (v) {
         return this.xEqual.getGradient(v) + this.yEqual.getGradient(v);
     };
-    return CoincidentConstraint;
+    return CoincidentPointConstraint;
 }());
+exports.CoincidentPointConstraint = CoincidentPointConstraint;
 var LockConstraint = /** @class */ (function () {
     function LockConstraint(val) {
         this.variable = val;
@@ -116,6 +118,7 @@ var LockConstraint = /** @class */ (function () {
     };
     return LockConstraint;
 }());
+exports.LockConstraint = LockConstraint;
 var HorizontalConstraint = /** @class */ (function (_super) {
     __extends(HorizontalConstraint, _super);
     function HorizontalConstraint(points) {
@@ -130,6 +133,7 @@ var HorizontalConstraint = /** @class */ (function (_super) {
     }
     return HorizontalConstraint;
 }(EqualConstraint));
+exports.HorizontalConstraint = HorizontalConstraint;
 var VerticalConstraint = /** @class */ (function (_super) {
     __extends(VerticalConstraint, _super);
     function VerticalConstraint(points) {
@@ -144,6 +148,7 @@ var VerticalConstraint = /** @class */ (function (_super) {
     }
     return VerticalConstraint;
 }(EqualConstraint));
+exports.VerticalConstraint = VerticalConstraint;
 var TangentConstraint = /** @class */ (function () {
     function TangentConstraint(center, radius, points) {
         this.center = center;
@@ -190,96 +195,179 @@ var TangentConstraint = /** @class */ (function () {
     };
     return TangentConstraint;
 }());
-var ConstraintPossibility = /** @class */ (function () {
-    function ConstraintPossibility(requiredTypes, possibleConstraint) {
-        this.requiredTypes = requiredTypes;
-        this.possibleConstraint = possibleConstraint;
+exports.TangentConstraint = TangentConstraint;
+
+},{"./figures":3}],2:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var constraint_1 = require("./constraint");
+var HorizontalPointFilter = /** @class */ (function () {
+    function HorizontalPointFilter() {
+        this.name = "horizontal";
     }
-    ConstraintPossibility.prototype.satisfiesTypes = function (s) {
-        return s.sort().join("") == this.requiredTypes.sort().join("");
+    HorizontalPointFilter.prototype.validFigures = function (figs) {
+        for (var _i = 0, figs_1 = figs; _i < figs_1.length; _i++) {
+            var fig = figs_1[_i];
+            if (fig.type != "point")
+                return false;
+        }
+        return figs.length > 1;
     };
-    ConstraintPossibility.prototype.makeConstraint = function (figures) {
-        if (this.possibleConstraint == "horizontal") {
-            var points = [];
-            for (var _i = 0, figures_2 = figures; _i < figures_2.length; _i++) {
-                var fig = figures_2[_i];
-                points.push(fig.p1.variablePoint);
-                points.push(fig.p2.variablePoint);
-            }
-            return new HorizontalConstraint(points);
+    HorizontalPointFilter.prototype.createConstraints = function (figs) {
+        var points = [];
+        for (var _i = 0, _a = figs; _i < _a.length; _i++) {
+            var fig = _a[_i];
+            points.push(fig.p.variablePoint);
         }
-        if (this.possibleConstraint == "vertical") {
-            var points = [];
-            for (var _a = 0, figures_3 = figures; _a < figures_3.length; _a++) {
-                var fig = figures_3[_a];
-                points.push(fig.p1.variablePoint);
-                points.push(fig.p2.variablePoint);
-            }
-            return new VerticalConstraint(points);
+        return [new constraint_1.HorizontalConstraint(points)];
+    };
+    return HorizontalPointFilter;
+}());
+var VerticalPointFilter = /** @class */ (function () {
+    function VerticalPointFilter() {
+        this.name = "vertical";
+    }
+    VerticalPointFilter.prototype.validFigures = function (figs) {
+        for (var _i = 0, figs_2 = figs; _i < figs_2.length; _i++) {
+            var fig = figs_2[_i];
+            if (fig.type != "point")
+                return false;
         }
-        if (this.possibleConstraint == "coincident") {
-            var points = [];
-            for (var _b = 0, figures_4 = figures; _b < figures_4.length; _b++) {
-                var fig = figures_4[_b];
+        return figs.length > 1;
+    };
+    VerticalPointFilter.prototype.createConstraints = function (figs) {
+        var points = [];
+        for (var _i = 0, _a = figs; _i < _a.length; _i++) {
+            var fig = _a[_i];
+            points.push(fig.p.variablePoint);
+        }
+        return [new constraint_1.VerticalConstraint(points)];
+    };
+    return VerticalPointFilter;
+}());
+var VerticalLineFilter = /** @class */ (function () {
+    function VerticalLineFilter() {
+        this.name = "vertical";
+    }
+    VerticalLineFilter.prototype.validFigures = function (figs) {
+        for (var _i = 0, figs_3 = figs; _i < figs_3.length; _i++) {
+            var fig = figs_3[_i];
+            if (fig.type != "line")
+                return false;
+        }
+        return figs.length > 1;
+    };
+    VerticalLineFilter.prototype.createConstraints = function (figs) {
+        var constraints = [];
+        for (var _i = 0, _a = figs; _i < _a.length; _i++) {
+            var line = _a[_i];
+            constraints.push(new constraint_1.VerticalConstraint([line.p1.variablePoint, line.p2.variablePoint]));
+        }
+        return constraints;
+    };
+    return VerticalLineFilter;
+}());
+var HorizontalLineFilter = /** @class */ (function () {
+    function HorizontalLineFilter() {
+        this.name = "horizontal";
+    }
+    HorizontalLineFilter.prototype.validFigures = function (figs) {
+        for (var _i = 0, figs_4 = figs; _i < figs_4.length; _i++) {
+            var fig = figs_4[_i];
+            if (fig.type != "line")
+                return false;
+        }
+        return figs.length > 1;
+    };
+    HorizontalLineFilter.prototype.createConstraints = function (figs) {
+        var constraints = [];
+        for (var _i = 0, _a = figs; _i < _a.length; _i++) {
+            var line = _a[_i];
+            constraints.push(new constraint_1.HorizontalConstraint([line.p1.variablePoint, line.p2.variablePoint]));
+        }
+        return constraints;
+    };
+    return HorizontalLineFilter;
+}());
+var CoincidentPointFilter = /** @class */ (function () {
+    function CoincidentPointFilter() {
+        this.name = "coincident";
+    }
+    CoincidentPointFilter.prototype.validFigures = function (figs) {
+        var count = 0;
+        for (var _i = 0, figs_5 = figs; _i < figs_5.length; _i++) {
+            var fig = figs_5[_i];
+            if (fig.type == "point")
+                count += 1;
+            else
+                return false;
+        }
+        return count > 1;
+    };
+    CoincidentPointFilter.prototype.createConstraints = function (figs) {
+        var points = [];
+        for (var _i = 0, _a = figs; _i < _a.length; _i++) {
+            var fig = _a[_i];
+            points.push(fig.p.variablePoint);
+        }
+        return [new constraint_1.CoincidentPointConstraint(points)];
+    };
+    return CoincidentPointFilter;
+}());
+var ArcPointCoincidentFilter = /** @class */ (function () {
+    function ArcPointCoincidentFilter() {
+        this.name = "coincident";
+    }
+    ArcPointCoincidentFilter.prototype.validFigures = function (figs) {
+        var hasCircle = false;
+        var hasPoints = false;
+        for (var _i = 0, figs_6 = figs; _i < figs_6.length; _i++) {
+            var fig = figs_6[_i];
+            if (fig.type == "point") {
+                hasPoints = true;
+            }
+            else if (fig.type == "circle") {
+                hasCircle = true;
+            }
+        }
+        return hasPoints && hasCircle;
+    };
+    ArcPointCoincidentFilter.prototype.createConstraints = function (figs) {
+        var points = [];
+        var circle = null;
+        for (var _i = 0, figs_7 = figs; _i < figs_7.length; _i++) {
+            var fig = figs_7[_i];
+            if (fig.type == "point") {
                 points.push(fig.p.variablePoint);
             }
-            return new CoincidentConstraint(points);
-        }
-        if (this.possibleConstraint == "tangent") {
-            var points = [];
-            var circle = null;
-            for (var _c = 0, figures_5 = figures; _c < figures_5.length; _c++) {
-                var fig = figures_5[_c];
-                if (fig.type == "point") {
-                    points.push(fig.p.variablePoint);
-                    continue;
-                }
-                if (fig.type == "circle") {
-                    circle = fig;
-                }
+            else if (fig.type == "circle") {
+                circle = fig;
             }
-            return new TangentConstraint(circle.c.variablePoint, circle.r, points);
         }
-        return undefined;
+        return [new constraint_1.TangentConstraint(circle.c.variablePoint, circle.r, points)];
     };
-    return ConstraintPossibility;
+    return ArcPointCoincidentFilter;
 }());
 var possibleConstraints = [
-    new ConstraintPossibility(["point", "point"], "coincident"),
-    new ConstraintPossibility(["point"], "lock"),
-    //new ConstraintPossibility(["line", "point"], "coincident"),
-    new ConstraintPossibility(["line", "point"], "midpoint"),
-    new ConstraintPossibility(["line"], "horizontal"),
-    new ConstraintPossibility(["line"], "vertical"),
-    new ConstraintPossibility(["line"], "lock"),
-    new ConstraintPossibility(["line", "line"], "perpendicular"),
-    new ConstraintPossibility(["line", "line"], "parallel"),
-    new ConstraintPossibility(["line", "circle"], "tangent"),
-    //new ConstraintPossibility(["line", "circle"], "coincident"),
-    new ConstraintPossibility(["line", "circle"], "equal"),
-    new ConstraintPossibility(["circle"], "lock"),
-    new ConstraintPossibility(["circle", "circle"], "equal"),
-    new ConstraintPossibility(["circle", "circle"], "concentric"),
-    new ConstraintPossibility(["circle", "point"], "center"),
-    new ConstraintPossibility(["circle", "point"], "tangent"),
+    new CoincidentPointFilter(),
+    new HorizontalPointFilter(),
+    new HorizontalLineFilter(),
+    new VerticalPointFilter(),
+    new VerticalLineFilter(),
+    new ArcPointCoincidentFilter()
 ];
 function getPossibleConstraints(figs) {
-    var shapes = [];
-    for (var _i = 0, figs_1 = figs; _i < figs_1.length; _i++) {
-        var fig = figs_1[_i];
-        shapes.push(fig.type);
-    }
     var possibilities = [];
-    for (var _a = 0, possibleConstraints_1 = possibleConstraints; _a < possibleConstraints_1.length; _a++) {
-        var pc = possibleConstraints_1[_a];
-        if (pc.satisfiesTypes(shapes))
+    for (var _i = 0, possibleConstraints_1 = possibleConstraints; _i < possibleConstraints_1.length; _i++) {
+        var pc = possibleConstraints_1[_i];
+        if (pc.validFigures(figs))
             possibilities.push(pc);
     }
     return possibilities;
 }
 exports.getPossibleConstraints = getPossibleConstraints;
 
-},{"./figures":2}],2:[function(require,module,exports){
+},{"./constraint":1}],3:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -511,9 +599,10 @@ var CircleFigure = /** @class */ (function (_super) {
 }(BasicFigure));
 exports.CircleFigure = CircleFigure;
 
-},{"../main":4,"./constraint":1}],3:[function(require,module,exports){
+},{"../main":5,"./constraint":1}],4:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var main_1 = require("../main");
 var typeMagnetism = {
     circle: 0,
     line: 0,
@@ -550,9 +639,13 @@ var Sketch = /** @class */ (function () {
         }
         return closest;
     };
-    Sketch.prototype.addConstraint = function (constraint) {
-        this.constraints.push(constraint);
+    Sketch.prototype.addConstraints = function (constraints) {
+        for (var _i = 0, constraints_1 = constraints; _i < constraints_1.length; _i++) {
+            var c = constraints_1[_i];
+            this.constraints.push(c);
+        }
         this.solveConstraints();
+        main_1.protractr.ui.sketchView.draw();
     };
     Sketch.prototype.removeConstraint = function (constraint) {
         this.constraints = this.constraints.filter(function (value, index, arr) {
@@ -609,7 +702,7 @@ var Sketch = /** @class */ (function () {
 }());
 exports.Sketch = Sketch;
 
-},{}],4:[function(require,module,exports){
+},{"../main":5}],5:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var protractr_1 = require("./protractr");
@@ -631,7 +724,7 @@ window.addEventListener("load", function () {
     console.log("Protractr: ", exports.protractr);
 });
 
-},{"./protractr":5}],5:[function(require,module,exports){
+},{"./protractr":6}],6:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var sketch_1 = require("./gcs/sketch");
@@ -645,11 +738,11 @@ var Protractr = /** @class */ (function () {
 }());
 exports.Protractr = Protractr;
 
-},{"./gcs/sketch":3,"./ui/ui":10}],6:[function(require,module,exports){
+},{"./gcs/sketch":4,"./ui/ui":11}],7:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var constraint_1 = require("../gcs/constraint");
 var main_1 = require("../main");
+var constraint_filter_1 = require("../gcs/constraint_filter");
 var InfoPane = /** @class */ (function () {
     function InfoPane(sidePane) {
         this.sidePane = sidePane;
@@ -676,16 +769,14 @@ var InfoPane = /** @class */ (function () {
         }
         var _loop_1 = function (pc) {
             var child = document.createElement("button");
-            child.innerText = pc.possibleConstraint;
+            child.innerText = pc.name;
             child.addEventListener("click", function () {
-                var constraint = pc.makeConstraint(figures);
-                if (constraint != undefined)
-                    main_1.protractr.sketch.addConstraint(constraint);
+                main_1.protractr.sketch.addConstraints(pc.createConstraints(figures));
             });
             this_1.possibleConstraints.appendChild(child);
         };
         var this_1 = this;
-        for (var _i = 0, _a = constraint_1.getPossibleConstraints(figures); _i < _a.length; _i++) {
+        for (var _i = 0, _a = constraint_filter_1.getPossibleConstraints(figures); _i < _a.length; _i++) {
             var pc = _a[_i];
             _loop_1(pc);
         }
@@ -694,7 +785,7 @@ var InfoPane = /** @class */ (function () {
 }());
 exports.InfoPane = InfoPane;
 
-},{"../gcs/constraint":1,"../main":4}],7:[function(require,module,exports){
+},{"../gcs/constraint_filter":2,"../main":5}],8:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var figures_1 = require("../gcs/figures");
@@ -916,7 +1007,7 @@ var SketchView = /** @class */ (function () {
 }());
 exports.SketchView = SketchView;
 
-},{"../gcs/figures":2}],8:[function(require,module,exports){
+},{"../gcs/figures":3}],9:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var tools_1 = require("./tools");
@@ -977,7 +1068,7 @@ var ToolElement = /** @class */ (function () {
     return ToolElement;
 }());
 
-},{"./tools":9}],9:[function(require,module,exports){
+},{"./tools":10}],10:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -1172,7 +1263,7 @@ var CircleTool = /** @class */ (function (_super) {
 }(FigureTool));
 exports.CircleTool = CircleTool;
 
-},{"../gcs/figures":2,"../main":4}],10:[function(require,module,exports){
+},{"../gcs/figures":3,"../main":5}],11:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var toolbar_1 = require("./toolbar");
@@ -1189,4 +1280,4 @@ var UI = /** @class */ (function () {
 }());
 exports.UI = UI;
 
-},{"./infopane":6,"./sketchview":7,"./toolbar":8}]},{},[4]);
+},{"./infopane":7,"./sketchview":8,"./toolbar":9}]},{},[5]);

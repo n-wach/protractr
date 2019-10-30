@@ -47,7 +47,7 @@ export interface Constraint {
     getGradient(v: Variable): number; //how to adjust v to reduce error
 }
 
-class EqualConstraint implements Constraint {
+export class EqualConstraint implements Constraint {
     variables: Variable[];
     constructor(vals: Variable[]) {
         this.variables = vals;
@@ -67,7 +67,7 @@ class EqualConstraint implements Constraint {
     }
 }
 
-class CoincidentConstraint implements Constraint {
+export class CoincidentPointConstraint implements Constraint {
     xEqual: EqualConstraint;
     yEqual: EqualConstraint;
     constructor(points: VariablePoint[]) {
@@ -88,7 +88,7 @@ class CoincidentConstraint implements Constraint {
     }
 }
 
-class LockConstraint implements Constraint {
+export class LockConstraint implements Constraint {
     variable: Variable;
     value: number;
     constructor(val: Variable) {
@@ -104,7 +104,7 @@ class LockConstraint implements Constraint {
     }
 }
 
-class HorizontalConstraint extends EqualConstraint {
+export class HorizontalConstraint extends EqualConstraint {
     constructor(points: VariablePoint[]) {
         let ys: Variable[] = [];
         for(let p of points) {
@@ -114,7 +114,7 @@ class HorizontalConstraint extends EqualConstraint {
     }
 }
 
-class VerticalConstraint extends EqualConstraint {
+export class VerticalConstraint extends EqualConstraint {
     constructor(points: VariablePoint[]) {
         let xs: Variable[] = [];
         for(let p of points) {
@@ -125,7 +125,7 @@ class VerticalConstraint extends EqualConstraint {
 }
 
 
-class TangentConstraint implements Constraint {
+export class TangentConstraint implements Constraint {
     center: VariablePoint;
     radius: Variable;
     points: VariablePoint[];
@@ -169,89 +169,3 @@ class TangentConstraint implements Constraint {
         return 0;
     }
 }
-
-class ConstraintPossibility {
-    requiredTypes: string[];
-    possibleConstraint: string;
-    constructor(requiredTypes: string[], possibleConstraint: string) {
-        this.requiredTypes = requiredTypes;
-        this.possibleConstraint = possibleConstraint;
-    }
-    satisfiesTypes(s: string[]): boolean {
-        return s.sort().join("") == this.requiredTypes.sort().join("");
-    }
-    makeConstraint(figures: Figure[]) {
-        if(this.possibleConstraint == "horizontal") {
-            let points = [];
-            for(let fig of figures) {
-                points.push((fig as LineFigure).p1.variablePoint);
-                points.push((fig as LineFigure).p2.variablePoint);
-            }
-            return new HorizontalConstraint(points)
-        }
-        if(this.possibleConstraint == "vertical") {
-            let points = [];
-            for(let fig of figures) {
-                points.push((fig as LineFigure).p1.variablePoint);
-                points.push((fig as LineFigure).p2.variablePoint);
-            }
-            return new VerticalConstraint(points)
-        }
-        if(this.possibleConstraint == "coincident") {
-            let points = [];
-            for(let fig of figures) {
-                points.push((fig as PointFigure).p.variablePoint);
-            }
-            return new CoincidentConstraint(points)
-        }
-        if(this.possibleConstraint == "tangent") {
-            let points: VariablePoint[] = [];
-            let circle: CircleFigure = null;
-            for(let fig of figures) {
-                if(fig.type == "point") {
-                    points.push((fig as PointFigure).p.variablePoint);
-                    continue;
-                }
-                if(fig.type == "circle") {
-                    circle = fig as CircleFigure;
-                }
-            }
-            return new TangentConstraint(circle.c.variablePoint, circle.r, points);
-        }
-        return undefined;
-    }
-}
-
-let possibleConstraints = [
-    new ConstraintPossibility(["point", "point"], "coincident"),
-    new ConstraintPossibility(["point"], "lock"),
-    //new ConstraintPossibility(["line", "point"], "coincident"),
-    new ConstraintPossibility(["line", "point"], "midpoint"),
-    new ConstraintPossibility(["line"], "horizontal"),
-    new ConstraintPossibility(["line"], "vertical"),
-    new ConstraintPossibility(["line"], "lock"),
-    new ConstraintPossibility(["line", "line"], "perpendicular"),
-    new ConstraintPossibility(["line", "line"], "parallel"),
-    new ConstraintPossibility(["line", "circle"], "tangent"),
-    //new ConstraintPossibility(["line", "circle"], "coincident"),
-    new ConstraintPossibility(["line", "circle"], "equal"), // diameter equals length
-    new ConstraintPossibility(["circle"], "lock"),
-    new ConstraintPossibility(["circle", "circle"], "equal"),
-    new ConstraintPossibility(["circle", "circle"], "concentric"),
-    new ConstraintPossibility(["circle", "point"], "center"),
-    new ConstraintPossibility(["circle", "point"], "tangent"),
-];
-
-export function getPossibleConstraints(figs: Figure[]): ConstraintPossibility[] {
-    let shapes = [];
-    for(let fig of figs) {
-        shapes.push(fig.type);
-    }
-    let possibilities = [];
-    for(let pc of possibleConstraints) {
-        if(pc.satisfiesTypes(shapes)) possibilities.push(pc);
-    }
-    return possibilities;
-}
-
-

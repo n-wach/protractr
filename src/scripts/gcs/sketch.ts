@@ -1,6 +1,5 @@
 import {Constraint, Variable} from "./constraint";
 import {Figure, Point} from "./figures";
-import {Solver} from "./solver";
 import {protractr} from "../main";
 
 let typeMagnetism = {
@@ -37,9 +36,12 @@ export class Sketch {
         }
         return closest;
     }
-    addConstraint(constraint) {
-        this.constraints.push(constraint);
+    addConstraints(constraints: Constraint[]) {
+        for(let c of constraints) {
+            this.constraints.push(c);
+        }
         this.solveConstraints();
+        protractr.ui.sketchView.draw();
     }
     removeConstraint(constraint) {
         this.constraints = this.constraints.filter(function(value, index, arr) {
