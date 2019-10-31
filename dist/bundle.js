@@ -313,7 +313,7 @@ var VerticalLineFilter = /** @class */ (function () {
             if (fig.type != "line")
                 return false;
         }
-        return figs.length > 1;
+        return figs.length > 0;
     };
     VerticalLineFilter.prototype.createConstraints = function (figs) {
         var constraints = [];
@@ -335,7 +335,7 @@ var HorizontalLineFilter = /** @class */ (function () {
             if (fig.type != "line")
                 return false;
         }
-        return figs.length > 1;
+        return figs.length > 0;
     };
     HorizontalLineFilter.prototype.createConstraints = function (figs) {
         var constraints = [];

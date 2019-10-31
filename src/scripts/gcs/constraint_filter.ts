@@ -1,10 +1,12 @@
 import {CircleFigure, Figure, LineFigure, PointFigure} from "./figures";
 import {
-    CoincidentPointConstraint, Constraint,
-    HorizontalConstraint, LineMidpointConstraint, LockConstraint,
+    Constraint,
+    CoincidentPointConstraint,
+    VerticalConstraint,
+    HorizontalConstraint,
+    LineMidpointConstraint,
     TangentConstraint,
     VariablePoint,
-    VerticalConstraint
 } from "./constraint";
 
 interface ConstraintFilter {
@@ -53,7 +55,7 @@ class VerticalLineFilter implements ConstraintFilter {
         for(let fig of figs) {
             if(fig.type != "line") return false;
         }
-        return figs.length > 1;
+        return figs.length > 0;
     }
     createConstraints(figs: Figure[]) {
         let constraints = [];
@@ -70,7 +72,7 @@ class HorizontalLineFilter implements ConstraintFilter {
         for(let fig of figs) {
             if(fig.type != "line") return false;
         }
-        return figs.length > 1;
+        return figs.length > 0;
     }
     createConstraints(figs: Figure[]) {
         let constraints = [];
