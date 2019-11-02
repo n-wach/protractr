@@ -226,3 +226,48 @@ export class LineMidpointConstraint implements Constraint {
         return 0;
     }
 }
+
+export class ColinearPointConstraint implements Constraint {
+    p1: VariablePoint;
+    p2: VariablePoint;
+    p: VariablePoint;
+
+    constructor(p1: VariablePoint, p2: VariablePoint, p: VariablePoint) {
+        this.p1 = p1;
+        this.p2 = p2;
+        this.p = p;
+    }
+    getError(): number {
+        let p = this.p.toPoint();
+        let projected = p.projectBetween(this.p1.toPoint(), this.p2.toPoint());
+        return p.distTo(projected);
+    }
+    getGradient(v: Variable): number {
+        if (this.p1.x == v || this.p1.y == v) {
+            let p1 = this.p1.toPoint();
+            let projected = p1.projectBetween(this.p.toPoint(), this.p2.toPoint());
+            if(this.p1.x == v) {
+                return projected.x - v.value;
+            } else {
+                return projected.y - v.value;
+            }
+        } else if (this.p2.x == v || this.p2.y == v) {
+            let p2 = this.p2.toPoint();
+            let projected = p2.projectBetween(this.p.toPoint(), this.p1.toPoint());
+            if(this.p2.x == v) {
+                return projected.x - v.value;
+            } else {
+                return projected.y - v.value;
+            }
+        } else if (this.p.x == v || this.p.y == v) {
+            let p = this.p.toPoint();
+            let projected = p.projectBetween(this.p1.toPoint(), this.p2.toPoint());
+            if(this.p.x == v) {
+                return projected.x - v.value;
+            } else {
+                return projected.y - v.value;
+            }
+        }
+        return 0;
+    }
+}

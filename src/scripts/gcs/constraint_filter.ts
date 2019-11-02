@@ -6,7 +6,9 @@ import {
     HorizontalConstraint,
     LineMidpointConstraint,
     TangentConstraint,
-    VariablePoint, EqualConstraint,
+    VariablePoint,
+    EqualConstraint,
+    ColinearPointConstraint,
 } from "./constraint";
 
 interface ConstraintFilter {
@@ -178,8 +180,41 @@ class EqualRadiusConstraintFilter implements ConstraintFilter {
         }
         return figs.length > 1;
     }
-
 }
+
+class ColinearConstraintFilter implements ConstraintFilter {
+    name: string = "colinear";
+
+    validFigures(figs: Figure[]): boolean {
+        let hasLine = false;
+        let hasPoint = false;
+        for(let fig of figs) {
+            if(fig.type == "point") {
+                if(hasPoint) return false;
+                hasPoint = true;
+            } else if (fig.type == "line") {
+                if(hasLine) return false;
+                hasLine = true;
+            }
+        }
+        return hasPoint && hasLine;
+    }
+
+    createConstraints(figs: Figure[]): Constraint[] {
+        let point: PointFigure = null;
+        let line: LineFigure = null;
+        for(let fig of figs) {
+            if(fig.type == "point") {
+                point = fig as PointFigure;
+            } else if(fig.type == "line") {
+                line = fig as LineFigure;
+            }
+        }
+        return [new ColinearPointConstraint(line.p1.variablePoint, line.p2.variablePoint, point.p.variablePoint)];
+    }
+}
+
+
 
 let possibleConstraints = [
     new CoincidentPointFilter(),
@@ -190,6 +225,7 @@ let possibleConstraints = [
     new ArcPointCoincidentFilter(),
     new LineMidpointCoincidentFilter(),
     new EqualRadiusConstraintFilter(),
+    new ColinearConstraintFilter(),
 ];
 
 export function getSatisfiedConstraintFilters(figs: Figure[]): ConstraintFilter[] {

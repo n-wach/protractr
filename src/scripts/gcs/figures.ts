@@ -63,7 +63,28 @@ export class Point {
         this.y -= point.y;
         return this;
     }
+    projectBetween(p1: Point, p2: Point, cutoff: boolean = false) {
+        let r = cutoff ? this.segmentFractionBetween(p1, p2) : this.projectionFactorBetween(p1, p2);
+        let px = p1.x + r * (p2.x - p1.x);
+        let py = p1.y + r * (p2.y - p1.y);
+        return new Point(px, py);
+    }
+    projectionFactorBetween(p1: Point, p2: Point) {
+        if(p1.equals(this)) return 0;
+        if(p2.equals(this)) return 1;
+        let dx = p1.x - p2.x;
+        let dy = p1.y - p2.y;
+        let len2 = dx * dx + dy * dy;
+        return -((this.x - p1.x) * dx + (this.y - p1.y) * dy) / len2;
+    }
+    segmentFractionBetween(p1: Point, p2: Point) {
+        let segFrac = this.projectionFactorBetween(p1, p2);
+        if (segFrac < 0) return 0;
+        if (segFrac > 1 || isNaN(segFrac)) return 1;
+        return segFrac;
+    }
 }
+
 
 export interface Figure {
     type: string;
@@ -158,28 +179,8 @@ export class LineFigure extends BasicFigure {
         this.childFigures[0].parentFigure = this;
         this.childFigures[1].parentFigure = this;
     }
-    projectionFactor(point: Point) {
-        if(this.p1.equals(point)) return 0;
-        if(this.p2.equals(point)) return 1;
-        let dx = this.p1.x - this.p2.x;
-        let dy = this.p1.y - this.p2.y;
-        let len2 = dx * dx + dy * dy;
-        return -((point.x - this.p1.x) * dx + (point.y - this.p1.y) * dy) / len2;
-    }
-    segmentFraction(point: Point) {
-        let segFrac = this.projectionFactor(point);
-        if (segFrac < 0) return 0;
-        if (segFrac > 1 || isNaN(segFrac)) return 1;
-        return segFrac;
-    }
-    project(point: Point) {
-        let r = this.segmentFraction(point);
-        let px = this.p1.x + r * (this.p2.x - this.p1.x);
-        let py = this.p1.y + r * (this.p2.y - this.p1.y);
-        return new Point(px, py);
-    }
     getClosestPoint(point: Point): Point {
-        return this.project(point);
+        return point.projectBetween(this.p1, this.p2, true);
     }
     translate(from: Point, to: Point) {
         let diff = to.sub(from).copy();

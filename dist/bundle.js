@@ -254,6 +254,53 @@ var LineMidpointConstraint = /** @class */ (function () {
     return LineMidpointConstraint;
 }());
 exports.LineMidpointConstraint = LineMidpointConstraint;
+var ColinearPointConstraint = /** @class */ (function () {
+    function ColinearPointConstraint(p1, p2, p) {
+        this.p1 = p1;
+        this.p2 = p2;
+        this.p = p;
+    }
+    ColinearPointConstraint.prototype.getError = function () {
+        var p = this.p.toPoint();
+        var projected = p.projectBetween(this.p1.toPoint(), this.p2.toPoint());
+        return p.distTo(projected);
+    };
+    ColinearPointConstraint.prototype.getGradient = function (v) {
+        if (this.p1.x == v || this.p1.y == v) {
+            var p1 = this.p1.toPoint();
+            var projected = p1.projectBetween(this.p.toPoint(), this.p2.toPoint());
+            if (this.p1.x == v) {
+                return projected.x - v.value;
+            }
+            else {
+                return projected.y - v.value;
+            }
+        }
+        else if (this.p2.x == v || this.p2.y == v) {
+            var p2 = this.p2.toPoint();
+            var projected = p2.projectBetween(this.p.toPoint(), this.p1.toPoint());
+            if (this.p2.x == v) {
+                return projected.x - v.value;
+            }
+            else {
+                return projected.y - v.value;
+            }
+        }
+        else if (this.p.x == v || this.p.y == v) {
+            var p = this.p.toPoint();
+            var projected = p.projectBetween(this.p1.toPoint(), this.p2.toPoint());
+            if (this.p.x == v) {
+                return projected.x - v.value;
+            }
+            else {
+                return projected.y - v.value;
+            }
+        }
+        return 0;
+    };
+    return ColinearPointConstraint;
+}());
+exports.ColinearPointConstraint = ColinearPointConstraint;
 
 },{"./figures":3}],2:[function(require,module,exports){
 "use strict";
@@ -468,6 +515,44 @@ var EqualRadiusConstraintFilter = /** @class */ (function () {
     };
     return EqualRadiusConstraintFilter;
 }());
+var ColinearConstraintFilter = /** @class */ (function () {
+    function ColinearConstraintFilter() {
+        this.name = "colinear";
+    }
+    ColinearConstraintFilter.prototype.validFigures = function (figs) {
+        var hasLine = false;
+        var hasPoint = false;
+        for (var _i = 0, figs_11 = figs; _i < figs_11.length; _i++) {
+            var fig = figs_11[_i];
+            if (fig.type == "point") {
+                if (hasPoint)
+                    return false;
+                hasPoint = true;
+            }
+            else if (fig.type == "line") {
+                if (hasLine)
+                    return false;
+                hasLine = true;
+            }
+        }
+        return hasPoint && hasLine;
+    };
+    ColinearConstraintFilter.prototype.createConstraints = function (figs) {
+        var point = null;
+        var line = null;
+        for (var _i = 0, figs_12 = figs; _i < figs_12.length; _i++) {
+            var fig = figs_12[_i];
+            if (fig.type == "point") {
+                point = fig;
+            }
+            else if (fig.type == "line") {
+                line = fig;
+            }
+        }
+        return [new constraint_1.ColinearPointConstraint(line.p1.variablePoint, line.p2.variablePoint, point.p.variablePoint)];
+    };
+    return ColinearConstraintFilter;
+}());
 var possibleConstraints = [
     new CoincidentPointFilter(),
     new HorizontalPointFilter(),
@@ -477,6 +562,7 @@ var possibleConstraints = [
     new ArcPointCoincidentFilter(),
     new LineMidpointCoincidentFilter(),
     new EqualRadiusConstraintFilter(),
+    new ColinearConstraintFilter(),
 ];
 function getSatisfiedConstraintFilters(figs) {
     var possibilities = [];
@@ -576,6 +662,31 @@ var Point = /** @class */ (function () {
         this.y -= point.y;
         return this;
     };
+    Point.prototype.projectBetween = function (p1, p2, cutoff) {
+        if (cutoff === void 0) { cutoff = false; }
+        var r = cutoff ? this.segmentFractionBetween(p1, p2) : this.projectionFactorBetween(p1, p2);
+        var px = p1.x + r * (p2.x - p1.x);
+        var py = p1.y + r * (p2.y - p1.y);
+        return new Point(px, py);
+    };
+    Point.prototype.projectionFactorBetween = function (p1, p2) {
+        if (p1.equals(this))
+            return 0;
+        if (p2.equals(this))
+            return 1;
+        var dx = p1.x - p2.x;
+        var dy = p1.y - p2.y;
+        var len2 = dx * dx + dy * dy;
+        return -((this.x - p1.x) * dx + (this.y - p1.y) * dy) / len2;
+    };
+    Point.prototype.segmentFractionBetween = function (p1, p2) {
+        var segFrac = this.projectionFactorBetween(p1, p2);
+        if (segFrac < 0)
+            return 0;
+        if (segFrac > 1 || isNaN(segFrac))
+            return 1;
+        return segFrac;
+    };
     return Point;
 }());
 exports.Point = Point;
@@ -660,32 +771,8 @@ var LineFigure = /** @class */ (function (_super) {
         _this.childFigures[1].parentFigure = _this;
         return _this;
     }
-    LineFigure.prototype.projectionFactor = function (point) {
-        if (this.p1.equals(point))
-            return 0;
-        if (this.p2.equals(point))
-            return 1;
-        var dx = this.p1.x - this.p2.x;
-        var dy = this.p1.y - this.p2.y;
-        var len2 = dx * dx + dy * dy;
-        return -((point.x - this.p1.x) * dx + (point.y - this.p1.y) * dy) / len2;
-    };
-    LineFigure.prototype.segmentFraction = function (point) {
-        var segFrac = this.projectionFactor(point);
-        if (segFrac < 0)
-            return 0;
-        if (segFrac > 1 || isNaN(segFrac))
-            return 1;
-        return segFrac;
-    };
-    LineFigure.prototype.project = function (point) {
-        var r = this.segmentFraction(point);
-        var px = this.p1.x + r * (this.p2.x - this.p1.x);
-        var py = this.p1.y + r * (this.p2.y - this.p1.y);
-        return new Point(px, py);
-    };
     LineFigure.prototype.getClosestPoint = function (point) {
-        return this.project(point);
+        return point.projectBetween(this.p1, this.p2, true);
     };
     LineFigure.prototype.translate = function (from, to) {
         var diff = to.sub(from).copy();
