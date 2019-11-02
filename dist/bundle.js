@@ -446,6 +446,28 @@ var LineMidpointCoincidentFilter = /** @class */ (function () {
     };
     return LineMidpointCoincidentFilter;
 }());
+var EqualRadiusConstraintFilter = /** @class */ (function () {
+    function EqualRadiusConstraintFilter() {
+        this.name = "equal";
+    }
+    EqualRadiusConstraintFilter.prototype.createConstraints = function (figs) {
+        var radii = [];
+        for (var _i = 0, _a = figs; _i < _a.length; _i++) {
+            var fig = _a[_i];
+            radii.push(fig.r);
+        }
+        return [new constraint_1.EqualConstraint(radii)];
+    };
+    EqualRadiusConstraintFilter.prototype.validFigures = function (figs) {
+        for (var _i = 0, figs_10 = figs; _i < figs_10.length; _i++) {
+            var fig = figs_10[_i];
+            if (fig.type != "circle")
+                return false;
+        }
+        return figs.length > 1;
+    };
+    return EqualRadiusConstraintFilter;
+}());
 var possibleConstraints = [
     new CoincidentPointFilter(),
     new HorizontalPointFilter(),
@@ -454,6 +476,7 @@ var possibleConstraints = [
     new VerticalLineFilter(),
     new ArcPointCoincidentFilter(),
     new LineMidpointCoincidentFilter(),
+    new EqualRadiusConstraintFilter(),
 ];
 function getSatisfiedConstraintFilters(figs) {
     var possibilities = [];

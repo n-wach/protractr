@@ -6,7 +6,7 @@ import {
     HorizontalConstraint,
     LineMidpointConstraint,
     TangentConstraint,
-    VariablePoint,
+    VariablePoint, EqualConstraint,
 } from "./constraint";
 
 interface ConstraintFilter {
@@ -161,6 +161,26 @@ class LineMidpointCoincidentFilter implements ConstraintFilter {
     }
 }
 
+class EqualRadiusConstraintFilter implements ConstraintFilter {
+    name: string = "equal";
+
+    createConstraints(figs: Figure[]): Constraint[] {
+        let radii = [];
+        for(let fig of figs as CircleFigure[]) {
+            radii.push(fig.r);
+        }
+        return [new EqualConstraint(radii)];
+    }
+
+    validFigures(figs: Figure[]): boolean {
+        for(let fig of figs) {
+            if(fig.type != "circle") return false;
+        }
+        return figs.length > 1;
+    }
+
+}
+
 let possibleConstraints = [
     new CoincidentPointFilter(),
     new HorizontalPointFilter(),
@@ -169,6 +189,7 @@ let possibleConstraints = [
     new VerticalLineFilter(),
     new ArcPointCoincidentFilter(),
     new LineMidpointCoincidentFilter(),
+    new EqualRadiusConstraintFilter(),
 ];
 
 export function getSatisfiedConstraintFilters(figs: Figure[]): ConstraintFilter[] {
