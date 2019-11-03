@@ -5,10 +5,10 @@ import {
     VerticalConstraint,
     HorizontalConstraint,
     LineMidpointConstraint,
-    TangentConstraint,
+    ArcPointCoincidentConstraint,
     VariablePoint,
     EqualConstraint,
-    ColinearPointsConstraint,
+    ColinearPointsConstraint, Variable, TangentLineConstraint,
 } from "./constraint";
 
 interface ConstraintFilter {
@@ -129,7 +129,7 @@ class ArcPointCoincidentFilter implements ConstraintFilter {
                 circle = fig as CircleFigure;
             }
         }
-        return [new TangentConstraint(circle.c.variablePoint, circle.r, points)];
+        return [new ArcPointCoincidentConstraint(circle.c.variablePoint, circle.r, points)];
     }
 }
 
@@ -211,6 +211,36 @@ class ColinearConstraintFilter implements ConstraintFilter {
     }
 }
 
+export class TangentLineConstraintFilter implements ConstraintFilter {
+    name: string = "tangent";
+    validFigures(figs: Figure[]): boolean {
+        let hasLine = false;
+        let hasCircle = false;
+        for(let fig of figs) {
+            if(fig.type == "circle") {
+                if(hasCircle) return false;
+                hasCircle = true;
+            } else if (fig.type == "line") {
+                if(hasLine) return false;
+                hasLine = true;
+            }
+        }
+        return hasCircle && hasLine;
+    }
+    createConstraints(figs: Figure[]): Constraint[] {
+        let circle: CircleFigure = null;
+        let line: LineFigure = null;
+        for(let fig of figs) {
+            if(fig.type == "circle") {
+                circle = fig as CircleFigure;
+            } else if(fig.type == "line") {
+                line = fig as LineFigure;
+            }
+        }
+        return [new TangentLineConstraint(circle.c.variablePoint, circle.r, line.p1.variablePoint, line.p2.variablePoint)];
+    }
+}
+
 let possibleConstraints = [
     new CoincidentPointFilter(),
     new HorizontalPointFilter(),
@@ -221,6 +251,7 @@ let possibleConstraints = [
     new LineMidpointCoincidentFilter(),
     new EqualRadiusConstraintFilter(),
     new ColinearConstraintFilter(),
+    new TangentLineConstraintFilter(),
 ];
 
 export function getSatisfiedConstraintFilters(figs: Figure[]): ConstraintFilter[] {

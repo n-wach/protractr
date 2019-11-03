@@ -152,13 +152,13 @@ var VerticalConstraint = /** @class */ (function (_super) {
     return VerticalConstraint;
 }(EqualConstraint));
 exports.VerticalConstraint = VerticalConstraint;
-var TangentConstraint = /** @class */ (function () {
-    function TangentConstraint(center, radius, points) {
+var ArcPointCoincidentConstraint = /** @class */ (function () {
+    function ArcPointCoincidentConstraint(center, radius, points) {
         this.center = center;
         this.radius = radius;
         this.points = points;
     }
-    TangentConstraint.prototype.getError = function () {
+    ArcPointCoincidentConstraint.prototype.getError = function () {
         var error = 0;
         for (var _i = 0, _a = this.points; _i < _a.length; _i++) {
             var p = _a[_i];
@@ -168,7 +168,7 @@ var TangentConstraint = /** @class */ (function () {
         }
         return error;
     };
-    TangentConstraint.prototype.getGradient = function (v) {
+    ArcPointCoincidentConstraint.prototype.getGradient = function (v) {
         for (var _i = 0, _a = this.points; _i < _a.length; _i++) {
             var p = _a[_i];
             if (p.x === v || p.y === v) {
@@ -197,9 +197,9 @@ var TangentConstraint = /** @class */ (function () {
         //TODO add gradients for center of circle.  look for that one stack overflow post again
         return 0;
     };
-    return TangentConstraint;
+    return ArcPointCoincidentConstraint;
 }());
-exports.TangentConstraint = TangentConstraint;
+exports.ArcPointCoincidentConstraint = ArcPointCoincidentConstraint;
 var LineMidpointConstraint = /** @class */ (function () {
     function LineMidpointConstraint(p1, p2, midpoint) {
         this.p1 = p1;
@@ -289,6 +289,43 @@ var ColinearPointsConstraint = /** @class */ (function () {
     return ColinearPointsConstraint;
 }());
 exports.ColinearPointsConstraint = ColinearPointsConstraint;
+var TangentLineConstraint = /** @class */ (function () {
+    function TangentLineConstraint(center, radius, p1, p2) {
+        this.center = center;
+        this.radius = radius;
+        this.p1 = p1;
+        this.p2 = p2;
+    }
+    TangentLineConstraint.prototype.getError = function () {
+        var c = this.center.toPoint();
+        var projection = c.projectBetween(this.p1.toPoint(), this.p2.toPoint());
+        return Math.abs(projection.distTo(c) - this.radius.value);
+    };
+    TangentLineConstraint.prototype.getGradient = function (v) {
+        if (v == this.radius) {
+            var c = this.center.toPoint();
+            var projection = c.projectBetween(this.p1.toPoint(), this.p2.toPoint());
+            return projection.distTo(c) - this.radius.value;
+        }
+        else if (this.p1.x == v || this.p1.y == v || this.p2.x == v || this.p2.y == v) {
+            var c = this.center.toPoint();
+            var projection = c.projectBetween(this.p1.toPoint(), this.p2.toPoint());
+            var dist = projection.distTo(c) - this.radius.value;
+            var coincidentProjection = projection.pointTowards(c, dist);
+            var delta = coincidentProjection.sub(projection);
+            if (this.p1.x == v || this.p2.x == v) {
+                return delta.x;
+            }
+            else {
+                return delta.y;
+            }
+        }
+        //TODO add gradients for center of circle.  look for that one stack overflow post again
+        return 0;
+    };
+    return TangentLineConstraint;
+}());
+exports.TangentLineConstraint = TangentLineConstraint;
 function leastSquaresRegression(points) {
     var xs = 0;
     var ys = 0;
@@ -467,7 +504,7 @@ var ArcPointCoincidentFilter = /** @class */ (function () {
                 circle = fig;
             }
         }
-        return [new constraint_1.TangentConstraint(circle.c.variablePoint, circle.r, points)];
+        return [new constraint_1.ArcPointCoincidentConstraint(circle.c.variablePoint, circle.r, points)];
     };
     return ArcPointCoincidentFilter;
 }());
@@ -567,6 +604,45 @@ var ColinearConstraintFilter = /** @class */ (function () {
     };
     return ColinearConstraintFilter;
 }());
+var TangentLineConstraintFilter = /** @class */ (function () {
+    function TangentLineConstraintFilter() {
+        this.name = "tangent";
+    }
+    TangentLineConstraintFilter.prototype.validFigures = function (figs) {
+        var hasLine = false;
+        var hasCircle = false;
+        for (var _i = 0, figs_13 = figs; _i < figs_13.length; _i++) {
+            var fig = figs_13[_i];
+            if (fig.type == "circle") {
+                if (hasCircle)
+                    return false;
+                hasCircle = true;
+            }
+            else if (fig.type == "line") {
+                if (hasLine)
+                    return false;
+                hasLine = true;
+            }
+        }
+        return hasCircle && hasLine;
+    };
+    TangentLineConstraintFilter.prototype.createConstraints = function (figs) {
+        var circle = null;
+        var line = null;
+        for (var _i = 0, figs_14 = figs; _i < figs_14.length; _i++) {
+            var fig = figs_14[_i];
+            if (fig.type == "circle") {
+                circle = fig;
+            }
+            else if (fig.type == "line") {
+                line = fig;
+            }
+        }
+        return [new constraint_1.TangentLineConstraint(circle.c.variablePoint, circle.r, line.p1.variablePoint, line.p2.variablePoint)];
+    };
+    return TangentLineConstraintFilter;
+}());
+exports.TangentLineConstraintFilter = TangentLineConstraintFilter;
 var possibleConstraints = [
     new CoincidentPointFilter(),
     new HorizontalPointFilter(),
@@ -577,6 +653,7 @@ var possibleConstraints = [
     new LineMidpointCoincidentFilter(),
     new EqualRadiusConstraintFilter(),
     new ColinearConstraintFilter(),
+    new TangentLineConstraintFilter(),
 ];
 function getSatisfiedConstraintFilters(figs) {
     var possibilities = [];

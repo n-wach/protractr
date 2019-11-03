@@ -128,7 +128,7 @@ export class VerticalConstraint extends EqualConstraint {
 }
 
 
-export class TangentConstraint implements Constraint {
+export class ArcPointCoincidentConstraint implements Constraint {
     center: VariablePoint;
     radius: Variable;
     points: VariablePoint[];
@@ -259,6 +259,45 @@ export class ColinearPointsConstraint implements Constraint {
         return 0;
     }
 }
+
+export class TangentLineConstraint implements Constraint {
+    center: VariablePoint;
+    radius: Variable;
+    p1: VariablePoint;
+    p2: VariablePoint;
+    constructor(center: VariablePoint, radius: Variable, p1: VariablePoint, p2: VariablePoint) {
+        this.center = center;
+        this.radius = radius;
+        this.p1 = p1;
+        this.p2 = p2;
+    }
+    getError(): number {
+        let c = this.center.toPoint();
+        let projection = c.projectBetween(this.p1.toPoint(), this.p2.toPoint());
+        return Math.abs(projection.distTo(c) - this.radius.value);
+    }
+    getGradient(v: Variable): number {
+        if(v == this.radius) {
+            let c = this.center.toPoint();
+            let projection = c.projectBetween(this.p1.toPoint(), this.p2.toPoint());
+            return projection.distTo(c) - this.radius.value;
+        } else if (this.p1.x == v || this.p1.y == v || this.p2.x == v || this.p2.y == v) {
+            let c = this.center.toPoint();
+            let projection = c.projectBetween(this.p1.toPoint(), this.p2.toPoint());
+            let dist = projection.distTo(c) - this.radius.value;
+            let coincidentProjection = projection.pointTowards(c, dist);
+            let delta = coincidentProjection.sub(projection);
+            if(this.p1.x == v || this.p2.x == v) {
+                return delta.x;
+            } else {
+                return delta.y;
+            }
+        }
+        //TODO add gradients for center of circle.  look for that one stack overflow post again
+        return 0;
+    }
+}
+
 
 function leastSquaresRegression(points: VariablePoint[]) {
     let xs = 0;
