@@ -88,6 +88,7 @@ export class Point {
 
 export interface Figure {
     type: string;
+    name: string;
     parentFigure: Figure;
     childFigures: Figure[];
     getClosestPoint(point: Point): Point;
@@ -102,6 +103,7 @@ export class BasicFigure implements Figure {
     childFigures: Figure[];
     parentFigure: Figure;
     type: string;
+    name: string;
 
     getClosestPoint(point: Point): Point {
         return undefined;
@@ -141,6 +143,7 @@ let ORIGIN = new Point(0, 0);
 
 export class PointFigure extends BasicFigure {
     type = "point";
+    name = "point";
     p: Point;
     childFigures: Figure[] = [];
     parentFigure: Figure = null;
@@ -148,6 +151,7 @@ export class PointFigure extends BasicFigure {
     constructor(p: Point, name: string="point") {
         super();
         this.p = p;
+        this.name = name;
         protractr.sketch.addVariable(this.p.variablePoint.x);
         protractr.sketch.addVariable(this.p.variablePoint.y);
     }
@@ -166,15 +170,17 @@ export class PointFigure extends BasicFigure {
 
 export class LineFigure extends BasicFigure {
     type = "line";
+    name = "line"
     p1: Point;
     p2: Point;
     childFigures: Figure[];
     parentFigure: Figure;
 
-    constructor(p1: Point, p2: Point) {
+    constructor(p1: Point, p2: Point, name: string = "line") {
         super();
         this.p1 = p1;
         this.p2 = p2;
+        this.name = name;
         this.childFigures = [new PointFigure(this.p1, "p1"), new PointFigure(this.p2, "p2")];
         this.childFigures[0].parentFigure = this;
         this.childFigures[1].parentFigure = this;
@@ -196,10 +202,11 @@ export class CircleFigure extends BasicFigure {
     childFigures: Figure[];
     parentFigure: Figure;
 
-    constructor(c: Point, r: number) {
+    constructor(c: Point, r: number, name: string = "circle") {
         super();
         this.c = c;
         this.r = new Variable(r);
+        this.name = name;
         protractr.sketch.addVariable(this.r);
         this.childFigures = [new PointFigure(this.c, "center")];
         this.childFigures[0].parentFigure = this;
@@ -214,4 +221,14 @@ export class CircleFigure extends BasicFigure {
         super.setLocked(lock);
         this.r.constant = lock;
     }
+}
+
+export function getFullName(figure: Figure): string {
+    if(!figure) return "null";
+    let name = figure.name;
+    while(figure.parentFigure) {
+        figure = figure.parentFigure;
+        name += " of " + figure.name;
+    }
+    return name;
 }

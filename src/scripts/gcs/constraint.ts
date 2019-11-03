@@ -227,47 +227,64 @@ export class LineMidpointConstraint implements Constraint {
     }
 }
 
-export class ColinearPointConstraint implements Constraint {
-    p1: VariablePoint;
-    p2: VariablePoint;
-    p: VariablePoint;
+export class ColinearPointsConstraint implements Constraint {
+    points: VariablePoint[];
 
-    constructor(p1: VariablePoint, p2: VariablePoint, p: VariablePoint) {
-        this.p1 = p1;
-        this.p2 = p2;
-        this.p = p;
+    constructor(points: VariablePoint[]) {
+        this.points = points;
     }
     getError(): number {
-        let p = this.p.toPoint();
-        let projected = p.projectBetween(this.p1.toPoint(), this.p2.toPoint());
-        return p.distTo(projected);
+        let regression = leastSquaresRegression(this.points);
+        let error = 0;
+        for(let point of this.points) {
+            let p = point.toPoint();
+            let regressed = p.projectBetween(regression[0], regression[1]);
+            error += p.distTo(regressed);
+        }
+        return error;
     }
     getGradient(v: Variable): number {
-        if (this.p1.x == v || this.p1.y == v) {
-            let p1 = this.p1.toPoint();
-            let projected = p1.projectBetween(this.p.toPoint(), this.p2.toPoint());
-            if(this.p1.x == v) {
-                return projected.x - v.value;
-            } else {
-                return projected.y - v.value;
-            }
-        } else if (this.p2.x == v || this.p2.y == v) {
-            let p2 = this.p2.toPoint();
-            let projected = p2.projectBetween(this.p.toPoint(), this.p1.toPoint());
-            if(this.p2.x == v) {
-                return projected.x - v.value;
-            } else {
-                return projected.y - v.value;
-            }
-        } else if (this.p.x == v || this.p.y == v) {
-            let p = this.p.toPoint();
-            let projected = p.projectBetween(this.p1.toPoint(), this.p2.toPoint());
-            if(this.p.x == v) {
-                return projected.x - v.value;
-            } else {
-                return projected.y - v.value;
+        for(let point of this.points) {
+            if(point.x == v || point.y == v) {
+                let regression = leastSquaresRegression(this.points);
+                let p = point.toPoint();
+                let regressed = p.projectBetween(regression[0], regression[1]);
+                if(point.x == v) {
+                    return regressed.x - v.value;
+                } else {
+                    return regressed.y - v.value;
+                }
             }
         }
         return 0;
     }
+}
+
+function leastSquaresRegression(points: VariablePoint[]) {
+    let xs = 0;
+    let ys = 0;
+    let x2s = 0;
+    let xys = 0;
+    let n = points.length;
+    for(let point of points) {
+        let x = point.x.value;
+        let y = point.y.value;
+        xs += x;
+        ys += y;
+        x2s += x * x;
+        xys += x * y;
+    }
+    let denominator = n * x2s - (xs * xs);
+    if (denominator < 0.001) {
+        let p1 = new Point(xs / n, 0);
+        let p2 = new Point(xs / n, 10);
+        return [p1, p2];
+    }
+    let numerator = (n * xys) - (xs * ys);
+    let slope = numerator / denominator;
+    let intercept = (ys - slope * xs) / n;
+
+    let p1 = new Point(0, intercept);
+    let p2 = new Point(1, intercept + slope);
+    return [p1, p2];
 }

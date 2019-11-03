@@ -254,53 +254,69 @@ var LineMidpointConstraint = /** @class */ (function () {
     return LineMidpointConstraint;
 }());
 exports.LineMidpointConstraint = LineMidpointConstraint;
-var ColinearPointConstraint = /** @class */ (function () {
-    function ColinearPointConstraint(p1, p2, p) {
-        this.p1 = p1;
-        this.p2 = p2;
-        this.p = p;
+var ColinearPointsConstraint = /** @class */ (function () {
+    function ColinearPointsConstraint(points) {
+        this.points = points;
     }
-    ColinearPointConstraint.prototype.getError = function () {
-        var p = this.p.toPoint();
-        var projected = p.projectBetween(this.p1.toPoint(), this.p2.toPoint());
-        return p.distTo(projected);
+    ColinearPointsConstraint.prototype.getError = function () {
+        var regression = leastSquaresRegression(this.points);
+        var error = 0;
+        for (var _i = 0, _a = this.points; _i < _a.length; _i++) {
+            var point = _a[_i];
+            var p = point.toPoint();
+            var regressed = p.projectBetween(regression[0], regression[1]);
+            error += p.distTo(regressed);
+        }
+        return error;
     };
-    ColinearPointConstraint.prototype.getGradient = function (v) {
-        if (this.p1.x == v || this.p1.y == v) {
-            var p1 = this.p1.toPoint();
-            var projected = p1.projectBetween(this.p.toPoint(), this.p2.toPoint());
-            if (this.p1.x == v) {
-                return projected.x - v.value;
-            }
-            else {
-                return projected.y - v.value;
-            }
-        }
-        else if (this.p2.x == v || this.p2.y == v) {
-            var p2 = this.p2.toPoint();
-            var projected = p2.projectBetween(this.p.toPoint(), this.p1.toPoint());
-            if (this.p2.x == v) {
-                return projected.x - v.value;
-            }
-            else {
-                return projected.y - v.value;
-            }
-        }
-        else if (this.p.x == v || this.p.y == v) {
-            var p = this.p.toPoint();
-            var projected = p.projectBetween(this.p1.toPoint(), this.p2.toPoint());
-            if (this.p.x == v) {
-                return projected.x - v.value;
-            }
-            else {
-                return projected.y - v.value;
+    ColinearPointsConstraint.prototype.getGradient = function (v) {
+        for (var _i = 0, _a = this.points; _i < _a.length; _i++) {
+            var point = _a[_i];
+            if (point.x == v || point.y == v) {
+                var regression = leastSquaresRegression(this.points);
+                var p = point.toPoint();
+                var regressed = p.projectBetween(regression[0], regression[1]);
+                if (point.x == v) {
+                    return regressed.x - v.value;
+                }
+                else {
+                    return regressed.y - v.value;
+                }
             }
         }
         return 0;
     };
-    return ColinearPointConstraint;
+    return ColinearPointsConstraint;
 }());
-exports.ColinearPointConstraint = ColinearPointConstraint;
+exports.ColinearPointsConstraint = ColinearPointsConstraint;
+function leastSquaresRegression(points) {
+    var xs = 0;
+    var ys = 0;
+    var x2s = 0;
+    var xys = 0;
+    var n = points.length;
+    for (var _i = 0, points_4 = points; _i < points_4.length; _i++) {
+        var point = points_4[_i];
+        var x = point.x.value;
+        var y = point.y.value;
+        xs += x;
+        ys += y;
+        x2s += x * x;
+        xys += x * y;
+    }
+    var denominator = n * x2s - (xs * xs);
+    if (denominator < 0.001) {
+        var p1_1 = new figures_1.Point(xs / n, 0);
+        var p2_1 = new figures_1.Point(xs / n, 10);
+        return [p1_1, p2_1];
+    }
+    var numerator = (n * xys) - (xs * ys);
+    var slope = numerator / denominator;
+    var intercept = (ys - slope * xs) / n;
+    var p1 = new figures_1.Point(0, intercept);
+    var p2 = new figures_1.Point(1, intercept + slope);
+    return [p1, p2];
+}
 
 },{"./figures":3}],2:[function(require,module,exports){
 "use strict";
@@ -520,36 +536,34 @@ var ColinearConstraintFilter = /** @class */ (function () {
         this.name = "colinear";
     }
     ColinearConstraintFilter.prototype.validFigures = function (figs) {
-        var hasLine = false;
-        var hasPoint = false;
+        var count = 0;
         for (var _i = 0, figs_11 = figs; _i < figs_11.length; _i++) {
             var fig = figs_11[_i];
             if (fig.type == "point") {
-                if (hasPoint)
-                    return false;
-                hasPoint = true;
+                count += 1;
             }
             else if (fig.type == "line") {
-                if (hasLine)
-                    return false;
-                hasLine = true;
+                count += 2;
+            }
+            else {
+                return false;
             }
         }
-        return hasPoint && hasLine;
+        return count > 3;
     };
     ColinearConstraintFilter.prototype.createConstraints = function (figs) {
-        var point = null;
-        var line = null;
+        var points = [];
         for (var _i = 0, figs_12 = figs; _i < figs_12.length; _i++) {
             var fig = figs_12[_i];
             if (fig.type == "point") {
-                point = fig;
+                points.push(fig.p.variablePoint);
             }
             else if (fig.type == "line") {
-                line = fig;
+                points.push(fig.p1.variablePoint);
+                points.push(fig.p2.variablePoint);
             }
         }
-        return [new constraint_1.ColinearPointConstraint(line.p1.variablePoint, line.p2.variablePoint, point.p.variablePoint)];
+        return [new constraint_1.ColinearPointsConstraint(points)];
     };
     return ColinearConstraintFilter;
 }());
@@ -738,9 +752,11 @@ var PointFigure = /** @class */ (function (_super) {
         if (name === void 0) { name = "point"; }
         var _this = _super.call(this) || this;
         _this.type = "point";
+        _this.name = "point";
         _this.childFigures = [];
         _this.parentFigure = null;
         _this.p = p;
+        _this.name = name;
         main_1.protractr.sketch.addVariable(_this.p.variablePoint.x);
         main_1.protractr.sketch.addVariable(_this.p.variablePoint.y);
         return _this;
@@ -761,11 +777,14 @@ var PointFigure = /** @class */ (function (_super) {
 exports.PointFigure = PointFigure;
 var LineFigure = /** @class */ (function (_super) {
     __extends(LineFigure, _super);
-    function LineFigure(p1, p2) {
+    function LineFigure(p1, p2, name) {
+        if (name === void 0) { name = "line"; }
         var _this = _super.call(this) || this;
         _this.type = "line";
+        _this.name = "line";
         _this.p1 = p1;
         _this.p2 = p2;
+        _this.name = name;
         _this.childFigures = [new PointFigure(_this.p1, "p1"), new PointFigure(_this.p2, "p2")];
         _this.childFigures[0].parentFigure = _this;
         _this.childFigures[1].parentFigure = _this;
@@ -784,11 +803,13 @@ var LineFigure = /** @class */ (function (_super) {
 exports.LineFigure = LineFigure;
 var CircleFigure = /** @class */ (function (_super) {
     __extends(CircleFigure, _super);
-    function CircleFigure(c, r) {
+    function CircleFigure(c, r, name) {
+        if (name === void 0) { name = "circle"; }
         var _this = _super.call(this) || this;
         _this.type = "circle";
         _this.c = c;
         _this.r = new constraint_1.Variable(r);
+        _this.name = name;
         main_1.protractr.sketch.addVariable(_this.r);
         _this.childFigures = [new PointFigure(_this.c, "center")];
         _this.childFigures[0].parentFigure = _this;
@@ -807,6 +828,17 @@ var CircleFigure = /** @class */ (function (_super) {
     return CircleFigure;
 }(BasicFigure));
 exports.CircleFigure = CircleFigure;
+function getFullName(figure) {
+    if (!figure)
+        return "null";
+    var name = figure.name;
+    while (figure.parentFigure) {
+        figure = figure.parentFigure;
+        name += " of " + figure.name;
+    }
+    return name;
+}
+exports.getFullName = getFullName;
 
 },{"../main":5,"./constraint":1}],4:[function(require,module,exports){
 "use strict";
@@ -853,13 +885,15 @@ var Sketch = /** @class */ (function () {
             var c = constraints_1[_i];
             this.constraints.push(c);
         }
-        this.solveConstraints();
+        this.solveConstraints(true);
+        main_1.protractr.ui.infoPane.updateConstraintList(this.constraints);
         main_1.protractr.ui.sketchView.draw();
     };
     Sketch.prototype.removeConstraint = function (constraint) {
         this.constraints = this.constraints.filter(function (value, index, arr) {
             return value != constraint;
         });
+        main_1.protractr.ui.infoPane.updateConstraintList(this.constraints);
     };
     Sketch.prototype.addVariable = function (variable) {
         this.variables.push(variable);
@@ -950,6 +984,7 @@ exports.Protractr = Protractr;
 },{"./gcs/sketch":4,"./ui/ui":11}],7:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var figures_1 = require("../gcs/figures");
 var main_1 = require("../main");
 var constraint_filter_1 = require("../gcs/constraint_filter");
 var InfoPane = /** @class */ (function () {
@@ -962,16 +997,21 @@ var InfoPane = /** @class */ (function () {
         this.sidePane.appendChild(d);
         this.possibleConstraints = document.createElement("div");
         this.sidePane.appendChild(this.possibleConstraints);
+        var e = document.createElement("p");
+        e.innerText = "Existing Constraints:";
+        this.sidePane.appendChild(e);
+        this.existingConstraints = document.createElement("select");
+        this.existingConstraints.multiple = true;
+        this.existingConstraints.style.width = "100%";
+        this.existingConstraints.style.height = "200px";
+        this.sidePane.appendChild(this.existingConstraints);
     }
     InfoPane.prototype.setFocusedFigures = function (figures) {
         if (figures === null || figures.length == 0) {
             this.title.innerText = "Nothing selected";
         }
-        else if (figures.length == 1) {
-            this.title.innerText = "Selected " + figures[0].type;
-        }
         else {
-            this.title.innerText = "Multiple things selected";
+            this.title.innerText = "Selected " + figures.map(figures_1.getFullName).join(", ");
         }
         while (this.possibleConstraints.lastChild) {
             this.possibleConstraints.removeChild(this.possibleConstraints.lastChild);
@@ -990,11 +1030,32 @@ var InfoPane = /** @class */ (function () {
             _loop_1(pc);
         }
     };
+    InfoPane.prototype.updateConstraintList = function (constraints) {
+        while (this.existingConstraints.lastChild) {
+            this.existingConstraints.removeChild(this.existingConstraints.lastChild);
+        }
+        var _loop_2 = function (constraint) {
+            var o = document.createElement("option");
+            o.innerText = constraint.constructor.name;
+            this_2.existingConstraints.appendChild(o);
+            o.oncontextmenu = function (event) {
+                event.preventDefault();
+                if (event.which == 3)
+                    main_1.protractr.sketch.removeConstraint(constraint);
+            };
+        };
+        var this_2 = this;
+        for (var _i = 0, constraints_1 = constraints; _i < constraints_1.length; _i++) {
+            var constraint = constraints_1[_i];
+            _loop_2(constraint);
+        }
+        console.log("Update list");
+    };
     return InfoPane;
 }());
 exports.InfoPane = InfoPane;
 
-},{"../gcs/constraint_filter":2,"../main":5}],8:[function(require,module,exports){
+},{"../gcs/constraint_filter":2,"../gcs/figures":3,"../main":5}],8:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var figures_1 = require("../gcs/figures");

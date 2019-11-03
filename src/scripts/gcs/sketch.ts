@@ -40,13 +40,15 @@ export class Sketch {
         for(let c of constraints) {
             this.constraints.push(c);
         }
-        this.solveConstraints();
+        this.solveConstraints(true);
+        protractr.ui.infoPane.updateConstraintList(this.constraints);
         protractr.ui.sketchView.draw();
     }
     removeConstraint(constraint) {
         this.constraints = this.constraints.filter(function(value, index, arr) {
             return value != constraint;
         });
+        protractr.ui.infoPane.updateConstraintList(this.constraints);
     }
     addVariable(variable: Variable) {
         this.variables.push(variable);

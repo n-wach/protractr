@@ -8,7 +8,7 @@ import {
     TangentConstraint,
     VariablePoint,
     EqualConstraint,
-    ColinearPointConstraint,
+    ColinearPointsConstraint,
 } from "./constraint";
 
 interface ConstraintFilter {
@@ -184,37 +184,32 @@ class EqualRadiusConstraintFilter implements ConstraintFilter {
 
 class ColinearConstraintFilter implements ConstraintFilter {
     name: string = "colinear";
-
     validFigures(figs: Figure[]): boolean {
-        let hasLine = false;
-        let hasPoint = false;
+        let count = 0;
         for(let fig of figs) {
             if(fig.type == "point") {
-                if(hasPoint) return false;
-                hasPoint = true;
-            } else if (fig.type == "line") {
-                if(hasLine) return false;
-                hasLine = true;
-            }
-        }
-        return hasPoint && hasLine;
-    }
-
-    createConstraints(figs: Figure[]): Constraint[] {
-        let point: PointFigure = null;
-        let line: LineFigure = null;
-        for(let fig of figs) {
-            if(fig.type == "point") {
-                point = fig as PointFigure;
+                count += 1;
             } else if(fig.type == "line") {
-                line = fig as LineFigure;
+                count += 2;
+            } else {
+                return false;
             }
         }
-        return [new ColinearPointConstraint(line.p1.variablePoint, line.p2.variablePoint, point.p.variablePoint)];
+        return count > 3;
+    }
+    createConstraints(figs: Figure[]): Constraint[] {
+        let points: VariablePoint[] = [];
+        for(let fig of figs) {
+            if(fig.type == "point") {
+                points.push((fig as PointFigure).p.variablePoint);
+            } else if(fig.type == "line") {
+                points.push((fig as LineFigure).p1.variablePoint);
+                points.push((fig as LineFigure).p2.variablePoint);
+            }
+        }
+        return [new ColinearPointsConstraint(points)];
     }
 }
-
-
 
 let possibleConstraints = [
     new CoincidentPointFilter(),
