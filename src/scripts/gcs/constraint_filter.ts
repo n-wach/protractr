@@ -167,16 +167,16 @@ class FilterString {
 interface ConstraintFilter {
     name: string;
     filter: FilterString;
-    createConstraints(figs: Figure[]): Constraint[];
+    createConstraints(sortedFigures: SortedFigureSelection): Constraint[];
 }
 
 class HorizontalPointFilter implements ConstraintFilter {
     name: string = "horizontal";
     filter = new FilterString(":2+point");
-    createConstraints(figs: Figure[]) {
+    createConstraints(sortedFigures: SortedFigureSelection) {
         let points = [];
-        for(let fig of figs as PointFigure[]) {
-            points.push(fig.p.variablePoint);
+        for(let point of sortedFigures.point) {
+            points.push(point.p.variablePoint);
         }
         return [new HorizontalConstraint(points)];
     }
@@ -185,10 +185,10 @@ class HorizontalPointFilter implements ConstraintFilter {
 class VerticalPointFilter implements ConstraintFilter {
     name: string = "vertical";
     filter = new FilterString(":2+point");
-    createConstraints(figs: Figure[]) {
+    createConstraints(sortedFigures: SortedFigureSelection) {
         let points = [];
-        for(let fig of figs as PointFigure[]) {
-            points.push(fig.p.variablePoint);
+        for(let point of sortedFigures.point) {
+            points.push(point.p.variablePoint);
         }
         return [new VerticalConstraint(points)];
     }
@@ -197,9 +197,9 @@ class VerticalPointFilter implements ConstraintFilter {
 class VerticalLineFilter implements ConstraintFilter {
     name: string = "vertical";
     filter = new FilterString(":1+line");
-    createConstraints(figs: Figure[]) {
+    createConstraints(sortedFigures: SortedFigureSelection) {
         let constraints = [];
-        for(let line of figs as LineFigure[]) {
+        for(let line of sortedFigures.line) {
             constraints.push(new VerticalConstraint([line.p1.variablePoint, line.p2.variablePoint]));
         }
         return constraints;
@@ -209,9 +209,9 @@ class VerticalLineFilter implements ConstraintFilter {
 class HorizontalLineFilter implements ConstraintFilter {
     name: string = "horizontal";
     filter = new FilterString(":1+line");
-    createConstraints(figs: Figure[]) {
+    createConstraints(sortedFigures: SortedFigureSelection) {
         let constraints = [];
-        for(let line of figs as LineFigure[]) {
+        for(let line of sortedFigures.line) {
             constraints.push(new HorizontalConstraint([line.p1.variablePoint, line.p2.variablePoint]));
         }
         return constraints;
@@ -221,9 +221,9 @@ class HorizontalLineFilter implements ConstraintFilter {
 class CoincidentPointFilter implements ConstraintFilter {
     name: string = "coincident";
     filter = new FilterString(":2+point");
-    createConstraints(figs: Figure[]) {
+    createConstraints(sortedFigures: SortedFigureSelection) {
         let points = [];
-        for(let fig of figs as PointFigure[]) {
+        for(let fig of sortedFigures.point) {
             points.push(fig.p.variablePoint);
         }
         return [new CoincidentPointConstraint(points)];
@@ -233,15 +233,11 @@ class CoincidentPointFilter implements ConstraintFilter {
 class ArcPointCoincidentFilter implements ConstraintFilter {
     name: string = "coincident";
     filter = new FilterString(":circle&1+point");
-    createConstraints(figs: Figure[]) {
+    createConstraints(sortedFigures: SortedFigureSelection) {
         let points: VariablePoint[] = [];
-        let circle: CircleFigure = null;
-        for(let fig of figs) {
-            if(fig.type == "point") {
-                points.push((fig as PointFigure).p.variablePoint);
-            } else if(fig.type == "circle") {
-                circle = fig as CircleFigure;
-            }
+        let circle: CircleFigure = sortedFigures.circle[0];
+        for(let point of sortedFigures.point) {
+            points.push(point.p.variablePoint);
         }
         return [new ArcPointCoincidentConstraint(circle.c.variablePoint, circle.r, points)];
     }
@@ -250,16 +246,9 @@ class ArcPointCoincidentFilter implements ConstraintFilter {
 class LineMidpointCoincidentFilter implements ConstraintFilter {
     name: string = "midpoint";
     filter = new FilterString(":line&point");
-    createConstraints(figs: Figure[]) {
-        let point: PointFigure = null;
-        let line: LineFigure = null;
-        for(let fig of figs) {
-            if(fig.type == "point") {
-                point = fig as PointFigure;
-            } else if(fig.type == "line") {
-                line = fig as LineFigure;
-            }
-        }
+    createConstraints(sortedFigures: SortedFigureSelection) {
+        let point: PointFigure = sortedFigures.point[0];
+        let line: LineFigure = sortedFigures.line[0];
         return [new LineMidpointConstraint(line.p1.variablePoint, line.p2.variablePoint, point.p.variablePoint)];
     }
 }
@@ -267,10 +256,10 @@ class LineMidpointCoincidentFilter implements ConstraintFilter {
 class EqualRadiusConstraintFilter implements ConstraintFilter {
     name: string = "equal";
     filter = new FilterString(":2+circle");
-    createConstraints(figs: Figure[]): Constraint[] {
+    createConstraints(sortedFigures: SortedFigureSelection): Constraint[] {
         let radii = [];
-        for(let fig of figs as CircleFigure[]) {
-            radii.push(fig.r);
+        for(let circle of sortedFigures.circle) {
+            radii.push(circle.r);
         }
         return [new EqualConstraint(radii)];
     }
@@ -279,15 +268,14 @@ class EqualRadiusConstraintFilter implements ConstraintFilter {
 class ColinearConstraintFilter implements ConstraintFilter {
     name: string = "colinear";
     filter = new FilterString("line as 2 point:2+point");
-    createConstraints(figs: Figure[]): Constraint[] {
+    createConstraints(sortedFigures: SortedFigureSelection): Constraint[] {
         let points: VariablePoint[] = [];
-        for(let fig of figs) {
-            if(fig.type == "point") {
-                points.push((fig as PointFigure).p.variablePoint);
-            } else if(fig.type == "line") {
-                points.push((fig as LineFigure).p1.variablePoint);
-                points.push((fig as LineFigure).p2.variablePoint);
-            }
+        for(let point of sortedFigures.point) {
+            points.push(point.p.variablePoint);
+        }
+        for(let line of sortedFigures.line) {
+            points.push(line.p1.variablePoint);
+            points.push(line.p2.variablePoint);
         }
         return [new ColinearPointsConstraint(points)];
     }
@@ -296,18 +284,10 @@ class ColinearConstraintFilter implements ConstraintFilter {
 export class TangentLineConstraintFilter implements ConstraintFilter {
     name: string = "tangent";
     filter = new FilterString(":circle&1+line");
-    createConstraints(figs: Figure[]): Constraint[] {
-        let circle: CircleFigure = null;
-        let lines: LineFigure[] = [];
-        for(let fig of figs) {
-            if(fig.type == "circle") {
-                circle = fig as CircleFigure;
-            } else if(fig.type == "line") {
-                lines.push(fig as LineFigure);
-            }
-        }
+    createConstraints(sortedFigures: SortedFigureSelection): Constraint[] {
+        let circle: CircleFigure = sortedFigures.circle[0];
         let constraints = [];
-        for(let line of lines) {
+        for(let line of sortedFigures.line) {
             constraints.push(new TangentLineConstraint(circle.c.variablePoint, circle.r, line.p1.variablePoint, line.p2.variablePoint));
         }
         return constraints;
@@ -316,15 +296,14 @@ export class TangentLineConstraintFilter implements ConstraintFilter {
 
 export class ConcentricConstraintFilter implements ConstraintFilter {
     name: string = "concentric";
-    filter = new FilterString(":circle&1+line");
-    createConstraints(figs: Figure[]): Constraint[] {
+    filter = new FilterString(":1+circle&*point");
+    createConstraints(sortedFigures: SortedFigureSelection): Constraint[] {
         let points = [];
-        for(let fig of figs) {
-            if(fig.type == "circle") {
-                points.push((fig as CircleFigure).c.variablePoint);
-            } else if(fig.type == "point") {
-                points.push((fig as PointFigure).p.variablePoint);
-            }
+        for(let circle of sortedFigures.circle) {
+            points.push(circle.c.variablePoint);
+        }
+        for(let point of sortedFigures.point) {
+            points.push(point.p.variablePoint);
         }
         return [new CoincidentPointConstraint(points)];
     }
@@ -333,19 +312,12 @@ export class ConcentricConstraintFilter implements ConstraintFilter {
 export class IntersectionConstraintFilter implements ConstraintFilter {
     name: string = "intersection";
     filter = new FilterString(":point&2+line");
-    createConstraints(figs: Figure[]): Constraint[] {
-        let lines: LineFigure[] = [];
-        let point: VariablePoint = null;
-        for(let fig of figs) {
-            if(fig.type == "point") {
-                point = (fig as PointFigure).p.variablePoint;
-            } else if(fig.type == "line") {
-                lines.push(fig as LineFigure);
-            }
-        }
+    createConstraints(sortedFigures: SortedFigureSelection): Constraint[] {
+        let lines: LineFigure[] = sortedFigures.line;
+        let point: PointFigure = sortedFigures.point[0];
         let constraints = [];
         for(let line of lines) {
-            constraints.push(new ColinearPointsConstraint([line.p1.variablePoint, line.p2.variablePoint, point]));
+            constraints.push(new ColinearPointsConstraint([line.p1.variablePoint, line.p2.variablePoint, point.p.variablePoint]));
         }
         return constraints;
     }
@@ -354,9 +326,9 @@ export class IntersectionConstraintFilter implements ConstraintFilter {
 export class TangentCirclesConstraintFilter implements ConstraintFilter {
     name: string = "tangent";
     filter = new FilterString(":2circle");
-    createConstraints(figs: Figure[]): Constraint[] {
-        let circle1 = figs[0] as CircleFigure;
-        let circle2 = figs[1] as CircleFigure;
+    createConstraints(sortedFigures: SortedFigureSelection): Constraint[] {
+        let circle1 = sortedFigures.circle[0];
+        let circle2 = sortedFigures.circle[1];
         return [new TangentCircleConstraint(circle1.c.variablePoint, circle1.r, circle2.c.variablePoint, circle2.r)];
     }
 }
@@ -376,6 +348,24 @@ let possibleConstraints = [
     new IntersectionConstraintFilter(),
     new TangentCirclesConstraintFilter(),
 ];
+
+type SortedFigureSelection = {
+    point: PointFigure[]
+    line: LineFigure[],
+    circle: CircleFigure[],
+};
+
+export function sortFigureSelection(figures: Figure[]): SortedFigureSelection {
+    let sortedFigures: SortedFigureSelection = {
+        point: [],
+        line: [],
+        circle: [],
+    }
+    for(let f of figures) {
+        sortedFigures[f.type].push(f);
+    }
+    return sortedFigures;
+}
 
 export function getSatisfiedConstraintFilters(figs: Figure[]): ConstraintFilter[] {
     let possibilities = [];

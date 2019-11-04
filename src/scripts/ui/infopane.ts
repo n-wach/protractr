@@ -1,6 +1,6 @@
 import {Figure, getFullName} from "../gcs/figures";
 import {protractr} from "../main";
-import {getSatisfiedConstraintFilters} from "../gcs/constraint_filter";
+import {getSatisfiedConstraintFilters, sortFigureSelection} from "../gcs/constraint_filter";
 import {Constraint} from "../gcs/constraint";
 
 export class InfoPane {
@@ -46,7 +46,8 @@ export class InfoPane {
             let child = document.createElement("button");
             child.innerText = pc.name;
             child.addEventListener("click", function () {
-                protractr.sketch.addConstraints(pc.createConstraints(figures));
+                let sortedFigures = sortFigureSelection(figures);
+                protractr.sketch.addConstraints(pc.createConstraints(sortedFigures));
             });
             this.possibleConstraints.appendChild(child);
         }
