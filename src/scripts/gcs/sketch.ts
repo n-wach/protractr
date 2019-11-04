@@ -67,7 +67,7 @@ export class Sketch {
                 totalError += constraint.getError();
             }
             if (totalError < 1) return true;
-            if (count > 30 && !tirelessSolve) return false;
+            if (count > 50 && tirelessSolve) return false;
             let variableGradients = [];
             let contributorCount = [];
             for (let variable of this.variables) {
@@ -84,7 +84,7 @@ export class Sketch {
                 contributorCount.push(count);
             }
             for (let i = 0; i < variableGradients.length; i++) {
-                this.variables[i].value += variableGradients[i] / (1 + contributorCount[i]);
+                this.variables[i].value += variableGradients[i] / (2 + contributorCount[i]);
             }
             count += 1;
             previousError = totalError;

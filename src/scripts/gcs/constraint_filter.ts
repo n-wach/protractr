@@ -8,23 +8,171 @@ import {
     ArcPointCoincidentConstraint,
     VariablePoint,
     EqualConstraint,
-    ColinearPointsConstraint, Variable, TangentLineConstraint,
+    ColinearPointsConstraint, Variable, TangentLineConstraint, TangentCircleConstraint,
 } from "./constraint";
+
+type MatchQuantifier = string;
+type FigureType = string;
+type TypeMatch = {quantifier: MatchQuantifier, type: FigureType};
+type TypeMatchExpression = TypeMatch[];
+type TypeMatchExpressionList = TypeMatchExpression[];
+type TypeMap = {from: FigureType, count: number, to: FigureType};
+type TypeMapList = TypeMap[];
+type FilterCase = {mappings: TypeMapList, expressions: TypeMatchExpressionList};
+type Filter = FilterCase[];
+
+
+class FilterString {
+    /**
+     * See type definitions above.
+     * - TypeMatches are joined by & to form a TypeMatchExpression
+     * - TypeMaps take the form "type as n type" such as "line as 2 point"
+     * - TypeMaps are joined by , to form a TypeMapList
+     * - MappedTypedMatchExpressionLists are formed as TypeMapList:TypeMatchExpression
+     * - MappedTypedMatchExpressionLists are joined by | to form
+     * - MatchQuantifier can be a number, a range (number-number), number+ or * (0+) or empty (1)
+     */
+    filterString: string;
+    filter: Filter;
+    constructor(str: string) {
+        this.filterString = str;
+        this.filter = this.parseFilter(this.filterString);
+    }
+    private parseFilter(filterString: string): Filter{
+        let filter: Filter=[];
+        for(let mappedTypeMatchExpressionList of filterString.split("|")) {
+            filter.push(this.parseFilterCase(mappedTypeMatchExpressionList));
+        }
+        return filter;
+    }
+    private parseFilterCase(filterCase: string): FilterCase {
+        let split = filterCase.split(":");
+        let mapList: TypeMapList = split[0] ? this.parseTypeMapList(split[0]) : [];
+        let matchExpressionList: TypeMatchExpressionList = this.parseTypeMatchExpressionList(split[1]);
+        return {mappings: mapList, expressions: matchExpressionList};
+    }
+    private parseTypeMapList(typeMapList: string): TypeMapList {
+        let maps: TypeMapList = [];
+        for(let typeMap of typeMapList.split(",")) {
+            maps.push(this.parseTypeMap(typeMap));
+        }
+        return maps;
+    }
+    private parseTypeMap(typeMap: string): TypeMap {
+        let split = typeMap.split(" ");
+        let fromType = split[0];
+        //let as = split[1];
+        let toTypeCount = parseInt(split[2]);
+        let toType = split[3];
+        return {from: fromType, count: toTypeCount, to: toType};
+    }
+    private parseTypeMatchExpressionList(typeMatchExpressionList: string): TypeMatchExpressionList {
+        let expressions: TypeMatchExpressionList = [];
+        for(let typeMatchExpression of typeMatchExpressionList.split(",")) {
+            expressions.push(this.parseTypeMatchExpression(typeMatchExpression));
+        }
+        return expressions;
+    }
+    private parseTypeMatchExpression(typeMatchExpression: string): TypeMatchExpression {
+        let matches: TypeMatchExpression = [];
+        for(let typeMatch of typeMatchExpression.split("&")) {
+            matches.push(this.parseTypeMatch(typeMatch));
+        }
+        return matches;
+    }
+    private parseTypeMatch(typeMatch: string): TypeMatch {
+        for(let i = 0; i < typeMatch.length; i++) {
+            if(typeMatch[i].toLowerCase() != typeMatch[i].toUpperCase()) {
+                //we've hit a letter!
+                let quantifier = typeMatch.substr(0, i);
+                if(quantifier == "*") quantifier = "0+";
+                if(quantifier == "" || quantifier == undefined) quantifier = "1";
+                let type = typeMatch.substr(i);
+                return {quantifier: quantifier, type: type};
+            }
+        }
+        console.error("Invalid TypeMatch:", typeMatch);
+        return {quantifier: "0", type: "point"};
+    }
+    satisfiesFilter(figures: Figure[]) {
+        let rawTypes = {};
+        for(let fig of figures) {
+            if(rawTypes[fig.type] === undefined) {
+                rawTypes[fig.type] = 1;
+                continue;
+            }
+            rawTypes[fig.type] += 1;
+        }
+        for(let filterCase of this.filter) {
+            let typeCopy = {};
+            for(let key in rawTypes) {
+                typeCopy[key] = rawTypes[key];
+            }
+            if(this.satisfiesFilterCase(filterCase, typeCopy)) return true;
+        }
+        return false;
+    }
+    private satisfiesFilterCase(filterCase: FilterCase, types): boolean {
+        for(let typeMapping of filterCase.mappings) {
+            this.mapTypes(typeMapping, types);
+        }
+        for(let expression of filterCase.expressions) {
+            console.log(types, expression);
+            if(this.satisfiesTypeMatchExpression(expression, types)) return true;
+        }
+        return false;
+    }
+    private mapTypes(typeMapping: TypeMap, types) {
+        if(types[typeMapping.from] !== undefined) {
+            let additionalTypes = types[typeMapping.from] * typeMapping.count;
+            types[typeMapping.from] = 0;
+            if(types[typeMapping.to] === undefined) {
+                types[typeMapping.to] = additionalTypes;
+            } else {
+                types[typeMapping.to] += additionalTypes;
+            }
+        }
+    }
+    private satisfiesTypeMatchExpression(expression: TypeMatchExpression, types): boolean {
+        let addressedTypes = {};
+        for(let typeMatch of expression) {
+            if(!this.satisfiesTypeMatch(typeMatch, types)) return false;
+            addressedTypes[typeMatch.type] = true;
+        }
+        for(let type in types) {
+            //all types must be addressed.
+            if(!addressedTypes[type]) return false;
+        }
+        return true;
+    }
+    private satisfiesTypeMatch(typeMatch: TypeMatch, types): boolean {
+        let count = types[typeMatch.type];
+        let quantifier = typeMatch.quantifier;
+        if(quantifier.indexOf("-") != -1) {
+            //range
+            let min = parseInt(quantifier.substr(0, quantifier.indexOf("-") - 1));
+            let max = parseInt(quantifier.substr(quantifier.indexOf("-") + 1));
+            return count >= min && count <= max;
+        }
+        if (quantifier.indexOf("+") != -1) {
+            //min+
+            let min = parseInt(quantifier.substr(0, quantifier.indexOf("+")));
+            return count >= min;
+        }
+        let exact = parseInt(quantifier);
+        return count == exact;
+    }
+}
 
 interface ConstraintFilter {
     name: string;
-    validFigures(figs: Figure[]): boolean;
+    filter: FilterString;
     createConstraints(figs: Figure[]): Constraint[];
 }
 
 class HorizontalPointFilter implements ConstraintFilter {
     name: string = "horizontal";
-    validFigures(figs: Figure[]) {
-        for(let fig of figs) {
-            if(fig.type != "point") return false;
-        }
-        return figs.length > 1;
-    }
+    filter = new FilterString(":2+point");
     createConstraints(figs: Figure[]) {
         let points = [];
         for(let fig of figs as PointFigure[]) {
@@ -36,12 +184,7 @@ class HorizontalPointFilter implements ConstraintFilter {
 
 class VerticalPointFilter implements ConstraintFilter {
     name: string = "vertical";
-    validFigures(figs: Figure[]) {
-        for(let fig of figs) {
-            if(fig.type != "point") return false;
-        }
-        return figs.length > 1;
-    }
+    filter = new FilterString(":2+point");
     createConstraints(figs: Figure[]) {
         let points = [];
         for(let fig of figs as PointFigure[]) {
@@ -53,12 +196,7 @@ class VerticalPointFilter implements ConstraintFilter {
 
 class VerticalLineFilter implements ConstraintFilter {
     name: string = "vertical";
-    validFigures(figs: Figure[]) {
-        for(let fig of figs) {
-            if(fig.type != "line") return false;
-        }
-        return figs.length > 0;
-    }
+    filter = new FilterString(":1+line");
     createConstraints(figs: Figure[]) {
         let constraints = [];
         for(let line of figs as LineFigure[]) {
@@ -70,12 +208,7 @@ class VerticalLineFilter implements ConstraintFilter {
 
 class HorizontalLineFilter implements ConstraintFilter {
     name: string = "horizontal";
-    validFigures(figs: Figure[]) {
-        for(let fig of figs) {
-            if(fig.type != "line") return false;
-        }
-        return figs.length > 0;
-    }
+    filter = new FilterString(":1+line");
     createConstraints(figs: Figure[]) {
         let constraints = [];
         for(let line of figs as LineFigure[]) {
@@ -87,14 +220,7 @@ class HorizontalLineFilter implements ConstraintFilter {
 
 class CoincidentPointFilter implements ConstraintFilter {
     name: string = "coincident";
-    validFigures(figs: Figure[]) {
-        let count = 0;
-        for(let fig of figs) {
-            if(fig.type == "point") count += 1;
-            else return false;
-        }
-        return count > 1;
-    }
+    filter = new FilterString(":2+point");
     createConstraints(figs: Figure[]) {
         let points = [];
         for(let fig of figs as PointFigure[]) {
@@ -106,19 +232,7 @@ class CoincidentPointFilter implements ConstraintFilter {
 
 class ArcPointCoincidentFilter implements ConstraintFilter {
     name: string = "coincident";
-    validFigures(figs: Figure[]) {
-        let hasCircle = false;
-        let hasPoints = false;
-        for(let fig of figs) {
-            if(fig.type == "point") {
-                hasPoints = true;
-            } else if (fig.type == "circle") {
-                if(hasCircle) return false;
-                hasCircle = true;
-            }
-        }
-        return hasPoints && hasCircle;
-    }
+    filter = new FilterString(":circle&1+point");
     createConstraints(figs: Figure[]) {
         let points: VariablePoint[] = [];
         let circle: CircleFigure = null;
@@ -135,20 +249,7 @@ class ArcPointCoincidentFilter implements ConstraintFilter {
 
 class LineMidpointCoincidentFilter implements ConstraintFilter {
     name: string = "midpoint";
-    validFigures(figs: Figure[]) {
-        let hasLine = false;
-        let hasPoint = false;
-        for(let fig of figs) {
-            if(fig.type == "point") {
-                if(hasPoint) return false;
-                hasPoint = true;
-            } else if (fig.type == "line") {
-                if(hasLine) return false;
-                hasLine = true;
-            }
-        }
-        return hasPoint && hasLine;
-    }
+    filter = new FilterString(":line&point");
     createConstraints(figs: Figure[]) {
         let point: PointFigure = null;
         let line: LineFigure = null;
@@ -165,7 +266,7 @@ class LineMidpointCoincidentFilter implements ConstraintFilter {
 
 class EqualRadiusConstraintFilter implements ConstraintFilter {
     name: string = "equal";
-
+    filter = new FilterString(":2+circle");
     createConstraints(figs: Figure[]): Constraint[] {
         let radii = [];
         for(let fig of figs as CircleFigure[]) {
@@ -173,30 +274,11 @@ class EqualRadiusConstraintFilter implements ConstraintFilter {
         }
         return [new EqualConstraint(radii)];
     }
-
-    validFigures(figs: Figure[]): boolean {
-        for(let fig of figs) {
-            if(fig.type != "circle") return false;
-        }
-        return figs.length > 1;
-    }
 }
 
 class ColinearConstraintFilter implements ConstraintFilter {
     name: string = "colinear";
-    validFigures(figs: Figure[]): boolean {
-        let count = 0;
-        for(let fig of figs) {
-            if(fig.type == "point") {
-                count += 1;
-            } else if(fig.type == "line") {
-                count += 2;
-            } else {
-                return false;
-            }
-        }
-        return count > 3;
-    }
+    filter = new FilterString("line as 2 point:2+point");
     createConstraints(figs: Figure[]): Constraint[] {
         let points: VariablePoint[] = [];
         for(let fig of figs) {
@@ -213,31 +295,69 @@ class ColinearConstraintFilter implements ConstraintFilter {
 
 export class TangentLineConstraintFilter implements ConstraintFilter {
     name: string = "tangent";
-    validFigures(figs: Figure[]): boolean {
-        let hasLine = false;
-        let hasCircle = false;
-        for(let fig of figs) {
-            if(fig.type == "circle") {
-                if(hasCircle) return false;
-                hasCircle = true;
-            } else if (fig.type == "line") {
-                if(hasLine) return false;
-                hasLine = true;
-            }
-        }
-        return hasCircle && hasLine;
-    }
+    filter = new FilterString(":circle&1+line");
     createConstraints(figs: Figure[]): Constraint[] {
         let circle: CircleFigure = null;
-        let line: LineFigure = null;
+        let lines: LineFigure[] = [];
         for(let fig of figs) {
             if(fig.type == "circle") {
                 circle = fig as CircleFigure;
             } else if(fig.type == "line") {
-                line = fig as LineFigure;
+                lines.push(fig as LineFigure);
             }
         }
-        return [new TangentLineConstraint(circle.c.variablePoint, circle.r, line.p1.variablePoint, line.p2.variablePoint)];
+        let constraints = [];
+        for(let line of lines) {
+            constraints.push(new TangentLineConstraint(circle.c.variablePoint, circle.r, line.p1.variablePoint, line.p2.variablePoint));
+        }
+        return constraints;
+    }
+}
+
+export class ConcentricConstraintFilter implements ConstraintFilter {
+    name: string = "concentric";
+    filter = new FilterString(":circle&1+line");
+    createConstraints(figs: Figure[]): Constraint[] {
+        let points = [];
+        for(let fig of figs) {
+            if(fig.type == "circle") {
+                points.push((fig as CircleFigure).c.variablePoint);
+            } else if(fig.type == "point") {
+                points.push((fig as PointFigure).p.variablePoint);
+            }
+        }
+        return [new CoincidentPointConstraint(points)];
+    }
+}
+
+export class IntersectionConstraintFilter implements ConstraintFilter {
+    name: string = "intersection";
+    filter = new FilterString(":point&2+line");
+    createConstraints(figs: Figure[]): Constraint[] {
+        let lines: LineFigure[] = [];
+        let point: VariablePoint = null;
+        for(let fig of figs) {
+            if(fig.type == "point") {
+                point = (fig as PointFigure).p.variablePoint;
+            } else if(fig.type == "line") {
+                lines.push(fig as LineFigure);
+            }
+        }
+        let constraints = [];
+        for(let line of lines) {
+            constraints.push(new ColinearPointsConstraint([line.p1.variablePoint, line.p2.variablePoint, point]));
+        }
+        return constraints;
+    }
+}
+
+export class TangentCirclesConstraintFilter implements ConstraintFilter {
+    name: string = "tangent";
+    filter = new FilterString(":2circle");
+    createConstraints(figs: Figure[]): Constraint[] {
+        let circle1 = figs[0] as CircleFigure;
+        let circle2 = figs[1] as CircleFigure;
+        return [new TangentCircleConstraint(circle1.c.variablePoint, circle1.r, circle2.c.variablePoint, circle2.r)];
     }
 }
 
@@ -252,12 +372,15 @@ let possibleConstraints = [
     new EqualRadiusConstraintFilter(),
     new ColinearConstraintFilter(),
     new TangentLineConstraintFilter(),
+    new ConcentricConstraintFilter(),
+    new IntersectionConstraintFilter(),
+    new TangentCirclesConstraintFilter(),
 ];
 
 export function getSatisfiedConstraintFilters(figs: Figure[]): ConstraintFilter[] {
     let possibilities = [];
     for(let pc of possibleConstraints) {
-        if(pc.validFigures(figs)) possibilities.push(pc);
+        if(pc.filter.satisfiesFilter(figs)) possibilities.push(pc);
     }
     return possibilities;
 }

@@ -42,6 +42,16 @@ var VariablePoint = /** @class */ (function () {
     VariablePoint.prototype.toPoint = function () {
         return new figures_1.Point(this.x.value, this.y.value);
     };
+    VariablePoint.prototype.has = function (v) {
+        return this.x == v || this.y == v;
+    };
+    VariablePoint.prototype.deltaVTowards = function (v, goal) {
+        if (this.x == v)
+            return goal.x - v.value;
+        if (this.y == v)
+            return goal.y - v.value;
+        return 0;
+    };
     return VariablePoint;
 }());
 exports.VariablePoint = VariablePoint;
@@ -106,22 +116,6 @@ var CoincidentPointConstraint = /** @class */ (function () {
     return CoincidentPointConstraint;
 }());
 exports.CoincidentPointConstraint = CoincidentPointConstraint;
-var LockConstraint = /** @class */ (function () {
-    function LockConstraint(val) {
-        this.variable = val;
-        this.value = val.value;
-    }
-    LockConstraint.prototype.getError = function () {
-        return Math.abs(this.variable.value - this.value);
-    };
-    LockConstraint.prototype.getGradient = function (v) {
-        if (this.variable != v)
-            return 0;
-        return this.value - this.variable.value;
-    };
-    return LockConstraint;
-}());
-exports.LockConstraint = LockConstraint;
 var HorizontalConstraint = /** @class */ (function (_super) {
     __extends(HorizontalConstraint, _super);
     function HorizontalConstraint(points) {
@@ -160,27 +154,21 @@ var ArcPointCoincidentConstraint = /** @class */ (function () {
     }
     ArcPointCoincidentConstraint.prototype.getError = function () {
         var error = 0;
+        var center = this.center.toPoint();
         for (var _i = 0, _a = this.points; _i < _a.length; _i++) {
             var p = _a[_i];
-            var dx = p.x.value - this.center.x.value;
-            var dy = p.y.value - this.center.y.value;
-            error += Math.abs(this.radius.value - Math.sqrt(dx * dx + dy * dy));
+            error += Math.abs(this.radius.value - p.toPoint().distTo(center));
         }
         return error;
     };
     ArcPointCoincidentConstraint.prototype.getGradient = function (v) {
         for (var _i = 0, _a = this.points; _i < _a.length; _i++) {
             var p = _a[_i];
-            if (p.x === v || p.y === v) {
+            if (p.has(v)) {
                 var center = this.center.toPoint();
                 var target = p.toPoint();
                 var goal = center.pointTowards(target, this.radius.value);
-                if (p.x == v) {
-                    return goal.x - v.value;
-                }
-                else {
-                    return goal.y - v.value;
-                }
+                return p.deltaVTowards(v, goal);
             }
         }
         if (v === this.radius) {
@@ -194,7 +182,32 @@ var ArcPointCoincidentConstraint = /** @class */ (function () {
             var averageRadius = totalDist / this.points.length;
             return averageRadius - v.value;
         }
-        //TODO add gradients for center of circle.  look for that one stack overflow post again
+        if (this.center.x == v) {
+            var error = 0;
+            for (var _d = 0, _e = this.points; _d < _e.length; _d++) {
+                var p = _e[_d];
+                var dist = this.center.toPoint().distTo(p.toPoint());
+                if (dist == 0)
+                    continue;
+                var dx = this.center.x.value - p.x.value;
+                var d = this.radius.value / dist;
+                error += (1 - d) * dx;
+            }
+            return -error;
+        }
+        else if (this.center.y == v) {
+            var error = 0;
+            for (var _f = 0, _g = this.points; _f < _g.length; _f++) {
+                var p = _g[_f];
+                var dist = this.center.toPoint().distTo(p.toPoint());
+                if (dist == 0)
+                    continue;
+                var dy = this.center.y.value - p.y.value;
+                var d = this.radius.value / dist;
+                error += (1 - d) * dy;
+            }
+            return -error;
+        }
         return 0;
     };
     return ArcPointCoincidentConstraint;
@@ -223,31 +236,19 @@ var LineMidpointConstraint = /** @class */ (function () {
             var avgY = (this.p1.y.value + this.p2.y.value) / 2;
             return avgY - v.value;
         }
-        else if (v === this.p1.x || v === this.p1.y) {
+        else if (this.p1.has(v)) {
             var p2 = this.p2.toPoint();
             var midpoint = this.midpoint.toPoint();
             var halfDist = p2.distTo(midpoint);
-            var fullDist = halfDist * 2;
-            var goalP1 = p2.pointTowards(midpoint, fullDist);
-            if (this.p1.x == v) {
-                return goalP1.x - v.value;
-            }
-            else {
-                return goalP1.y - v.value;
-            }
+            var goalP1 = p2.pointTowards(midpoint, halfDist * 2);
+            return this.p1.deltaVTowards(v, goalP1);
         }
-        else if (v === this.p2.x || v === this.p2.y) {
+        else if (this.p2.has(v)) {
             var p1 = this.p1.toPoint();
             var midpoint = this.midpoint.toPoint();
             var halfDist = p1.distTo(midpoint);
-            var fullDist = halfDist * 2;
-            var goalP2 = p1.pointTowards(midpoint, fullDist);
-            if (this.p2.x == v) {
-                return goalP2.x - v.value;
-            }
-            else {
-                return goalP2.y - v.value;
-            }
+            var goalP2 = p1.pointTowards(midpoint, halfDist * 2);
+            return this.p2.deltaVTowards(v, goalP2);
         }
         return 0;
     };
@@ -272,16 +273,11 @@ var ColinearPointsConstraint = /** @class */ (function () {
     ColinearPointsConstraint.prototype.getGradient = function (v) {
         for (var _i = 0, _a = this.points; _i < _a.length; _i++) {
             var point = _a[_i];
-            if (point.x == v || point.y == v) {
+            if (point.has(v)) {
                 var regression = leastSquaresRegression(this.points);
                 var p = point.toPoint();
                 var regressed = p.projectBetween(regression[0], regression[1]);
-                if (point.x == v) {
-                    return regressed.x - v.value;
-                }
-                else {
-                    return regressed.y - v.value;
-                }
+                return point.deltaVTowards(v, regressed);
             }
         }
         return 0;
@@ -299,7 +295,7 @@ var TangentLineConstraint = /** @class */ (function () {
     TangentLineConstraint.prototype.getError = function () {
         var c = this.center.toPoint();
         var projection = c.projectBetween(this.p1.toPoint(), this.p2.toPoint());
-        return Math.abs(projection.distTo(c) - this.radius.value);
+        return Math.abs(projection.distTo(c) - this.radius.value) * 10;
     };
     TangentLineConstraint.prototype.getGradient = function (v) {
         if (v == this.radius) {
@@ -307,12 +303,16 @@ var TangentLineConstraint = /** @class */ (function () {
             var projection = c.projectBetween(this.p1.toPoint(), this.p2.toPoint());
             return projection.distTo(c) - this.radius.value;
         }
-        else if (this.p1.x == v || this.p1.y == v || this.p2.x == v || this.p2.y == v) {
+        else if (this.p1.has(v) || this.p2.has(v) || this.center.has(v)) {
             var c = this.center.toPoint();
             var projection = c.projectBetween(this.p1.toPoint(), this.p2.toPoint());
             var dist = projection.distTo(c) - this.radius.value;
             var coincidentProjection = projection.pointTowards(c, dist);
             var delta = coincidentProjection.sub(projection);
+            if (this.center.x == v)
+                return -delta.x;
+            if (this.center.y == v)
+                return -delta.y;
             if (this.p1.x == v || this.p2.x == v) {
                 return delta.x;
             }
@@ -320,12 +320,53 @@ var TangentLineConstraint = /** @class */ (function () {
                 return delta.y;
             }
         }
-        //TODO add gradients for center of circle.  look for that one stack overflow post again
         return 0;
     };
     return TangentLineConstraint;
 }());
 exports.TangentLineConstraint = TangentLineConstraint;
+var TangentCircleConstraint = /** @class */ (function () {
+    function TangentCircleConstraint(center1, radius1, center2, radius2) {
+        this.center1 = center1;
+        this.radius1 = radius1;
+        this.center2 = center2;
+        this.radius2 = radius2;
+    }
+    TangentCircleConstraint.prototype.getError = function () {
+        var dist = this.center1.toPoint().distTo(this.center2.toPoint());
+        var radiusSum = this.radius1.value + this.radius2.value;
+        return Math.abs(dist - radiusSum);
+    };
+    TangentCircleConstraint.prototype.getGradient = function (v) {
+        if (this.radius1 == v || this.radius2 == v) {
+            var delta = this.getDelta();
+            if (this.radius1 == v && this.radius1.value + delta <= 0)
+                return 0;
+            if (this.radius2 == v && this.radius2.value + delta <= 0)
+                return 0;
+            return delta;
+        }
+        if (this.center2.has(v)) {
+            var goal = this.center2.toPoint().pointTowards(this.center1.toPoint(), this.getDelta());
+            return this.center2.deltaVTowards(v, goal);
+        }
+        if (this.center1.has(v)) {
+            var goal = this.center1.toPoint().pointTowards(this.center2.toPoint(), this.getDelta());
+            return this.center1.deltaVTowards(v, goal);
+        }
+        return 0;
+    };
+    TangentCircleConstraint.prototype.getDelta = function () {
+        //TODO for some reason this doesn't approach a solution with one circle inside the other...
+        var dist = this.center1.toPoint().distTo(this.center2.toPoint());
+        var radiusSum = this.radius1.value + this.radius2.value;
+        var radiusDiff1 = this.radius1.value - this.radius2.value;
+        var radiusDiff2 = this.radius2.value - this.radius1.value;
+        return Math.min(dist - radiusSum, dist - radiusDiff1, dist - radiusDiff2);
+    };
+    return TangentCircleConstraint;
+}());
+exports.TangentCircleConstraint = TangentCircleConstraint;
 function leastSquaresRegression(points) {
     var xs = 0;
     var ys = 0;
@@ -359,18 +400,158 @@ function leastSquaresRegression(points) {
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var constraint_1 = require("./constraint");
+var FilterString = /** @class */ (function () {
+    function FilterString(str) {
+        this.filterString = str;
+        this.filter = this.parseFilter(this.filterString);
+    }
+    FilterString.prototype.parseFilter = function (filterString) {
+        var filter = [];
+        for (var _i = 0, _a = filterString.split("|"); _i < _a.length; _i++) {
+            var mappedTypeMatchExpressionList = _a[_i];
+            filter.push(this.parseFilterCase(mappedTypeMatchExpressionList));
+        }
+        return filter;
+    };
+    FilterString.prototype.parseFilterCase = function (filterCase) {
+        var split = filterCase.split(":");
+        var mapList = split[0] ? this.parseTypeMapList(split[0]) : [];
+        var matchExpressionList = this.parseTypeMatchExpressionList(split[1]);
+        return { mappings: mapList, expressions: matchExpressionList };
+    };
+    FilterString.prototype.parseTypeMapList = function (typeMapList) {
+        var maps = [];
+        for (var _i = 0, _a = typeMapList.split(","); _i < _a.length; _i++) {
+            var typeMap = _a[_i];
+            maps.push(this.parseTypeMap(typeMap));
+        }
+        return maps;
+    };
+    FilterString.prototype.parseTypeMap = function (typeMap) {
+        var split = typeMap.split(" ");
+        var fromType = split[0];
+        //let as = split[1];
+        var toTypeCount = parseInt(split[2]);
+        var toType = split[3];
+        return { from: fromType, count: toTypeCount, to: toType };
+    };
+    FilterString.prototype.parseTypeMatchExpressionList = function (typeMatchExpressionList) {
+        var expressions = [];
+        for (var _i = 0, _a = typeMatchExpressionList.split(","); _i < _a.length; _i++) {
+            var typeMatchExpression = _a[_i];
+            expressions.push(this.parseTypeMatchExpression(typeMatchExpression));
+        }
+        return expressions;
+    };
+    FilterString.prototype.parseTypeMatchExpression = function (typeMatchExpression) {
+        var matches = [];
+        for (var _i = 0, _a = typeMatchExpression.split("&"); _i < _a.length; _i++) {
+            var typeMatch = _a[_i];
+            matches.push(this.parseTypeMatch(typeMatch));
+        }
+        return matches;
+    };
+    FilterString.prototype.parseTypeMatch = function (typeMatch) {
+        for (var i = 0; i < typeMatch.length; i++) {
+            if (typeMatch[i].toLowerCase() != typeMatch[i].toUpperCase()) {
+                //we've hit a letter!
+                var quantifier = typeMatch.substr(0, i);
+                if (quantifier == "*")
+                    quantifier = "0+";
+                if (quantifier == "" || quantifier == undefined)
+                    quantifier = "1";
+                var type = typeMatch.substr(i);
+                return { quantifier: quantifier, type: type };
+            }
+        }
+        console.error("Invalid TypeMatch:", typeMatch);
+        return { quantifier: "0", type: "point" };
+    };
+    FilterString.prototype.satisfiesFilter = function (figures) {
+        var rawTypes = {};
+        for (var _i = 0, figures_1 = figures; _i < figures_1.length; _i++) {
+            var fig = figures_1[_i];
+            if (rawTypes[fig.type] === undefined) {
+                rawTypes[fig.type] = 1;
+                continue;
+            }
+            rawTypes[fig.type] += 1;
+        }
+        for (var _a = 0, _b = this.filter; _a < _b.length; _a++) {
+            var filterCase = _b[_a];
+            var typeCopy = {};
+            for (var key in rawTypes) {
+                typeCopy[key] = rawTypes[key];
+            }
+            if (this.satisfiesFilterCase(filterCase, typeCopy))
+                return true;
+        }
+        return false;
+    };
+    FilterString.prototype.satisfiesFilterCase = function (filterCase, types) {
+        for (var _i = 0, _a = filterCase.mappings; _i < _a.length; _i++) {
+            var typeMapping = _a[_i];
+            this.mapTypes(typeMapping, types);
+        }
+        for (var _b = 0, _c = filterCase.expressions; _b < _c.length; _b++) {
+            var expression = _c[_b];
+            console.log(types, expression);
+            if (this.satisfiesTypeMatchExpression(expression, types))
+                return true;
+        }
+        return false;
+    };
+    FilterString.prototype.mapTypes = function (typeMapping, types) {
+        if (types[typeMapping.from] !== undefined) {
+            var additionalTypes = types[typeMapping.from] * typeMapping.count;
+            types[typeMapping.from] = 0;
+            if (types[typeMapping.to] === undefined) {
+                types[typeMapping.to] = additionalTypes;
+            }
+            else {
+                types[typeMapping.to] += additionalTypes;
+            }
+        }
+    };
+    FilterString.prototype.satisfiesTypeMatchExpression = function (expression, types) {
+        var addressedTypes = {};
+        for (var _i = 0, expression_1 = expression; _i < expression_1.length; _i++) {
+            var typeMatch = expression_1[_i];
+            if (!this.satisfiesTypeMatch(typeMatch, types))
+                return false;
+            addressedTypes[typeMatch.type] = true;
+        }
+        for (var type in types) {
+            //all types must be addressed.
+            if (!addressedTypes[type])
+                return false;
+        }
+        return true;
+    };
+    FilterString.prototype.satisfiesTypeMatch = function (typeMatch, types) {
+        var count = types[typeMatch.type];
+        var quantifier = typeMatch.quantifier;
+        if (quantifier.indexOf("-") != -1) {
+            //range
+            var min = parseInt(quantifier.substr(0, quantifier.indexOf("-") - 1));
+            var max = parseInt(quantifier.substr(quantifier.indexOf("-") + 1));
+            return count >= min && count <= max;
+        }
+        if (quantifier.indexOf("+") != -1) {
+            //min+
+            var min = parseInt(quantifier.substr(0, quantifier.indexOf("+")));
+            return count >= min;
+        }
+        var exact = parseInt(quantifier);
+        return count == exact;
+    };
+    return FilterString;
+}());
 var HorizontalPointFilter = /** @class */ (function () {
     function HorizontalPointFilter() {
         this.name = "horizontal";
+        this.filter = new FilterString(":2+point");
     }
-    HorizontalPointFilter.prototype.validFigures = function (figs) {
-        for (var _i = 0, figs_1 = figs; _i < figs_1.length; _i++) {
-            var fig = figs_1[_i];
-            if (fig.type != "point")
-                return false;
-        }
-        return figs.length > 1;
-    };
     HorizontalPointFilter.prototype.createConstraints = function (figs) {
         var points = [];
         for (var _i = 0, _a = figs; _i < _a.length; _i++) {
@@ -384,15 +565,8 @@ var HorizontalPointFilter = /** @class */ (function () {
 var VerticalPointFilter = /** @class */ (function () {
     function VerticalPointFilter() {
         this.name = "vertical";
+        this.filter = new FilterString(":2+point");
     }
-    VerticalPointFilter.prototype.validFigures = function (figs) {
-        for (var _i = 0, figs_2 = figs; _i < figs_2.length; _i++) {
-            var fig = figs_2[_i];
-            if (fig.type != "point")
-                return false;
-        }
-        return figs.length > 1;
-    };
     VerticalPointFilter.prototype.createConstraints = function (figs) {
         var points = [];
         for (var _i = 0, _a = figs; _i < _a.length; _i++) {
@@ -406,15 +580,8 @@ var VerticalPointFilter = /** @class */ (function () {
 var VerticalLineFilter = /** @class */ (function () {
     function VerticalLineFilter() {
         this.name = "vertical";
+        this.filter = new FilterString(":1+line");
     }
-    VerticalLineFilter.prototype.validFigures = function (figs) {
-        for (var _i = 0, figs_3 = figs; _i < figs_3.length; _i++) {
-            var fig = figs_3[_i];
-            if (fig.type != "line")
-                return false;
-        }
-        return figs.length > 0;
-    };
     VerticalLineFilter.prototype.createConstraints = function (figs) {
         var constraints = [];
         for (var _i = 0, _a = figs; _i < _a.length; _i++) {
@@ -428,15 +595,8 @@ var VerticalLineFilter = /** @class */ (function () {
 var HorizontalLineFilter = /** @class */ (function () {
     function HorizontalLineFilter() {
         this.name = "horizontal";
+        this.filter = new FilterString(":1+line");
     }
-    HorizontalLineFilter.prototype.validFigures = function (figs) {
-        for (var _i = 0, figs_4 = figs; _i < figs_4.length; _i++) {
-            var fig = figs_4[_i];
-            if (fig.type != "line")
-                return false;
-        }
-        return figs.length > 0;
-    };
     HorizontalLineFilter.prototype.createConstraints = function (figs) {
         var constraints = [];
         for (var _i = 0, _a = figs; _i < _a.length; _i++) {
@@ -450,18 +610,8 @@ var HorizontalLineFilter = /** @class */ (function () {
 var CoincidentPointFilter = /** @class */ (function () {
     function CoincidentPointFilter() {
         this.name = "coincident";
+        this.filter = new FilterString(":2+point");
     }
-    CoincidentPointFilter.prototype.validFigures = function (figs) {
-        var count = 0;
-        for (var _i = 0, figs_5 = figs; _i < figs_5.length; _i++) {
-            var fig = figs_5[_i];
-            if (fig.type == "point")
-                count += 1;
-            else
-                return false;
-        }
-        return count > 1;
-    };
     CoincidentPointFilter.prototype.createConstraints = function (figs) {
         var points = [];
         for (var _i = 0, _a = figs; _i < _a.length; _i++) {
@@ -475,28 +625,13 @@ var CoincidentPointFilter = /** @class */ (function () {
 var ArcPointCoincidentFilter = /** @class */ (function () {
     function ArcPointCoincidentFilter() {
         this.name = "coincident";
+        this.filter = new FilterString(":circle&1+point");
     }
-    ArcPointCoincidentFilter.prototype.validFigures = function (figs) {
-        var hasCircle = false;
-        var hasPoints = false;
-        for (var _i = 0, figs_6 = figs; _i < figs_6.length; _i++) {
-            var fig = figs_6[_i];
-            if (fig.type == "point") {
-                hasPoints = true;
-            }
-            else if (fig.type == "circle") {
-                if (hasCircle)
-                    return false;
-                hasCircle = true;
-            }
-        }
-        return hasPoints && hasCircle;
-    };
     ArcPointCoincidentFilter.prototype.createConstraints = function (figs) {
         var points = [];
         var circle = null;
-        for (var _i = 0, figs_7 = figs; _i < figs_7.length; _i++) {
-            var fig = figs_7[_i];
+        for (var _i = 0, figs_1 = figs; _i < figs_1.length; _i++) {
+            var fig = figs_1[_i];
             if (fig.type == "point") {
                 points.push(fig.p.variablePoint);
             }
@@ -511,30 +646,13 @@ var ArcPointCoincidentFilter = /** @class */ (function () {
 var LineMidpointCoincidentFilter = /** @class */ (function () {
     function LineMidpointCoincidentFilter() {
         this.name = "midpoint";
+        this.filter = new FilterString(":line&point");
     }
-    LineMidpointCoincidentFilter.prototype.validFigures = function (figs) {
-        var hasLine = false;
-        var hasPoint = false;
-        for (var _i = 0, figs_8 = figs; _i < figs_8.length; _i++) {
-            var fig = figs_8[_i];
-            if (fig.type == "point") {
-                if (hasPoint)
-                    return false;
-                hasPoint = true;
-            }
-            else if (fig.type == "line") {
-                if (hasLine)
-                    return false;
-                hasLine = true;
-            }
-        }
-        return hasPoint && hasLine;
-    };
     LineMidpointCoincidentFilter.prototype.createConstraints = function (figs) {
         var point = null;
         var line = null;
-        for (var _i = 0, figs_9 = figs; _i < figs_9.length; _i++) {
-            var fig = figs_9[_i];
+        for (var _i = 0, figs_2 = figs; _i < figs_2.length; _i++) {
+            var fig = figs_2[_i];
             if (fig.type == "point") {
                 point = fig;
             }
@@ -549,6 +667,7 @@ var LineMidpointCoincidentFilter = /** @class */ (function () {
 var EqualRadiusConstraintFilter = /** @class */ (function () {
     function EqualRadiusConstraintFilter() {
         this.name = "equal";
+        this.filter = new FilterString(":2+circle");
     }
     EqualRadiusConstraintFilter.prototype.createConstraints = function (figs) {
         var radii = [];
@@ -558,40 +677,17 @@ var EqualRadiusConstraintFilter = /** @class */ (function () {
         }
         return [new constraint_1.EqualConstraint(radii)];
     };
-    EqualRadiusConstraintFilter.prototype.validFigures = function (figs) {
-        for (var _i = 0, figs_10 = figs; _i < figs_10.length; _i++) {
-            var fig = figs_10[_i];
-            if (fig.type != "circle")
-                return false;
-        }
-        return figs.length > 1;
-    };
     return EqualRadiusConstraintFilter;
 }());
 var ColinearConstraintFilter = /** @class */ (function () {
     function ColinearConstraintFilter() {
         this.name = "colinear";
+        this.filter = new FilterString("line as 2 point:2+point");
     }
-    ColinearConstraintFilter.prototype.validFigures = function (figs) {
-        var count = 0;
-        for (var _i = 0, figs_11 = figs; _i < figs_11.length; _i++) {
-            var fig = figs_11[_i];
-            if (fig.type == "point") {
-                count += 1;
-            }
-            else if (fig.type == "line") {
-                count += 2;
-            }
-            else {
-                return false;
-            }
-        }
-        return count > 3;
-    };
     ColinearConstraintFilter.prototype.createConstraints = function (figs) {
         var points = [];
-        for (var _i = 0, figs_12 = figs; _i < figs_12.length; _i++) {
-            var fig = figs_12[_i];
+        for (var _i = 0, figs_3 = figs; _i < figs_3.length; _i++) {
+            var fig = figs_3[_i];
             if (fig.type == "point") {
                 points.push(fig.p.variablePoint);
             }
@@ -607,42 +703,91 @@ var ColinearConstraintFilter = /** @class */ (function () {
 var TangentLineConstraintFilter = /** @class */ (function () {
     function TangentLineConstraintFilter() {
         this.name = "tangent";
+        this.filter = new FilterString(":circle&1+line");
     }
-    TangentLineConstraintFilter.prototype.validFigures = function (figs) {
-        var hasLine = false;
-        var hasCircle = false;
-        for (var _i = 0, figs_13 = figs; _i < figs_13.length; _i++) {
-            var fig = figs_13[_i];
-            if (fig.type == "circle") {
-                if (hasCircle)
-                    return false;
-                hasCircle = true;
-            }
-            else if (fig.type == "line") {
-                if (hasLine)
-                    return false;
-                hasLine = true;
-            }
-        }
-        return hasCircle && hasLine;
-    };
     TangentLineConstraintFilter.prototype.createConstraints = function (figs) {
         var circle = null;
-        var line = null;
-        for (var _i = 0, figs_14 = figs; _i < figs_14.length; _i++) {
-            var fig = figs_14[_i];
+        var lines = [];
+        for (var _i = 0, figs_4 = figs; _i < figs_4.length; _i++) {
+            var fig = figs_4[_i];
             if (fig.type == "circle") {
                 circle = fig;
             }
             else if (fig.type == "line") {
-                line = fig;
+                lines.push(fig);
             }
         }
-        return [new constraint_1.TangentLineConstraint(circle.c.variablePoint, circle.r, line.p1.variablePoint, line.p2.variablePoint)];
+        var constraints = [];
+        for (var _a = 0, lines_1 = lines; _a < lines_1.length; _a++) {
+            var line = lines_1[_a];
+            constraints.push(new constraint_1.TangentLineConstraint(circle.c.variablePoint, circle.r, line.p1.variablePoint, line.p2.variablePoint));
+        }
+        return constraints;
     };
     return TangentLineConstraintFilter;
 }());
 exports.TangentLineConstraintFilter = TangentLineConstraintFilter;
+var ConcentricConstraintFilter = /** @class */ (function () {
+    function ConcentricConstraintFilter() {
+        this.name = "concentric";
+        this.filter = new FilterString(":circle&1+line");
+    }
+    ConcentricConstraintFilter.prototype.createConstraints = function (figs) {
+        var points = [];
+        for (var _i = 0, figs_5 = figs; _i < figs_5.length; _i++) {
+            var fig = figs_5[_i];
+            if (fig.type == "circle") {
+                points.push(fig.c.variablePoint);
+            }
+            else if (fig.type == "point") {
+                points.push(fig.p.variablePoint);
+            }
+        }
+        return [new constraint_1.CoincidentPointConstraint(points)];
+    };
+    return ConcentricConstraintFilter;
+}());
+exports.ConcentricConstraintFilter = ConcentricConstraintFilter;
+var IntersectionConstraintFilter = /** @class */ (function () {
+    function IntersectionConstraintFilter() {
+        this.name = "intersection";
+        this.filter = new FilterString(":point&2+line");
+    }
+    IntersectionConstraintFilter.prototype.createConstraints = function (figs) {
+        var lines = [];
+        var point = null;
+        for (var _i = 0, figs_6 = figs; _i < figs_6.length; _i++) {
+            var fig = figs_6[_i];
+            if (fig.type == "point") {
+                point = fig.p.variablePoint;
+            }
+            else if (fig.type == "line") {
+                lines.push(fig);
+            }
+        }
+        var constraints = [];
+        for (var _a = 0, lines_2 = lines; _a < lines_2.length; _a++) {
+            var line = lines_2[_a];
+            constraints.push(new constraint_1.ColinearPointsConstraint([line.p1.variablePoint, line.p2.variablePoint, point]));
+        }
+        return constraints;
+    };
+    return IntersectionConstraintFilter;
+}());
+exports.IntersectionConstraintFilter = IntersectionConstraintFilter;
+var TangentCirclesConstraintFilter = /** @class */ (function () {
+    function TangentCirclesConstraintFilter() {
+        this.name = "tangent";
+        this.filter = new FilterString(":2circle");
+    }
+    TangentCirclesConstraintFilter.prototype.createConstraints = function (figs) {
+        var circle1 = figs[0];
+        var circle2 = figs[1];
+        return [new constraint_1.TangentCircleConstraint(circle1.c.variablePoint, circle1.r, circle2.c.variablePoint, circle2.r)];
+    };
+    return TangentCirclesConstraintFilter;
+}());
+exports.TangentCirclesConstraintFilter = TangentCirclesConstraintFilter;
 var possibleConstraints = [
     new CoincidentPointFilter(),
     new HorizontalPointFilter(),
@@ -654,12 +799,15 @@ var possibleConstraints = [
     new EqualRadiusConstraintFilter(),
     new ColinearConstraintFilter(),
     new TangentLineConstraintFilter(),
+    new ConcentricConstraintFilter(),
+    new IntersectionConstraintFilter(),
+    new TangentCirclesConstraintFilter(),
 ];
 function getSatisfiedConstraintFilters(figs) {
     var possibilities = [];
     for (var _i = 0, possibleConstraints_1 = possibleConstraints; _i < possibleConstraints_1.length; _i++) {
         var pc = possibleConstraints_1[_i];
-        if (pc.validFigures(figs))
+        if (pc.filter.satisfiesFilter(figs))
             possibilities.push(pc);
     }
     return possibilities;
@@ -992,7 +1140,7 @@ var Sketch = /** @class */ (function () {
             }
             if (totalError < 1)
                 return true;
-            if (count > 30 && !tirelessSolve)
+            if (count > 50 && tirelessSolve)
                 return false;
             var variableGradients = [];
             var contributorCount = [];
@@ -1012,7 +1160,7 @@ var Sketch = /** @class */ (function () {
                 contributorCount.push(count_1);
             }
             for (var i = 0; i < variableGradients.length; i++) {
-                this.variables[i].value += variableGradients[i] / (1 + contributorCount[i]);
+                this.variables[i].value += variableGradients[i] / (2 + contributorCount[i]);
             }
             count += 1;
             previousError = totalError;
