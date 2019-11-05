@@ -125,7 +125,7 @@ class FilterString {
     private mapTypes(typeMapping: TypeMap, types) {
         if(types[typeMapping.from] !== undefined) {
             let additionalTypes = types[typeMapping.from] * typeMapping.count;
-            types[typeMapping.from] = 0;
+            delete types[typeMapping.from];
             if(types[typeMapping.to] === undefined) {
                 types[typeMapping.to] = additionalTypes;
             } else {
@@ -267,7 +267,7 @@ class EqualRadiusConstraintFilter implements ConstraintFilter {
 
 class ColinearConstraintFilter implements ConstraintFilter {
     name: string = "colinear";
-    filter = new FilterString("line as 2 point:2+point");
+    filter = new FilterString("line as 2 point:3+point");
     createConstraints(sortedFigures: SortedFigureSelection): Constraint[] {
         let points: VariablePoint[] = [];
         for(let point of sortedFigures.point) {

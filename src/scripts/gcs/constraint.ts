@@ -303,33 +303,100 @@ export class TangentCircleConstraint implements Constraint {
     }
     getError(): number {
         let dist = this.center1.toPoint().distTo(this.center2.toPoint());
-        let radiusSum = this.radius1.value + this.radius2.value;
-        return Math.abs(dist - radiusSum);
+        let r1 = this.radius1.value;
+        let r2 = this.radius2.value;
+        let maxR = Math.max(r1, r2);
+        let rsum = r1 + r2;
+        if(dist > maxR) {
+            //circles are outside of each other.
+            return Math.abs(dist - rsum)
+        } else {
+            //circle with smaller radius has center within other circle
+            if(r1 < r2) {
+                //circle 1 is inside circle 2
+                return Math.abs(r2 - (dist + r1));
+            } else {
+                //circle 2 is inside circle 1
+                return Math.abs(r1 - (dist + r2));
+            }
+        }
     }
     getGradient(v: Variable): number {
         if(this.radius1 == v || this.radius2 == v) {
-            let delta = this.getDelta();
-            if(this.radius1 == v && this.radius1.value + delta <= 0) return 0;
-            if(this.radius2 == v && this.radius2.value + delta <= 0) return 0;
-            return delta;
+            let dist = this.center1.toPoint().distTo(this.center2.toPoint());
+            let r1 = this.radius1.value;
+            let r2 = this.radius2.value;
+            let maxR = Math.max(r1, r2);
+            let rsum = r1 + r2;
+            if(dist > maxR) {
+                //circles are outside of each other.
+                let delta = dist - rsum;
+                if(this.radius1 == v && this.radius1.value + delta <= 0) return 0;
+                if(this.radius2 == v && this.radius2.value + delta <= 0) return 0;
+                return delta;
+            } else {
+                //circle with smaller radius has center within other circle
+                if(r1 < r2) {
+                    //circle 1 is inside circle 2
+                    let delta = r2 - (dist + r1);
+                    if(this.radius1 == v) {
+                        return delta;
+                    } else {
+                        return -delta;
+                    }
+                } else {
+                    //circle 2 is inside circle 1
+                    let delta = r1 - (dist + r2);
+                    if(this.radius2 == v) {
+                        return delta;
+                    } else {
+                        return -delta;
+                    }
+                }
+            }
         }
-        if(this.center2.has(v)) {
-            let goal = this.center2.toPoint().pointTowards(this.center1.toPoint(), this.getDelta());
-            return this.center2.deltaVTowards(v, goal);
-        }
-        if(this.center1.has(v)) {
-            let goal = this.center1.toPoint().pointTowards(this.center2.toPoint(), this.getDelta());
-            return this.center1.deltaVTowards(v, goal);
+        if(this.center1.has(v) || this.center2.has(v)) {
+            let dist = this.center1.toPoint().distTo(this.center2.toPoint());
+            let r1 = this.radius1.value;
+            let r2 = this.radius2.value;
+            let maxR = Math.max(r1, r2);
+            let rsum = r1 + r2;
+            if(dist > maxR) {
+                //circles are outside of each other.
+                let delta = dist - rsum;
+                if(this.center1.has(v)) {
+                    let goal = this.center1.toPoint().pointTowards(this.center2.toPoint(), delta);
+                    return this.center1.deltaVTowards(v, goal);
+                } else {
+                    let goal = this.center2.toPoint().pointTowards(this.center1.toPoint(), delta);
+                    return this.center2.deltaVTowards(v, goal);
+                }
+            } else {
+                //circle with smaller radius has center within other circle
+                if(r1 < r2) {
+                    //circle 1 is inside circle 2
+                    let delta = r2 - (dist + r1);
+                    if(this.center1.has(v)) {
+                        let goal = this.center1.toPoint().pointTowards(this.center2.toPoint(), -delta);
+                        return this.center1.deltaVTowards(v, goal);
+                    } else {
+                        let goal = this.center2.toPoint().pointTowards(this.center1.toPoint(), -delta);
+                        return this.center2.deltaVTowards(v, goal);
+                    }
+                } else {
+                    //circle 2 is inside circle 1
+                    let delta = r1 - (dist + r2);
+                    if(this.center1.has(v)) {
+                        let goal = this.center1.toPoint().pointTowards(this.center2.toPoint(), -delta);
+                        return this.center1.deltaVTowards(v, goal);
+                    } else {
+                        let goal = this.center2.toPoint().pointTowards(this.center1.toPoint(), -delta);
+                        return this.center2.deltaVTowards(v, goal);
+                    }
+                }
+            }
         }
         return 0;
-    }
-    getDelta(): number {
-        //TODO for some reason this doesn't approach a solution with one circle inside the other...
-        let dist = this.center1.toPoint().distTo(this.center2.toPoint());
-        let radiusSum = this.radius1.value + this.radius2.value;
-        let radiusDiff1 = this.radius1.value - this.radius2.value;
-        let radiusDiff2 = this.radius2.value - this.radius1.value;
-        return Math.min(dist - radiusSum, dist - radiusDiff1, dist - radiusDiff2);
     }
 }
 

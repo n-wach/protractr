@@ -334,35 +334,113 @@ var TangentCircleConstraint = /** @class */ (function () {
     }
     TangentCircleConstraint.prototype.getError = function () {
         var dist = this.center1.toPoint().distTo(this.center2.toPoint());
-        var radiusSum = this.radius1.value + this.radius2.value;
-        return Math.abs(dist - radiusSum);
+        var r1 = this.radius1.value;
+        var r2 = this.radius2.value;
+        var maxR = Math.max(r1, r2);
+        var rsum = r1 + r2;
+        if (dist > maxR) {
+            //circles are outside of each other.
+            return Math.abs(dist - rsum);
+        }
+        else {
+            //circle with smaller radius has center within other circle
+            if (r1 < r2) {
+                //circle 1 is inside circle 2
+                return Math.abs(r2 - (dist + r1));
+            }
+            else {
+                //circle 2 is inside circle 1
+                return Math.abs(r1 - (dist + r2));
+            }
+        }
     };
     TangentCircleConstraint.prototype.getGradient = function (v) {
         if (this.radius1 == v || this.radius2 == v) {
-            var delta = this.getDelta();
-            if (this.radius1 == v && this.radius1.value + delta <= 0)
-                return 0;
-            if (this.radius2 == v && this.radius2.value + delta <= 0)
-                return 0;
-            return delta;
+            var dist = this.center1.toPoint().distTo(this.center2.toPoint());
+            var r1 = this.radius1.value;
+            var r2 = this.radius2.value;
+            var maxR = Math.max(r1, r2);
+            var rsum = r1 + r2;
+            if (dist > maxR) {
+                //circles are outside of each other.
+                var delta = dist - rsum;
+                if (this.radius1 == v && this.radius1.value + delta <= 0)
+                    return 0;
+                if (this.radius2 == v && this.radius2.value + delta <= 0)
+                    return 0;
+                return delta;
+            }
+            else {
+                //circle with smaller radius has center within other circle
+                if (r1 < r2) {
+                    //circle 1 is inside circle 2
+                    var delta = r2 - (dist + r1);
+                    if (this.radius1 == v) {
+                        return delta;
+                    }
+                    else {
+                        return -delta;
+                    }
+                }
+                else {
+                    //circle 2 is inside circle 1
+                    var delta = r1 - (dist + r2);
+                    if (this.radius2 == v) {
+                        return delta;
+                    }
+                    else {
+                        return -delta;
+                    }
+                }
+            }
         }
-        if (this.center2.has(v)) {
-            var goal = this.center2.toPoint().pointTowards(this.center1.toPoint(), this.getDelta());
-            return this.center2.deltaVTowards(v, goal);
-        }
-        if (this.center1.has(v)) {
-            var goal = this.center1.toPoint().pointTowards(this.center2.toPoint(), this.getDelta());
-            return this.center1.deltaVTowards(v, goal);
+        if (this.center1.has(v) || this.center2.has(v)) {
+            var dist = this.center1.toPoint().distTo(this.center2.toPoint());
+            var r1 = this.radius1.value;
+            var r2 = this.radius2.value;
+            var maxR = Math.max(r1, r2);
+            var rsum = r1 + r2;
+            if (dist > maxR) {
+                //circles are outside of each other.
+                var delta = dist - rsum;
+                if (this.center1.has(v)) {
+                    var goal = this.center1.toPoint().pointTowards(this.center2.toPoint(), delta);
+                    return this.center1.deltaVTowards(v, goal);
+                }
+                else {
+                    var goal = this.center2.toPoint().pointTowards(this.center1.toPoint(), delta);
+                    return this.center2.deltaVTowards(v, goal);
+                }
+            }
+            else {
+                //circle with smaller radius has center within other circle
+                if (r1 < r2) {
+                    //circle 1 is inside circle 2
+                    var delta = r2 - (dist + r1);
+                    if (this.center1.has(v)) {
+                        var goal = this.center1.toPoint().pointTowards(this.center2.toPoint(), -delta);
+                        return this.center1.deltaVTowards(v, goal);
+                    }
+                    else {
+                        var goal = this.center2.toPoint().pointTowards(this.center1.toPoint(), -delta);
+                        return this.center2.deltaVTowards(v, goal);
+                    }
+                }
+                else {
+                    //circle 2 is inside circle 1
+                    var delta = r1 - (dist + r2);
+                    if (this.center1.has(v)) {
+                        var goal = this.center1.toPoint().pointTowards(this.center2.toPoint(), -delta);
+                        return this.center1.deltaVTowards(v, goal);
+                    }
+                    else {
+                        var goal = this.center2.toPoint().pointTowards(this.center1.toPoint(), -delta);
+                        return this.center2.deltaVTowards(v, goal);
+                    }
+                }
+            }
         }
         return 0;
-    };
-    TangentCircleConstraint.prototype.getDelta = function () {
-        //TODO for some reason this doesn't approach a solution with one circle inside the other...
-        var dist = this.center1.toPoint().distTo(this.center2.toPoint());
-        var radiusSum = this.radius1.value + this.radius2.value;
-        var radiusDiff1 = this.radius1.value - this.radius2.value;
-        var radiusDiff2 = this.radius2.value - this.radius1.value;
-        return Math.min(dist - radiusSum, dist - radiusDiff1, dist - radiusDiff2);
     };
     return TangentCircleConstraint;
 }());
@@ -504,7 +582,7 @@ var FilterString = /** @class */ (function () {
     FilterString.prototype.mapTypes = function (typeMapping, types) {
         if (types[typeMapping.from] !== undefined) {
             var additionalTypes = types[typeMapping.from] * typeMapping.count;
-            types[typeMapping.from] = 0;
+            delete types[typeMapping.from];
             if (types[typeMapping.to] === undefined) {
                 types[typeMapping.to] = additionalTypes;
             }
@@ -668,7 +746,7 @@ var EqualRadiusConstraintFilter = /** @class */ (function () {
 var ColinearConstraintFilter = /** @class */ (function () {
     function ColinearConstraintFilter() {
         this.name = "colinear";
-        this.filter = new FilterString("line as 2 point:2+point");
+        this.filter = new FilterString("line as 2 point:3+point");
     }
     ColinearConstraintFilter.prototype.createConstraints = function (sortedFigures) {
         var points = [];
