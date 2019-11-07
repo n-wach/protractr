@@ -15,6 +15,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var figures_1 = require("./figures");
+var main_1 = require("../main");
 var Variable = /** @class */ (function () {
     function Variable(v) {
         this.value = v;
@@ -446,6 +447,7 @@ var TangentCircleConstraint = /** @class */ (function () {
 }());
 exports.TangentCircleConstraint = TangentCircleConstraint;
 function leastSquaresRegression(points) {
+    //TODO this is broken for vertical lines...
     var xs = 0;
     var ys = 0;
     var x2s = 0;
@@ -461,7 +463,7 @@ function leastSquaresRegression(points) {
         xys += x * y;
     }
     var denominator = n * x2s - (xs * xs);
-    if (denominator < 0.001) {
+    if (denominator < main_1.EPSILON) {
         var p1_1 = new figures_1.Point(xs / n, 0);
         var p2_1 = new figures_1.Point(xs / n, 10);
         return [p1_1, p2_1];
@@ -474,7 +476,7 @@ function leastSquaresRegression(points) {
     return [p1, p2];
 }
 
-},{"./figures":3}],2:[function(require,module,exports){
+},{"../main":5,"./figures":3}],2:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var constraint_1 = require("./constraint");
@@ -800,12 +802,12 @@ var ConcentricConstraintFilter = /** @class */ (function () {
     return ConcentricConstraintFilter;
 }());
 exports.ConcentricConstraintFilter = ConcentricConstraintFilter;
-var IntersectionConstraintFilter = /** @class */ (function () {
-    function IntersectionConstraintFilter() {
+var LineIntersectionConstraintFilter = /** @class */ (function () {
+    function LineIntersectionConstraintFilter() {
         this.name = "intersection";
         this.filter = new FilterString(":point&2+line");
     }
-    IntersectionConstraintFilter.prototype.createConstraints = function (sortedFigures) {
+    LineIntersectionConstraintFilter.prototype.createConstraints = function (sortedFigures) {
         var lines = sortedFigures.line;
         var point = sortedFigures.point[0];
         var constraints = [];
@@ -815,9 +817,27 @@ var IntersectionConstraintFilter = /** @class */ (function () {
         }
         return constraints;
     };
-    return IntersectionConstraintFilter;
+    return LineIntersectionConstraintFilter;
 }());
-exports.IntersectionConstraintFilter = IntersectionConstraintFilter;
+exports.LineIntersectionConstraintFilter = LineIntersectionConstraintFilter;
+var CircleIntersectionConstraintFilter = /** @class */ (function () {
+    function CircleIntersectionConstraintFilter() {
+        this.name = "intersection";
+        this.filter = new FilterString(":point&2+circle");
+    }
+    CircleIntersectionConstraintFilter.prototype.createConstraints = function (sortedFigures) {
+        var circles = sortedFigures.circle;
+        var point = sortedFigures.point[0];
+        var constraints = [];
+        for (var _i = 0, circles_1 = circles; _i < circles_1.length; _i++) {
+            var circle = circles_1[_i];
+            constraints.push(new constraint_1.ArcPointCoincidentConstraint(circle.c.variablePoint, circle.r, [point.p.variablePoint]));
+        }
+        return constraints;
+    };
+    return CircleIntersectionConstraintFilter;
+}());
+exports.CircleIntersectionConstraintFilter = CircleIntersectionConstraintFilter;
 var TangentCirclesConstraintFilter = /** @class */ (function () {
     function TangentCirclesConstraintFilter() {
         this.name = "tangent";
@@ -843,7 +863,7 @@ var possibleConstraints = [
     new ColinearConstraintFilter(),
     new TangentLineConstraintFilter(),
     new ConcentricConstraintFilter(),
-    new IntersectionConstraintFilter(),
+    new CircleIntersectionConstraintFilter(),
     new TangentCirclesConstraintFilter(),
 ];
 function sortFigureSelection(figures) {
@@ -959,6 +979,17 @@ var Point = /** @class */ (function () {
     };
     Point.prototype.projectBetween = function (p1, p2, cutoff) {
         if (cutoff === void 0) { cutoff = false; }
+        if (Math.abs(p1.x - p2.x) < main_1.EPSILON) {
+            var x = (p1.x + p2.x) / 2;
+            var y = this.y;
+            if (cutoff) {
+                if (this.y > Math.max(p1.y, p2.y))
+                    y = Math.max(p1.y, p2.y);
+                else if (this.y < Math.min(p1.y, p2.y))
+                    y = Math.min(p1.y, p2.y);
+            }
+            return new Point(x, y);
+        }
         var r = cutoff ? this.segmentFractionBetween(p1, p2) : this.projectionFactorBetween(p1, p2);
         var px = p1.x + r * (p2.x - p1.x);
         var py = p1.y + r * (p2.y - p1.y);
@@ -1230,6 +1261,7 @@ exports.Sketch = Sketch;
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var protractr_1 = require("./protractr");
+exports.EPSILON = 0.001;
 var canvas;
 var tools;
 var sidePane;

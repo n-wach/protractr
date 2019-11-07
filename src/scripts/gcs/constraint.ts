@@ -1,4 +1,5 @@
 import {CircleFigure, Figure, LineFigure, Point, PointFigure} from "./figures";
+import {EPSILON} from "../main";
 
 export class Variable {
     _value: number;
@@ -402,6 +403,8 @@ export class TangentCircleConstraint implements Constraint {
 
 
 function leastSquaresRegression(points: VariablePoint[]) {
+    //TODO this is broken for vertical lines...
+
     let xs = 0;
     let ys = 0;
     let x2s = 0;
@@ -416,7 +419,7 @@ function leastSquaresRegression(points: VariablePoint[]) {
         xys += x * y;
     }
     let denominator = n * x2s - (xs * xs);
-    if (denominator < 0.001) {
+    if (denominator < EPSILON) {
         let p1 = new Point(xs / n, 0);
         let p2 = new Point(xs / n, 10);
         return [p1, p2];

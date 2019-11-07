@@ -309,7 +309,7 @@ export class ConcentricConstraintFilter implements ConstraintFilter {
     }
 }
 
-export class IntersectionConstraintFilter implements ConstraintFilter {
+export class LineIntersectionConstraintFilter implements ConstraintFilter {
     name: string = "intersection";
     filter = new FilterString(":point&2+line");
     createConstraints(sortedFigures: SortedFigureSelection): Constraint[] {
@@ -318,6 +318,21 @@ export class IntersectionConstraintFilter implements ConstraintFilter {
         let constraints = [];
         for(let line of lines) {
             constraints.push(new ColinearPointsConstraint([line.p1.variablePoint, line.p2.variablePoint, point.p.variablePoint]));
+        }
+        return constraints;
+    }
+}
+
+
+export class CircleIntersectionConstraintFilter implements ConstraintFilter {
+    name: string = "intersection";
+    filter = new FilterString(":point&2+circle");
+    createConstraints(sortedFigures: SortedFigureSelection): Constraint[] {
+        let circles: CircleFigure[] = sortedFigures.circle;
+        let point: PointFigure = sortedFigures.point[0];
+        let constraints = [];
+        for(let circle of circles) {
+            constraints.push(new ArcPointCoincidentConstraint(circle.c.variablePoint, circle.r, [point.p.variablePoint]));
         }
         return constraints;
     }
@@ -345,7 +360,7 @@ let possibleConstraints = [
     new ColinearConstraintFilter(),
     new TangentLineConstraintFilter(),
     new ConcentricConstraintFilter(),
-    new IntersectionConstraintFilter(),
+    new CircleIntersectionConstraintFilter(),
     new TangentCirclesConstraintFilter(),
 ];
 
