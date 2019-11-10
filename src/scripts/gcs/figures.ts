@@ -35,7 +35,7 @@ export class Point {
         return dx * dx + dy * dy;
     }
     normalizeSelf() {
-        let length = this.distTo(ORIGIN);
+        let length = this.distTo(new Point(0, 0));
         if(length == 0) {
             this.x = 0;
             this.y = 1;
@@ -64,15 +64,6 @@ export class Point {
         return this;
     }
     projectBetween(p1: Point, p2: Point, cutoff: boolean = false) {
-        if(Math.abs(p1.x - p2.x) < EPSILON) {
-            let x = (p1.x + p2.x) / 2;
-            let y = this.y;
-            if(cutoff) {
-                if(this.y > Math.max(p1.y, p2.y)) y = Math.max(p1.y, p2.y);
-                else if(this.y < Math.min(p1.y, p2.y)) y = Math.min(p1.y, p2.y);
-            }
-            return new Point(x, y);
-        }
         let r = cutoff ? this.segmentFractionBetween(p1, p2) : this.projectionFactorBetween(p1, p2);
         let px = p1.x + r * (p2.x - p1.x);
         let py = p1.y + r * (p2.y - p1.y);
@@ -147,8 +138,6 @@ export class BasicFigure implements Figure {
         }
     }
 }
-
-let ORIGIN = new Point(0, 0);
 
 export class PointFigure extends BasicFigure {
     type = "point";

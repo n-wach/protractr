@@ -55,11 +55,13 @@ function equalGoal(vals: Variable[]): number {
 
 
 export interface Constraint {
+    type: string;
     getError(): number;
     getGradient(v: Variable): number; //how to adjust v to reduce error
 }
 
 export class EqualConstraint implements Constraint {
+    type = "equal";
     variables: Variable[];
     constructor(vals: Variable[]) {
         this.variables = vals;
@@ -79,49 +81,8 @@ export class EqualConstraint implements Constraint {
     }
 }
 
-export class CoincidentPointConstraint implements Constraint {
-    xEqual: EqualConstraint;
-    yEqual: EqualConstraint;
-    constructor(points: VariablePoint[]) {
-        let xs: Variable[] = [];
-        let ys: Variable[] = [];
-        for(let p of points) {
-            xs.push(p.x);
-            ys.push(p.y);
-        }
-        this.xEqual = new EqualConstraint(xs);
-        this.yEqual = new EqualConstraint(ys);
-    }
-    getError(): number {
-        return this.xEqual.getError() + this.yEqual.getError();
-    }
-    getGradient(v: Variable): number {
-        return this.xEqual.getGradient(v) + this.yEqual.getGradient(v);
-    }
-}
-
-export class HorizontalConstraint extends EqualConstraint {
-    constructor(points: VariablePoint[]) {
-        let ys: Variable[] = [];
-        for(let p of points) {
-            ys.push(p.y);
-        }
-        super(ys);
-    }
-}
-
-export class VerticalConstraint extends EqualConstraint {
-    constructor(points: VariablePoint[]) {
-        let xs: Variable[] = [];
-        for(let p of points) {
-            xs.push(p.x);
-        }
-        super(xs);
-    }
-}
-
-
 export class ArcPointCoincidentConstraint implements Constraint {
+    type = "arc-point-coincident";
     center: VariablePoint;
     radius: Variable;
     points: VariablePoint[];
@@ -182,7 +143,8 @@ export class ArcPointCoincidentConstraint implements Constraint {
     }
 }
 
-export class LineMidpointConstraint implements Constraint {
+export class MidpointConstraint implements Constraint {
+    type = "midpoint";
     p1: VariablePoint;
     p2: VariablePoint;
     midpoint: VariablePoint;
@@ -224,6 +186,7 @@ export class LineMidpointConstraint implements Constraint {
 }
 
 export class ColinearPointsConstraint implements Constraint {
+    type = "colinear";
     points: VariablePoint[];
 
     constructor(points: VariablePoint[]) {
@@ -253,6 +216,7 @@ export class ColinearPointsConstraint implements Constraint {
 }
 
 export class TangentLineConstraint implements Constraint {
+    type = "tangent-line";
     center: VariablePoint;
     radius: Variable;
     p1: VariablePoint;
@@ -292,6 +256,7 @@ export class TangentLineConstraint implements Constraint {
 }
 
 export class TangentCircleConstraint implements Constraint {
+    type = "tangent-circle";
     center1: VariablePoint;
     radius1: Variable;
     center2: VariablePoint;
@@ -402,12 +367,13 @@ export class TangentCircleConstraint implements Constraint {
 }
 
 
-function leastSquaresRegression(points: VariablePoint[]) {
+function leastSquaresRegression(points: VariablePoint[]): [Point, Point] {
     //TODO this is broken for vertical lines...
 
     let xs = 0;
     let ys = 0;
     let x2s = 0;
+    let y2s = 0;
     let xys = 0;
     let n = points.length;
     for(let point of points) {
@@ -416,19 +382,25 @@ function leastSquaresRegression(points: VariablePoint[]) {
         xs += x;
         ys += y;
         x2s += x * x;
+        y2s += y * y;
         xys += x * y;
     }
+    let numerator = (n * xys) - (xs * ys);
     let denominator = n * x2s - (xs * xs);
-    if (denominator < EPSILON) {
-        let p1 = new Point(xs / n, 0);
-        let p2 = new Point(xs / n, 10);
+    if (denominator < 1) {
+        denominator = n * y2s - (ys * ys);
+
+        let slope = numerator / denominator;
+        let xintercept = (xs - slope * ys) / n;
+
+        let p1 = new Point(xintercept, 0);
+        let p2 = new Point(xintercept + slope, 1);
         return [p1, p2];
     }
-    let numerator = (n * xys) - (xs * ys);
     let slope = numerator / denominator;
-    let intercept = (ys - slope * xs) / n;
+    let yintercept = (ys - slope * xs) / n;
 
-    let p1 = new Point(0, intercept);
-    let p2 = new Point(1, intercept + slope);
+    let p1 = new Point(0, yintercept);
+    let p2 = new Point(1, yintercept + slope);
     return [p1, p2];
 }

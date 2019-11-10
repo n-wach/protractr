@@ -1,6 +1,6 @@
 import {Protractr} from "./protractr";
 
-export let EPSILON: number = 0.001;
+export let EPSILON: number = 1;
 
 let canvas: HTMLCanvasElement;
 let tools: HTMLUListElement;
