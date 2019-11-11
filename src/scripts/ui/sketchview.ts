@@ -2,6 +2,7 @@ import {CircleFigure, Figure, LineFigure, Point, PointFigure} from "../gcs/figur
 import {Sketch} from "../gcs/sketch";
 import {Tool} from "./tools";
 import {UI} from "./ui";
+import {Constraint} from "../gcs/constraint";
 
 export class SketchView {
     canvas: HTMLCanvasElement;
@@ -22,6 +23,7 @@ export class SketchView {
     dragging: boolean = false;
 
     lastPanPoint: Point = null;
+    hoveredConstraint: Constraint;
 
     constructor(ui: UI, sketch: Sketch, canvas: HTMLCanvasElement) {
         this.ui = ui;
@@ -186,6 +188,9 @@ export class SketchView {
         }
         if (this.selectedFigures.indexOf(fig) != -1) {
             this.ctx.strokeStyle = "#5e9cff";
+        }
+        if (this.hoveredConstraint && this.hoveredConstraint.containsFigure(fig)) {
+            this.ctx.strokeStyle = "purple";
         }
         switch(fig.type) {
             case "line":

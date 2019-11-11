@@ -80,6 +80,25 @@ var EqualConstraint = /** @class */ (function () {
         var avg = equalGoal(this.variables);
         return avg - v.value;
     };
+    EqualConstraint.prototype.containsFigure = function (f) {
+        if (f.type == "point") {
+            for (var _i = 0, _a = this.variables; _i < _a.length; _i++) {
+                var v = _a[_i];
+                if (f.p.variablePoint.has(v))
+                    return true;
+            }
+            return false;
+        }
+        else if (f.type == "line") {
+            //both points
+            return this.containsFigure(f.childFigures[0]) && this.containsFigure(f.childFigures[1]);
+        }
+        else if (f.type == "circle") {
+            //just radius
+            return this.variables.indexOf(f.r) != -1;
+        }
+        return false;
+    };
     return EqualConstraint;
 }());
 exports.EqualConstraint = EqualConstraint;
@@ -148,6 +167,16 @@ var ArcPointCoincidentConstraint = /** @class */ (function () {
         }
         return 0;
     };
+    ArcPointCoincidentConstraint.prototype.containsFigure = function (f) {
+        if (f.type == "point") {
+            return this.points.indexOf(f.p.variablePoint) != -1;
+        }
+        else if (f.type == "circle") {
+            //just radius
+            return this.radius == f.r;
+        }
+        return false;
+    };
     return ArcPointCoincidentConstraint;
 }());
 exports.ArcPointCoincidentConstraint = ArcPointCoincidentConstraint;
@@ -191,6 +220,18 @@ var MidpointConstraint = /** @class */ (function () {
         }
         return 0;
     };
+    MidpointConstraint.prototype.containsFigure = function (f) {
+        if (f.type == "point") {
+            return this.p1 == f.p.variablePoint ||
+                this.p2 == f.p.variablePoint ||
+                this.midpoint == f.p.variablePoint;
+        }
+        else if (f.type == "line") {
+            //both points
+            return this.p1 == f.p1.variablePoint && this.p2 == f.p2.variablePoint;
+        }
+        return false;
+    };
     return MidpointConstraint;
 }());
 exports.MidpointConstraint = MidpointConstraint;
@@ -221,6 +262,16 @@ var ColinearPointsConstraint = /** @class */ (function () {
             }
         }
         return 0;
+    };
+    ColinearPointsConstraint.prototype.containsFigure = function (f) {
+        if (f.type == "point") {
+            return this.points.indexOf(f.p.variablePoint) != -1;
+        }
+        else if (f.type == "line") {
+            //both points
+            return this.containsFigure(f.childFigures[0]) && this.containsFigure(f.childFigures[1]);
+        }
+        return false;
     };
     return ColinearPointsConstraint;
 }());
@@ -262,6 +313,21 @@ var TangentLineConstraint = /** @class */ (function () {
             }
         }
         return 0;
+    };
+    TangentLineConstraint.prototype.containsFigure = function (f) {
+        if (f.type == "point") {
+            return this.p1 == f.p.variablePoint ||
+                this.p2 == f.p.variablePoint;
+        }
+        else if (f.type == "line") {
+            //both points
+            return this.containsFigure(f.childFigures[0]) && this.containsFigure(f.childFigures[1]);
+        }
+        else if (f.type == "circle") {
+            //just radius
+            return this.radius == f.r;
+        }
+        return false;
     };
     return TangentLineConstraint;
 }());
@@ -383,6 +449,14 @@ var TangentCircleConstraint = /** @class */ (function () {
             }
         }
         return 0;
+    };
+    TangentCircleConstraint.prototype.containsFigure = function (f) {
+        if (f.type == "circle") {
+            //just radius
+            return this.radius1 == f.r ||
+                this.radius2 == f.r;
+        }
+        return false;
     };
     return TangentCircleConstraint;
 }());
@@ -1343,8 +1417,8 @@ var InfoPane = /** @class */ (function () {
         var e = document.createElement("p");
         e.innerText = "Existing Constraints:";
         this.sidePane.appendChild(e);
-        this.existingConstraints = document.createElement("select");
-        this.existingConstraints.multiple = true;
+        this.existingConstraints = document.createElement("div");
+        this.existingConstraints.classList.add("existing-constraints");
         this.existingConstraints.style.width = "100%";
         this.existingConstraints.style.height = "200px";
         this.sidePane.appendChild(this.existingConstraints);
@@ -1379,14 +1453,25 @@ var InfoPane = /** @class */ (function () {
             this.existingConstraints.removeChild(this.existingConstraints.lastChild);
         }
         var _loop_2 = function (constraint) {
-            var o = document.createElement("option");
+            var o = document.createElement("p");
             o.innerText = constraint.constructor.name;
-            this_2.existingConstraints.appendChild(o);
+            o.classList.add("existing-constraint");
             o.oncontextmenu = function (event) {
                 event.preventDefault();
                 if (event.which == 3)
                     main_1.protractr.sketch.removeConstraint(constraint);
             };
+            o.onmouseenter = function (event) {
+                console.log("enter");
+                main_1.protractr.ui.sketchView.hoveredConstraint = constraint;
+                main_1.protractr.ui.sketchView.draw();
+            };
+            o.onmouseleave = function (event) {
+                console.log("leave");
+                main_1.protractr.ui.sketchView.hoveredConstraint = null;
+                main_1.protractr.ui.sketchView.draw();
+            };
+            this_2.existingConstraints.appendChild(o);
         };
         var this_2 = this;
         for (var _i = 0, constraints_1 = constraints; _i < constraints_1.length; _i++) {
@@ -1574,6 +1659,9 @@ var SketchView = /** @class */ (function () {
         }
         if (this.selectedFigures.indexOf(fig) != -1) {
             this.ctx.strokeStyle = "#5e9cff";
+        }
+        if (this.hoveredConstraint && this.hoveredConstraint.containsFigure(fig)) {
+            this.ctx.strokeStyle = "purple";
         }
         switch (fig.type) {
             case "line":

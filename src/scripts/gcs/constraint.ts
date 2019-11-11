@@ -53,11 +53,11 @@ function equalGoal(vals: Variable[]): number {
     return sum / vals.length;
 }
 
-
 export interface Constraint {
     type: string;
     getError(): number;
     getGradient(v: Variable): number; //how to adjust v to reduce error
+    containsFigure(f: Figure): boolean; // should a given figure be highlighted as a part of this constraint
 }
 
 export class EqualConstraint implements Constraint {
@@ -78,6 +78,21 @@ export class EqualConstraint implements Constraint {
         if(this.variables.indexOf(v) == -1) return 0;
         let avg = equalGoal(this.variables);
         return avg - v.value;
+    }
+    containsFigure(f: Figure): boolean {
+        if(f.type == "point") {
+            for(let v of this.variables) {
+                if((f as PointFigure).p.variablePoint.has(v)) return true;
+            }
+            return false;
+        } else if (f.type == "line") {
+            //both points
+            return this.containsFigure(f.childFigures[0]) && this.containsFigure(f.childFigures[1]);
+        } else if (f.type == "circle") {
+            //just radius
+            return this.variables.indexOf((f as CircleFigure).r) != -1;
+        }
+        return false;
     }
 }
 
@@ -141,6 +156,15 @@ export class ArcPointCoincidentConstraint implements Constraint {
         }
         return 0;
     }
+    containsFigure(f: Figure): boolean {
+        if(f.type == "point") {
+            return this.points.indexOf((f as PointFigure).p.variablePoint) != -1;
+        } else if (f.type == "circle") {
+            //just radius
+            return this.radius == (f as CircleFigure).r;
+        }
+        return false;
+    }
 }
 
 export class MidpointConstraint implements Constraint {
@@ -183,6 +207,17 @@ export class MidpointConstraint implements Constraint {
         }
         return 0;
     }
+    containsFigure(f: Figure): boolean {
+        if(f.type == "point") {
+            return this.p1 == (f as PointFigure).p.variablePoint ||
+                   this.p2 == (f as PointFigure).p.variablePoint ||
+                   this.midpoint == (f as PointFigure).p.variablePoint;
+        } else if (f.type == "line") {
+            //both points
+            return this.p1 == (f as LineFigure).p1.variablePoint && this.p2 == (f as LineFigure).p2.variablePoint;
+        }
+        return false;
+    }
 }
 
 export class ColinearPointsConstraint implements Constraint {
@@ -212,6 +247,15 @@ export class ColinearPointsConstraint implements Constraint {
             }
         }
         return 0;
+    }
+    containsFigure(f: Figure): boolean {
+        if(f.type == "point") {
+            return this.points.indexOf((f as PointFigure).p.variablePoint) != -1;
+        } else if (f.type == "line") {
+            //both points
+            return this.containsFigure(f.childFigures[0]) && this.containsFigure(f.childFigures[1]);
+        }
+        return false;
     }
 }
 
@@ -252,6 +296,19 @@ export class TangentLineConstraint implements Constraint {
             }
         }
         return 0;
+    }
+    containsFigure(f: Figure): boolean {
+        if(f.type == "point") {
+            return this.p1 == (f as PointFigure).p.variablePoint ||
+                this.p2 == (f as PointFigure).p.variablePoint;
+        } else if (f.type == "line") {
+            //both points
+            return this.containsFigure(f.childFigures[0]) && this.containsFigure(f.childFigures[1]);
+        } else if (f.type == "circle") {
+            //just radius
+            return this.radius == (f as CircleFigure).r;
+        }
+        return false;
     }
 }
 
@@ -363,6 +420,14 @@ export class TangentCircleConstraint implements Constraint {
             }
         }
         return 0;
+    }
+    containsFigure(f: Figure): boolean {
+        if (f.type == "circle") {
+            //just radius
+            return this.radius1 == (f as CircleFigure).r ||
+                   this.radius2 == (f as CircleFigure).r;
+        }
+        return false;
     }
 }
 

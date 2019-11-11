@@ -42,3 +42,12 @@ table, tbody, tr, td {
 .tool-active {
     border-color: red;
 }
+.existing-constraint {
+    background: white;
+    border: 1px black;
+    color: black;
+    margin: 0 5px;
+}
+.existing-constraint:hover {
+    background: gray;
+}

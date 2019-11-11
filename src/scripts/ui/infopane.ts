@@ -7,7 +7,7 @@ export class InfoPane {
     sidePane: HTMLDivElement;
     title: HTMLParagraphElement;
     possibleConstraints: HTMLDivElement;
-    existingConstraints: HTMLSelectElement;
+    existingConstraints: HTMLDivElement;
 
     constructor(sidePane: HTMLDivElement) {
         this.sidePane = sidePane;
@@ -26,8 +26,8 @@ export class InfoPane {
         e.innerText = "Existing Constraints:";
         this.sidePane.appendChild(e);
 
-        this.existingConstraints = document.createElement("select");
-        this.existingConstraints.multiple = true;
+        this.existingConstraints = document.createElement("div");
+        this.existingConstraints.classList.add("existing-constraints");
         this.existingConstraints.style.width = "100%";
         this.existingConstraints.style.height = "200px";
         this.sidePane.appendChild(this.existingConstraints);
@@ -57,13 +57,24 @@ export class InfoPane {
             this.existingConstraints.removeChild(this.existingConstraints.lastChild);
         }
         for(let constraint of constraints) {
-            let o = document.createElement("option");
+            let o = document.createElement("p");
             o.innerText = (constraint.constructor as any).name;
-            this.existingConstraints.appendChild(o);
+            o.classList.add("existing-constraint");
             o.oncontextmenu = function(event) {
                 event.preventDefault();
                 if(event.which == 3) protractr.sketch.removeConstraint(constraint);
             }
+            o.onmouseenter = function (event) {
+                console.log("enter");
+                protractr.ui.sketchView.hoveredConstraint = constraint;
+                protractr.ui.sketchView.draw();
+            }
+            o.onmouseleave = function (event) {
+                console.log("leave");
+                protractr.ui.sketchView.hoveredConstraint = null;
+                protractr.ui.sketchView.draw();
+            }
+            this.existingConstraints.appendChild(o);
         }
         console.log("Update list");
     }
