@@ -552,7 +552,16 @@ export class TangentCircleConstraint implements Constraint {
 
 
 function leastSquaresRegression(points: VariablePoint[]): [Point, Point] {
-    //TODO this is broken for vertical lines...
+    //hacky solution to avoid weird behavior when dragging vertical points
+    let constantPoints: Point[] = [];
+    for(let p of points) {
+        if(p.x.constant) {
+            constantPoints.push(p.toPoint());
+        }
+    }
+    if(constantPoints.length > 1) {
+        return [constantPoints[0], constantPoints[1]];
+    }
 
     let xs = 0;
     let ys = 0;
@@ -571,7 +580,7 @@ function leastSquaresRegression(points: VariablePoint[]): [Point, Point] {
     }
     let numerator = (n * xys) - (xs * ys);
     let denominator = n * x2s - (xs * xs);
-    if (denominator < 1) {
+    if (denominator == 0 || Math.abs(numerator/denominator) > 1) {
         denominator = n * y2s - (ys * ys);
 
         let slope = numerator / denominator;

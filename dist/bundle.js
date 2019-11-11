@@ -575,15 +575,25 @@ var TangentCircleConstraint = /** @class */ (function () {
 }());
 exports.TangentCircleConstraint = TangentCircleConstraint;
 function leastSquaresRegression(points) {
-    //TODO this is broken for vertical lines...
+    //hacky solution to avoid weird behavior with vertical points
+    var constantPoints = [];
+    for (var _i = 0, points_1 = points; _i < points_1.length; _i++) {
+        var p = points_1[_i];
+        if (p.x.constant) {
+            constantPoints.push(p.toPoint());
+        }
+    }
+    if (constantPoints.length > 1) {
+        return [constantPoints[0], constantPoints[1]];
+    }
     var xs = 0;
     var ys = 0;
     var x2s = 0;
     var y2s = 0;
     var xys = 0;
     var n = points.length;
-    for (var _i = 0, points_1 = points; _i < points_1.length; _i++) {
-        var point = points_1[_i];
+    for (var _a = 0, points_2 = points; _a < points_2.length; _a++) {
+        var point = points_2[_a];
         var x = point.x.value;
         var y = point.y.value;
         xs += x;
@@ -594,7 +604,7 @@ function leastSquaresRegression(points) {
     }
     var numerator = (n * xys) - (xs * ys);
     var denominator = n * x2s - (xs * xs);
-    if (denominator < 1) {
+    if (denominator == 0 || Math.abs(numerator / denominator) > 1) {
         denominator = n * y2s - (ys * ys);
         var slope_1 = numerator / denominator;
         var xintercept = (xs - slope_1 * ys) / n;
