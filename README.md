@@ -10,3 +10,12 @@ The project is written in typescript.  The typescript is compiled into `dist/` a
 Modifying a typescript file in `src/` requires recompiling the typescript and rerunning `browserify` (see `package.json` for full command).  Webstorm has good typescript integration and `browserify` can easily be added as a pre-browser-launch npm script.
 
 The latest version is hosted at [ccs-1l-f19.github.io/protractr/src](https://ccs-1l-f19.github.io/protractr/src)
+
+
+# Generating Documentation
+
+To generate documentation, use:
+
+```
+./node_modules/typedoc/bin/typedoc --out docs src
+```
