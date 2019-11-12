@@ -1658,7 +1658,7 @@ var SketchView = /** @class */ (function () {
         this.ctx.lineWidth = 2 / this.ctxScale;
         var pointSize = 3 / this.ctxScale;
         if (this.hoveredFigure == fig) {
-            pointSize = 5 / this.ctxScale;
+            pointSize = 7 / this.ctxScale;
             this.ctx.lineWidth = 5 / this.ctxScale;
         }
         if (this.selectedFigures.indexOf(fig) != -1) {
@@ -1666,6 +1666,8 @@ var SketchView = /** @class */ (function () {
         }
         if (this.hoveredConstraint && this.hoveredConstraint.containsFigure(fig)) {
             this.ctx.strokeStyle = "purple";
+            pointSize = 7 / this.ctxScale;
+            this.ctx.lineWidth = 5 / this.ctxScale;
         }
         switch (fig.type) {
             case "line":
