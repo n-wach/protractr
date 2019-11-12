@@ -62,7 +62,7 @@ export class SketchView {
                 break;
         }
     }
-    handleToolEvent(type: string, point: Point) {
+    handleToolEvent(type: string, point: Point, snapFigure: Figure) {
         switch(type) {
             case "mousedown":
                 this.subscribedTool.down(point);
@@ -71,7 +71,7 @@ export class SketchView {
                 this.subscribedTool.move(point);
                 break;
             case "mouseup":
-                this.subscribedTool.up(point);
+                this.subscribedTool.up(point, snapFigure);
                 break;
         }
     }
@@ -118,7 +118,7 @@ export class SketchView {
         let scaled = new Point(offset.x / this.ctxScale, offset.y / this.ctxScale);
         let point = new Point(scaled.x - this.ctxOrigin.x / this.ctxScale, scaled.y - this.ctxOrigin.y / this.ctxScale);
         this.updateHover(point);
-        let snapPoint = point; //this.snapPoint(point);
+        let snapPoint = this.snapPoint(point);
         if(event.type == "wheel") {
             this.handleZoomEvent(event.deltaY, point);
         }
@@ -127,9 +127,9 @@ export class SketchView {
         }
         if(event.which == 1) {
             if(this.subscribedTool) {
-                this.handleToolEvent(event.type, snapPoint);
+                this.handleToolEvent(event.type, snapPoint, this.hoveredFigure);
             } else {
-                this.handleDragEvent(event.type, snapPoint);
+                this.handleDragEvent(event.type, point);
             }
         }
         this.draw();

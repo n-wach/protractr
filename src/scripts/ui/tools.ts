@@ -1,6 +1,8 @@
 import {CircleFigure, Figure, LineFigure, Point, PointFigure} from "../gcs/figures";
 import {protractr} from "../main";
 import {Toolbar} from "./toolbar";
+import {ArcPointCoincidentConstraint, ColinearPointsConstraint, EqualConstraint} from "../gcs/constraint";
+
 
 export class Tool {
     name: string;
@@ -11,18 +13,14 @@ export class Tool {
         this.name = name;
         this.tooltip = tooltip;
     }
-    used() {
 
-    }
-    down(point) {
+    down(point){};
 
-    }
-    up(point) {
+    move(point){};
 
-    }
-    move(point) {
+    up(point, snapFigure: Figure){};
 
-    }
+    used(){};
 }
 
 export class UndoTool extends Tool {
@@ -70,7 +68,7 @@ export class FigureTool extends ActivatableTool {
         }
         this.currentPoint.set(point);
     }
-    up(point) {
+    up(point, snapFigure: Figure) {
         if(!this.currentPoint) return;
         this.currentPoint = point.copy();
         this.points.push(this.currentPoint);
@@ -82,8 +80,11 @@ export class PointTool extends FigureTool {
     constructor() {
         super("Point", "Create a point");
     }
-    up(point) {
+    up(point, snapFigure: Figure) {
         if(this.currentFigure) {
+            if(snapFigure) {
+                constrainPointBySnap(this.currentFigure.p, snapFigure);
+            }
             this.currentFigure = null;
         }
     }
@@ -97,20 +98,48 @@ export class PointTool extends FigureTool {
     }
 }
 
+function constrainPointBySnap(point, snapFigure) {
+    let p = point.variablePoint;
+    switch(snapFigure.type) {
+        case "point":
+            let v1 = (snapFigure as PointFigure).p.variablePoint;
+            let ex = new EqualConstraint([v1.x, p.x]);
+            let ey = new EqualConstraint([v1.y, p.y]);
+            protractr.sketch.addConstraints([ex, ey])
+            break;
+        case "circle":
+            let r = (snapFigure as CircleFigure).r;
+            let c = (snapFigure as CircleFigure).c.variablePoint;
+            protractr.sketch.addConstraints([new ArcPointCoincidentConstraint(c, r, [p])]);
+            break;
+        case "line":
+            let p1 = (snapFigure as LineFigure).p1.variablePoint;
+            let p2 = (snapFigure as LineFigure).p2.variablePoint;
+            protractr.sketch.addConstraints([new ColinearPointsConstraint([p1, p2, p])]);
+            break;
+    }
+}
+
 export class LineTool extends FigureTool {
     currentFigure: LineFigure;
     hasSetP1: boolean = false;
     constructor() {
         super("Line", "Create a line");
     }
-    up(point) {
+    up(point, snapFigure: Figure) {
         if(this.currentFigure) {
             if(this.hasSetP1) {
                 this.currentFigure.p2.set(point);
+                if(snapFigure) {
+                    constrainPointBySnap(this.currentFigure.p2, snapFigure);
+                }
                 this.currentFigure = null;
             } else {
                 this.hasSetP1 = true;
                 this.currentFigure.p1.set(point);
+                if(snapFigure) {
+                    constrainPointBySnap(this.currentFigure.p1, snapFigure);
+                }
             }
         }
     }
@@ -135,7 +164,7 @@ export class CircleTool extends FigureTool {
     constructor() {
         super("Circle", "Create a circle");
     }
-    up(point) {
+    up(point, snapFigure: Figure) {
         if(this.currentFigure) {
             if(this.hasSetC) {
                 this.currentFigure.r.value = this.currentFigure.c.distTo(point);
@@ -143,6 +172,9 @@ export class CircleTool extends FigureTool {
             } else {
                 this.hasSetC = true;
                 this.currentFigure.c.set(point);
+                if(snapFigure) {
+                    constrainPointBySnap(this.currentFigure.c, snapFigure);
+                }
             }
         }
         return true;

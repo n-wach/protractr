@@ -876,19 +876,23 @@ var TangentCirclesConstraintFilter = /** @class */ (function () {
 }());
 exports.TangentCirclesConstraintFilter = TangentCirclesConstraintFilter;
 var possibleConstraints = [
+    //pointy
     new CoincidentPointFilter(),
     new HorizontalPointFilter(),
-    new HorizontalLineFilter(),
     new VerticalPointFilter(),
+    //liney
+    new HorizontalLineFilter(),
     new VerticalLineFilter(),
-    new ArcPointCoincidentFilter(),
-    new LineMidpointCoincidentFilter(),
-    new EqualRadiusConstraintFilter(),
     new ColinearConstraintFilter(),
-    new TangentLineConstraintFilter(),
+    new LineIntersectionConstraintFilter(),
+    new LineMidpointCoincidentFilter(),
+    //circley
+    new EqualRadiusConstraintFilter(),
     new ConcentricConstraintFilter(),
-    new CircleIntersectionConstraintFilter(),
     new TangentCirclesConstraintFilter(),
+    new CircleIntersectionConstraintFilter(),
+    new ArcPointCoincidentFilter(),
+    new TangentLineConstraintFilter(),
 ];
 function sortFigureSelection(figures) {
     var sortedFigures = {
@@ -1529,7 +1533,7 @@ var SketchView = /** @class */ (function () {
                 break;
         }
     };
-    SketchView.prototype.handleToolEvent = function (type, point) {
+    SketchView.prototype.handleToolEvent = function (type, point, snapFigure) {
         switch (type) {
             case "mousedown":
                 this.subscribedTool.down(point);
@@ -1538,7 +1542,7 @@ var SketchView = /** @class */ (function () {
                 this.subscribedTool.move(point);
                 break;
             case "mouseup":
-                this.subscribedTool.up(point);
+                this.subscribedTool.up(point, snapFigure);
                 break;
         }
     };
@@ -1586,7 +1590,7 @@ var SketchView = /** @class */ (function () {
         var scaled = new figures_1.Point(offset.x / this.ctxScale, offset.y / this.ctxScale);
         var point = new figures_1.Point(scaled.x - this.ctxOrigin.x / this.ctxScale, scaled.y - this.ctxOrigin.y / this.ctxScale);
         this.updateHover(point);
-        var snapPoint = point; //this.snapPoint(point);
+        var snapPoint = this.snapPoint(point);
         if (event.type == "wheel") {
             this.handleZoomEvent(event.deltaY, point);
         }
@@ -1595,10 +1599,10 @@ var SketchView = /** @class */ (function () {
         }
         if (event.which == 1) {
             if (this.subscribedTool) {
-                this.handleToolEvent(event.type, snapPoint);
+                this.handleToolEvent(event.type, snapPoint, this.hoveredFigure);
             }
             else {
-                this.handleDragEvent(event.type, snapPoint);
+                this.handleDragEvent(event.type, point);
             }
         }
         this.draw();
@@ -1788,19 +1792,20 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var figures_1 = require("../gcs/figures");
 var main_1 = require("../main");
+var constraint_1 = require("../gcs/constraint");
 var Tool = /** @class */ (function () {
     function Tool(name, tooltip) {
         this.name = name;
         this.tooltip = tooltip;
     }
-    Tool.prototype.used = function () {
-    };
-    Tool.prototype.down = function (point) {
-    };
-    Tool.prototype.up = function (point) {
-    };
-    Tool.prototype.move = function (point) {
-    };
+    Tool.prototype.down = function (point) { };
+    ;
+    Tool.prototype.move = function (point) { };
+    ;
+    Tool.prototype.up = function (point, snapFigure) { };
+    ;
+    Tool.prototype.used = function () { };
+    ;
     return Tool;
 }());
 exports.Tool = Tool;
@@ -1862,7 +1867,7 @@ var FigureTool = /** @class */ (function (_super) {
         }
         this.currentPoint.set(point);
     };
-    FigureTool.prototype.up = function (point) {
+    FigureTool.prototype.up = function (point, snapFigure) {
         if (!this.currentPoint)
             return;
         this.currentPoint = point.copy();
@@ -1876,8 +1881,11 @@ var PointTool = /** @class */ (function (_super) {
     function PointTool() {
         return _super.call(this, "Point", "Create a point") || this;
     }
-    PointTool.prototype.up = function (point) {
+    PointTool.prototype.up = function (point, snapFigure) {
         if (this.currentFigure) {
+            if (snapFigure) {
+                constrainPointBySnap(this.currentFigure.p, snapFigure);
+            }
             this.currentFigure = null;
         }
     };
@@ -1893,6 +1901,27 @@ var PointTool = /** @class */ (function (_super) {
     return PointTool;
 }(FigureTool));
 exports.PointTool = PointTool;
+function constrainPointBySnap(point, snapFigure) {
+    var p = point.variablePoint;
+    switch (snapFigure.type) {
+        case "point":
+            var v1 = snapFigure.p.variablePoint;
+            var ex = new constraint_1.EqualConstraint([v1.x, p.x]);
+            var ey = new constraint_1.EqualConstraint([v1.y, p.y]);
+            main_1.protractr.sketch.addConstraints([ex, ey]);
+            break;
+        case "circle":
+            var r = snapFigure.r;
+            var c = snapFigure.c.variablePoint;
+            main_1.protractr.sketch.addConstraints([new constraint_1.ArcPointCoincidentConstraint(c, r, [p])]);
+            break;
+        case "line":
+            var p1 = snapFigure.p1.variablePoint;
+            var p2 = snapFigure.p2.variablePoint;
+            main_1.protractr.sketch.addConstraints([new constraint_1.ColinearPointsConstraint([p1, p2, p])]);
+            break;
+    }
+}
 var LineTool = /** @class */ (function (_super) {
     __extends(LineTool, _super);
     function LineTool() {
@@ -1900,15 +1929,21 @@ var LineTool = /** @class */ (function (_super) {
         _this.hasSetP1 = false;
         return _this;
     }
-    LineTool.prototype.up = function (point) {
+    LineTool.prototype.up = function (point, snapFigure) {
         if (this.currentFigure) {
             if (this.hasSetP1) {
                 this.currentFigure.p2.set(point);
+                if (snapFigure) {
+                    constrainPointBySnap(this.currentFigure.p2, snapFigure);
+                }
                 this.currentFigure = null;
             }
             else {
                 this.hasSetP1 = true;
                 this.currentFigure.p1.set(point);
+                if (snapFigure) {
+                    constrainPointBySnap(this.currentFigure.p1, snapFigure);
+                }
             }
         }
     };
@@ -1935,7 +1970,7 @@ var CircleTool = /** @class */ (function (_super) {
         _this.hasSetC = false;
         return _this;
     }
-    CircleTool.prototype.up = function (point) {
+    CircleTool.prototype.up = function (point, snapFigure) {
         if (this.currentFigure) {
             if (this.hasSetC) {
                 this.currentFigure.r.value = this.currentFigure.c.distTo(point);
@@ -1944,6 +1979,9 @@ var CircleTool = /** @class */ (function (_super) {
             else {
                 this.hasSetC = true;
                 this.currentFigure.c.set(point);
+                if (snapFigure) {
+                    constrainPointBySnap(this.currentFigure.c, snapFigure);
+                }
             }
         }
         return true;
@@ -1965,7 +2003,7 @@ var CircleTool = /** @class */ (function (_super) {
 }(FigureTool));
 exports.CircleTool = CircleTool;
 
-},{"../gcs/figures":3,"../main":5}],11:[function(require,module,exports){
+},{"../gcs/constraint":1,"../gcs/figures":3,"../main":5}],11:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var toolbar_1 = require("./toolbar");

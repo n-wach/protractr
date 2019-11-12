@@ -353,19 +353,23 @@ export class TangentCirclesConstraintFilter implements ConstraintFilter {
 }
 
 let possibleConstraints = [
+    //pointy
     new CoincidentPointFilter(),
     new HorizontalPointFilter(),
-    new HorizontalLineFilter(),
     new VerticalPointFilter(),
+    //liney
+    new HorizontalLineFilter(),
     new VerticalLineFilter(),
-    new ArcPointCoincidentFilter(),
-    new LineMidpointCoincidentFilter(),
-    new EqualRadiusConstraintFilter(),
     new ColinearConstraintFilter(),
-    new TangentLineConstraintFilter(),
+    new LineIntersectionConstraintFilter(),
+    new LineMidpointCoincidentFilter(),
+    //circley
+    new EqualRadiusConstraintFilter(),
     new ConcentricConstraintFilter(),
-    new CircleIntersectionConstraintFilter(),
     new TangentCirclesConstraintFilter(),
+    new CircleIntersectionConstraintFilter(),
+    new ArcPointCoincidentFilter(),
+    new TangentLineConstraintFilter(),
 ];
 
 type SortedFigureSelection = {
