@@ -1464,6 +1464,7 @@ var InfoPane = /** @class */ (function () {
                 event.preventDefault();
                 if (event.which == 3)
                     main_1.protractr.sketch.removeConstraint(constraint);
+                main_1.protractr.ui.sketchView.hoveredConstraint = null;
             };
             o.onmouseenter = function (event) {
                 console.log("enter");
@@ -1976,6 +1977,12 @@ var CircleTool = /** @class */ (function (_super) {
         if (this.currentFigure) {
             if (this.hasSetC) {
                 this.currentFigure.r.value = this.currentFigure.c.distTo(point);
+                if (snapFigure && snapFigure.type == "point") {
+                    var r = this.currentFigure.r;
+                    var c = this.currentFigure.c.variablePoint;
+                    var p = snapFigure.p.variablePoint;
+                    main_1.protractr.sketch.addConstraints([new constraint_1.ArcPointCoincidentConstraint(c, r, [p])]);
+                }
                 this.currentFigure = null;
             }
             else {

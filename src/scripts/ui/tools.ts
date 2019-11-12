@@ -168,6 +168,12 @@ export class CircleTool extends FigureTool {
         if(this.currentFigure) {
             if(this.hasSetC) {
                 this.currentFigure.r.value = this.currentFigure.c.distTo(point);
+                if(snapFigure && snapFigure.type == "point") {
+                    let r = this.currentFigure.r;
+                    let c = this.currentFigure.c.variablePoint;
+                    let p = (snapFigure as PointFigure).p.variablePoint;
+                    protractr.sketch.addConstraints([new ArcPointCoincidentConstraint(c, r, [p])]);
+                }
                 this.currentFigure = null;
             } else {
                 this.hasSetC = true;
