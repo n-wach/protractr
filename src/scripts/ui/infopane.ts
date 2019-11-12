@@ -63,6 +63,7 @@ export class InfoPane {
             o.oncontextmenu = function(event) {
                 event.preventDefault();
                 if(event.which == 3) protractr.sketch.removeConstraint(constraint);
+                protractr.ui.sketchView.hoveredConstraint = null;
             }
             o.onmouseenter = function (event) {
                 console.log("enter");
