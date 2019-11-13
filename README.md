@@ -11,36 +11,32 @@ Modifying a typescript file in `src/` requires recompiling the typescript and re
 
 The latest version is hosted at [ccs-1l-f19.github.io/protractr/src](https://ccs-1l-f19.github.io/protractr/src)
 
-
 # Developer Info
 
 To get started:
 
 1.  clone this repo, and cd into it
-2.  npm install browserify
-3.  npm install typescript
-4.  Make changes to typescript source.  This should be done under the `src` directory.
-
-    Note that the `dist` directory is the product of doing `browserify` and `tsc`, and you should not directly edit
-    files there.
+2.  npm install
+4.  Make changes to typescript source.  This should be done under the `src` directory.  Note that the `dist` directory is the product of doing `browserify` and `tsc`, and you should not directly edit files there.
     
 5.  Run:
 
-    ```
-    ./node_modules/typescript/bin/tsc
-    npm run browserify
-    ```
+```
+./node_modules/typescript/bin/tsc
+npm run browserify
+```
 
-    Alternatively, you can use `npm install -g typescript`, in which case the `tsc` command is installed globally
-    for your operating system.
+You should then see that the file `dist/bundle.js` has been modified.  This is the final JavaScript file that the running application actually uses: it is the combination of all the custom JavaScript in the application, together with the node modules on which the application depends.
 
-    You should then see that the file `dist/bundle.js` has been modified.  This is the final JavaScript file that the
-    running application actually uses: it is the combination of all the custom JavaScript in the application, together with
-    the node modules on which the application depends.
+If you are commiting the change, commit both the changes under `src` plus the changes to `dist/bundle.js`.
 
-    If you are commiting the change, commit both the changes under `src` plus the changes to `dist/bundle.js`.
-
-    The reason that we commit `dist/bundle.js` is that it is used by the GitHub Pages hosted production version of the site.
+We commit `dist/bundle.js` because it is used by the GitHub Pages hosted production version of the site.
 
 
+# Generating Documentation
 
+To generate documentation, use:
+
+```
+./node_modules/typedoc/bin/typedoc --out docs src
+```
