@@ -1514,7 +1514,8 @@ var SketchView = /** @class */ (function () {
     }
     SketchView.prototype.handleZoomEvent = function (deltaY, point) {
         var originalScale = this.ctxScale;
-        this.ctxScale = this.ctxScale - (deltaY * 0.05 * this.ctxScale);
+        var s = this.ctxScale - (deltaY * 0.005 * this.ctxScale);
+        this.ctxScale = Math.min(10, Math.max(0.1, s));
         var scaleChange = originalScale - this.ctxScale;
         this.ctxOrigin.x += (point.x * scaleChange);
         this.ctxOrigin.y += (point.y * scaleChange);
@@ -1593,12 +1594,20 @@ var SketchView = /** @class */ (function () {
         this.updateHover(point);
         var snapPoint = this.snapPoint(point);
         if (event.type == "wheel") {
-            this.handleZoomEvent(event.deltaY, point);
+            var delta = event.deltaY;
+            //convert delta into pixels...
+            if (event.deltaMode == WheelEvent.DOM_DELTA_LINE) {
+                delta *= 16; // just a guess--depends on inaccessible user settings
+            }
+            else if (event.deltaMode == WheelEvent.DOM_DELTA_PAGE) {
+                delta *= 800; // also just a guess--no good way to predict these...
+            }
+            this.handleZoomEvent(delta, point);
         }
         if (event.which == 2 || (event.type == "mousemove" && this.lastPanPoint != null)) {
             this.handlePanEvent(event.type, offset);
         }
-        if (event.which == 1) {
+        if (event.which == 1 || event.type == "mousemove") {
             if (this.subscribedTool) {
                 this.handleToolEvent(event.type, snapPoint, this.hoveredFigure);
             }
