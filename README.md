@@ -13,6 +13,8 @@ The latest version is hosted at [ccs-1l-f19.github.io/protractr/src](https://ccs
 
 # Developer Info
 
+[View the docs!](https://ccs-1l-f19.github.io/protractr/docs)
+
 To get started:
 
 1.  clone this repo, and cd into it
