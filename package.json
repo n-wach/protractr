@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "browserify": "browserify dist/main.js -o dist/bundle.js"
+    "browserify": "browserify dist/main.js -o dist/bundle.js",
+    "gen-docs": "typedoc --out docs src"
   },
   "keywords": [],
   "author": "",

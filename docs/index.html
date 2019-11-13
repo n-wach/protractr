@@ -78,6 +78,30 @@
 				<p>The project is written in typescript.  The typescript is compiled into <code>dist/</code> as a series of Node modules by <code>tsconfig.json</code>.  Then, <code>browserify</code> combines all required modules into a single <code>bundle.js</code>.  This <code>bundle.js</code> can be served to the client by <code>index.html</code>.</p>
 				<p>Modifying a typescript file in <code>src/</code> requires recompiling the typescript and rerunning <code>browserify</code> (see <code>package.json</code> for full command).  Webstorm has good typescript integration and <code>browserify</code> can easily be added as a pre-browser-launch npm script.</p>
 				<p>The latest version is hosted at <a href="https://ccs-1l-f19.github.io/protractr/src">ccs-1l-f19.github.io/protractr/src</a></p>
+				<a href="#developer-info" id="developer-info" style="color: inherit; text-decoration: none;">
+					<h1>Developer Info</h1>
+				</a>
+				<p><a href="https://ccs-1l-f19.github.io/protractr/docs">View the docs!</a></p>
+				<p>To get started:</p>
+				<ol>
+					<li><p>clone this repo, and cd into it</p>
+					</li>
+					<li><p>npm install</p>
+					</li>
+					<li><p>Make changes to typescript source.  This should be done under the <code>src</code> directory.  Note that the <code>dist</code> directory is the product of doing <code>browserify</code> and <code>tsc</code>, and you should not directly edit files there.</p>
+					</li>
+					<li><p>Run:</p>
+					</li>
+				</ol>
+				<pre><code>.<span class="hljs-regexp">/node_modules/</span>typescript<span class="hljs-regexp">/bin/</span>tsc
+npm run browserify</code></pre><p>You should then see that the file <code>dist/bundle.js</code> has been modified.  This is the final JavaScript file that the running application actually uses: it is the combination of all the custom JavaScript in the application, together with the node modules on which the application depends.</p>
+				<p>If you are commiting the change, commit both the changes under <code>src</code> plus the changes to <code>dist/bundle.js</code>.</p>
+				<p>We commit <code>dist/bundle.js</code> because it is used by the GitHub Pages hosted production version of the site.</p>
+				<a href="#generating-documentation" id="generating-documentation" style="color: inherit; text-decoration: none;">
+					<h1>Generating Documentation</h1>
+				</a>
+				<p>To generate documentation, use:</p>
+				<pre><code>.<span class="hljs-regexp">/node_modules/</span>typedoc<span class="hljs-regexp">/bin/</span>typedoc --out docs src</code></pre>
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
@@ -87,37 +111,37 @@
 						<a href="globals.html"><em>Globals</em></a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_gcs_constraint_.html">"gcs/constraint"</a>
+						<a href="modules/_gcs_constraint_.html">&quot;gcs/constraint&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_gcs_constraint_filter_.html">"gcs/constraint_<wbr>filter"</a>
+						<a href="modules/_gcs_constraint_filter_.html">&quot;gcs/constraint_<wbr>filter&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_gcs_figures_.html">"gcs/figures"</a>
+						<a href="modules/_gcs_figures_.html">&quot;gcs/figures&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_gcs_sketch_.html">"gcs/sketch"</a>
+						<a href="modules/_gcs_sketch_.html">&quot;gcs/sketch&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_main_.html">"main"</a>
+						<a href="modules/_main_.html">&quot;main&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_protractr_.html">"protractr"</a>
+						<a href="modules/_protractr_.html">&quot;protractr&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_ui_infopane_.html">"ui/infopane"</a>
+						<a href="modules/_ui_infopane_.html">&quot;ui/infopane&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_ui_sketchview_.html">"ui/sketchview"</a>
+						<a href="modules/_ui_sketchview_.html">&quot;ui/sketchview&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_ui_toolbar_.html">"ui/toolbar"</a>
+						<a href="modules/_ui_toolbar_.html">&quot;ui/toolbar&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_ui_tools_.html">"ui/tools"</a>
+						<a href="modules/_ui_tools_.html">&quot;ui/tools&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_ui_ui_.html">"ui/ui"</a>
+						<a href="modules/_ui_ui_.html">&quot;ui/ui&quot;</a>
 					</li>
 				</ul>
 			</nav>
