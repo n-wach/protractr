@@ -75,18 +75,19 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-class tsd-parent-kind-external-module"><a href="../classes/_ui_tools_.activatabletool.html" class="tsd-kind-icon">Activatable<wbr>Tool</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-external-module"><a href="../classes/_ui_tools_.circletool.html" class="tsd-kind-icon">Circle<wbr>Tool</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-external-module"><a href="../classes/_ui_tools_.exporttool.html" class="tsd-kind-icon">Export<wbr>Tool</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-external-module"><a href="../classes/_ui_tools_.figuretool.html" class="tsd-kind-icon">Figure<wbr>Tool</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-external-module"><a href="../classes/_ui_tools_.importtool.html" class="tsd-kind-icon">Import<wbr>Tool</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-external-module"><a href="../classes/_ui_tools_.linetool.html" class="tsd-kind-icon">Line<wbr>Tool</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-external-module"><a href="../classes/_ui_tools_.pointtool.html" class="tsd-kind-icon">Point<wbr>Tool</a></li>
-								<li class="tsd-kind-class tsd-parent-kind-external-module"><a href="../classes/_ui_tools_.redotool.html" class="tsd-kind-icon">Redo<wbr>Tool</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-external-module"><a href="../classes/_ui_tools_.tool.html" class="tsd-kind-icon">Tool</a></li>
-								<li class="tsd-kind-class tsd-parent-kind-external-module"><a href="../classes/_ui_tools_.undotool.html" class="tsd-kind-icon">Undo<wbr>Tool</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section tsd-is-not-exported">
 							<h3>Functions</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_ui_tools_.html#constrainpointbysnap" class="tsd-kind-icon">constrain<wbr>Point<wbr>BySnap</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_ui_tools_.html#saveas" class="tsd-kind-icon">save<wbr>As</a></li>
 							</ul>
 						</section>
 					</div>
@@ -104,7 +105,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/031b03c/src/scripts/ui/tools.ts#L101">ui/tools.ts:101</a></li>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/4030209/src/scripts/ui/tools.ts#L121">ui/tools.ts:121</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -114,6 +115,32 @@
 								</li>
 								<li>
 									<h5>snapFigure: <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="saveas" class="tsd-anchor"></a>
+					<h3>save<wbr>As</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">save<wbr>As<span class="tsd-signature-symbol">(</span>obj<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, filename<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/4030209/src/scripts/ui/tools.ts#L37">ui/tools.ts:37</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>obj: <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
+									<h5>filename: <span class="tsd-signature-type">any</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -172,7 +199,13 @@
 						<a href="../classes/_ui_tools_.circletool.html" class="tsd-kind-icon">Circle<wbr>Tool</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="../classes/_ui_tools_.exporttool.html" class="tsd-kind-icon">Export<wbr>Tool</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
 						<a href="../classes/_ui_tools_.figuretool.html" class="tsd-kind-icon">Figure<wbr>Tool</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="../classes/_ui_tools_.importtool.html" class="tsd-kind-icon">Import<wbr>Tool</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
 						<a href="../classes/_ui_tools_.linetool.html" class="tsd-kind-icon">Line<wbr>Tool</a>
@@ -181,16 +214,13 @@
 						<a href="../classes/_ui_tools_.pointtool.html" class="tsd-kind-icon">Point<wbr>Tool</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="../classes/_ui_tools_.redotool.html" class="tsd-kind-icon">Redo<wbr>Tool</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
 						<a href="../classes/_ui_tools_.tool.html" class="tsd-kind-icon">Tool</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="../classes/_ui_tools_.undotool.html" class="tsd-kind-icon">Undo<wbr>Tool</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="_ui_tools_.html#constrainpointbysnap" class="tsd-kind-icon">constrain<wbr>Point<wbr>BySnap</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_ui_tools_.html#saveas" class="tsd-kind-icon">save<wbr>As</a>
 					</li>
 				</ul>
 			</nav>

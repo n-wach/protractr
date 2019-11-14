@@ -85,6 +85,7 @@
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_gcs_sketch_.sketch.html#constraints" class="tsd-kind-icon">constraints</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_gcs_sketch_.sketch.html#points" class="tsd-kind-icon">points</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_gcs_sketch_.sketch.html#rootfigures" class="tsd-kind-icon">root<wbr>Figures</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_gcs_sketch_.sketch.html#variables" class="tsd-kind-icon">variables</a></li>
 							</ul>
@@ -94,11 +95,13 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_gcs_sketch_.sketch.html#addconstraintandcombine" class="tsd-kind-icon">add<wbr>Constraint<wbr>And<wbr>Combine</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_gcs_sketch_.sketch.html#addconstraints" class="tsd-kind-icon">add<wbr>Constraints</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_gcs_sketch_.sketch.html#addpoint" class="tsd-kind-icon">add<wbr>Point</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_gcs_sketch_.sketch.html#addvariable" class="tsd-kind-icon">add<wbr>Variable</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_gcs_sketch_.sketch.html#asobject" class="tsd-kind-icon">as<wbr>Object</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_gcs_sketch_.sketch.html#getclosestfigure" class="tsd-kind-icon">get<wbr>Closest<wbr>Figure</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_gcs_sketch_.sketch.html#removeconstraint" class="tsd-kind-icon">remove<wbr>Constraint</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_gcs_sketch_.sketch.html#removevariable" class="tsd-kind-icon">remove<wbr>Variable</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_gcs_sketch_.sketch.html#solveconstraints" class="tsd-kind-icon">solve<wbr>Constraints</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="_gcs_sketch_.sketch.html#fromobject" class="tsd-kind-icon">from<wbr>Object</a></li>
 							</ul>
 						</section>
 					</div>
@@ -112,7 +115,17 @@
 					<div class="tsd-signature tsd-kind-icon">constraints<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_gcs_constraint_.constraint.html" class="tsd-signature-type">Constraint</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/031b03c/src/scripts/gcs/sketch.ts#L12">gcs/sketch.ts:12</a></li>
+							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/4030209/src/scripts/gcs/sketch.ts#L34">gcs/sketch.ts:34</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="points" class="tsd-anchor"></a>
+					<h3>points</h3>
+					<div class="tsd-signature tsd-kind-icon">points<span class="tsd-signature-symbol">:</span> <a href="_gcs_constraint_.variablepoint.html" class="tsd-signature-type">VariablePoint</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/4030209/src/scripts/gcs/sketch.ts#L36">gcs/sketch.ts:36</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -122,7 +135,7 @@
 					<div class="tsd-signature tsd-kind-icon">root<wbr>Figures<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_gcs_figures_.figure.html" class="tsd-signature-type">Figure</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/031b03c/src/scripts/gcs/sketch.ts#L14">gcs/sketch.ts:14</a></li>
+							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/4030209/src/scripts/gcs/sketch.ts#L37">gcs/sketch.ts:37</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -132,7 +145,7 @@
 					<div class="tsd-signature tsd-kind-icon">variables<span class="tsd-signature-symbol">:</span> <a href="_gcs_constraint_.variable.html" class="tsd-signature-type">Variable</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/031b03c/src/scripts/gcs/sketch.ts#L13">gcs/sketch.ts:13</a></li>
+							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/4030209/src/scripts/gcs/sketch.ts#L35">gcs/sketch.ts:35</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -149,7 +162,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/031b03c/src/scripts/gcs/sketch.ts#L39">gcs/sketch.ts:39</a></li>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/4030209/src/scripts/gcs/sketch.ts#L62">gcs/sketch.ts:62</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -172,13 +185,36 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/031b03c/src/scripts/gcs/sketch.ts#L112">gcs/sketch.ts:112</a></li>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/4030209/src/scripts/gcs/sketch.ts#L135">gcs/sketch.ts:135</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>constraints: <a href="../interfaces/_gcs_constraint_.constraint.html" class="tsd-signature-type">Constraint</a><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="addpoint" class="tsd-anchor"></a>
+					<h3>add<wbr>Point</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Point<span class="tsd-signature-symbol">(</span>point<span class="tsd-signature-symbol">: </span><a href="_gcs_constraint_.variablepoint.html" class="tsd-signature-type">VariablePoint</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/4030209/src/scripts/gcs/sketch.ts#L149">gcs/sketch.ts:149</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>point: <a href="_gcs_constraint_.variablepoint.html" class="tsd-signature-type">VariablePoint</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -195,7 +231,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/031b03c/src/scripts/gcs/sketch.ts#L126">gcs/sketch.ts:126</a></li>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/4030209/src/scripts/gcs/sketch.ts#L154">gcs/sketch.ts:154</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -209,6 +245,23 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="asobject" class="tsd-anchor"></a>
+					<h3>as<wbr>Object</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">as<wbr>Object<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../modules/_gcs_sketch_.html#sketchexport" class="tsd-signature-type">SketchExport</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/4030209/src/scripts/gcs/sketch.ts#L189">gcs/sketch.ts:189</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="../modules/_gcs_sketch_.html#sketchexport" class="tsd-signature-type">SketchExport</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="getclosestfigure" class="tsd-anchor"></a>
 					<h3>get<wbr>Closest<wbr>Figure</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -218,7 +271,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/031b03c/src/scripts/gcs/sketch.ts#L15">gcs/sketch.ts:15</a></li>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/4030209/src/scripts/gcs/sketch.ts#L38">gcs/sketch.ts:38</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -244,36 +297,13 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/031b03c/src/scripts/gcs/sketch.ts#L120">gcs/sketch.ts:120</a></li>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/4030209/src/scripts/gcs/sketch.ts#L143">gcs/sketch.ts:143</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>constraint: <span class="tsd-signature-type">any</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="removevariable" class="tsd-anchor"></a>
-					<h3>remove<wbr>Variable</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">remove<wbr>Variable<span class="tsd-signature-symbol">(</span>variable<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/031b03c/src/scripts/gcs/sketch.ts#L129">gcs/sketch.ts:129</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>variable: <span class="tsd-signature-type">any</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -290,7 +320,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/031b03c/src/scripts/gcs/sketch.ts#L134">gcs/sketch.ts:134</a></li>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/4030209/src/scripts/gcs/sketch.ts#L157">gcs/sketch.ts:157</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -300,6 +330,29 @@
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="fromobject" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> from<wbr>Object</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">from<wbr>Object<span class="tsd-signature-symbol">(</span>obj<span class="tsd-signature-symbol">: </span><a href="../modules/_gcs_sketch_.html#sketchexport" class="tsd-signature-type">SketchExport</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_gcs_sketch_.sketch.html" class="tsd-signature-type">Sketch</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/4030209/src/scripts/gcs/sketch.ts#L212">gcs/sketch.ts:212</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>obj: <a href="../modules/_gcs_sketch_.html#sketchexport" class="tsd-signature-type">SketchExport</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="_gcs_sketch_.sketch.html" class="tsd-signature-type">Sketch</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -357,6 +410,9 @@
 								<a href="_gcs_sketch_.sketch.html#constraints" class="tsd-kind-icon">constraints</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_gcs_sketch_.sketch.html#points" class="tsd-kind-icon">points</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="_gcs_sketch_.sketch.html#rootfigures" class="tsd-kind-icon">root<wbr>Figures</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
@@ -369,7 +425,13 @@
 								<a href="_gcs_sketch_.sketch.html#addconstraints" class="tsd-kind-icon">add<wbr>Constraints</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_gcs_sketch_.sketch.html#addpoint" class="tsd-kind-icon">add<wbr>Point</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_gcs_sketch_.sketch.html#addvariable" class="tsd-kind-icon">add<wbr>Variable</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_gcs_sketch_.sketch.html#asobject" class="tsd-kind-icon">as<wbr>Object</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_gcs_sketch_.sketch.html#getclosestfigure" class="tsd-kind-icon">get<wbr>Closest<wbr>Figure</a>
@@ -378,15 +440,24 @@
 								<a href="_gcs_sketch_.sketch.html#removeconstraint" class="tsd-kind-icon">remove<wbr>Constraint</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_gcs_sketch_.sketch.html#removevariable" class="tsd-kind-icon">remove<wbr>Variable</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_gcs_sketch_.sketch.html#solveconstraints" class="tsd-kind-icon">solve<wbr>Constraints</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+								<a href="_gcs_sketch_.sketch.html#fromobject" class="tsd-kind-icon">from<wbr>Object</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
+						<a href="../modules/_gcs_sketch_.html#constraintexport" class="tsd-kind-icon">Constraint<wbr>Export</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
+						<a href="../modules/_gcs_sketch_.html#figureexport" class="tsd-kind-icon">Figure<wbr>Export</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
+						<a href="../modules/_gcs_sketch_.html#sketchexport" class="tsd-kind-icon">Sketch<wbr>Export</a>
+					</li>
 					<li class=" tsd-kind-object-literal tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="../modules/_gcs_sketch_.html#typemagnetism" class="tsd-kind-icon">type<wbr>Magnetism</a>
 					</li>
