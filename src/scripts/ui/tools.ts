@@ -47,8 +47,17 @@ export class ImportTool extends Tool {
         super("Import", "Import a Sketch from a file or web");
     }
     used() {
-        let json = prompt("JSON to import?");
-        protractr.loadSketch(json);
+        let input = prompt("JSON or URL to import");
+        if(input[0] == "{") {
+            protractr.loadSketch(input);
+        } else {
+            let request = new XMLHttpRequest();
+            request.addEventListener("load", function () {
+                protractr.loadSketch(this.responseText);
+            });
+            request.open("GET", input);
+            request.send();
+        }
     }
 }
 

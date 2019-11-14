@@ -19,8 +19,8 @@ export class Toolbar {
         this.addTool(new LineTool(), "line.png");
         this.addTool(new CircleTool(), "circle.png");
         //this.addTool(new Tool("Arc", "Create an arc"), "arc.png");
-        this.addTool(new ExportTool(), "export.png");
         this.addTool(new ImportTool(), "import.png");
+        this.addTool(new ExportTool(), "export.png");
     }
     addTool(tool: Tool, image: string) {
         let e = new ToolElement(tool, image);

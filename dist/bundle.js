@@ -1986,8 +1986,8 @@ var Toolbar = /** @class */ (function () {
         this.addTool(new tools_1.LineTool(), "line.png");
         this.addTool(new tools_1.CircleTool(), "circle.png");
         //this.addTool(new Tool("Arc", "Create an arc"), "arc.png");
-        this.addTool(new tools_1.ExportTool(), "export.png");
         this.addTool(new tools_1.ImportTool(), "import.png");
+        this.addTool(new tools_1.ExportTool(), "export.png");
     };
     Toolbar.prototype.addTool = function (tool, image) {
         var e = new ToolElement(tool, image);
@@ -2090,8 +2090,18 @@ var ImportTool = /** @class */ (function (_super) {
         return _super.call(this, "Import", "Import a Sketch from a file or web") || this;
     }
     ImportTool.prototype.used = function () {
-        var json = prompt("JSON to import?");
-        main_1.protractr.loadSketch(json);
+        var input = prompt("JSON or URL to import");
+        if (input[0] == "{") {
+            main_1.protractr.loadSketch(input);
+        }
+        else {
+            var request = new XMLHttpRequest();
+            request.addEventListener("load", function () {
+                main_1.protractr.loadSketch(this.responseText);
+            });
+            request.open("GET", input);
+            request.send();
+        }
     };
     return ImportTool;
 }(Tool));
