@@ -8,5 +8,10 @@ export class Protractr {
         this.sketch = new Sketch();
         this.ui = new UI(this, canvas, sidePane, toolbar);
     }
+    loadSketch(json) {
+        this.sketch = Sketch.fromObject(JSON.parse(json));
+        this.ui.sketchView.draw();
+        this.ui.infoPane.updateConstraintList(this.sketch.constraints);
+    }
 }
 

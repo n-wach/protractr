@@ -20,5 +20,12 @@ window.addEventListener("load", function() {
     tools = document.getElementById("tools") as HTMLUListElement;
     protractr = new Protractr(canvas, sidePane, tools);
     adjustCanvasResolution(null);
+    console.log(
+"________                __                        __     "                + "\n" +
+"\\_____  \\_______  _____/  |_____________    _____/  |________"          + "\n" +
+"|    ___/\\_  __ \\/  _ \\   __\\_  __ \\__  \\ _/ ___\\   __\\_  __ \\"   + "\n" +
+"|   |     |  | \\(  <_> )  |  |  | \\// __ \\\\  \\___|  |  |  | \\/"      + "\n" +
+"|___|     |__|   \\____/|__|  |__|  (____  /\\___  >__|  |__|"             + "\n" +
+"                                        \\/     \\/");
     console.log("Protractr: ", protractr);
 });

@@ -1,5 +1,12 @@
-import {ColinearPointsConstraint, Constraint, EqualConstraint, Variable, VariablePoint} from "./constraint";
-import {Figure, Point} from "./figures";
+import {
+    ColinearPointsConstraint,
+    Constraint,
+    constraintFromObject,
+    EqualConstraint,
+    Variable,
+    VariablePoint
+} from "./constraint";
+import {Figure, figureFromObject, Point} from "./figures";
 import {protractr} from "../main";
 
 let typeMagnetism = {
@@ -8,9 +15,25 @@ let typeMagnetism = {
     point: 5,
 };
 
+export type FigureExport = {
+    type: string,
+    [a: string]: any,
+};
+export type ConstraintExport = {
+    type: string,
+    [a: string]: any,
+};
+export type SketchExport = {
+    variables: number[];
+    points: [number, number][],
+    figures: FigureExport[],
+    constraints: ConstraintExport[],
+}
+
 export class Sketch {
     constraints: Constraint[] = [];
     variables: Variable[] = [];
+    points: VariablePoint[] = [];
     rootFigures: Figure[] = [];
     getClosestFigure(point: Point, ignoreFigures: Figure[] = []): Figure {
         let allFigures = [];
@@ -123,13 +146,13 @@ export class Sketch {
         });
         protractr.ui.infoPane.updateConstraintList(this.constraints);
     }
+    addPoint(point: VariablePoint) {
+        this.points.push(point);
+        this.addVariable(point.x);
+        this.addVariable(point.y);
+    }
     addVariable(variable: Variable) {
         this.variables.push(variable);
-    }
-    removeVariable(variable) {
-        this.variables = this.variables.filter(function(value, index, arr) {
-            return value != variable;
-        });
     }
     solveConstraints(tirelessSolve:boolean=false): boolean {
         let count = 0;
@@ -162,6 +185,48 @@ export class Sketch {
             count += 1;
             previousError = totalError;
         }
+    }
+    asObject(): SketchExport {
+        let obj: SketchExport = {
+            "variables": [],
+            "points": [],
+            "figures": [],
+            "constraints": [],
+        };
+        for(let v of this.variables) {
+            obj.variables.push(v.value);
+        }
+        for(let p of this.points) {
+            let xp = this.variables.indexOf(p.x);
+            let yp = this.variables.indexOf(p.y);
+            obj.points.push([xp, yp])
+        }
+        for(let fig of this.rootFigures) {
+            obj.figures.push(fig.asObject(obj, this));
+        }
+        for(let constraint of this.constraints) {
+            obj.constraints.push(constraint.asObject(obj, this));
+        }
+        return obj;
+    }
+    static fromObject(obj: SketchExport): Sketch {
+        let sketch = new Sketch();
+        for(let v of obj.variables) {
+            sketch.variables.push(new Variable(v));
+        }
+        for(let p of obj.points) {
+            let xv = sketch.variables[p[0]];
+            let yv = sketch.variables[p[1]];
+            let vp = VariablePoint.fromVariables(xv, yv);
+            sketch.points.push(vp);
+        }
+        for(let fig of obj.figures) {
+            sketch.rootFigures.push(figureFromObject(fig, sketch));
+        }
+        for(let constraint of obj.constraints) {
+            sketch.constraints.push(constraintFromObject(constraint, sketch));
+        }
+        return sketch;
     }
 }
 

@@ -1,5 +1,6 @@
 import {Variable, VariablePoint} from "./constraint";
 import {EPSILON, protractr} from "../main";
+import {FigureExport, Sketch, SketchExport} from "./sketch";
 
 export class Point {
     variablePoint: VariablePoint;
@@ -83,6 +84,11 @@ export class Point {
         if (segFrac > 1 || isNaN(segFrac)) return 1;
         return segFrac;
     }
+    static fromVariablePoint(v: VariablePoint): Point {
+        let p = new Point(0, 0);
+        p.variablePoint = v;
+        return p;
+    }
 }
 
 
@@ -97,13 +103,14 @@ export interface Figure {
     getRootFigure(): Figure;
     translate(from: Point, to: Point);
     setLocked(lock: boolean);
+    asObject(obj: SketchExport, sketch: Sketch): FigureExport;
 }
 
 export class BasicFigure implements Figure {
     childFigures: Figure[];
     parentFigure: Figure;
-    type: string;
-    name: string;
+    type: string = "null";
+    name: string = "null";
 
     getClosestPoint(point: Point): Point {
         return undefined;
@@ -137,6 +144,11 @@ export class BasicFigure implements Figure {
             fig.setLocked(lock);
         }
     }
+    asObject(obj: SketchExport, sketch: Sketch): FigureExport {
+        return {
+            "type": this.type,
+        };
+    }
 }
 
 export class PointFigure extends BasicFigure {
@@ -146,12 +158,11 @@ export class PointFigure extends BasicFigure {
     childFigures: Figure[] = [];
     parentFigure: Figure = null;
 
-    constructor(p: Point, name: string="point") {
+    constructor(p: Point, name: string="point", add=true) {
         super();
         this.p = p;
         this.name = name;
-        protractr.sketch.addVariable(this.p.variablePoint.x);
-        protractr.sketch.addVariable(this.p.variablePoint.y);
+        if(add) protractr.sketch.addPoint(this.p.variablePoint);
     }
     getClosestPoint(point: Point): Point {
         return this.p.copy();
@@ -164,6 +175,11 @@ export class PointFigure extends BasicFigure {
         this.p.variablePoint.x.constant = lock;
         this.p.variablePoint.y.constant = lock;
     }
+    asObject(obj: SketchExport, sketch: Sketch): FigureExport {
+        let o = super.asObject(obj, sketch);
+        o["p"] = sketch.points.indexOf(this.p.variablePoint);
+        return o;
+    }
 }
 
 export class LineFigure extends BasicFigure {
@@ -174,12 +190,12 @@ export class LineFigure extends BasicFigure {
     childFigures: Figure[];
     parentFigure: Figure;
 
-    constructor(p1: Point, p2: Point, name: string = "line") {
+    constructor(p1: Point, p2: Point, name: string = "line", add=true) {
         super();
         this.p1 = p1;
         this.p2 = p2;
         this.name = name;
-        this.childFigures = [new PointFigure(this.p1, "p1"), new PointFigure(this.p2, "p2")];
+        this.childFigures = [new PointFigure(this.p1, "p1", add), new PointFigure(this.p2, "p2", add)];
         this.childFigures[0].parentFigure = this;
         this.childFigures[1].parentFigure = this;
     }
@@ -191,6 +207,12 @@ export class LineFigure extends BasicFigure {
         this.p1.add(diff);
         this.p2.add(diff);
     }
+    asObject(obj: SketchExport, sketch: Sketch): FigureExport {
+        let o = super.asObject(obj, sketch);
+        o["p1"] = sketch.points.indexOf(this.p1.variablePoint);
+        o["p2"] = sketch.points.indexOf(this.p2.variablePoint);
+        return o;
+    }
 }
 
 export class CircleFigure extends BasicFigure {
@@ -200,13 +222,13 @@ export class CircleFigure extends BasicFigure {
     childFigures: Figure[];
     parentFigure: Figure;
 
-    constructor(c: Point, r: number, name: string = "circle") {
+    constructor(c: Point, r: number, name: string = "circle", add=true) {
         super();
         this.c = c;
         this.r = new Variable(r);
         this.name = name;
-        protractr.sketch.addVariable(this.r);
-        this.childFigures = [new PointFigure(this.c, "center")];
+        if(add) protractr.sketch.addVariable(this.r);
+        this.childFigures = [new PointFigure(this.c, "center", add)];
         this.childFigures[0].parentFigure = this;
     }
     getClosestPoint(point: Point): Point {
@@ -219,6 +241,12 @@ export class CircleFigure extends BasicFigure {
         super.setLocked(lock);
         this.r.constant = lock;
     }
+    asObject(obj: SketchExport, sketch: Sketch): FigureExport {
+        let o = super.asObject(obj, sketch);
+        o["c"] = sketch.points.indexOf(this.c.variablePoint);
+        o["r"] = sketch.variables.indexOf(this.r);
+        return o;
+    }
 }
 
 export function getFullName(figure: Figure): string {
@@ -229,4 +257,23 @@ export function getFullName(figure: Figure): string {
         name += " of " + figure.name;
     }
     return name;
+}
+
+export function figureFromObject(obj: FigureExport, sketch: Sketch): Figure {
+    switch(obj.type) {
+        case "point":
+            let p = sketch.points[obj["p"]];
+            return new PointFigure(Point.fromVariablePoint(p), "point", false);
+        case "line":
+            let p1 = sketch.points[obj["p1"]];
+            let p2 = sketch.points[obj["p2"]];
+            return new LineFigure(Point.fromVariablePoint(p1), Point.fromVariablePoint(p2), "line",false);
+        case "circle":
+            let c = sketch.points[obj["c"]];
+            let r = sketch.variables[obj["r"]];
+            let circle = new CircleFigure(Point.fromVariablePoint(c), 0, "circle", false);
+            circle.r = r;
+            return circle;
+    }
+    return null;
 }

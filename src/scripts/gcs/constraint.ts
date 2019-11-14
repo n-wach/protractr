@@ -1,5 +1,6 @@
 import {CircleFigure, Figure, LineFigure, Point, PointFigure} from "./figures";
 import {EPSILON} from "../main";
+import {ConstraintExport, Sketch, SketchExport} from "./sketch";
 
 export class Variable {
     _value: number;
@@ -34,6 +35,12 @@ export class VariablePoint {
         if(this.y == v) return goal.y - v.value;
         return 0;
     }
+    static fromVariables(x: Variable, y: Variable): VariablePoint {
+        let v = new VariablePoint(0, 0);
+        v.x = x;
+        v.y = y;
+        return v;
+    }
 }
 
 function sum(vals: Variable[]): number {
@@ -58,6 +65,7 @@ export interface Constraint {
     getError(): number;
     getGradient(v: Variable): number; //how to adjust v to reduce error
     containsFigure(f: Figure): boolean; // should a given figure be highlighted as a part of this constraint
+    asObject(obj: SketchExport, sketch: Sketch): ConstraintExport;
 }
 
 export class EqualConstraint implements Constraint {
@@ -93,6 +101,25 @@ export class EqualConstraint implements Constraint {
             return this.variables.indexOf((f as CircleFigure).r) != -1;
         }
         return false;
+    }
+
+    asObject(obj: SketchExport, sketch: Sketch): ConstraintExport {
+        let variables = [];
+        for(let v of this.variables) {
+            variables.push(sketch.variables.indexOf(v));
+        }
+        return {
+            "type": this.type,
+            "variables": variables
+        };
+    }
+
+    static fromObject(c: ConstraintExport, sketch: Sketch): EqualConstraint {
+        let variables = [];
+        for(let v of c["variables"]) {
+            variables.push(sketch.variables[v]);
+        }
+        return new EqualConstraint(variables);
     }
 }
 
@@ -165,6 +192,29 @@ export class ArcPointCoincidentConstraint implements Constraint {
         }
         return false;
     }
+
+    asObject(obj: SketchExport, sketch: Sketch): ConstraintExport {
+        let points = [];
+        for(let p of this.points) {
+            points.push(sketch.points.indexOf(p));
+        }
+        return {
+            "type": this.type,
+            "c": sketch.points.indexOf(this.center),
+            "r": sketch.variables.indexOf(this.radius),
+            "points": points
+        };
+    }
+
+    static fromObject(c: ConstraintExport, sketch: Sketch): ArcPointCoincidentConstraint {
+        let ce = sketch.points[c["c"]];
+        let r = sketch.variables[c["r"]];
+        let points = [];
+        for(let p of c["points"]) {
+            points.push(sketch.points[p]);
+        }
+        return new ArcPointCoincidentConstraint(ce, r, points);
+    }
 }
 
 export class MidpointConstraint implements Constraint {
@@ -218,6 +268,21 @@ export class MidpointConstraint implements Constraint {
         }
         return false;
     }
+    asObject(obj: SketchExport, sketch: Sketch): ConstraintExport {
+        return {
+            "type": this.type,
+            "p1": sketch.points.indexOf(this.p1),
+            "p2": sketch.points.indexOf(this.p2),
+            "mp": sketch.points.indexOf(this.midpoint)
+        };
+    }
+
+    static fromObject(c: ConstraintExport, sketch: Sketch): MidpointConstraint {
+        let p1 = sketch.points[c["p1"]];
+        let p2 = sketch.points[c["p2"]];
+        let mp = sketch.points[c["mp"]];
+        return new MidpointConstraint(p1, p2, mp);
+    }
 }
 
 export class ColinearPointsConstraint implements Constraint {
@@ -257,6 +322,25 @@ export class ColinearPointsConstraint implements Constraint {
         }
         return false;
     }
+
+    asObject(obj: SketchExport, sketch: Sketch): ConstraintExport {
+        let points = [];
+        for(let p of this.points) {
+            points.push(sketch.points.indexOf(p));
+        }
+        return {
+            "type": this.type,
+            "points": points
+        };
+    }
+    static fromObject(c: ConstraintExport, sketch: Sketch): ColinearPointsConstraint {
+        let points = [];
+        for(let p of c["points"]) {
+            points.push(sketch.points[p]);
+        }
+        return new ColinearPointsConstraint(points);
+    }
+
 }
 
 export class TangentLineConstraint implements Constraint {
@@ -309,6 +393,24 @@ export class TangentLineConstraint implements Constraint {
             return this.radius == (f as CircleFigure).r;
         }
         return false;
+    }
+
+    asObject(obj: SketchExport, sketch: Sketch): ConstraintExport {
+        return {
+            "type": this.type,
+            "c": sketch.points.indexOf(this.center),
+            "r": sketch.variables.indexOf(this.radius),
+            "p1": sketch.points.indexOf(this.p1),
+            "p2": sketch.points.indexOf(this.p2),
+        };
+    }
+
+    static fromObject(c: ConstraintExport, sketch: Sketch): TangentLineConstraint {
+        let ce = sketch.points[c["c"]];
+        let r = sketch.variables[c["r"]];
+        let p1 = sketch.points[c["p1"]];
+        let p2 = sketch.points[c["p2"]];
+        return new TangentLineConstraint(ce, r, p1, p2);
     }
 }
 
@@ -429,6 +531,23 @@ export class TangentCircleConstraint implements Constraint {
         }
         return false;
     }
+
+    asObject(obj: SketchExport, sketch: Sketch): ConstraintExport {
+        return {
+            "type": this.type,
+            "c1": sketch.points.indexOf(this.center1),
+            "r1": sketch.variables.indexOf(this.radius1),
+            "c2": sketch.points.indexOf(this.center2),
+            "r2": sketch.variables.indexOf(this.radius2),
+        };
+    }
+    static fromObject(c: ConstraintExport, sketch: Sketch): TangentCircleConstraint {
+        let c1 = sketch.points[c["c1"]];
+        let r1 = sketch.variables[c["r1"]];
+        let c2 = sketch.points[c["c2"]];
+        let r2 = sketch.variables[c["r2"]];
+        return new TangentCircleConstraint(c1, r1, c2, r2);
+    }
 }
 
 
@@ -468,4 +587,22 @@ function leastSquaresRegression(points: VariablePoint[]): [Point, Point] {
     let p1 = new Point(0, yintercept);
     let p2 = new Point(1, yintercept + slope);
     return [p1, p2];
+}
+
+export function constraintFromObject(c: ConstraintExport, sketch: Sketch): Constraint {
+    switch(c.type) {
+        case "equal":
+            return EqualConstraint.fromObject(c, sketch);
+        case "arc-point-coincident":
+            return ArcPointCoincidentConstraint.fromObject(c, sketch);
+        case "midpoint":
+            return MidpointConstraint.fromObject(c, sketch);
+        case "colinear":
+            return ColinearPointsConstraint.fromObject(c, sketch);
+        case "tangent-line":
+            return TangentLineConstraint.fromObject(c, sketch);
+        case "tangent-circle":
+            return TangentCircleConstraint.fromObject(c, sketch);
+    }
+    return null;
 }

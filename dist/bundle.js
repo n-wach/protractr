@@ -39,6 +39,12 @@ var VariablePoint = /** @class */ (function () {
             return goal.y - v.value;
         return 0;
     };
+    VariablePoint.fromVariables = function (x, y) {
+        var v = new VariablePoint(0, 0);
+        v.x = x;
+        v.y = y;
+        return v;
+    };
     return VariablePoint;
 }());
 exports.VariablePoint = VariablePoint;
@@ -98,6 +104,25 @@ var EqualConstraint = /** @class */ (function () {
             return this.variables.indexOf(f.r) != -1;
         }
         return false;
+    };
+    EqualConstraint.prototype.asObject = function (obj, sketch) {
+        var variables = [];
+        for (var _i = 0, _a = this.variables; _i < _a.length; _i++) {
+            var v = _a[_i];
+            variables.push(sketch.variables.indexOf(v));
+        }
+        return {
+            "type": this.type,
+            "variables": variables
+        };
+    };
+    EqualConstraint.fromObject = function (c, sketch) {
+        var variables = [];
+        for (var _i = 0, _a = c["variables"]; _i < _a.length; _i++) {
+            var v = _a[_i];
+            variables.push(sketch.variables[v]);
+        }
+        return new EqualConstraint(variables);
     };
     return EqualConstraint;
 }());
@@ -177,6 +202,29 @@ var ArcPointCoincidentConstraint = /** @class */ (function () {
         }
         return false;
     };
+    ArcPointCoincidentConstraint.prototype.asObject = function (obj, sketch) {
+        var points = [];
+        for (var _i = 0, _a = this.points; _i < _a.length; _i++) {
+            var p = _a[_i];
+            points.push(sketch.points.indexOf(p));
+        }
+        return {
+            "type": this.type,
+            "c": sketch.points.indexOf(this.center),
+            "r": sketch.variables.indexOf(this.radius),
+            "points": points
+        };
+    };
+    ArcPointCoincidentConstraint.fromObject = function (c, sketch) {
+        var ce = sketch.points[c["c"]];
+        var r = sketch.variables[c["r"]];
+        var points = [];
+        for (var _i = 0, _a = c["points"]; _i < _a.length; _i++) {
+            var p = _a[_i];
+            points.push(sketch.points[p]);
+        }
+        return new ArcPointCoincidentConstraint(ce, r, points);
+    };
     return ArcPointCoincidentConstraint;
 }());
 exports.ArcPointCoincidentConstraint = ArcPointCoincidentConstraint;
@@ -232,6 +280,20 @@ var MidpointConstraint = /** @class */ (function () {
         }
         return false;
     };
+    MidpointConstraint.prototype.asObject = function (obj, sketch) {
+        return {
+            "type": this.type,
+            "p1": sketch.points.indexOf(this.p1),
+            "p2": sketch.points.indexOf(this.p2),
+            "mp": sketch.points.indexOf(this.midpoint)
+        };
+    };
+    MidpointConstraint.fromObject = function (c, sketch) {
+        var p1 = sketch.points[c["p1"]];
+        var p2 = sketch.points[c["p2"]];
+        var mp = sketch.points[c["mp"]];
+        return new MidpointConstraint(p1, p2, mp);
+    };
     return MidpointConstraint;
 }());
 exports.MidpointConstraint = MidpointConstraint;
@@ -272,6 +334,25 @@ var ColinearPointsConstraint = /** @class */ (function () {
             return this.containsFigure(f.childFigures[0]) && this.containsFigure(f.childFigures[1]);
         }
         return false;
+    };
+    ColinearPointsConstraint.prototype.asObject = function (obj, sketch) {
+        var points = [];
+        for (var _i = 0, _a = this.points; _i < _a.length; _i++) {
+            var p = _a[_i];
+            points.push(sketch.points.indexOf(p));
+        }
+        return {
+            "type": this.type,
+            "points": points
+        };
+    };
+    ColinearPointsConstraint.fromObject = function (c, sketch) {
+        var points = [];
+        for (var _i = 0, _a = c["points"]; _i < _a.length; _i++) {
+            var p = _a[_i];
+            points.push(sketch.points[p]);
+        }
+        return new ColinearPointsConstraint(points);
     };
     return ColinearPointsConstraint;
 }());
@@ -328,6 +409,22 @@ var TangentLineConstraint = /** @class */ (function () {
             return this.radius == f.r;
         }
         return false;
+    };
+    TangentLineConstraint.prototype.asObject = function (obj, sketch) {
+        return {
+            "type": this.type,
+            "c": sketch.points.indexOf(this.center),
+            "r": sketch.variables.indexOf(this.radius),
+            "p1": sketch.points.indexOf(this.p1),
+            "p2": sketch.points.indexOf(this.p2),
+        };
+    };
+    TangentLineConstraint.fromObject = function (c, sketch) {
+        var ce = sketch.points[c["c"]];
+        var r = sketch.variables[c["r"]];
+        var p1 = sketch.points[c["p1"]];
+        var p2 = sketch.points[c["p2"]];
+        return new TangentLineConstraint(ce, r, p1, p2);
     };
     return TangentLineConstraint;
 }());
@@ -458,6 +555,22 @@ var TangentCircleConstraint = /** @class */ (function () {
         }
         return false;
     };
+    TangentCircleConstraint.prototype.asObject = function (obj, sketch) {
+        return {
+            "type": this.type,
+            "c1": sketch.points.indexOf(this.center1),
+            "r1": sketch.variables.indexOf(this.radius1),
+            "c2": sketch.points.indexOf(this.center2),
+            "r2": sketch.variables.indexOf(this.radius2),
+        };
+    };
+    TangentCircleConstraint.fromObject = function (c, sketch) {
+        var c1 = sketch.points[c["c1"]];
+        var r1 = sketch.variables[c["r1"]];
+        var c2 = sketch.points[c["c2"]];
+        var r2 = sketch.variables[c["r2"]];
+        return new TangentCircleConstraint(c1, r1, c2, r2);
+    };
     return TangentCircleConstraint;
 }());
 exports.TangentCircleConstraint = TangentCircleConstraint;
@@ -495,6 +608,24 @@ function leastSquaresRegression(points) {
     var p2 = new figures_1.Point(1, yintercept + slope);
     return [p1, p2];
 }
+function constraintFromObject(c, sketch) {
+    switch (c.type) {
+        case "equal":
+            return EqualConstraint.fromObject(c, sketch);
+        case "arc-point-coincident":
+            return ArcPointCoincidentConstraint.fromObject(c, sketch);
+        case "midpoint":
+            return MidpointConstraint.fromObject(c, sketch);
+        case "colinear":
+            return ColinearPointsConstraint.fromObject(c, sketch);
+        case "tangent-line":
+            return TangentLineConstraint.fromObject(c, sketch);
+        case "tangent-circle":
+            return TangentCircleConstraint.fromObject(c, sketch);
+    }
+    return null;
+}
+exports.constraintFromObject = constraintFromObject;
 
 },{"./figures":3}],2:[function(require,module,exports){
 "use strict";
@@ -1030,11 +1161,18 @@ var Point = /** @class */ (function () {
             return 1;
         return segFrac;
     };
+    Point.fromVariablePoint = function (v) {
+        var p = new Point(0, 0);
+        p.variablePoint = v;
+        return p;
+    };
     return Point;
 }());
 exports.Point = Point;
 var BasicFigure = /** @class */ (function () {
     function BasicFigure() {
+        this.type = "null";
+        this.name = "null";
     }
     BasicFigure.prototype.getClosestPoint = function (point) {
         return undefined;
@@ -1071,13 +1209,19 @@ var BasicFigure = /** @class */ (function () {
             fig.setLocked(lock);
         }
     };
+    BasicFigure.prototype.asObject = function (obj, sketch) {
+        return {
+            "type": this.type,
+        };
+    };
     return BasicFigure;
 }());
 exports.BasicFigure = BasicFigure;
 var PointFigure = /** @class */ (function (_super) {
     __extends(PointFigure, _super);
-    function PointFigure(p, name) {
+    function PointFigure(p, name, add) {
         if (name === void 0) { name = "point"; }
+        if (add === void 0) { add = true; }
         var _this = _super.call(this) || this;
         _this.type = "point";
         _this.name = "point";
@@ -1085,8 +1229,8 @@ var PointFigure = /** @class */ (function (_super) {
         _this.parentFigure = null;
         _this.p = p;
         _this.name = name;
-        main_1.protractr.sketch.addVariable(_this.p.variablePoint.x);
-        main_1.protractr.sketch.addVariable(_this.p.variablePoint.y);
+        if (add)
+            main_1.protractr.sketch.addPoint(_this.p.variablePoint);
         return _this;
     }
     PointFigure.prototype.getClosestPoint = function (point) {
@@ -1100,20 +1244,26 @@ var PointFigure = /** @class */ (function (_super) {
         this.p.variablePoint.x.constant = lock;
         this.p.variablePoint.y.constant = lock;
     };
+    PointFigure.prototype.asObject = function (obj, sketch) {
+        var o = _super.prototype.asObject.call(this, obj, sketch);
+        o["p"] = sketch.points.indexOf(this.p.variablePoint);
+        return o;
+    };
     return PointFigure;
 }(BasicFigure));
 exports.PointFigure = PointFigure;
 var LineFigure = /** @class */ (function (_super) {
     __extends(LineFigure, _super);
-    function LineFigure(p1, p2, name) {
+    function LineFigure(p1, p2, name, add) {
         if (name === void 0) { name = "line"; }
+        if (add === void 0) { add = true; }
         var _this = _super.call(this) || this;
         _this.type = "line";
         _this.name = "line";
         _this.p1 = p1;
         _this.p2 = p2;
         _this.name = name;
-        _this.childFigures = [new PointFigure(_this.p1, "p1"), new PointFigure(_this.p2, "p2")];
+        _this.childFigures = [new PointFigure(_this.p1, "p1", add), new PointFigure(_this.p2, "p2", add)];
         _this.childFigures[0].parentFigure = _this;
         _this.childFigures[1].parentFigure = _this;
         return _this;
@@ -1126,20 +1276,28 @@ var LineFigure = /** @class */ (function (_super) {
         this.p1.add(diff);
         this.p2.add(diff);
     };
+    LineFigure.prototype.asObject = function (obj, sketch) {
+        var o = _super.prototype.asObject.call(this, obj, sketch);
+        o["p1"] = sketch.points.indexOf(this.p1.variablePoint);
+        o["p2"] = sketch.points.indexOf(this.p2.variablePoint);
+        return o;
+    };
     return LineFigure;
 }(BasicFigure));
 exports.LineFigure = LineFigure;
 var CircleFigure = /** @class */ (function (_super) {
     __extends(CircleFigure, _super);
-    function CircleFigure(c, r, name) {
+    function CircleFigure(c, r, name, add) {
         if (name === void 0) { name = "circle"; }
+        if (add === void 0) { add = true; }
         var _this = _super.call(this) || this;
         _this.type = "circle";
         _this.c = c;
         _this.r = new constraint_1.Variable(r);
         _this.name = name;
-        main_1.protractr.sketch.addVariable(_this.r);
-        _this.childFigures = [new PointFigure(_this.c, "center")];
+        if (add)
+            main_1.protractr.sketch.addVariable(_this.r);
+        _this.childFigures = [new PointFigure(_this.c, "center", add)];
         _this.childFigures[0].parentFigure = _this;
         return _this;
     }
@@ -1152,6 +1310,12 @@ var CircleFigure = /** @class */ (function (_super) {
     CircleFigure.prototype.setLocked = function (lock) {
         _super.prototype.setLocked.call(this, lock);
         this.r.constant = lock;
+    };
+    CircleFigure.prototype.asObject = function (obj, sketch) {
+        var o = _super.prototype.asObject.call(this, obj, sketch);
+        o["c"] = sketch.points.indexOf(this.c.variablePoint);
+        o["r"] = sketch.variables.indexOf(this.r);
+        return o;
     };
     return CircleFigure;
 }(BasicFigure));
@@ -1167,11 +1331,31 @@ function getFullName(figure) {
     return name;
 }
 exports.getFullName = getFullName;
+function figureFromObject(obj, sketch) {
+    switch (obj.type) {
+        case "point":
+            var p = sketch.points[obj["p"]];
+            return new PointFigure(Point.fromVariablePoint(p), "point", false);
+        case "line":
+            var p1 = sketch.points[obj["p1"]];
+            var p2 = sketch.points[obj["p2"]];
+            return new LineFigure(Point.fromVariablePoint(p1), Point.fromVariablePoint(p2), "line", false);
+        case "circle":
+            var c = sketch.points[obj["c"]];
+            var r = sketch.variables[obj["r"]];
+            var circle = new CircleFigure(Point.fromVariablePoint(c), 0, "circle", false);
+            circle.r = r;
+            return circle;
+    }
+    return null;
+}
+exports.figureFromObject = figureFromObject;
 
 },{"../main":5,"./constraint":1}],4:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var constraint_1 = require("./constraint");
+var figures_1 = require("./figures");
 var main_1 = require("../main");
 var typeMagnetism = {
     circle: 0,
@@ -1182,6 +1366,7 @@ var Sketch = /** @class */ (function () {
     function Sketch() {
         this.constraints = [];
         this.variables = [];
+        this.points = [];
         this.rootFigures = [];
     }
     Sketch.prototype.getClosestFigure = function (point, ignoreFigures) {
@@ -1315,13 +1500,13 @@ var Sketch = /** @class */ (function () {
         });
         main_1.protractr.ui.infoPane.updateConstraintList(this.constraints);
     };
+    Sketch.prototype.addPoint = function (point) {
+        this.points.push(point);
+        this.addVariable(point.x);
+        this.addVariable(point.y);
+    };
     Sketch.prototype.addVariable = function (variable) {
         this.variables.push(variable);
-    };
-    Sketch.prototype.removeVariable = function (variable) {
-        this.variables = this.variables.filter(function (value, index, arr) {
-            return value != variable;
-        });
     };
     Sketch.prototype.solveConstraints = function (tirelessSolve) {
         if (tirelessSolve === void 0) { tirelessSolve = false; }
@@ -1361,11 +1546,61 @@ var Sketch = /** @class */ (function () {
             previousError = totalError;
         }
     };
+    Sketch.prototype.asObject = function () {
+        var obj = {
+            "variables": [],
+            "points": [],
+            "figures": [],
+            "constraints": [],
+        };
+        for (var _i = 0, _a = this.variables; _i < _a.length; _i++) {
+            var v = _a[_i];
+            obj.variables.push(v.value);
+        }
+        for (var _b = 0, _c = this.points; _b < _c.length; _b++) {
+            var p = _c[_b];
+            var xp = this.variables.indexOf(p.x);
+            var yp = this.variables.indexOf(p.y);
+            obj.points.push([xp, yp]);
+        }
+        for (var _d = 0, _e = this.rootFigures; _d < _e.length; _d++) {
+            var fig = _e[_d];
+            obj.figures.push(fig.asObject(obj, this));
+        }
+        for (var _f = 0, _g = this.constraints; _f < _g.length; _f++) {
+            var constraint = _g[_f];
+            obj.constraints.push(constraint.asObject(obj, this));
+        }
+        return obj;
+    };
+    Sketch.fromObject = function (obj) {
+        var sketch = new Sketch();
+        for (var _i = 0, _a = obj.variables; _i < _a.length; _i++) {
+            var v = _a[_i];
+            sketch.variables.push(new constraint_1.Variable(v));
+        }
+        for (var _b = 0, _c = obj.points; _b < _c.length; _b++) {
+            var p = _c[_b];
+            var xv = sketch.variables[p[0]];
+            var yv = sketch.variables[p[1]];
+            var vp = constraint_1.VariablePoint.fromVariables(xv, yv);
+            sketch.points.push(vp);
+        }
+        for (var _d = 0, _e = obj.figures; _d < _e.length; _d++) {
+            var fig = _e[_d];
+            sketch.rootFigures.push(figures_1.figureFromObject(fig, sketch));
+        }
+        for (var _f = 0, _g = obj.constraints; _f < _g.length; _f++) {
+            var constraint = _g[_f];
+            sketch.constraints.push(constraint_1.constraintFromObject(constraint, sketch));
+        }
+        return sketch;
+    };
     return Sketch;
 }());
 exports.Sketch = Sketch;
 
-},{"../main":5,"./constraint":1}],5:[function(require,module,exports){
+},{"../main":5,"./constraint":1,"./figures":3}],5:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var protractr_1 = require("./protractr");
@@ -1385,6 +1620,12 @@ window.addEventListener("load", function () {
     tools = document.getElementById("tools");
     exports.protractr = new protractr_1.Protractr(canvas, sidePane, tools);
     adjustCanvasResolution(null);
+    console.log("________                __                        __     " + "\n" +
+        "\\_____  \\_______  _____/  |_____________    _____/  |________" + "\n" +
+        "|    ___/\\_  __ \\/  _ \\   __\\_  __ \\__  \\ _/ ___\\   __\\_  __ \\" + "\n" +
+        "|   |     |  | \\(  <_> )  |  |  | \\// __ \\\\  \\___|  |  |  | \\/" + "\n" +
+        "|___|     |__|   \\____/|__|  |__|  (____  /\\___  >__|  |__|" + "\n" +
+        "                                        \\/     \\/");
     console.log("Protractr: ", exports.protractr);
 });
 
@@ -1398,6 +1639,11 @@ var Protractr = /** @class */ (function () {
         this.sketch = new sketch_1.Sketch();
         this.ui = new ui_1.UI(this, canvas, sidePane, toolbar);
     }
+    Protractr.prototype.loadSketch = function (json) {
+        this.sketch = sketch_1.Sketch.fromObject(JSON.parse(json));
+        this.ui.sketchView.draw();
+        this.ui.infoPane.updateConstraintList(this.sketch.constraints);
+    };
     return Protractr;
 }());
 exports.Protractr = Protractr;
@@ -1494,11 +1740,10 @@ exports.InfoPane = InfoPane;
 Object.defineProperty(exports, "__esModule", { value: true });
 var figures_1 = require("../gcs/figures");
 var SketchView = /** @class */ (function () {
-    function SketchView(ui, sketch, canvas) {
+    function SketchView(ui, canvas) {
         this.dragging = false;
         this.lastPanPoint = null;
         this.ui = ui;
-        this.sketch = sketch;
         this.canvas = canvas;
         this.selectedFigures = [];
         this.ctxScale = 1;
@@ -1564,7 +1809,7 @@ var SketchView = /** @class */ (function () {
                     this.draggedFigure.translate(this.lastFigureDrag, point.copy());
                     this.draggedFigure.setLocked(true);
                     this.lastFigureDrag = point.copy();
-                    this.sketch.solveConstraints();
+                    this.ui.protractr.sketch.solveConstraints();
                 }
                 break;
             case "mouseup":
@@ -1580,7 +1825,7 @@ var SketchView = /** @class */ (function () {
                 if (this.draggedFigure) {
                     this.draggedFigure.setLocked(false);
                     this.draggedFigure = null;
-                    this.sketch.solveConstraints(true);
+                    this.ui.protractr.sketch.solveConstraints(true);
                 }
                 this.dragging = false;
                 break;
@@ -1626,7 +1871,7 @@ var SketchView = /** @class */ (function () {
         if (this.draggedFigure && this.dragging) {
             ignoredFigures.push.apply(ignoredFigures, this.draggedFigure.getRelatedFigures());
         }
-        closest = this.sketch.getClosestFigure(point, ignoredFigures);
+        closest = this.ui.protractr.sketch.getClosestFigure(point, ignoredFigures);
         if (closest != null && closest.getClosestPoint(point).distTo(point) > 10 / this.ctxScale) {
             closest = null;
         }
@@ -1704,7 +1949,7 @@ var SketchView = /** @class */ (function () {
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
         this.ctx.translate(this.ctxOrigin.x, this.ctxOrigin.y);
         this.ctx.scale(this.ctxScale, this.ctxScale);
-        for (var _i = 0, _a = this.sketch.rootFigures; _i < _a.length; _i++) {
+        for (var _i = 0, _a = this.ui.protractr.sketch.rootFigures; _i < _a.length; _i++) {
             var fig = _a[_i];
             for (var _b = 0, _c = fig.getRelatedFigures(); _b < _c.length; _b++) {
                 var child = _c[_b];
@@ -1740,9 +1985,9 @@ var Toolbar = /** @class */ (function () {
         this.addTool(new tools_1.PointTool(), "point.png");
         this.addTool(new tools_1.LineTool(), "line.png");
         this.addTool(new tools_1.CircleTool(), "circle.png");
-        this.addTool(new tools_1.Tool("Arc", "Create an arc"), "arc.png");
-        this.addTool(new tools_1.UndoTool(), "undo.png");
-        this.addTool(new tools_1.RedoTool(), "redo.png");
+        //this.addTool(new Tool("Arc", "Create an arc"), "arc.png");
+        this.addTool(new tools_1.ExportTool(), "export.png");
+        this.addTool(new tools_1.ImportTool(), "import.png");
     };
     Toolbar.prototype.addTool = function (tool, image) {
         var e = new ToolElement(tool, image);
@@ -1821,28 +2066,36 @@ var Tool = /** @class */ (function () {
     return Tool;
 }());
 exports.Tool = Tool;
-var UndoTool = /** @class */ (function (_super) {
-    __extends(UndoTool, _super);
-    function UndoTool() {
-        return _super.call(this, "Undo", "Undo the most recent action") || this;
+var ExportTool = /** @class */ (function (_super) {
+    __extends(ExportTool, _super);
+    function ExportTool() {
+        return _super.call(this, "Export", "Export your Sketch") || this;
     }
-    UndoTool.prototype.used = function () {
-        alert("Undo");
+    ExportTool.prototype.used = function () {
+        saveAs(main_1.protractr.sketch.asObject(), "sketch.json");
     };
-    return UndoTool;
+    return ExportTool;
 }(Tool));
-exports.UndoTool = UndoTool;
-var RedoTool = /** @class */ (function (_super) {
-    __extends(RedoTool, _super);
-    function RedoTool() {
-        return _super.call(this, "Redo", "Redo the most recent undo") || this;
+exports.ExportTool = ExportTool;
+function saveAs(obj, filename) {
+    var a = document.createElement("a");
+    var data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(obj));
+    a.href = "data:" + data;
+    a.download = filename;
+    a.click();
+}
+var ImportTool = /** @class */ (function (_super) {
+    __extends(ImportTool, _super);
+    function ImportTool() {
+        return _super.call(this, "Import", "Import a Sketch from a file or web") || this;
     }
-    RedoTool.prototype.used = function () {
-        alert("Redo");
+    ImportTool.prototype.used = function () {
+        var json = prompt("JSON to import?");
+        main_1.protractr.loadSketch(json);
     };
-    return RedoTool;
+    return ImportTool;
 }(Tool));
-exports.RedoTool = RedoTool;
+exports.ImportTool = ImportTool;
 var ActivatableTool = /** @class */ (function (_super) {
     __extends(ActivatableTool, _super);
     function ActivatableTool() {
@@ -2031,7 +2284,7 @@ var UI = /** @class */ (function () {
     function UI(protractr, canvas, sidePane, toolbar) {
         this.protractr = protractr;
         this.infoPane = new infopane_1.InfoPane(sidePane);
-        this.sketchView = new sketchview_1.SketchView(this, this.protractr.sketch, canvas);
+        this.sketchView = new sketchview_1.SketchView(this, canvas);
         this.toolbar = new toolbar_1.Toolbar(toolbar, this.sketchView);
     }
     return UI;

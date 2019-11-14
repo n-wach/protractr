@@ -2,6 +2,8 @@ import {CircleFigure, Figure, LineFigure, Point, PointFigure} from "../gcs/figur
 import {protractr} from "../main";
 import {Toolbar} from "./toolbar";
 import {ArcPointCoincidentConstraint, ColinearPointsConstraint, EqualConstraint} from "../gcs/constraint";
+import {SketchView} from "./sketchview";
+import {Protractr} from "../protractr";
 
 
 export class Tool {
@@ -23,21 +25,30 @@ export class Tool {
     used(){};
 }
 
-export class UndoTool extends Tool {
+export class ExportTool extends Tool {
     constructor() {
-        super("Undo", "Undo the most recent action");
+        super("Export", "Export your Sketch");
     }
     used() {
-        alert("Undo");
+        saveAs(protractr.sketch.asObject(), "sketch.json");
     }
 }
 
-export class RedoTool extends Tool {
+function saveAs(obj, filename) {
+    let a = document.createElement("a");
+    var data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(obj));
+    a.href = "data:" + data;
+    a.download = filename;
+    a.click();
+}
+
+export class ImportTool extends Tool {
     constructor() {
-        super("Redo", "Redo the most recent undo");
+        super("Import", "Import a Sketch from a file or web");
     }
     used() {
-        alert("Redo");
+        let json = prompt("JSON to import?");
+        protractr.loadSketch(json);
     }
 }
 
