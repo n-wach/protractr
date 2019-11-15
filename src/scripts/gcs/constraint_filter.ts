@@ -231,7 +231,7 @@ class CoincidentPointFilter implements ConstraintFilter {
     }
 }
 
-class ArcPointCoincidentFilter implements ConstraintFilter {
+class ArcPointFilter implements ConstraintFilter {
     name: string = "coincident";
     filter = new FilterString(":circle&1+point");
     createConstraints(sortedFigures: SortedFigureSelection) {
@@ -244,7 +244,7 @@ class ArcPointCoincidentFilter implements ConstraintFilter {
     }
 }
 
-class LineMidpointCoincidentFilter implements ConstraintFilter {
+class LineMidpointFilter implements ConstraintFilter {
     name: string = "midpoint";
     filter = new FilterString(":line&point");
     createConstraints(sortedFigures: SortedFigureSelection) {
@@ -254,7 +254,7 @@ class LineMidpointCoincidentFilter implements ConstraintFilter {
     }
 }
 
-class EqualRadiusConstraintFilter implements ConstraintFilter {
+class EqualRadiusFilter implements ConstraintFilter {
     name: string = "equal";
     filter = new FilterString(":2+circle");
     createConstraints(sortedFigures: SortedFigureSelection): Constraint[] {
@@ -266,7 +266,7 @@ class EqualRadiusConstraintFilter implements ConstraintFilter {
     }
 }
 
-class ColinearConstraintFilter implements ConstraintFilter {
+class ColinearFilter implements ConstraintFilter {
     name: string = "colinear";
     filter = new FilterString("line as 2 point:3+point");
     createConstraints(sortedFigures: SortedFigureSelection): Constraint[] {
@@ -282,7 +282,7 @@ class ColinearConstraintFilter implements ConstraintFilter {
     }
 }
 
-export class TangentLineConstraintFilter implements ConstraintFilter {
+export class TangentLineFilter implements ConstraintFilter {
     name: string = "tangent";
     filter = new FilterString(":circle&1+line");
     createConstraints(sortedFigures: SortedFigureSelection): Constraint[] {
@@ -295,7 +295,7 @@ export class TangentLineConstraintFilter implements ConstraintFilter {
     }
 }
 
-export class ConcentricConstraintFilter implements ConstraintFilter {
+export class ConcentricCirclesFilter implements ConstraintFilter {
     name: string = "concentric";
     filter = new FilterString(":1+circle&*point");
     createConstraints(sortedFigures: SortedFigureSelection): Constraint[] {
@@ -313,7 +313,7 @@ export class ConcentricConstraintFilter implements ConstraintFilter {
     }
 }
 
-export class LineIntersectionConstraintFilter implements ConstraintFilter {
+export class LineIntersectionFilter implements ConstraintFilter {
     name: string = "intersection";
     filter = new FilterString(":point&2+line");
     createConstraints(sortedFigures: SortedFigureSelection): Constraint[] {
@@ -328,7 +328,7 @@ export class LineIntersectionConstraintFilter implements ConstraintFilter {
 }
 
 
-export class CircleIntersectionConstraintFilter implements ConstraintFilter {
+export class CircleIntersectionFilter implements ConstraintFilter {
     name: string = "intersection";
     filter = new FilterString(":point&2+circle");
     createConstraints(sortedFigures: SortedFigureSelection): Constraint[] {
@@ -342,7 +342,7 @@ export class CircleIntersectionConstraintFilter implements ConstraintFilter {
     }
 }
 
-export class TangentCirclesConstraintFilter implements ConstraintFilter {
+export class TangentCirclesFilter implements ConstraintFilter {
     name: string = "tangent";
     filter = new FilterString(":2circle");
     createConstraints(sortedFigures: SortedFigureSelection): Constraint[] {
@@ -360,16 +360,16 @@ let possibleConstraints = [
     //liney
     new HorizontalLineFilter(),
     new VerticalLineFilter(),
-    new ColinearConstraintFilter(),
-    new LineIntersectionConstraintFilter(),
-    new LineMidpointCoincidentFilter(),
+    new ColinearFilter(),
+    new LineIntersectionFilter(),
+    new LineMidpointFilter(),
     //circley
-    new EqualRadiusConstraintFilter(),
-    new ConcentricConstraintFilter(),
-    new TangentCirclesConstraintFilter(),
-    new CircleIntersectionConstraintFilter(),
-    new ArcPointCoincidentFilter(),
-    new TangentLineConstraintFilter(),
+    new EqualRadiusFilter(),
+    new ConcentricCirclesFilter(),
+    new TangentCirclesFilter(),
+    new CircleIntersectionFilter(),
+    new ArcPointFilter(),
+    new TangentLineFilter(),
 ];
 
 type SortedFigureSelection = {
