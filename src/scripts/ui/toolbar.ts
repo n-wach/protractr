@@ -1,4 +1,4 @@
-import {ActivatableTool, CircleTool, LineTool, PointTool, ImportTool, Tool, ExportTool} from "./tools";
+import {ActivatableTool, CircleTool, LineTool, PointTool, ImportTool, Tool, ExportTool, UndoTool} from "./tools";
 import {Protractr} from "../protractr";
 import {SketchView} from "./sketchview";
 
@@ -19,6 +19,7 @@ export class Toolbar {
         this.addTool(new LineTool(), "line.png");
         this.addTool(new CircleTool(), "circle.png");
         //this.addTool(new Tool("Arc", "Create an arc"), "arc.png");
+        this.addTool(new UndoTool(), "undo.png");
         this.addTool(new ImportTool(), "import.png");
         this.addTool(new ExportTool(), "export.png");
     }

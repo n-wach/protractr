@@ -25,18 +25,34 @@ export class Tool {
     used(){};
 }
 
+export class UndoTool extends Tool {
+    constructor() {
+        super("Undo", "Undo as action");
+    }
+    used() {
+        let history = protractr.ui.sketchView.history;
+        history.pop(); //pop current state
+        if(history.length > 0) {
+            let lastState = history[history.length - 1]; //restore last state
+            protractr.loadSketch(lastState);
+        } else {
+            protractr.resetSketch();
+        }
+    }
+}
+
 export class ExportTool extends Tool {
     constructor() {
         super("Export", "Export your Sketch");
     }
     used() {
-        saveAs(protractr.sketch.asObject(), "sketch.json");
+        saveAs(protractr.exportSketch(), "sketch.json");
     }
 }
 
-function saveAs(obj, filename) {
+function saveAs(string, filename) {
     let a = document.createElement("a");
-    var data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(obj));
+    var data = "text/json;charset=utf-8," + encodeURIComponent(string);
     a.href = "data:" + data;
     a.download = filename;
     a.click();
@@ -51,14 +67,18 @@ export class ImportTool extends Tool {
         if(input[0] == "{") {
             protractr.loadSketch(input);
         } else {
-            let request = new XMLHttpRequest();
-            request.addEventListener("load", function () {
-                protractr.loadSketch(this.responseText);
-            });
-            request.open("GET", input);
-            request.send();
+            loadFromURL(input);
         }
     }
+}
+
+export function loadFromURL(url){
+    let request = new XMLHttpRequest();
+    request.addEventListener("load", function () {
+        protractr.loadSketch(this.responseText);
+    });
+    request.open("GET", url);
+    request.send();
 }
 
 export class ActivatableTool extends Tool {

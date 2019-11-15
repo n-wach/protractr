@@ -3,6 +3,7 @@ import {Sketch} from "../gcs/sketch";
 import {Tool} from "./tools";
 import {UI} from "./ui";
 import {Constraint} from "../gcs/constraint";
+import {protractr} from "../main";
 
 export class SketchView {
     canvas: HTMLCanvasElement;
@@ -23,6 +24,8 @@ export class SketchView {
 
     lastPanPoint: Point = null;
     hoveredConstraint: Constraint;
+
+    history: string[] = [];
 
     constructor(ui: UI, canvas: HTMLCanvasElement) {
         this.ui = ui;
@@ -71,6 +74,7 @@ export class SketchView {
                 break;
             case "mouseup":
                 this.subscribedTool.up(point, snapFigure);
+                if(this.subscribedTool.currentFigure == null) this.pushState(); //new figure just added
                 break;
         }
     }
@@ -106,6 +110,7 @@ export class SketchView {
                     this.draggedFigure.setLocked(false);
                     this.draggedFigure = null;
                     this.ui.protractr.sketch.solveConstraints(true);
+                    this.pushState(); //figure modified
                 }
                 this.dragging = false;
                 break;
@@ -183,7 +188,6 @@ export class SketchView {
     setCursor(cursor: string) {
         this.canvas.style.cursor = cursor;
     }
-
     drawFigure(fig: Figure) {
         this.ctx.strokeStyle = "black";
         this.ctx.lineWidth = 2 / this.ctxScale;
@@ -237,5 +241,8 @@ export class SketchView {
         this.ctx.moveTo(point.x, point.y);
         this.ctx.arc(point.x, point.y, size, 0, Math.PI * 2);
         this.ctx.fill();
+    }
+    pushState() {
+        this.history.push(this.ui.protractr.exportSketch());
     }
 }

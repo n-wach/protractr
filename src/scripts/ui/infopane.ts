@@ -48,6 +48,7 @@ export class InfoPane {
             child.addEventListener("click", function () {
                 let sortedFigures = sortFigureSelection(figures);
                 protractr.sketch.addConstraints(pc.createConstraints(sortedFigures));
+                protractr.ui.sketchView.pushState();
             });
             this.possibleConstraints.appendChild(child);
         }
@@ -62,16 +63,17 @@ export class InfoPane {
             o.classList.add("existing-constraint");
             o.oncontextmenu = function(event) {
                 event.preventDefault();
-                if(event.which == 3) protractr.sketch.removeConstraint(constraint);
+                if(event.which == 3) {
+                    protractr.sketch.removeConstraint(constraint);
+                    protractr.ui.sketchView.pushState();
+                }
                 protractr.ui.sketchView.hoveredConstraint = null;
             }
             o.onmouseenter = function (event) {
-                console.log("enter");
                 protractr.ui.sketchView.hoveredConstraint = constraint;
                 protractr.ui.sketchView.draw();
             }
             o.onmouseleave = function (event) {
-                console.log("leave");
                 protractr.ui.sketchView.hoveredConstraint = null;
                 protractr.ui.sketchView.draw();
             }

@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>VariablePoint | protractr</title>
+	<title>UndoTool | protractr</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,13 +56,13 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_gcs_constraint_.html">&quot;gcs/constraint&quot;</a>
+					<a href="../modules/_ui_tools_.html">&quot;ui/tools&quot;</a>
 				</li>
 				<li>
-					<a href="_gcs_constraint_.variablepoint.html">VariablePoint</a>
+					<a href="_ui_tools_.undotool.html">UndoTool</a>
 				</li>
 			</ul>
-			<h1>Class VariablePoint</h1>
+			<h1>Class UndoTool</h1>
 		</div>
 	</div>
 </header>
@@ -73,7 +73,12 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">VariablePoint</span>
+						<a href="_ui_tools_.tool.html" class="tsd-signature-type">Tool</a>
+						<ul class="tsd-hierarchy">
+							<li>
+								<span class="target">UndoTool</span>
+							</li>
+						</ul>
 					</li>
 				</ul>
 			</section>
@@ -84,23 +89,25 @@
 						<section class="tsd-index-section ">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="_gcs_constraint_.variablepoint.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite"><a href="_ui_tools_.undotool.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
-						<section class="tsd-index-section ">
+						<section class="tsd-index-section tsd-is-inherited">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_gcs_constraint_.variablepoint.html#x" class="tsd-kind-icon">x</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_gcs_constraint_.variablepoint.html#y" class="tsd-kind-icon">y</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_ui_tools_.undotool.html#currentfigure" class="tsd-kind-icon">current<wbr>Figure</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_ui_tools_.undotool.html#name" class="tsd-kind-icon">name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_ui_tools_.undotool.html#toolbar" class="tsd-kind-icon">toolbar</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_ui_tools_.undotool.html#tooltip" class="tsd-kind-icon">tooltip</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_gcs_constraint_.variablepoint.html#deltavtowards" class="tsd-kind-icon">deltaVTowards</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_gcs_constraint_.variablepoint.html#has" class="tsd-kind-icon">has</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_gcs_constraint_.variablepoint.html#topoint" class="tsd-kind-icon">to<wbr>Point</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="_gcs_constraint_.variablepoint.html#fromvariables" class="tsd-kind-icon">from<wbr>Variables</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="_ui_tools_.undotool.html#down" class="tsd-kind-icon">down</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="_ui_tools_.undotool.html#move" class="tsd-kind-icon">move</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="_ui_tools_.undotool.html#up" class="tsd-kind-icon">up</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="_ui_tools_.undotool.html#used" class="tsd-kind-icon">used</a></li>
 							</ul>
 						</section>
 					</div>
@@ -108,147 +115,164 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Constructors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
-					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Variable<wbr>Point<span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, y<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_gcs_constraint_.variablepoint.html" class="tsd-signature-type">VariablePoint</a></li>
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Undo<wbr>Tool<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_ui_tools_.undotool.html" class="tsd-signature-type">UndoTool</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Overrides <a href="_ui_tools_.tool.html">Tool</a>.<a href="_ui_tools_.tool.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/9f23fb4/src/scripts/gcs/constraint.ts#L22">gcs/constraint.ts:22</a></li>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/9f23fb4/src/scripts/ui/tools.ts#L28">ui/tools.ts:28</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>x: <span class="tsd-signature-type">number</span></h5>
-								</li>
-								<li>
-									<h5>y: <span class="tsd-signature-type">number</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_gcs_constraint_.variablepoint.html" class="tsd-signature-type">VariablePoint</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="_ui_tools_.undotool.html" class="tsd-signature-type">UndoTool</a></h4>
 						</li>
 					</ul>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group ">
+			<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="x" class="tsd-anchor"></a>
-					<h3>x</h3>
-					<div class="tsd-signature tsd-kind-icon">x<span class="tsd-signature-symbol">:</span> <a href="_gcs_constraint_.variable.html" class="tsd-signature-type">Variable</a></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+					<a name="currentfigure" class="tsd-anchor"></a>
+					<h3>current<wbr>Figure</h3>
+					<div class="tsd-signature tsd-kind-icon">current<wbr>Figure<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_gcs_figures_.figure.html" class="tsd-signature-type">Figure</a></div>
 					<aside class="tsd-sources">
+						<p>Inherited from <a href="_ui_tools_.tool.html">Tool</a>.<a href="_ui_tools_.tool.html#currentfigure">currentFigure</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/9f23fb4/src/scripts/gcs/constraint.ts#L21">gcs/constraint.ts:21</a></li>
+							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/9f23fb4/src/scripts/ui/tools.ts#L12">ui/tools.ts:12</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="y" class="tsd-anchor"></a>
-					<h3>y</h3>
-					<div class="tsd-signature tsd-kind-icon">y<span class="tsd-signature-symbol">:</span> <a href="_gcs_constraint_.variable.html" class="tsd-signature-type">Variable</a></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+					<a name="name" class="tsd-anchor"></a>
+					<h3>name</h3>
+					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
+						<p>Inherited from <a href="_ui_tools_.tool.html">Tool</a>.<a href="_ui_tools_.tool.html#name">name</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/9f23fb4/src/scripts/gcs/constraint.ts#L22">gcs/constraint.ts:22</a></li>
+							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/9f23fb4/src/scripts/ui/tools.ts#L10">ui/tools.ts:10</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+					<a name="toolbar" class="tsd-anchor"></a>
+					<h3>toolbar</h3>
+					<div class="tsd-signature tsd-kind-icon">toolbar<span class="tsd-signature-symbol">:</span> <a href="_ui_toolbar_.toolbar.html" class="tsd-signature-type">Toolbar</a></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_ui_tools_.tool.html">Tool</a>.<a href="_ui_tools_.tool.html#toolbar">toolbar</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/9f23fb4/src/scripts/ui/tools.ts#L13">ui/tools.ts:13</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+					<a name="tooltip" class="tsd-anchor"></a>
+					<h3>tooltip</h3>
+					<div class="tsd-signature tsd-kind-icon">tooltip<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_ui_tools_.tool.html">Tool</a>.<a href="_ui_tools_.tool.html#tooltip">tooltip</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/9f23fb4/src/scripts/ui/tools.ts#L11">ui/tools.ts:11</a></li>
 						</ul>
 					</aside>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="deltavtowards" class="tsd-anchor"></a>
-					<h3>deltaVTowards</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">deltaVTowards<span class="tsd-signature-symbol">(</span>v<span class="tsd-signature-symbol">: </span><a href="_gcs_constraint_.variable.html" class="tsd-signature-type">Variable</a>, goal<span class="tsd-signature-symbol">: </span><a href="_gcs_figures_.point.html" class="tsd-signature-type">Point</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="down" class="tsd-anchor"></a>
+					<h3>down</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">down<span class="tsd-signature-symbol">(</span>point<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Inherited from <a href="_ui_tools_.tool.html">Tool</a>.<a href="_ui_tools_.tool.html#down">down</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/9f23fb4/src/scripts/gcs/constraint.ts#L33">gcs/constraint.ts:33</a></li>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/9f23fb4/src/scripts/ui/tools.ts#L19">ui/tools.ts:19</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>v: <a href="_gcs_constraint_.variable.html" class="tsd-signature-type">Variable</a></h5>
-								</li>
-								<li>
-									<h5>goal: <a href="_gcs_figures_.point.html" class="tsd-signature-type">Point</a></h5>
+									<h5>point: <span class="tsd-signature-type">any</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="has" class="tsd-anchor"></a>
-					<h3>has</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">has<span class="tsd-signature-symbol">(</span>v<span class="tsd-signature-symbol">: </span><a href="_gcs_constraint_.variable.html" class="tsd-signature-type">Variable</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="move" class="tsd-anchor"></a>
+					<h3>move</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">move<span class="tsd-signature-symbol">(</span>point<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Inherited from <a href="_ui_tools_.tool.html">Tool</a>.<a href="_ui_tools_.tool.html#move">move</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/9f23fb4/src/scripts/gcs/constraint.ts#L30">gcs/constraint.ts:30</a></li>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/9f23fb4/src/scripts/ui/tools.ts#L21">ui/tools.ts:21</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>v: <a href="_gcs_constraint_.variable.html" class="tsd-signature-type">Variable</a></h5>
+									<h5>point: <span class="tsd-signature-type">any</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="topoint" class="tsd-anchor"></a>
-					<h3>to<wbr>Point</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">to<wbr>Point<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_gcs_figures_.point.html" class="tsd-signature-type">Point</a></li>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="up" class="tsd-anchor"></a>
+					<h3>up</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">up<span class="tsd-signature-symbol">(</span>point<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, snapFigure<span class="tsd-signature-symbol">: </span><a href="../interfaces/_gcs_figures_.figure.html" class="tsd-signature-type">Figure</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Inherited from <a href="_ui_tools_.tool.html">Tool</a>.<a href="_ui_tools_.tool.html#up">up</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/9f23fb4/src/scripts/gcs/constraint.ts#L27">gcs/constraint.ts:27</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-returns-title">Returns <a href="_gcs_figures_.point.html" class="tsd-signature-type">Point</a></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
-					<a name="fromvariables" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagStatic">Static</span> from<wbr>Variables</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
-						<li class="tsd-signature tsd-kind-icon">from<wbr>Variables<span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><a href="_gcs_constraint_.variable.html" class="tsd-signature-type">Variable</a>, y<span class="tsd-signature-symbol">: </span><a href="_gcs_constraint_.variable.html" class="tsd-signature-type">Variable</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_gcs_constraint_.variablepoint.html" class="tsd-signature-type">VariablePoint</a></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/9f23fb4/src/scripts/gcs/constraint.ts#L38">gcs/constraint.ts:38</a></li>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/9f23fb4/src/scripts/ui/tools.ts#L23">ui/tools.ts:23</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>x: <a href="_gcs_constraint_.variable.html" class="tsd-signature-type">Variable</a></h5>
+									<h5>point: <span class="tsd-signature-type">any</span></h5>
 								</li>
 								<li>
-									<h5>y: <a href="_gcs_constraint_.variable.html" class="tsd-signature-type">Variable</a></h5>
+									<h5>snapFigure: <a href="../interfaces/_gcs_figures_.figure.html" class="tsd-signature-type">Figure</a></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_gcs_constraint_.variablepoint.html" class="tsd-signature-type">VariablePoint</a></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+					<a name="used" class="tsd-anchor"></a>
+					<h3>used</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon">used<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides <a href="_ui_tools_.tool.html">Tool</a>.<a href="_ui_tools_.tool.html#used">used</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/9f23fb4/src/scripts/ui/tools.ts#L32">ui/tools.ts:32</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -260,7 +284,7 @@
 					<li class="globals  ">
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
-					<li class="current tsd-kind-external-module">
+					<li class=" tsd-kind-external-module">
 						<a href="../modules/_gcs_constraint_.html">&quot;gcs/constraint&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
@@ -287,7 +311,7 @@
 					<li class=" tsd-kind-external-module">
 						<a href="../modules/_ui_toolbar_.html">&quot;ui/toolbar&quot;</a>
 					</li>
-					<li class=" tsd-kind-external-module">
+					<li class="current tsd-kind-external-module">
 						<a href="../modules/_ui_tools_.html">&quot;ui/tools&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
@@ -298,70 +322,73 @@
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_gcs_constraint_.arcpointcoincidentconstraint.html" class="tsd-kind-icon">Arc<wbr>Point<wbr>Coincident<wbr>Constraint</a>
+						<a href="_ui_tools_.activatabletool.html" class="tsd-kind-icon">Activatable<wbr>Tool</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_gcs_constraint_.colinearpointsconstraint.html" class="tsd-kind-icon">Colinear<wbr>Points<wbr>Constraint</a>
+						<a href="_ui_tools_.circletool.html" class="tsd-kind-icon">Circle<wbr>Tool</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_gcs_constraint_.equalconstraint.html" class="tsd-kind-icon">Equal<wbr>Constraint</a>
+						<a href="_ui_tools_.exporttool.html" class="tsd-kind-icon">Export<wbr>Tool</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_gcs_constraint_.midpointconstraint.html" class="tsd-kind-icon">Midpoint<wbr>Constraint</a>
+						<a href="_ui_tools_.figuretool.html" class="tsd-kind-icon">Figure<wbr>Tool</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_gcs_constraint_.tangentcircleconstraint.html" class="tsd-kind-icon">Tangent<wbr>Circle<wbr>Constraint</a>
+						<a href="_ui_tools_.importtool.html" class="tsd-kind-icon">Import<wbr>Tool</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_gcs_constraint_.tangentlineconstraint.html" class="tsd-kind-icon">Tangent<wbr>Line<wbr>Constraint</a>
+						<a href="_ui_tools_.linetool.html" class="tsd-kind-icon">Line<wbr>Tool</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_gcs_constraint_.variable.html" class="tsd-kind-icon">Variable</a>
+						<a href="_ui_tools_.pointtool.html" class="tsd-kind-icon">Point<wbr>Tool</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="_ui_tools_.tool.html" class="tsd-kind-icon">Tool</a>
 					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_gcs_constraint_.variablepoint.html" class="tsd-kind-icon">Variable<wbr>Point</a>
+						<a href="_ui_tools_.undotool.html" class="tsd-kind-icon">Undo<wbr>Tool</a>
 						<ul>
-							<li class=" tsd-kind-constructor tsd-parent-kind-class">
-								<a href="_gcs_constraint_.variablepoint.html#constructor" class="tsd-kind-icon">constructor</a>
+							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
+								<a href="_ui_tools_.undotool.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_gcs_constraint_.variablepoint.html#x" class="tsd-kind-icon">x</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="_ui_tools_.undotool.html#currentfigure" class="tsd-kind-icon">current<wbr>Figure</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_gcs_constraint_.variablepoint.html#y" class="tsd-kind-icon">y</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="_ui_tools_.undotool.html#name" class="tsd-kind-icon">name</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_gcs_constraint_.variablepoint.html#deltavtowards" class="tsd-kind-icon">deltaVTowards</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="_ui_tools_.undotool.html#toolbar" class="tsd-kind-icon">toolbar</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_gcs_constraint_.variablepoint.html#has" class="tsd-kind-icon">has</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="_ui_tools_.undotool.html#tooltip" class="tsd-kind-icon">tooltip</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_gcs_constraint_.variablepoint.html#topoint" class="tsd-kind-icon">to<wbr>Point</a>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="_ui_tools_.undotool.html#down" class="tsd-kind-icon">down</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
-								<a href="_gcs_constraint_.variablepoint.html#fromvariables" class="tsd-kind-icon">from<wbr>Variables</a>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="_ui_tools_.undotool.html#move" class="tsd-kind-icon">move</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="_ui_tools_.undotool.html#up" class="tsd-kind-icon">up</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+								<a href="_ui_tools_.undotool.html#used" class="tsd-kind-icon">used</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/_gcs_constraint_.constraint.html" class="tsd-kind-icon">Constraint</a>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../modules/_ui_tools_.html#constrainpointbysnap" class="tsd-kind-icon">constrain<wbr>Point<wbr>BySnap</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module">
-						<a href="../modules/_gcs_constraint_.html#constraintfromobject" class="tsd-kind-icon">constraint<wbr>From<wbr>Object</a>
+						<a href="../modules/_ui_tools_.html#loadfromurl" class="tsd-kind-icon">load<wbr>FromURL</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_gcs_constraint_.html#equalgoal" class="tsd-kind-icon">equal<wbr>Goal</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_gcs_constraint_.html#leastsquaresregression" class="tsd-kind-icon">least<wbr>Squares<wbr>Regression</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_gcs_constraint_.html#sum" class="tsd-kind-icon">sum</a>
+						<a href="../modules/_ui_tools_.html#saveas" class="tsd-kind-icon">save<wbr>As</a>
 					</li>
 				</ul>
 			</nav>

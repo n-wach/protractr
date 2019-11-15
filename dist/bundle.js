@@ -1604,6 +1604,7 @@ exports.Sketch = Sketch;
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var protractr_1 = require("./protractr");
+var tools_1 = require("./ui/tools");
 exports.EPSILON = 1;
 var canvas;
 var tools;
@@ -1620,16 +1621,22 @@ window.addEventListener("load", function () {
     tools = document.getElementById("tools");
     exports.protractr = new protractr_1.Protractr(canvas, sidePane, tools);
     adjustCanvasResolution(null);
-    console.log("________                __                        __     " + "\n" +
-        "\\_____  \\_______  _____/  |_____________    _____/  |________" + "\n" +
+    console.log("________                __                        __                   " + "\n" +
+        "\\_____  \\_______  _____/  |_____________    _____/  |________        " + "\n" +
         "|    ___/\\_  __ \\/  _ \\   __\\_  __ \\__  \\ _/ ___\\   __\\_  __ \\" + "\n" +
-        "|   |     |  | \\(  <_> )  |  |  | \\// __ \\\\  \\___|  |  |  | \\/" + "\n" +
-        "|___|     |__|   \\____/|__|  |__|  (____  /\\___  >__|  |__|" + "\n" +
-        "                                        \\/     \\/");
+        "|   |     |  | \\(  <_> )  |  |  | \\// __ \\\\  \\___|  |  |  | \\/   " + "\n" +
+        "|___|     |__|   \\____/|__|  |__|  (____  /\\___  >__|  |__|          " + "\n" +
+        "                                        \\/     \\/                                    ");
     console.log("Protractr: ", exports.protractr);
+    var example = document.location.search.substr(1);
+    if (example.length > 0) {
+        console.log("Loading ", example);
+        var path = document.location.pathname;
+        tools_1.loadFromURL(path.substr(0, path.indexOf("/src/")) + "/examples/" + example);
+    }
 });
 
-},{"./protractr":6}],6:[function(require,module,exports){
+},{"./protractr":6,"./ui/tools":10}],6:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var sketch_1 = require("./gcs/sketch");
@@ -1638,9 +1645,18 @@ var Protractr = /** @class */ (function () {
     function Protractr(canvas, sidePane, toolbar) {
         this.sketch = new sketch_1.Sketch();
         this.ui = new ui_1.UI(this, canvas, sidePane, toolbar);
+        this.ui.sketchView.pushState();
     }
     Protractr.prototype.loadSketch = function (json) {
         this.sketch = sketch_1.Sketch.fromObject(JSON.parse(json));
+        this.ui.sketchView.draw();
+        this.ui.infoPane.updateConstraintList(this.sketch.constraints);
+    };
+    Protractr.prototype.exportSketch = function () {
+        return JSON.stringify(this.sketch.asObject());
+    };
+    Protractr.prototype.resetSketch = function () {
+        this.sketch = new sketch_1.Sketch();
         this.ui.sketchView.draw();
         this.ui.infoPane.updateConstraintList(this.sketch.constraints);
     };
@@ -1689,6 +1705,7 @@ var InfoPane = /** @class */ (function () {
             child.addEventListener("click", function () {
                 var sortedFigures = constraint_filter_1.sortFigureSelection(figures);
                 main_1.protractr.sketch.addConstraints(pc.createConstraints(sortedFigures));
+                main_1.protractr.ui.sketchView.pushState();
             });
             this_1.possibleConstraints.appendChild(child);
         };
@@ -1708,17 +1725,17 @@ var InfoPane = /** @class */ (function () {
             o.classList.add("existing-constraint");
             o.oncontextmenu = function (event) {
                 event.preventDefault();
-                if (event.which == 3)
+                if (event.which == 3) {
                     main_1.protractr.sketch.removeConstraint(constraint);
+                    main_1.protractr.ui.sketchView.pushState();
+                }
                 main_1.protractr.ui.sketchView.hoveredConstraint = null;
             };
             o.onmouseenter = function (event) {
-                console.log("enter");
                 main_1.protractr.ui.sketchView.hoveredConstraint = constraint;
                 main_1.protractr.ui.sketchView.draw();
             };
             o.onmouseleave = function (event) {
-                console.log("leave");
                 main_1.protractr.ui.sketchView.hoveredConstraint = null;
                 main_1.protractr.ui.sketchView.draw();
             };
@@ -1743,6 +1760,7 @@ var SketchView = /** @class */ (function () {
     function SketchView(ui, canvas) {
         this.dragging = false;
         this.lastPanPoint = null;
+        this.history = [];
         this.ui = ui;
         this.canvas = canvas;
         this.selectedFigures = [];
@@ -1790,6 +1808,8 @@ var SketchView = /** @class */ (function () {
                 break;
             case "mouseup":
                 this.subscribedTool.up(point, snapFigure);
+                if (this.subscribedTool.currentFigure == null)
+                    this.pushState(); //new figure just added
                 break;
         }
     };
@@ -1826,6 +1846,7 @@ var SketchView = /** @class */ (function () {
                     this.draggedFigure.setLocked(false);
                     this.draggedFigure = null;
                     this.ui.protractr.sketch.solveConstraints(true);
+                    this.pushState(); //figure modified
                 }
                 this.dragging = false;
                 break;
@@ -1966,6 +1987,9 @@ var SketchView = /** @class */ (function () {
         this.ctx.arc(point.x, point.y, size, 0, Math.PI * 2);
         this.ctx.fill();
     };
+    SketchView.prototype.pushState = function () {
+        this.history.push(this.ui.protractr.exportSketch());
+    };
     return SketchView;
 }());
 exports.SketchView = SketchView;
@@ -1986,6 +2010,7 @@ var Toolbar = /** @class */ (function () {
         this.addTool(new tools_1.LineTool(), "line.png");
         this.addTool(new tools_1.CircleTool(), "circle.png");
         //this.addTool(new Tool("Arc", "Create an arc"), "arc.png");
+        this.addTool(new tools_1.UndoTool(), "undo.png");
         this.addTool(new tools_1.ImportTool(), "import.png");
         this.addTool(new tools_1.ExportTool(), "export.png");
     };
@@ -2066,20 +2091,39 @@ var Tool = /** @class */ (function () {
     return Tool;
 }());
 exports.Tool = Tool;
+var UndoTool = /** @class */ (function (_super) {
+    __extends(UndoTool, _super);
+    function UndoTool() {
+        return _super.call(this, "Undo", "Undo as action") || this;
+    }
+    UndoTool.prototype.used = function () {
+        var history = main_1.protractr.ui.sketchView.history;
+        history.pop(); //pop current state
+        if (history.length > 0) {
+            var lastState = history[history.length - 1]; //restore last state
+            main_1.protractr.loadSketch(lastState);
+        }
+        else {
+            main_1.protractr.resetSketch();
+        }
+    };
+    return UndoTool;
+}(Tool));
+exports.UndoTool = UndoTool;
 var ExportTool = /** @class */ (function (_super) {
     __extends(ExportTool, _super);
     function ExportTool() {
         return _super.call(this, "Export", "Export your Sketch") || this;
     }
     ExportTool.prototype.used = function () {
-        saveAs(main_1.protractr.sketch.asObject(), "sketch.json");
+        saveAs(main_1.protractr.exportSketch(), "sketch.json");
     };
     return ExportTool;
 }(Tool));
 exports.ExportTool = ExportTool;
-function saveAs(obj, filename) {
+function saveAs(string, filename) {
     var a = document.createElement("a");
-    var data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(obj));
+    var data = "text/json;charset=utf-8," + encodeURIComponent(string);
     a.href = "data:" + data;
     a.download = filename;
     a.click();
@@ -2095,17 +2139,21 @@ var ImportTool = /** @class */ (function (_super) {
             main_1.protractr.loadSketch(input);
         }
         else {
-            var request = new XMLHttpRequest();
-            request.addEventListener("load", function () {
-                main_1.protractr.loadSketch(this.responseText);
-            });
-            request.open("GET", input);
-            request.send();
+            loadFromURL(input);
         }
     };
     return ImportTool;
 }(Tool));
 exports.ImportTool = ImportTool;
+function loadFromURL(url) {
+    var request = new XMLHttpRequest();
+    request.addEventListener("load", function () {
+        main_1.protractr.loadSketch(this.responseText);
+    });
+    request.open("GET", url);
+    request.send();
+}
+exports.loadFromURL = loadFromURL;
 var ActivatableTool = /** @class */ (function (_super) {
     __extends(ActivatableTool, _super);
     function ActivatableTool() {
