@@ -136,11 +136,13 @@ export class Sketch {
         for(let c of constraints) {
             this.addConstraintAndCombine(c);
         }
-        this.solveConstraints(true);
+        if(!this.solveConstraints(true)) {
+            alert("That constraint couldn't be solved...");
+        }
         protractr.ui.infoPane.updateConstraintList(this.constraints);
         protractr.ui.sketchView.draw();
     }
-    removeConstraint(constraint) {
+    removeConstraint(constraint: Constraint) {
         this.constraints = this.constraints.filter(function(value, index, arr) {
             return value != constraint;
         });
@@ -155,15 +157,20 @@ export class Sketch {
         this.variables.push(variable);
     }
     solveConstraints(tirelessSolve:boolean=false): boolean {
-        let count = 0;
+        let startTime = new Date().getTime();
+        let count = 1;
         let previousError = 0;
         while(true) {
             let totalError = 0;
             for (let constraint of this.constraints) {
                 totalError += constraint.getError();
             }
-            if (totalError < 1) return true;
-            if (count > 50 && tirelessSolve) return false;
+            if (totalError < 1) return true; // solved
+            if (count > 100 && !tirelessSolve) return false;
+            if (count % 10000 == 0) {
+                let currentTime = new Date().getTime();
+                if(currentTime - startTime > 1000) return false; //give up after one second.
+            }
             let variableGradients = [];
             let contributorCount = [];
             for (let variable of this.variables) {

@@ -19,23 +19,23 @@ export class Point {
     constructor(x: number, y: number) {
         this.variablePoint = new VariablePoint(x, y);
     }
-    set(p: Point) {
+    set(p: Point): Point {
         this.x = p.x;
         this.y = p.y;
         return this;
     }
-    copy() {
+    copy(): Point {
         return new Point(this.x, this.y);
     }
-    distTo(o: Point) {
+    distTo(o: Point): number {
         return Math.sqrt(this.distTo2(o));
     }
-    distTo2(o: Point) {
+    distTo2(o: Point): number {
         let dx = o.x - this.x;
         let dy = o.y - this.y;
         return dx * dx + dy * dy;
     }
-    normalizeSelf() {
+    normalizeSelf(): Point {
         let length = this.distTo(new Point(0, 0));
         if(length == 0) {
             this.x = 0;
@@ -46,31 +46,31 @@ export class Point {
         this.y /= length;
         return this;
     }
-    pointTowards(target: Point, dist: number) {
+    pointTowards(target: Point, dist: number): Point {
         let diff = new Point(target.x - this.x, target.y - this.y);
         diff.normalizeSelf();
         return new Point(this.x + diff.x * dist, this.y + diff.y * dist);
     }
-    equals(o: Point) {
+    equals(o: Point): boolean {
         return o.x == this.x && o.y == this.y;
     }
-    add(point: Point) {
+    add(point: Point): Point {
         this.x += point.x;
         this.y += point.y;
         return this;
     }
-    sub(point: Point) {
+    sub(point: Point): Point {
         this.x -= point.x;
         this.y -= point.y;
         return this;
     }
-    projectBetween(p1: Point, p2: Point, cutoff: boolean = false) {
+    projectBetween(p1: Point, p2: Point, cutoff: boolean = false): Point {
         let r = cutoff ? this.segmentFractionBetween(p1, p2) : this.projectionFactorBetween(p1, p2);
         let px = p1.x + r * (p2.x - p1.x);
         let py = p1.y + r * (p2.y - p1.y);
         return new Point(px, py);
     }
-    projectionFactorBetween(p1: Point, p2: Point) {
+    projectionFactorBetween(p1: Point, p2: Point): number {
         if(p1.equals(this)) return 0;
         if(p2.equals(this)) return 1;
         let dx = p1.x - p2.x;
@@ -78,7 +78,7 @@ export class Point {
         let len2 = dx * dx + dy * dy;
         return -((this.x - p1.x) * dx + (this.y - p1.y) * dy) / len2;
     }
-    segmentFractionBetween(p1: Point, p2: Point) {
+    segmentFractionBetween(p1: Point, p2: Point): number {
         let segFrac = this.projectionFactorBetween(p1, p2);
         if (segFrac < 0) return 0;
         if (segFrac > 1 || isNaN(segFrac)) return 1;

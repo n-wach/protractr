@@ -79,6 +79,5 @@ export class InfoPane {
             }
             this.existingConstraints.appendChild(o);
         }
-        console.log("Update list");
     }
 }

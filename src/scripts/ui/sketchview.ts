@@ -109,14 +109,16 @@ export class SketchView {
                 if(this.draggedFigure) {
                     this.draggedFigure.setLocked(false);
                     this.draggedFigure = null;
-                    this.ui.protractr.sketch.solveConstraints(true);
+                    if(!this.ui.protractr.sketch.solveConstraints(true)) {
+                        alert("That state couldn't be solved...");
+                    }
                     this.pushState(); //figure modified
                 }
                 this.dragging = false;
                 break;
         }
     }
-    handleMouseEvent(event) {
+    handleMouseEvent(event: MouseEvent & WheelEvent) {
         event.preventDefault();
         let offset = new Point(event.offsetX, event.offsetY);
         let scaled = new Point(offset.x / this.ctxScale, offset.y / this.ctxScale);
@@ -145,7 +147,7 @@ export class SketchView {
         }
         this.draw();
     }
-    updateHover(point) {
+    updateHover(point: Point) {
         let closest;
         let ignoredFigures = [];
         if (this.subscribedTool && this.subscribedTool.currentFigure) {

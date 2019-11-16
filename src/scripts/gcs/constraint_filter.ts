@@ -172,7 +172,7 @@ interface ConstraintFilter {
 class HorizontalPointFilter implements ConstraintFilter {
     name: string = "horizontal";
     filter = new FilterString(":2+point");
-    createConstraints(sortedFigures: SortedFigureSelection) {
+    createConstraints(sortedFigures: SortedFigureSelection): Constraint[] {
         let ys: Variable[] = [];
         for(let point of sortedFigures.point) {
             ys.push(point.p.variablePoint.y);
@@ -184,7 +184,7 @@ class HorizontalPointFilter implements ConstraintFilter {
 class VerticalPointFilter implements ConstraintFilter {
     name: string = "vertical";
     filter = new FilterString(":2+point");
-    createConstraints(sortedFigures: SortedFigureSelection) {
+    createConstraints(sortedFigures: SortedFigureSelection): Constraint[] {
         let xs: Variable[] = [];
         for(let point of sortedFigures.point) {
             xs.push(point.p.variablePoint.x);
@@ -196,7 +196,7 @@ class VerticalPointFilter implements ConstraintFilter {
 class VerticalLineFilter implements ConstraintFilter {
     name: string = "vertical";
     filter = new FilterString(":1+line");
-    createConstraints(sortedFigures: SortedFigureSelection) {
+    createConstraints(sortedFigures: SortedFigureSelection): Constraint[] {
         let constraints = [];
         for(let line of sortedFigures.line) {
             constraints.push(new EqualConstraint([line.p1.variablePoint.x, line.p2.variablePoint.x]));
@@ -208,7 +208,7 @@ class VerticalLineFilter implements ConstraintFilter {
 class HorizontalLineFilter implements ConstraintFilter {
     name: string = "horizontal";
     filter = new FilterString(":1+line");
-    createConstraints(sortedFigures: SortedFigureSelection) {
+    createConstraints(sortedFigures: SortedFigureSelection): Constraint[] {
         let constraints = [];
         for(let line of sortedFigures.line) {
             constraints.push(new EqualConstraint([line.p1.variablePoint.y, line.p2.variablePoint.y]));
@@ -220,7 +220,7 @@ class HorizontalLineFilter implements ConstraintFilter {
 class CoincidentPointFilter implements ConstraintFilter {
     name: string = "coincident";
     filter = new FilterString(":2+point");
-    createConstraints(sortedFigures: SortedFigureSelection) {
+    createConstraints(sortedFigures: SortedFigureSelection): Constraint[] {
         let xs: Variable[] = [];
         let ys: Variable[] = [];
         for(let fig of sortedFigures.point) {
@@ -234,7 +234,7 @@ class CoincidentPointFilter implements ConstraintFilter {
 class ArcPointFilter implements ConstraintFilter {
     name: string = "coincident";
     filter = new FilterString(":circle&1+point");
-    createConstraints(sortedFigures: SortedFigureSelection) {
+    createConstraints(sortedFigures: SortedFigureSelection): Constraint[] {
         let points: VariablePoint[] = [];
         let circle: CircleFigure = sortedFigures.circle[0];
         for(let point of sortedFigures.point) {
@@ -247,7 +247,7 @@ class ArcPointFilter implements ConstraintFilter {
 class LineMidpointFilter implements ConstraintFilter {
     name: string = "midpoint";
     filter = new FilterString(":line&point");
-    createConstraints(sortedFigures: SortedFigureSelection) {
+    createConstraints(sortedFigures: SortedFigureSelection): Constraint[] {
         let point: PointFigure = sortedFigures.point[0];
         let line: LineFigure = sortedFigures.line[0];
         return [new MidpointConstraint(line.p1.variablePoint, line.p2.variablePoint, point.p.variablePoint)];

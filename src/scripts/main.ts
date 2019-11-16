@@ -1,5 +1,4 @@
 import {Protractr} from "./protractr";
-import {ImportTool, loadFromURL} from "./ui/tools";
 
 export let EPSILON: number = 1;
 
@@ -7,6 +6,14 @@ let canvas: HTMLCanvasElement;
 let tools: HTMLUListElement;
 let sidePane: HTMLDivElement;
 export let protractr: Protractr;
+
+export function saveAs(string: string, filename: string) {
+    let a = document.createElement("a");
+    var data = "text/json;charset=utf-8," + encodeURIComponent(string);
+    a.href = "data:" + data;
+    a.download = filename;
+    a.click();
+}
 
 let adjustCanvasResolution = function(event) {
     canvas.width = canvas.parentElement.clientWidth - 1;
@@ -32,6 +39,8 @@ window.addEventListener("load", function() {
     if(example.length > 0) {
         console.log("Loading ", example);
         let path = document.location.pathname;
-        loadFromURL(path.substr(0, path.indexOf("/src/")) + "/examples/" + example);
+        let origin = path.substr(0, path.indexOf("/src/"));
+        let url = origin + "/examples/" + example;
+        protractr.loadFromURL(url);
     }
 });

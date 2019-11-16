@@ -1,5 +1,5 @@
 import {CircleFigure, Figure, LineFigure, Point, PointFigure} from "../gcs/figures";
-import {protractr} from "../main";
+import {protractr, saveAs} from "../main";
 import {Toolbar} from "./toolbar";
 import {ArcPointCoincidentConstraint, ColinearPointsConstraint, EqualConstraint} from "../gcs/constraint";
 import {SketchView} from "./sketchview";
@@ -16,11 +16,11 @@ export class Tool {
         this.tooltip = tooltip;
     }
 
-    down(point){};
+    down(point: Point){};
 
-    move(point){};
+    move(point: Point){};
 
-    up(point, snapFigure: Figure){};
+    up(point: Point, snapFigure: Figure){};
 
     used(){};
 }
@@ -34,7 +34,7 @@ export class UndoTool extends Tool {
         history.pop(); //pop current state
         if(history.length > 0) {
             let lastState = history[history.length - 1]; //restore last state
-            protractr.loadSketch(lastState);
+            protractr.loadSketch(lastState, false);
         } else {
             protractr.resetSketch();
         }
@@ -50,14 +50,6 @@ export class ExportTool extends Tool {
     }
 }
 
-function saveAs(string, filename) {
-    let a = document.createElement("a");
-    var data = "text/json;charset=utf-8," + encodeURIComponent(string);
-    a.href = "data:" + data;
-    a.download = filename;
-    a.click();
-}
-
 export class ImportTool extends Tool {
     constructor() {
         super("Import", "Import a Sketch from a file or web");
@@ -67,18 +59,9 @@ export class ImportTool extends Tool {
         if(input[0] == "{") {
             protractr.loadSketch(input);
         } else {
-            loadFromURL(input);
+            protractr.loadFromURL(input);
         }
     }
-}
-
-export function loadFromURL(url){
-    let request = new XMLHttpRequest();
-    request.addEventListener("load", function () {
-        protractr.loadSketch(this.responseText);
-    });
-    request.open("GET", url);
-    request.send();
 }
 
 export class ActivatableTool extends Tool {
@@ -101,14 +84,14 @@ export class ActivatableTool extends Tool {
 export class FigureTool extends ActivatableTool {
     points: Point[];
     currentPoint: Point;
-    move(point) {
+    move(point: Point) {
         if(!this.currentPoint) {
             this.currentPoint = point.copy();
             this.points.push(this.currentPoint);
         }
         this.currentPoint.set(point);
     }
-    up(point, snapFigure: Figure) {
+    up(point: Point, snapFigure: Figure) {
         if(!this.currentPoint) return;
         this.currentPoint = point.copy();
         this.points.push(this.currentPoint);
@@ -120,7 +103,7 @@ export class PointTool extends FigureTool {
     constructor() {
         super("Point", "Create a point");
     }
-    up(point, snapFigure: Figure) {
+    up(point: Point, snapFigure: Figure) {
         if(this.currentFigure) {
             if(snapFigure) {
                 constrainPointBySnap(this.currentFigure.p, snapFigure);
@@ -128,7 +111,7 @@ export class PointTool extends FigureTool {
             this.currentFigure = null;
         }
     }
-    move(point) {
+    move(point: Point) {
         if(this.currentFigure) {
             this.currentFigure.p.set(point);
         } else {
@@ -137,6 +120,86 @@ export class PointTool extends FigureTool {
         }
     }
 }
+
+export class LineTool extends FigureTool {
+    currentFigure: LineFigure;
+    hasSetP1: boolean = false;
+    constructor() {
+        super("Line", "Create a line");
+    }
+    up(point: Point, snapFigure: Figure) {
+        if(this.currentFigure) {
+            if(this.hasSetP1) {
+                this.currentFigure.p2.set(point);
+                if(snapFigure) {
+                    constrainPointBySnap(this.currentFigure.p2, snapFigure);
+                }
+                this.currentFigure = null;
+            } else {
+                this.hasSetP1 = true;
+                this.currentFigure.p1.set(point);
+                if(snapFigure) {
+                    constrainPointBySnap(this.currentFigure.p1, snapFigure);
+                }
+            }
+        }
+    }
+    move(point: Point) {
+        if(this.currentFigure) {
+            if(!this.hasSetP1) {
+                this.currentFigure.p1.set(point);
+            }
+            this.currentFigure.p2.set(point);
+        } else {
+            this.hasSetP1 = false;
+            this.currentFigure = new LineFigure(point, point.copy());
+            protractr.sketch.rootFigures.push(this.currentFigure);
+        }
+    }
+}
+
+
+export class CircleTool extends FigureTool {
+    currentFigure: CircleFigure;
+    hasSetC: boolean = false;
+    constructor() {
+        super("Circle", "Create a circle");
+    }
+    up(point: Point, snapFigure: Figure) {
+        if(this.currentFigure) {
+            if(this.hasSetC) {
+                this.currentFigure.r.value = this.currentFigure.c.distTo(point);
+                if(snapFigure && snapFigure.type == "point") {
+                    let r = this.currentFigure.r;
+                    let c = this.currentFigure.c.variablePoint;
+                    let p = (snapFigure as PointFigure).p.variablePoint;
+                    protractr.sketch.addConstraints([new ArcPointCoincidentConstraint(c, r, [p])]);
+                }
+                this.currentFigure = null;
+            } else {
+                this.hasSetC = true;
+                this.currentFigure.c.set(point);
+                if(snapFigure) {
+                    constrainPointBySnap(this.currentFigure.c, snapFigure);
+                }
+            }
+        }
+        return true;
+    }
+    move(point: Point) {
+        if(this.currentFigure) {
+            if(!this.hasSetC) {
+                this.currentFigure.c.set(point);
+            }
+            this.currentFigure.r.value = this.currentFigure.c.distTo(point);
+        } else {
+            this.hasSetC = false;
+            this.currentFigure = new CircleFigure(point, 0);
+            protractr.sketch.rootFigures.push(this.currentFigure);
+        }
+    }
+}
+
 
 function constrainPointBySnap(point, snapFigure) {
     let p = point.variablePoint;
@@ -159,83 +222,3 @@ function constrainPointBySnap(point, snapFigure) {
             break;
     }
 }
-
-export class LineTool extends FigureTool {
-    currentFigure: LineFigure;
-    hasSetP1: boolean = false;
-    constructor() {
-        super("Line", "Create a line");
-    }
-    up(point, snapFigure: Figure) {
-        if(this.currentFigure) {
-            if(this.hasSetP1) {
-                this.currentFigure.p2.set(point);
-                if(snapFigure) {
-                    constrainPointBySnap(this.currentFigure.p2, snapFigure);
-                }
-                this.currentFigure = null;
-            } else {
-                this.hasSetP1 = true;
-                this.currentFigure.p1.set(point);
-                if(snapFigure) {
-                    constrainPointBySnap(this.currentFigure.p1, snapFigure);
-                }
-            }
-        }
-    }
-    move(point) {
-        if(this.currentFigure) {
-            if(!this.hasSetP1) {
-                this.currentFigure.p1.set(point);
-            }
-            this.currentFigure.p2.set(point);
-        } else {
-            this.hasSetP1 = false;
-            this.currentFigure = new LineFigure(point, point.copy());
-            protractr.sketch.rootFigures.push(this.currentFigure);
-        }
-    }
-}
-
-
-export class CircleTool extends FigureTool {
-    currentFigure: CircleFigure;
-    hasSetC: boolean = false;
-    constructor() {
-        super("Circle", "Create a circle");
-    }
-    up(point, snapFigure: Figure) {
-        if(this.currentFigure) {
-            if(this.hasSetC) {
-                this.currentFigure.r.value = this.currentFigure.c.distTo(point);
-                if(snapFigure && snapFigure.type == "point") {
-                    let r = this.currentFigure.r;
-                    let c = this.currentFigure.c.variablePoint;
-                    let p = (snapFigure as PointFigure).p.variablePoint;
-                    protractr.sketch.addConstraints([new ArcPointCoincidentConstraint(c, r, [p])]);
-                }
-                this.currentFigure = null;
-            } else {
-                this.hasSetC = true;
-                this.currentFigure.c.set(point);
-                if(snapFigure) {
-                    constrainPointBySnap(this.currentFigure.c, snapFigure);
-                }
-            }
-        }
-        return true;
-    }
-    move(point) {
-        if(this.currentFigure) {
-            if(!this.hasSetC) {
-                this.currentFigure.c.set(point);
-            }
-            this.currentFigure.r.value = this.currentFigure.c.distTo(point);
-        } else {
-            this.hasSetC = false;
-            this.currentFigure = new CircleFigure(point, 0);
-            protractr.sketch.rootFigures.push(this.currentFigure);
-        }
-    }
-}
-
