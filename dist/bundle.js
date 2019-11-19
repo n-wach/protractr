@@ -378,19 +378,28 @@ var TangentLineConstraint = /** @class */ (function () {
         }
         else if (this.p1.has(v) || this.p2.has(v) || this.center.has(v)) {
             var c = this.center.toPoint();
-            var projection = c.projectBetween(this.p1.toPoint(), this.p2.toPoint());
-            var dist = projection.distTo(c) - this.radius.value;
-            var coincidentProjection = projection.pointTowards(c, dist);
-            var delta = coincidentProjection.sub(projection);
+            var projection = c.projectBetween(this.p1.toPoint(), this.p2.toPoint()); //project center onto line
+            var dist = projection.distTo(c) - this.radius.value; // distance from circle to projection
+            var coincidentProjection = projection.pointTowards(c, dist); // point on circle closest to line
+            var delta = coincidentProjection.sub(projection); // from projection to point on circle
             if (this.center.x == v)
                 return -delta.x;
             if (this.center.y == v)
                 return -delta.y;
-            if (this.p1.x == v || this.p2.x == v) {
-                return delta.x;
+            if (this.p1.has(v)) {
+                // without also moving points slightly towards projection, there are situations where states cannot be solved...
+                var towardsP = this.p1.deltaVTowards(v, projection) / 5000;
+                if (this.p1.x == v)
+                    return delta.x + towardsP;
+                if (this.p1.y == v)
+                    return delta.y + towardsP;
             }
-            else {
-                return delta.y;
+            if (this.p2.has(v)) {
+                var towardsP = this.p2.deltaVTowards(v, projection) / 5000;
+                if (this.p2.x == v)
+                    return delta.x + towardsP;
+                if (this.p2.y == v)
+                    return delta.y + towardsP;
             }
         }
         return 0;
@@ -575,7 +584,7 @@ var TangentCircleConstraint = /** @class */ (function () {
 }());
 exports.TangentCircleConstraint = TangentCircleConstraint;
 function leastSquaresRegression(points) {
-    //hacky solution to avoid weird behavior with vertical points
+    //hacky solution to avoid weird behavior when dragging vertical points
     var constantPoints = [];
     for (var _i = 0, points_1 = points; _i < points_1.length; _i++) {
         var p = points_1[_i];

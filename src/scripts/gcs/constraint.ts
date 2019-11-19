@@ -367,16 +367,22 @@ export class TangentLineConstraint implements Constraint {
             return projection.distTo(c) - this.radius.value;
         } else if (this.p1.has(v) || this.p2.has(v) || this.center.has(v)) {
             let c = this.center.toPoint();
-            let projection = c.projectBetween(this.p1.toPoint(), this.p2.toPoint());
-            let dist = projection.distTo(c) - this.radius.value;
-            let coincidentProjection = projection.pointTowards(c, dist);
-            let delta = coincidentProjection.sub(projection);
+            let projection = c.projectBetween(this.p1.toPoint(), this.p2.toPoint()); //project center onto line
+            let dist = projection.distTo(c) - this.radius.value; // distance from circle to projection
+            let coincidentProjection = projection.pointTowards(c, dist); // point on circle closest to line
+            let delta = coincidentProjection.sub(projection); // from projection to point on circle
             if(this.center.x == v) return -delta.x;
             if(this.center.y == v) return -delta.y;
-            if(this.p1.x == v || this.p2.x == v) {
-                return delta.x;
-            } else {
-                return delta.y;
+            if(this.p1.has(v)) {
+                // without also moving points slightly towards projection, there are situations where states cannot be solved...
+                let towardsP = this.p1.deltaVTowards(v, projection) / 5000;
+                if(this.p1.x == v) return delta.x + towardsP;
+                if(this.p1.y == v) return delta.y + towardsP;
+            }
+            if(this.p2.has(v)) {
+                let towardsP = this.p2.deltaVTowards(v, projection) / 5000;
+                if(this.p2.x == v) return delta.x + towardsP;
+                if(this.p2.y == v) return delta.y + towardsP;
             }
         }
         return 0;
