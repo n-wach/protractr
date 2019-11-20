@@ -2,14 +2,17 @@ import {Figure, getFullName} from "../gcs/figures";
 import {protractr} from "../main";
 import {getSatisfiedConstraintFilters, sortFigureSelection} from "../gcs/constraint_filter";
 import {Constraint} from "../gcs/constraint";
+import {UI} from "./ui";
 
 export class InfoPane {
     sidePane: HTMLDivElement;
     title: HTMLParagraphElement;
     possibleConstraints: HTMLDivElement;
     existingConstraints: HTMLDivElement;
+    ui: UI;
 
-    constructor(sidePane: HTMLDivElement) {
+    constructor(ui: UI, sidePane: HTMLDivElement) {
+        this.ui = ui;
         this.sidePane = sidePane;
 
         this.title = document.createElement("p");
@@ -23,7 +26,7 @@ export class InfoPane {
         this.sidePane.appendChild(this.possibleConstraints);
 
         let e = document.createElement("p");
-        e.innerText = "Existing Constraints:";
+        e.innerText = "Sketch Constraints:";
         this.sidePane.appendChild(e);
 
         this.existingConstraints = document.createElement("div");
@@ -31,7 +34,6 @@ export class InfoPane {
         this.existingConstraints.style.width = "100%";
         this.existingConstraints.style.height = "200px";
         this.sidePane.appendChild(this.existingConstraints);
-
     }
     setFocusedFigures(figures: Figure[]) {
         if(figures === null || figures.length == 0) {
@@ -42,13 +44,14 @@ export class InfoPane {
         while(this.possibleConstraints.lastChild) {
             this.possibleConstraints.removeChild(this.possibleConstraints.lastChild);
         }
-        for(let pc of getSatisfiedConstraintFilters(figures)) {
+        for(let constraintFilter of getSatisfiedConstraintFilters(figures)) {
             let child = document.createElement("button");
-            child.innerText = pc.name;
+            child.innerText = constraintFilter.name;
+            let _this = this;
             child.addEventListener("click", function () {
                 let sortedFigures = sortFigureSelection(figures);
-                protractr.sketch.addConstraints(pc.createConstraints(sortedFigures));
-                protractr.ui.sketchView.pushState();
+                _this.ui.protractr.sketch.addConstraints(constraintFilter.createConstraints(sortedFigures));
+                _this.ui.sketchView.pushState();
             });
             this.possibleConstraints.appendChild(child);
         }
@@ -57,27 +60,39 @@ export class InfoPane {
         while(this.existingConstraints.lastChild) {
             this.existingConstraints.removeChild(this.existingConstraints.lastChild);
         }
+        let figs = this.ui.sketchView.selectedFigures;
         for(let constraint of constraints) {
-            let o = document.createElement("p");
-            o.innerText = (constraint.constructor as any).name;
-            o.classList.add("existing-constraint");
-            o.oncontextmenu = function(event) {
-                event.preventDefault();
-                if(event.which == 3) {
-                    protractr.sketch.removeConstraint(constraint);
-                    protractr.ui.sketchView.pushState();
+            let add = true;
+            for(let selectedFigure of figs) {
+                if(!constraint.containsFigure(selectedFigure)) {
+                    add = false;
+                    break;
                 }
-                protractr.ui.sketchView.hoveredConstraint = null;
             }
-            o.onmouseenter = function (event) {
-                protractr.ui.sketchView.hoveredConstraint = constraint;
-                protractr.ui.sketchView.draw();
-            }
-            o.onmouseleave = function (event) {
-                protractr.ui.sketchView.hoveredConstraint = null;
-                protractr.ui.sketchView.draw();
-            }
-            this.existingConstraints.appendChild(o);
+            if(add) this.addConstraintElement(constraint);
         }
+    }
+    addConstraintElement(constraint: Constraint){
+        let o = document.createElement("p");
+        o.innerText = constraint.name;
+        o.classList.add("existing-constraint");
+        let _this = this;
+        o.oncontextmenu = function(event) {
+            event.preventDefault();
+            if(event.which == 3) {
+                _this.ui.protractr.sketch.removeConstraint(constraint);
+                _this.ui.sketchView.pushState();
+            }
+            _this.ui.sketchView.hoveredConstraint = null;
+        }
+        o.onmouseenter = function (event) {
+            _this.ui.sketchView.hoveredConstraint = constraint;
+            _this.ui.sketchView.draw();
+        }
+        o.onmouseleave = function (event) {
+            _this.ui.sketchView.hoveredConstraint = null;
+            _this.ui.sketchView.draw();
+        }
+        this.existingConstraints.appendChild(o);
     }
 }

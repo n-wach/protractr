@@ -86,7 +86,7 @@ export class Sketch {
                         newVariables.push(v);
                     }
                 }
-                let newEqual = new EqualConstraint(newVariables);
+                let newEqual = new EqualConstraint(newVariables, constraint.name);
                 for(let m of mergeables) this.removeConstraint(m);
                 this.constraints.push(newEqual);
             } else {
@@ -122,7 +122,7 @@ export class Sketch {
                         newPoints.push(p);
                     }
                 }
-                let newColinear = new ColinearPointsConstraint(newPoints);
+                let newColinear = new ColinearPointsConstraint(newPoints, constraint.name);
                 for(let m of mergeables) this.removeConstraint(m);
                 this.constraints.push(newColinear);
             } else {

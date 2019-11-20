@@ -33,7 +33,6 @@ export class SketchView {
         this.selectedFigures = [];
         this.ctxScale = 1;
         this.ctxOrigin = new Point(0, 0);
-        this.updateSelected();
         this.ctx = this.canvas.getContext("2d");
         let mouseEventHandler = this.handleMouseEvent.bind(this);
         let events = ["mousemove", "mousedown", "mouseup", "wheel"];
@@ -186,6 +185,7 @@ export class SketchView {
     }
     updateSelected() {
         this.ui.infoPane.setFocusedFigures(this.selectedFigures);
+        this.ui.infoPane.updateConstraintList(this.ui.protractr.sketch.constraints);
     }
     setCursor(cursor: string) {
         this.canvas.style.cursor = cursor;

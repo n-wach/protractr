@@ -62,6 +62,7 @@ function equalGoal(vals: Variable[]): number {
 
 export interface Constraint {
     type: string;
+    name: string;
     getError(): number;
     getGradient(v: Variable): number; //how to adjust v to reduce error
     containsFigure(f: Figure): boolean; // should a given figure be highlighted as a part of this constraint
@@ -70,8 +71,10 @@ export interface Constraint {
 
 export class EqualConstraint implements Constraint {
     type = "equal";
+    name = "equal";
     variables: Variable[];
-    constructor(vals: Variable[]) {
+    constructor(vals: Variable[], name: string="equal") {
+        this.name = name;
         this.variables = vals;
     }
     getError(): number {
@@ -110,6 +113,7 @@ export class EqualConstraint implements Constraint {
         }
         return {
             "type": this.type,
+            "name": this.name,
             "variables": variables
         };
     }
@@ -125,10 +129,12 @@ export class EqualConstraint implements Constraint {
 
 export class ArcPointCoincidentConstraint implements Constraint {
     type = "arc-point-coincident";
+    name = "point on circle";
     center: VariablePoint;
     radius: Variable;
     points: VariablePoint[];
-    constructor(center: VariablePoint, radius: Variable, points: VariablePoint[]) {
+    constructor(center: VariablePoint, radius: Variable, points: VariablePoint[], name: string="point on circle") {
+        this.name = name;
         this.center = center;
         this.radius = radius;
         this.points = points;
@@ -200,6 +206,7 @@ export class ArcPointCoincidentConstraint implements Constraint {
         }
         return {
             "type": this.type,
+            "name": this.name,
             "c": sketch.points.indexOf(this.center),
             "r": sketch.variables.indexOf(this.radius),
             "points": points
@@ -219,10 +226,12 @@ export class ArcPointCoincidentConstraint implements Constraint {
 
 export class MidpointConstraint implements Constraint {
     type = "midpoint";
+    name = "midpoint";
     p1: VariablePoint;
     p2: VariablePoint;
     midpoint: VariablePoint;
-    constructor(p1: VariablePoint, p2: VariablePoint, midpoint: VariablePoint) {
+    constructor(p1: VariablePoint, p2: VariablePoint, midpoint: VariablePoint, name: string="midpoint") {
+        this.name = name;
         this.p1 = p1;
         this.p2 = p2;
         this.midpoint = midpoint;
@@ -271,6 +280,7 @@ export class MidpointConstraint implements Constraint {
     asObject(obj: SketchExport, sketch: Sketch): ConstraintExport {
         return {
             "type": this.type,
+            "name": this.name,
             "p1": sketch.points.indexOf(this.p1),
             "p2": sketch.points.indexOf(this.p2),
             "mp": sketch.points.indexOf(this.midpoint)
@@ -287,9 +297,11 @@ export class MidpointConstraint implements Constraint {
 
 export class ColinearPointsConstraint implements Constraint {
     type = "colinear";
+    name = "colinear";
     points: VariablePoint[];
 
-    constructor(points: VariablePoint[]) {
+    constructor(points: VariablePoint[], name: string="colinear") {
+        this.name = name;
         this.points = points;
     }
     getError(): number {
@@ -330,6 +342,7 @@ export class ColinearPointsConstraint implements Constraint {
         }
         return {
             "type": this.type,
+            "name": this.name,
             "points": points
         };
     }
@@ -345,11 +358,13 @@ export class ColinearPointsConstraint implements Constraint {
 
 export class TangentLineConstraint implements Constraint {
     type = "tangent-line";
+    name = "tangent line";
     center: VariablePoint;
     radius: Variable;
     p1: VariablePoint;
     p2: VariablePoint;
-    constructor(center: VariablePoint, radius: Variable, p1: VariablePoint, p2: VariablePoint) {
+    constructor(center: VariablePoint, radius: Variable, p1: VariablePoint, p2: VariablePoint, name: string="tangent line") {
+        this.name = name;
         this.center = center;
         this.radius = radius;
         this.p1 = p1;
@@ -404,6 +419,7 @@ export class TangentLineConstraint implements Constraint {
     asObject(obj: SketchExport, sketch: Sketch): ConstraintExport {
         return {
             "type": this.type,
+            "name": this.name,
             "c": sketch.points.indexOf(this.center),
             "r": sketch.variables.indexOf(this.radius),
             "p1": sketch.points.indexOf(this.p1),
@@ -422,11 +438,13 @@ export class TangentLineConstraint implements Constraint {
 
 export class TangentCircleConstraint implements Constraint {
     type = "tangent-circle";
+    name = "tangent circles";
     center1: VariablePoint;
     radius1: Variable;
     center2: VariablePoint;
     radius2: Variable;
-    constructor(center1: VariablePoint, radius1: Variable, center2: VariablePoint, radius2: Variable) {
+    constructor(center1: VariablePoint, radius1: Variable, center2: VariablePoint, radius2: Variable, name: string="tangent circles") {
+        this.name = name;
         this.center1 = center1;
         this.radius1 = radius1;
         this.center2 = center2;
@@ -541,6 +559,7 @@ export class TangentCircleConstraint implements Constraint {
     asObject(obj: SketchExport, sketch: Sketch): ConstraintExport {
         return {
             "type": this.type,
+            "name": this.name,
             "c1": sketch.points.indexOf(this.center1),
             "r1": sketch.variables.indexOf(this.radius1),
             "c2": sketch.points.indexOf(this.center2),
@@ -605,19 +624,27 @@ function leastSquaresRegression(points: VariablePoint[]): [Point, Point] {
 }
 
 export function constraintFromObject(c: ConstraintExport, sketch: Sketch): Constraint {
+    let cs: Constraint;
     switch(c.type) {
         case "equal":
-            return EqualConstraint.fromObject(c, sketch);
+            cs = EqualConstraint.fromObject(c, sketch);
+            break;
         case "arc-point-coincident":
-            return ArcPointCoincidentConstraint.fromObject(c, sketch);
+            cs = ArcPointCoincidentConstraint.fromObject(c, sketch);
+            break;
         case "midpoint":
-            return MidpointConstraint.fromObject(c, sketch);
+            cs = MidpointConstraint.fromObject(c, sketch);
+            break;
         case "colinear":
-            return ColinearPointsConstraint.fromObject(c, sketch);
+            cs = ColinearPointsConstraint.fromObject(c, sketch);
+            break;
         case "tangent-line":
-            return TangentLineConstraint.fromObject(c, sketch);
+            cs = TangentLineConstraint.fromObject(c, sketch);
+            break;
         case "tangent-circle":
-            return TangentCircleConstraint.fromObject(c, sketch);
+            cs = TangentCircleConstraint.fromObject(c, sketch);
+            break;
     }
-    return null;
+    if(c.name) cs.name = c.name;
+    return cs;
 }

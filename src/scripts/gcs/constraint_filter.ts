@@ -163,7 +163,7 @@ class FilterString {
     }
 }
 
-interface ConstraintFilter {
+export interface ConstraintFilter {
     name: string;
     filter: FilterString;
     createConstraints(sortedFigures: SortedFigureSelection): Constraint[];
@@ -177,7 +177,7 @@ class HorizontalPointFilter implements ConstraintFilter {
         for(let point of sortedFigures.point) {
             ys.push(point.p.variablePoint.y);
         }
-        return [new EqualConstraint(ys)];
+        return [new EqualConstraint(ys, "horizontal")];
     }
 }
 
@@ -189,7 +189,7 @@ class VerticalPointFilter implements ConstraintFilter {
         for(let point of sortedFigures.point) {
             xs.push(point.p.variablePoint.x);
         }
-        return [new EqualConstraint(xs)];
+        return [new EqualConstraint(xs, "vertical")];
     }
 }
 
@@ -199,7 +199,7 @@ class VerticalLineFilter implements ConstraintFilter {
     createConstraints(sortedFigures: SortedFigureSelection): Constraint[] {
         let constraints = [];
         for(let line of sortedFigures.line) {
-            constraints.push(new EqualConstraint([line.p1.variablePoint.x, line.p2.variablePoint.x]));
+            constraints.push(new EqualConstraint([line.p1.variablePoint.x, line.p2.variablePoint.x], "vertical"));
         }
         return constraints;
     }
@@ -211,7 +211,7 @@ class HorizontalLineFilter implements ConstraintFilter {
     createConstraints(sortedFigures: SortedFigureSelection): Constraint[] {
         let constraints = [];
         for(let line of sortedFigures.line) {
-            constraints.push(new EqualConstraint([line.p1.variablePoint.y, line.p2.variablePoint.y]));
+            constraints.push(new EqualConstraint([line.p1.variablePoint.y, line.p2.variablePoint.y], "horizontal"));
         }
         return constraints;
     }
@@ -227,7 +227,7 @@ class CoincidentPointFilter implements ConstraintFilter {
             xs.push(fig.p.variablePoint.x);
             ys.push(fig.p.variablePoint.y);
         }
-        return [new EqualConstraint(xs), new EqualConstraint(ys)];
+        return [new EqualConstraint(xs, "vertical"), new EqualConstraint(ys, "horizontal")];
     }
 }
 
@@ -240,7 +240,7 @@ class ArcPointFilter implements ConstraintFilter {
         for(let point of sortedFigures.point) {
             points.push(point.p.variablePoint);
         }
-        return [new ArcPointCoincidentConstraint(circle.c.variablePoint, circle.r, points)];
+        return [new ArcPointCoincidentConstraint(circle.c.variablePoint, circle.r, points, "point on circle")];
     }
 }
 
@@ -250,7 +250,7 @@ class LineMidpointFilter implements ConstraintFilter {
     createConstraints(sortedFigures: SortedFigureSelection): Constraint[] {
         let point: PointFigure = sortedFigures.point[0];
         let line: LineFigure = sortedFigures.line[0];
-        return [new MidpointConstraint(line.p1.variablePoint, line.p2.variablePoint, point.p.variablePoint)];
+        return [new MidpointConstraint(line.p1.variablePoint, line.p2.variablePoint, point.p.variablePoint, "midpoint")];
     }
 }
 
@@ -262,7 +262,7 @@ class EqualRadiusFilter implements ConstraintFilter {
         for(let circle of sortedFigures.circle) {
             radii.push(circle.r);
         }
-        return [new EqualConstraint(radii)];
+        return [new EqualConstraint(radii, "equal radii")];
     }
 }
 
@@ -278,7 +278,7 @@ class ColinearFilter implements ConstraintFilter {
             points.push(line.p1.variablePoint);
             points.push(line.p2.variablePoint);
         }
-        return [new ColinearPointsConstraint(points)];
+        return [new ColinearPointsConstraint(points, "colinear")];
     }
 }
 
@@ -289,7 +289,7 @@ export class TangentLineFilter implements ConstraintFilter {
         let circle: CircleFigure = sortedFigures.circle[0];
         let constraints = [];
         for(let line of sortedFigures.line) {
-            constraints.push(new TangentLineConstraint(circle.c.variablePoint, circle.r, line.p1.variablePoint, line.p2.variablePoint));
+            constraints.push(new TangentLineConstraint(circle.c.variablePoint, circle.r, line.p1.variablePoint, line.p2.variablePoint, "tangent line"));
         }
         return constraints;
     }
@@ -309,7 +309,7 @@ export class ConcentricCirclesFilter implements ConstraintFilter {
             xs.push(point.p.variablePoint.x);
             ys.push(point.p.variablePoint.y);
         }
-        return [new EqualConstraint(xs), new EqualConstraint(ys)];
+        return [new EqualConstraint(xs, "vertical"), new EqualConstraint(ys, "horizontal")];
     }
 }
 
@@ -321,7 +321,7 @@ export class LineIntersectionFilter implements ConstraintFilter {
         let point: PointFigure = sortedFigures.point[0];
         let constraints = [];
         for(let line of lines) {
-            constraints.push(new ColinearPointsConstraint([line.p1.variablePoint, line.p2.variablePoint, point.p.variablePoint]));
+            constraints.push(new ColinearPointsConstraint([line.p1.variablePoint, line.p2.variablePoint, point.p.variablePoint], "colinear"));
         }
         return constraints;
     }
@@ -336,7 +336,7 @@ export class CircleIntersectionFilter implements ConstraintFilter {
         let point: PointFigure = sortedFigures.point[0];
         let constraints = [];
         for(let circle of circles) {
-            constraints.push(new ArcPointCoincidentConstraint(circle.c.variablePoint, circle.r, [point.p.variablePoint]));
+            constraints.push(new ArcPointCoincidentConstraint(circle.c.variablePoint, circle.r, [point.p.variablePoint], "point on circle"));
         }
         return constraints;
     }
@@ -348,7 +348,7 @@ export class TangentCirclesFilter implements ConstraintFilter {
     createConstraints(sortedFigures: SortedFigureSelection): Constraint[] {
         let circle1 = sortedFigures.circle[0];
         let circle2 = sortedFigures.circle[1];
-        return [new TangentCircleConstraint(circle1.c.variablePoint, circle1.r, circle2.c.variablePoint, circle2.r)];
+        return [new TangentCircleConstraint(circle1.c.variablePoint, circle1.r, circle2.c.variablePoint, circle2.r, "tangent circles")];
     }
 }
 

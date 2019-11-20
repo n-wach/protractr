@@ -206,8 +206,8 @@ function constrainPointBySnap(point, snapFigure) {
     switch(snapFigure.type) {
         case "point":
             let v1 = (snapFigure as PointFigure).p.variablePoint;
-            let ex = new EqualConstraint([v1.x, p.x]);
-            let ey = new EqualConstraint([v1.y, p.y]);
+            let ex = new EqualConstraint([v1.x, p.x], "vertical");
+            let ey = new EqualConstraint([v1.y, p.y], "horizontal");
             protractr.sketch.addConstraints([ex, ey])
             break;
         case "circle":

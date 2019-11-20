@@ -67,8 +67,11 @@ function equalGoal(vals) {
     return sum / vals.length;
 }
 var EqualConstraint = /** @class */ (function () {
-    function EqualConstraint(vals) {
+    function EqualConstraint(vals, name) {
+        if (name === void 0) { name = "equal"; }
         this.type = "equal";
+        this.name = "equal";
+        this.name = name;
         this.variables = vals;
     }
     EqualConstraint.prototype.getError = function () {
@@ -113,6 +116,7 @@ var EqualConstraint = /** @class */ (function () {
         }
         return {
             "type": this.type,
+            "name": this.name,
             "variables": variables
         };
     };
@@ -128,8 +132,11 @@ var EqualConstraint = /** @class */ (function () {
 }());
 exports.EqualConstraint = EqualConstraint;
 var ArcPointCoincidentConstraint = /** @class */ (function () {
-    function ArcPointCoincidentConstraint(center, radius, points) {
+    function ArcPointCoincidentConstraint(center, radius, points, name) {
+        if (name === void 0) { name = "point on circle"; }
         this.type = "arc-point-coincident";
+        this.name = "point on circle";
+        this.name = name;
         this.center = center;
         this.radius = radius;
         this.points = points;
@@ -210,6 +217,7 @@ var ArcPointCoincidentConstraint = /** @class */ (function () {
         }
         return {
             "type": this.type,
+            "name": this.name,
             "c": sketch.points.indexOf(this.center),
             "r": sketch.variables.indexOf(this.radius),
             "points": points
@@ -229,8 +237,11 @@ var ArcPointCoincidentConstraint = /** @class */ (function () {
 }());
 exports.ArcPointCoincidentConstraint = ArcPointCoincidentConstraint;
 var MidpointConstraint = /** @class */ (function () {
-    function MidpointConstraint(p1, p2, midpoint) {
+    function MidpointConstraint(p1, p2, midpoint, name) {
+        if (name === void 0) { name = "midpoint"; }
         this.type = "midpoint";
+        this.name = "midpoint";
+        this.name = name;
         this.p1 = p1;
         this.p2 = p2;
         this.midpoint = midpoint;
@@ -283,6 +294,7 @@ var MidpointConstraint = /** @class */ (function () {
     MidpointConstraint.prototype.asObject = function (obj, sketch) {
         return {
             "type": this.type,
+            "name": this.name,
             "p1": sketch.points.indexOf(this.p1),
             "p2": sketch.points.indexOf(this.p2),
             "mp": sketch.points.indexOf(this.midpoint)
@@ -298,8 +310,11 @@ var MidpointConstraint = /** @class */ (function () {
 }());
 exports.MidpointConstraint = MidpointConstraint;
 var ColinearPointsConstraint = /** @class */ (function () {
-    function ColinearPointsConstraint(points) {
+    function ColinearPointsConstraint(points, name) {
+        if (name === void 0) { name = "colinear"; }
         this.type = "colinear";
+        this.name = "colinear";
+        this.name = name;
         this.points = points;
     }
     ColinearPointsConstraint.prototype.getError = function () {
@@ -343,6 +358,7 @@ var ColinearPointsConstraint = /** @class */ (function () {
         }
         return {
             "type": this.type,
+            "name": this.name,
             "points": points
         };
     };
@@ -358,8 +374,11 @@ var ColinearPointsConstraint = /** @class */ (function () {
 }());
 exports.ColinearPointsConstraint = ColinearPointsConstraint;
 var TangentLineConstraint = /** @class */ (function () {
-    function TangentLineConstraint(center, radius, p1, p2) {
+    function TangentLineConstraint(center, radius, p1, p2, name) {
+        if (name === void 0) { name = "tangent line"; }
         this.type = "tangent-line";
+        this.name = "tangent line";
+        this.name = name;
         this.center = center;
         this.radius = radius;
         this.p1 = p1;
@@ -422,6 +441,7 @@ var TangentLineConstraint = /** @class */ (function () {
     TangentLineConstraint.prototype.asObject = function (obj, sketch) {
         return {
             "type": this.type,
+            "name": this.name,
             "c": sketch.points.indexOf(this.center),
             "r": sketch.variables.indexOf(this.radius),
             "p1": sketch.points.indexOf(this.p1),
@@ -439,8 +459,11 @@ var TangentLineConstraint = /** @class */ (function () {
 }());
 exports.TangentLineConstraint = TangentLineConstraint;
 var TangentCircleConstraint = /** @class */ (function () {
-    function TangentCircleConstraint(center1, radius1, center2, radius2) {
+    function TangentCircleConstraint(center1, radius1, center2, radius2, name) {
+        if (name === void 0) { name = "tangent circles"; }
         this.type = "tangent-circle";
+        this.name = "tangent circles";
+        this.name = name;
         this.center1 = center1;
         this.radius1 = radius1;
         this.center2 = center2;
@@ -567,6 +590,7 @@ var TangentCircleConstraint = /** @class */ (function () {
     TangentCircleConstraint.prototype.asObject = function (obj, sketch) {
         return {
             "type": this.type,
+            "name": this.name,
             "c1": sketch.points.indexOf(this.center1),
             "r1": sketch.variables.indexOf(this.radius1),
             "c2": sketch.points.indexOf(this.center2),
@@ -628,21 +652,30 @@ function leastSquaresRegression(points) {
     return [p1, p2];
 }
 function constraintFromObject(c, sketch) {
+    var cs;
     switch (c.type) {
         case "equal":
-            return EqualConstraint.fromObject(c, sketch);
+            cs = EqualConstraint.fromObject(c, sketch);
+            break;
         case "arc-point-coincident":
-            return ArcPointCoincidentConstraint.fromObject(c, sketch);
+            cs = ArcPointCoincidentConstraint.fromObject(c, sketch);
+            break;
         case "midpoint":
-            return MidpointConstraint.fromObject(c, sketch);
+            cs = MidpointConstraint.fromObject(c, sketch);
+            break;
         case "colinear":
-            return ColinearPointsConstraint.fromObject(c, sketch);
+            cs = ColinearPointsConstraint.fromObject(c, sketch);
+            break;
         case "tangent-line":
-            return TangentLineConstraint.fromObject(c, sketch);
+            cs = TangentLineConstraint.fromObject(c, sketch);
+            break;
         case "tangent-circle":
-            return TangentCircleConstraint.fromObject(c, sketch);
+            cs = TangentCircleConstraint.fromObject(c, sketch);
+            break;
     }
-    return null;
+    if (c.name)
+        cs.name = c.name;
+    return cs;
 }
 exports.constraintFromObject = constraintFromObject;
 
@@ -807,7 +840,7 @@ var HorizontalPointFilter = /** @class */ (function () {
             var point = _a[_i];
             ys.push(point.p.variablePoint.y);
         }
-        return [new constraint_1.EqualConstraint(ys)];
+        return [new constraint_1.EqualConstraint(ys, "horizontal")];
     };
     return HorizontalPointFilter;
 }());
@@ -822,7 +855,7 @@ var VerticalPointFilter = /** @class */ (function () {
             var point = _a[_i];
             xs.push(point.p.variablePoint.x);
         }
-        return [new constraint_1.EqualConstraint(xs)];
+        return [new constraint_1.EqualConstraint(xs, "vertical")];
     };
     return VerticalPointFilter;
 }());
@@ -835,7 +868,7 @@ var VerticalLineFilter = /** @class */ (function () {
         var constraints = [];
         for (var _i = 0, _a = sortedFigures.line; _i < _a.length; _i++) {
             var line = _a[_i];
-            constraints.push(new constraint_1.EqualConstraint([line.p1.variablePoint.x, line.p2.variablePoint.x]));
+            constraints.push(new constraint_1.EqualConstraint([line.p1.variablePoint.x, line.p2.variablePoint.x], "vertical"));
         }
         return constraints;
     };
@@ -850,7 +883,7 @@ var HorizontalLineFilter = /** @class */ (function () {
         var constraints = [];
         for (var _i = 0, _a = sortedFigures.line; _i < _a.length; _i++) {
             var line = _a[_i];
-            constraints.push(new constraint_1.EqualConstraint([line.p1.variablePoint.y, line.p2.variablePoint.y]));
+            constraints.push(new constraint_1.EqualConstraint([line.p1.variablePoint.y, line.p2.variablePoint.y], "horizontal"));
         }
         return constraints;
     };
@@ -869,7 +902,7 @@ var CoincidentPointFilter = /** @class */ (function () {
             xs.push(fig.p.variablePoint.x);
             ys.push(fig.p.variablePoint.y);
         }
-        return [new constraint_1.EqualConstraint(xs), new constraint_1.EqualConstraint(ys)];
+        return [new constraint_1.EqualConstraint(xs, "vertical"), new constraint_1.EqualConstraint(ys, "horizontal")];
     };
     return CoincidentPointFilter;
 }());
@@ -885,7 +918,7 @@ var ArcPointFilter = /** @class */ (function () {
             var point = _a[_i];
             points.push(point.p.variablePoint);
         }
-        return [new constraint_1.ArcPointCoincidentConstraint(circle.c.variablePoint, circle.r, points)];
+        return [new constraint_1.ArcPointCoincidentConstraint(circle.c.variablePoint, circle.r, points, "point on circle")];
     };
     return ArcPointFilter;
 }());
@@ -897,7 +930,7 @@ var LineMidpointFilter = /** @class */ (function () {
     LineMidpointFilter.prototype.createConstraints = function (sortedFigures) {
         var point = sortedFigures.point[0];
         var line = sortedFigures.line[0];
-        return [new constraint_1.MidpointConstraint(line.p1.variablePoint, line.p2.variablePoint, point.p.variablePoint)];
+        return [new constraint_1.MidpointConstraint(line.p1.variablePoint, line.p2.variablePoint, point.p.variablePoint, "midpoint")];
     };
     return LineMidpointFilter;
 }());
@@ -912,7 +945,7 @@ var EqualRadiusFilter = /** @class */ (function () {
             var circle = _a[_i];
             radii.push(circle.r);
         }
-        return [new constraint_1.EqualConstraint(radii)];
+        return [new constraint_1.EqualConstraint(radii, "equal radii")];
     };
     return EqualRadiusFilter;
 }());
@@ -932,7 +965,7 @@ var ColinearFilter = /** @class */ (function () {
             points.push(line.p1.variablePoint);
             points.push(line.p2.variablePoint);
         }
-        return [new constraint_1.ColinearPointsConstraint(points)];
+        return [new constraint_1.ColinearPointsConstraint(points, "colinear")];
     };
     return ColinearFilter;
 }());
@@ -946,7 +979,7 @@ var TangentLineFilter = /** @class */ (function () {
         var constraints = [];
         for (var _i = 0, _a = sortedFigures.line; _i < _a.length; _i++) {
             var line = _a[_i];
-            constraints.push(new constraint_1.TangentLineConstraint(circle.c.variablePoint, circle.r, line.p1.variablePoint, line.p2.variablePoint));
+            constraints.push(new constraint_1.TangentLineConstraint(circle.c.variablePoint, circle.r, line.p1.variablePoint, line.p2.variablePoint, "tangent line"));
         }
         return constraints;
     };
@@ -971,7 +1004,7 @@ var ConcentricCirclesFilter = /** @class */ (function () {
             xs.push(point.p.variablePoint.x);
             ys.push(point.p.variablePoint.y);
         }
-        return [new constraint_1.EqualConstraint(xs), new constraint_1.EqualConstraint(ys)];
+        return [new constraint_1.EqualConstraint(xs, "vertical"), new constraint_1.EqualConstraint(ys, "horizontal")];
     };
     return ConcentricCirclesFilter;
 }());
@@ -987,7 +1020,7 @@ var LineIntersectionFilter = /** @class */ (function () {
         var constraints = [];
         for (var _i = 0, lines_1 = lines; _i < lines_1.length; _i++) {
             var line = lines_1[_i];
-            constraints.push(new constraint_1.ColinearPointsConstraint([line.p1.variablePoint, line.p2.variablePoint, point.p.variablePoint]));
+            constraints.push(new constraint_1.ColinearPointsConstraint([line.p1.variablePoint, line.p2.variablePoint, point.p.variablePoint], "colinear"));
         }
         return constraints;
     };
@@ -1005,7 +1038,7 @@ var CircleIntersectionFilter = /** @class */ (function () {
         var constraints = [];
         for (var _i = 0, circles_1 = circles; _i < circles_1.length; _i++) {
             var circle = circles_1[_i];
-            constraints.push(new constraint_1.ArcPointCoincidentConstraint(circle.c.variablePoint, circle.r, [point.p.variablePoint]));
+            constraints.push(new constraint_1.ArcPointCoincidentConstraint(circle.c.variablePoint, circle.r, [point.p.variablePoint], "point on circle"));
         }
         return constraints;
     };
@@ -1020,7 +1053,7 @@ var TangentCirclesFilter = /** @class */ (function () {
     TangentCirclesFilter.prototype.createConstraints = function (sortedFigures) {
         var circle1 = sortedFigures.circle[0];
         var circle2 = sortedFigures.circle[1];
-        return [new constraint_1.TangentCircleConstraint(circle1.c.variablePoint, circle1.r, circle2.c.variablePoint, circle2.r)];
+        return [new constraint_1.TangentCircleConstraint(circle1.c.variablePoint, circle1.r, circle2.c.variablePoint, circle2.r, "tangent circles")];
     };
     return TangentCirclesFilter;
 }());
@@ -1444,7 +1477,7 @@ var Sketch = /** @class */ (function () {
                         newVariables.push(v);
                     }
                 }
-                var newEqual = new constraint_1.EqualConstraint(newVariables);
+                var newEqual = new constraint_1.EqualConstraint(newVariables, constraint.name);
                 for (var _g = 0, mergeables_2 = mergeables; _g < mergeables_2.length; _g++) {
                     var m = mergeables_2[_g];
                     this.removeConstraint(m);
@@ -1489,7 +1522,7 @@ var Sketch = /** @class */ (function () {
                         newPoints.push(p);
                     }
                 }
-                var newColinear = new constraint_1.ColinearPointsConstraint(newPoints);
+                var newColinear = new constraint_1.ColinearPointsConstraint(newPoints, constraint.name);
                 for (var _q = 0, mergeables_4 = mergeables; _q < mergeables_4.length; _q++) {
                     var m = mergeables_4[_q];
                     this.removeConstraint(m);
@@ -1670,6 +1703,7 @@ window.addEventListener("load", function () {
         var url = origin_1 + "/examples/" + example;
         exports.protractr.loadFromURL(url);
     }
+    exports.protractr.ui.sketchView.updateSelected();
 });
 
 },{"./protractr":6}],6:[function(require,module,exports){
@@ -1717,10 +1751,10 @@ exports.Protractr = Protractr;
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var figures_1 = require("../gcs/figures");
-var main_1 = require("../main");
 var constraint_filter_1 = require("../gcs/constraint_filter");
 var InfoPane = /** @class */ (function () {
-    function InfoPane(sidePane) {
+    function InfoPane(ui, sidePane) {
+        this.ui = ui;
         this.sidePane = sidePane;
         this.title = document.createElement("p");
         this.sidePane.appendChild(this.title);
@@ -1730,7 +1764,7 @@ var InfoPane = /** @class */ (function () {
         this.possibleConstraints = document.createElement("div");
         this.sidePane.appendChild(this.possibleConstraints);
         var e = document.createElement("p");
-        e.innerText = "Existing Constraints:";
+        e.innerText = "Sketch Constraints:";
         this.sidePane.appendChild(e);
         this.existingConstraints = document.createElement("div");
         this.existingConstraints.classList.add("existing-constraints");
@@ -1748,59 +1782,70 @@ var InfoPane = /** @class */ (function () {
         while (this.possibleConstraints.lastChild) {
             this.possibleConstraints.removeChild(this.possibleConstraints.lastChild);
         }
-        var _loop_1 = function (pc) {
+        var _loop_1 = function (constraintFilter) {
             var child = document.createElement("button");
-            child.innerText = pc.name;
+            child.innerText = constraintFilter.name;
+            var _this = this_1;
             child.addEventListener("click", function () {
                 var sortedFigures = constraint_filter_1.sortFigureSelection(figures);
-                main_1.protractr.sketch.addConstraints(pc.createConstraints(sortedFigures));
-                main_1.protractr.ui.sketchView.pushState();
+                _this.ui.protractr.sketch.addConstraints(constraintFilter.createConstraints(sortedFigures));
+                _this.ui.sketchView.pushState();
             });
             this_1.possibleConstraints.appendChild(child);
         };
         var this_1 = this;
         for (var _i = 0, _a = constraint_filter_1.getSatisfiedConstraintFilters(figures); _i < _a.length; _i++) {
-            var pc = _a[_i];
-            _loop_1(pc);
+            var constraintFilter = _a[_i];
+            _loop_1(constraintFilter);
         }
     };
     InfoPane.prototype.updateConstraintList = function (constraints) {
         while (this.existingConstraints.lastChild) {
             this.existingConstraints.removeChild(this.existingConstraints.lastChild);
         }
-        var _loop_2 = function (constraint) {
-            var o = document.createElement("p");
-            o.innerText = constraint.constructor.name;
-            o.classList.add("existing-constraint");
-            o.oncontextmenu = function (event) {
-                event.preventDefault();
-                if (event.which == 3) {
-                    main_1.protractr.sketch.removeConstraint(constraint);
-                    main_1.protractr.ui.sketchView.pushState();
-                }
-                main_1.protractr.ui.sketchView.hoveredConstraint = null;
-            };
-            o.onmouseenter = function (event) {
-                main_1.protractr.ui.sketchView.hoveredConstraint = constraint;
-                main_1.protractr.ui.sketchView.draw();
-            };
-            o.onmouseleave = function (event) {
-                main_1.protractr.ui.sketchView.hoveredConstraint = null;
-                main_1.protractr.ui.sketchView.draw();
-            };
-            this_2.existingConstraints.appendChild(o);
-        };
-        var this_2 = this;
+        var figs = this.ui.sketchView.selectedFigures;
         for (var _i = 0, constraints_1 = constraints; _i < constraints_1.length; _i++) {
             var constraint = constraints_1[_i];
-            _loop_2(constraint);
+            var add = true;
+            for (var _a = 0, figs_1 = figs; _a < figs_1.length; _a++) {
+                var selectedFigure = figs_1[_a];
+                if (!constraint.containsFigure(selectedFigure)) {
+                    add = false;
+                    break;
+                }
+            }
+            if (add)
+                this.addConstraintElement(constraint);
         }
+    };
+    InfoPane.prototype.addConstraintElement = function (constraint) {
+        var o = document.createElement("p");
+        o.innerText = constraint.name;
+        o.classList.add("existing-constraint");
+        var _this = this;
+        o.oncontextmenu = function (event) {
+            event.preventDefault();
+            if (event.which == 3) {
+                _this.ui.protractr.sketch.removeConstraint(constraint);
+                _this.ui.sketchView.pushState();
+            }
+            _this.ui.sketchView.hoveredConstraint = null;
+        };
+        o.onmouseenter = function (event) {
+            _this.ui.sketchView.hoveredConstraint = constraint;
+            _this.ui.sketchView.draw();
+        };
+        o.onmouseleave = function (event) {
+            _this.ui.sketchView.hoveredConstraint = null;
+            _this.ui.sketchView.draw();
+        };
+        this.existingConstraints.appendChild(o);
     };
     return InfoPane;
 }());
 exports.InfoPane = InfoPane;
 
-},{"../gcs/constraint_filter":2,"../gcs/figures":3,"../main":5}],8:[function(require,module,exports){
+},{"../gcs/constraint_filter":2,"../gcs/figures":3}],8:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var figures_1 = require("../gcs/figures");
@@ -1814,7 +1859,6 @@ var SketchView = /** @class */ (function () {
         this.selectedFigures = [];
         this.ctxScale = 1;
         this.ctxOrigin = new figures_1.Point(0, 0);
-        this.updateSelected();
         this.ctx = this.canvas.getContext("2d");
         var mouseEventHandler = this.handleMouseEvent.bind(this);
         var events = ["mousemove", "mousedown", "mouseup", "wheel"];
@@ -1975,6 +2019,7 @@ var SketchView = /** @class */ (function () {
     };
     SketchView.prototype.updateSelected = function () {
         this.ui.infoPane.setFocusedFigures(this.selectedFigures);
+        this.ui.infoPane.updateConstraintList(this.ui.protractr.sketch.constraints);
     };
     SketchView.prototype.setCursor = function (cursor) {
         this.canvas.style.cursor = cursor;
@@ -2349,8 +2394,8 @@ function constrainPointBySnap(point, snapFigure) {
     switch (snapFigure.type) {
         case "point":
             var v1 = snapFigure.p.variablePoint;
-            var ex = new constraint_1.EqualConstraint([v1.x, p.x]);
-            var ey = new constraint_1.EqualConstraint([v1.y, p.y]);
+            var ex = new constraint_1.EqualConstraint([v1.x, p.x], "vertical");
+            var ey = new constraint_1.EqualConstraint([v1.y, p.y], "horizontal");
             main_1.protractr.sketch.addConstraints([ex, ey]);
             break;
         case "circle":
@@ -2375,8 +2420,8 @@ var sketchview_1 = require("./sketchview");
 var UI = /** @class */ (function () {
     function UI(protractr, canvas, sidePane, toolbar) {
         this.protractr = protractr;
-        this.infoPane = new infopane_1.InfoPane(sidePane);
         this.sketchView = new sketchview_1.SketchView(this, canvas);
+        this.infoPane = new infopane_1.InfoPane(this, sidePane);
         this.toolbar = new toolbar_1.Toolbar(toolbar, this.sketchView);
     }
     return UI;

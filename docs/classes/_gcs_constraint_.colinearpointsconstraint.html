@@ -96,6 +96,7 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_gcs_constraint_.colinearpointsconstraint.html#name" class="tsd-kind-icon">name</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_gcs_constraint_.colinearpointsconstraint.html#points" class="tsd-kind-icon">points</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_gcs_constraint_.colinearpointsconstraint.html#type" class="tsd-kind-icon">type</a></li>
 							</ul>
@@ -119,19 +120,22 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Colinear<wbr>Points<wbr>Constraint<span class="tsd-signature-symbol">(</span>points<span class="tsd-signature-symbol">: </span><a href="_gcs_constraint_.variablepoint.html" class="tsd-signature-type">VariablePoint</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_gcs_constraint_.colinearpointsconstraint.html" class="tsd-signature-type">ColinearPointsConstraint</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Colinear<wbr>Points<wbr>Constraint<span class="tsd-signature-symbol">(</span>points<span class="tsd-signature-symbol">: </span><a href="_gcs_constraint_.variablepoint.html" class="tsd-signature-type">VariablePoint</a><span class="tsd-signature-symbol">[]</span>, name<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_gcs_constraint_.colinearpointsconstraint.html" class="tsd-signature-type">ColinearPointsConstraint</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/b058572/src/scripts/gcs/constraint.ts#L290">gcs/constraint.ts:290</a></li>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/66ca133/src/scripts/gcs/constraint.ts#L301">gcs/constraint.ts:301</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>points: <a href="_gcs_constraint_.variablepoint.html" class="tsd-signature-type">VariablePoint</a><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> name: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;colinear&quot;</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="_gcs_constraint_.colinearpointsconstraint.html" class="tsd-signature-type">ColinearPointsConstraint</a></h4>
@@ -142,12 +146,23 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="name" class="tsd-anchor"></a>
+					<h3>name</h3>
+					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;colinear&quot;</span></div>
+					<aside class="tsd-sources">
+						<p>Implementation of <a href="../interfaces/_gcs_constraint_.constraint.html">Constraint</a>.<a href="../interfaces/_gcs_constraint_.constraint.html#name">name</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/66ca133/src/scripts/gcs/constraint.ts#L300">gcs/constraint.ts:300</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="points" class="tsd-anchor"></a>
 					<h3>points</h3>
 					<div class="tsd-signature tsd-kind-icon">points<span class="tsd-signature-symbol">:</span> <a href="_gcs_constraint_.variablepoint.html" class="tsd-signature-type">VariablePoint</a><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/b058572/src/scripts/gcs/constraint.ts#L290">gcs/constraint.ts:290</a></li>
+							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/66ca133/src/scripts/gcs/constraint.ts#L301">gcs/constraint.ts:301</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -158,7 +173,7 @@
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/_gcs_constraint_.constraint.html">Constraint</a>.<a href="../interfaces/_gcs_constraint_.constraint.html#type">type</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/b058572/src/scripts/gcs/constraint.ts#L289">gcs/constraint.ts:289</a></li>
+							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/66ca133/src/scripts/gcs/constraint.ts#L299">gcs/constraint.ts:299</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -176,7 +191,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_gcs_constraint_.constraint.html">Constraint</a>.<a href="../interfaces/_gcs_constraint_.constraint.html#asobject">asObject</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/b058572/src/scripts/gcs/constraint.ts#L326">gcs/constraint.ts:326</a></li>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/66ca133/src/scripts/gcs/constraint.ts#L338">gcs/constraint.ts:338</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -203,7 +218,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_gcs_constraint_.constraint.html">Constraint</a>.<a href="../interfaces/_gcs_constraint_.constraint.html#containsfigure">containsFigure</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/b058572/src/scripts/gcs/constraint.ts#L316">gcs/constraint.ts:316</a></li>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/66ca133/src/scripts/gcs/constraint.ts#L328">gcs/constraint.ts:328</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -227,7 +242,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_gcs_constraint_.constraint.html">Constraint</a>.<a href="../interfaces/_gcs_constraint_.constraint.html#geterror">getError</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/b058572/src/scripts/gcs/constraint.ts#L295">gcs/constraint.ts:295</a></li>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/66ca133/src/scripts/gcs/constraint.ts#L307">gcs/constraint.ts:307</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -245,7 +260,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_gcs_constraint_.constraint.html">Constraint</a>.<a href="../interfaces/_gcs_constraint_.constraint.html#getgradient">getGradient</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/b058572/src/scripts/gcs/constraint.ts#L305">gcs/constraint.ts:305</a></li>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/66ca133/src/scripts/gcs/constraint.ts#L317">gcs/constraint.ts:317</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -268,7 +283,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/b058572/src/scripts/gcs/constraint.ts#L336">gcs/constraint.ts:336</a></li>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/66ca133/src/scripts/gcs/constraint.ts#L349">gcs/constraint.ts:349</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -339,6 +354,9 @@
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class">
 								<a href="_gcs_constraint_.colinearpointsconstraint.html#constructor" class="tsd-kind-icon">constructor</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_gcs_constraint_.colinearpointsconstraint.html#name" class="tsd-kind-icon">name</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="_gcs_constraint_.colinearpointsconstraint.html#points" class="tsd-kind-icon">points</a>
