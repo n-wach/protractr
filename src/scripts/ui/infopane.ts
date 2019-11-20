@@ -32,7 +32,8 @@ export class InfoPane {
         this.existingConstraints = document.createElement("div");
         this.existingConstraints.classList.add("existing-constraints");
         this.existingConstraints.style.width = "100%";
-        this.existingConstraints.style.height = "200px";
+        this.existingConstraints.style.height = "400px";
+        this.existingConstraints.style.overflowY = "scroll";
         this.sidePane.appendChild(this.existingConstraints);
     }
     setFocusedFigures(figures: Figure[]) {

@@ -73,6 +73,7 @@
 					<h2>Examples:</h2>
 				</a>
 				<ul>
+					<li><a href="https://ccs-1l-f19.github.io/protractr/src/?pyramid.json">pyramid</a></li>
 					<li><a href="https://ccs-1l-f19.github.io/protractr/src/?car.json">car</a></li>
 					<li><a href="https://ccs-1l-f19.github.io/protractr/src/?beach.json">beach</a></li>
 					<li><a href="https://ccs-1l-f19.github.io/protractr/src/?shield.json">shield</a></li>
@@ -92,17 +93,20 @@
 				</a>
 				<p>To get started:</p>
 				<ol>
-					<li>clone this repo, and cd into it</li>
-					<li><code>npm install</code></li>
-					<li>Make changes to typescript source.  This should be done under the <code>src</code> directory.  Note that the <code>dist</code> directory is the product of <code>browserify</code> and <code>tsc</code>, and you should not directly edit files there.</li>
-					<li>To test your changes, run:</li>
-				</ol>
-				<pre><code>.<span class="hljs-regexp">/node_modules/</span>typescript<span class="hljs-regexp">/bin/</span>tsc
+					<li><p>clone this repo, and cd into it</p>
+					</li>
+					<li><p><code>npm install</code></p>
+					</li>
+					<li><p>Make changes to typescript source.  This should be done under the <code>src</code> directory.  Note that the <code>dist</code> directory is the product of <code>browserify</code> and <code>tsc</code>, and you should not directly edit files there.</p>
+					</li>
+					<li><p>To test your changes, run:</p>
+						<pre><code>.<span class="hljs-regexp">/node_modules/</span>typescript<span class="hljs-regexp">/bin/</span>tsc
 npm run browserify</code></pre><p>You should then see that the file <code>dist/bundle.js</code> has been modified.  This is the final JavaScript file that the running application actually uses: a combination of all the JavaScript in the application, together with the node modules on which the application depends.</p>
-				<ol start="6">
-					<li>When you are ready to commit a change, regenerate the docs:</li>
+					</li>
+					<li><p>When you are ready to commit a change, regenerate the docs:</p>
+						<pre><code> npm <span class="hljs-keyword">run</span><span class="bash"> gen-docs</span></code></pre><p> Then, commit the changes under <code>src</code> and <code>docs</code>, and plus the changes to <code>dist/bundle.js</code>.  We commit <code>docs</code> and <code>dist/bundle.js</code> because they are used by the GitHub Pages hosted production version of the site.</p>
+					</li>
 				</ol>
-				<pre><code>npm <span class="hljs-keyword">run</span><span class="bash"> gen-docs</span></code></pre><p>Then, commit the changes under <code>src</code> and <code>docs</code>, and plus the changes to <code>dist/bundle.js</code>.  We commit <code>docs</code> and <code>dist/bundle.js</code> because they are used by the GitHub Pages hosted production version of the site.</p>
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
