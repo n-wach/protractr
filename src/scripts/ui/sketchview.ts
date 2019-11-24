@@ -25,8 +25,6 @@ export class SketchView {
     lastPanPoint: Point = null;
     hoveredConstraint: Constraint;
 
-    history: string[] = [];
-
     constructor(ui: UI, canvas: HTMLCanvasElement) {
         this.ui = ui;
         this.canvas = canvas;
@@ -245,6 +243,7 @@ export class SketchView {
         this.ctx.fill();
     }
     pushState() {
-        this.history.push(this.ui.protractr.exportSketch());
+        let s = this.ui.protractr.exportSketch();
+        this.ui.history.recordStateChange(s);
     }
 }

@@ -4,6 +4,7 @@ html, body, canvas {
     margin: 0;
     border: 0;
     padding: 0;
+    font-family: "Roboto Light", sans-serif;
 }
 table, tbody {
     height: 100%;
@@ -19,6 +20,8 @@ table, tbody, tr, td {
     width: 20%;
     margin: 0;
     text-align: center;
+    font-size: xx-large;
+    font-weight: bolder;
 }
 .toolbar {
     height: 30pt;

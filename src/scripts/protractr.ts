@@ -8,28 +8,31 @@ export class Protractr {
     constructor(canvas: HTMLCanvasElement, sidePane: HTMLDivElement, toolbar: HTMLUListElement) {
         this.sketch = new Sketch();
         this.ui = new UI(this, canvas, sidePane, toolbar);
-        this.ui.sketchView.pushState();
     }
     loadSketch(json: string, push: boolean=true) {
+        if(json == undefined) {
+            this.resetSketch();
+            return;
+        }
         this.sketch = Sketch.fromObject(JSON.parse(json));
-        this.ui.sketchView.draw();
-        this.ui.infoPane.updateConstraintList(this.sketch.constraints);
-        if(push) this.ui.sketchView.pushState();
+        this.ui.refresh();
     }
-    exportSketch() {
+    exportSketch(): string {
         return JSON.stringify(this.sketch.asObject());
     }
     resetSketch() {
         this.sketch = new Sketch();
-        this.ui.sketchView.draw();
-        this.ui.infoPane.updateConstraintList(this.sketch.constraints);
-        this.ui.sketchView.pushState();
+        this.ui.refresh();
     }
     loadFromURL(url: string) {
         let request = new XMLHttpRequest();
         let _this = this;
         request.addEventListener("load", function () {
-            _this.loadSketch(this.responseText);
+            if(this.status == 200) {
+                _this.loadSketch(this.responseText);
+            } else {
+                console.log("Failed to load sketch, response code != 200: ", this);
+            }
         });
         request.open("GET", url);
         request.send();

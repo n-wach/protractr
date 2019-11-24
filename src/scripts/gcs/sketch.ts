@@ -1,4 +1,5 @@
 import {
+    ArcPointCoincidentConstraint,
     ColinearPointsConstraint,
     Constraint,
     constraintFromObject,
@@ -28,7 +29,7 @@ export type SketchExport = {
     points: [number, number][],
     figures: FigureExport[],
     constraints: ConstraintExport[],
-}
+};
 
 export class Sketch {
     constraints: Constraint[] = [];
@@ -60,14 +61,14 @@ export class Sketch {
         return closest;
     }
     addConstraintAndCombine(constraint: Constraint) {
-        if(constraint.type == "equal") {
+        if (constraint.type == "equal") {
             let e1: EqualConstraint = constraint as EqualConstraint;
             let mergeables: EqualConstraint[] = [];
-            for(let c of this.constraints){
-                if(c.type == "equal") {
+            for (let c of this.constraints) {
+                if (c.type == "equal") {
                     let e2: EqualConstraint = c as EqualConstraint;
-                    for(let v of e1.variables) {
-                        if(e2.variables.indexOf(v) != -1) {
+                    for (let v of e1.variables) {
+                        if (e2.variables.indexOf(v) != -1) {
                             //intersection constraint domain
                             mergeables.push(e2);
                             break;
@@ -75,34 +76,34 @@ export class Sketch {
                     }
                 }
             }
-            if(mergeables.length > 0) {
+            if (mergeables.length > 0) {
                 let newVariables: Variable[] = [];
-                for(let m of mergeables) {
+                for (let m of mergeables) {
                     newVariables = newVariables.concat(m.variables);
                 }
-                for(let v of e1.variables) {
-                    if(newVariables.indexOf(v) == -1) {
+                for (let v of e1.variables) {
+                    if (newVariables.indexOf(v) == -1) {
                         //variable not present in merged intersecting constraints
                         newVariables.push(v);
                     }
                 }
                 let newEqual = new EqualConstraint(newVariables, constraint.name);
-                for(let m of mergeables) this.removeConstraint(m);
+                for (let m of mergeables) this.removeConstraint(m);
                 this.constraints.push(newEqual);
             } else {
                 this.constraints.push(constraint);
             }
-        } else if(constraint.type == "colinear") {
+        } else if (constraint.type == "colinear") {
             let cl1: ColinearPointsConstraint = constraint as ColinearPointsConstraint;
             let mergeables: ColinearPointsConstraint[] = [];
-            for(let c of this.constraints){
-                if(c.type == "colinear") {
+            for (let c of this.constraints) {
+                if (c.type == "colinear") {
                     let cl2: ColinearPointsConstraint = c as ColinearPointsConstraint;
                     let count = 0;
-                    for(let p of cl1.points) {
-                        if(cl2.points.indexOf(p) != -1) {
+                    for (let p of cl1.points) {
+                        if (cl2.points.indexOf(p) != -1) {
                             count += 1;
-                            if(count >= 2) {
+                            if (count >= 2) {
                                 //intersection constraint domain
                                 mergeables.push(cl2);
                                 break;
@@ -111,20 +112,39 @@ export class Sketch {
                     }
                 }
             }
-            if(mergeables.length > 0) {
+            if (mergeables.length > 0) {
                 let newPoints: VariablePoint[] = [];
-                for(let m of mergeables) {
+                for (let m of mergeables) {
                     newPoints = newPoints.concat(m.points);
                 }
-                for(let p of cl1.points) {
-                    if(newPoints.indexOf(p) == -1) {
+                for (let p of cl1.points) {
+                    if (newPoints.indexOf(p) == -1) {
                         //variable not present in merged intersecting constraints
                         newPoints.push(p);
                     }
                 }
                 let newColinear = new ColinearPointsConstraint(newPoints, constraint.name);
-                for(let m of mergeables) this.removeConstraint(m);
+                for (let m of mergeables) this.removeConstraint(m);
                 this.constraints.push(newColinear);
+            } else {
+                this.constraints.push(constraint);
+            }
+        } else if(constraint.type == "arc-point-coincident") {
+            let apc1: ArcPointCoincidentConstraint = constraint as ArcPointCoincidentConstraint;
+            let mergeable: ArcPointCoincidentConstraint;
+            for (let c of this.constraints) {
+                if (c.type == "arc-point-coincident") {
+                    let apc2: ArcPointCoincidentConstraint = c as ArcPointCoincidentConstraint;
+                    if(apc1.center == apc2.center) {
+                        mergeable = apc2;
+                        break;
+                    }
+                }
+            }
+            if (mergeable) {
+                for(let p of apc1.points) {
+                    mergeable.points.push(p);
+                }
             } else {
                 this.constraints.push(constraint);
             }
@@ -165,7 +185,7 @@ export class Sketch {
             for (let constraint of this.constraints) {
                 totalError += constraint.getError();
             }
-            if (totalError < 1) return true; // solved
+            if (totalError < 1 && count > 10) return true; // solved, still do a few iterations though...
             if (count > 100 && !tirelessSolve) return false;
             if (count % 10000 == 0) {
                 let currentTime = new Date().getTime();

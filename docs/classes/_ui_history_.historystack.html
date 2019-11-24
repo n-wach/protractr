@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>ColinearFilter | protractr</title>
+	<title>HistoryStack | protractr</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,31 +56,40 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_gcs_constraint_filter_.html">&quot;gcs/constraint_filter&quot;</a>
+					<a href="../modules/_ui_history_.html">&quot;ui/history&quot;</a>
 				</li>
 				<li>
-					<a href="_gcs_constraint_filter_.colinearfilter.html">ColinearFilter</a>
+					<a href="_ui_history_.historystack.html">HistoryStack</a>
 				</li>
 			</ul>
-			<h1>Class ColinearFilter</h1>
+			<h1>Class HistoryStack&lt;T&gt;</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>Simple stack structure.  Adjacent elements must be distinct.</p>
+					</div>
+				</div>
+			</section>
+			<section class="tsd-panel tsd-type-parameters">
+				<h3>Type parameters</h3>
+				<ul class="tsd-type-parameters">
+					<li>
+						<h4>T</h4>
+					</li>
+				</ul>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">ColinearFilter</span>
+						<span class="target">HistoryStack</span>
 					</li>
-				</ul>
-			</section>
-			<section class="tsd-panel">
-				<h3>Implements</h3>
-				<ul class="tsd-hierarchy">
-					<li><a href="../interfaces/_gcs_constraint_filter_.constraintfilter.html" class="tsd-signature-type">ConstraintFilter</a></li>
 				</ul>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
@@ -88,42 +97,59 @@
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section tsd-is-not-exported">
+							<h3>Constructors</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-not-exported"><a href="_ui_history_.historystack.html#constructor" class="tsd-kind-icon">constructor</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section tsd-is-not-exported">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-not-exported"><a href="_gcs_constraint_filter_.colinearfilter.html#filter" class="tsd-kind-icon">filter</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-not-exported"><a href="_gcs_constraint_filter_.colinearfilter.html#name" class="tsd-kind-icon">name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-not-exported"><a href="_ui_history_.historystack.html#stack" class="tsd-kind-icon">stack</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section tsd-is-not-exported">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_gcs_constraint_filter_.colinearfilter.html#createconstraints" class="tsd-kind-icon">create<wbr>Constraints</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_ui_history_.historystack.html#clear" class="tsd-kind-icon">clear</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_ui_history_.historystack.html#empty" class="tsd-kind-icon">empty</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_ui_history_.historystack.html#pop" class="tsd-kind-icon">pop</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_ui_history_.historystack.html#push" class="tsd-kind-icon">push</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_ui_history_.historystack.html#top" class="tsd-kind-icon">top</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
+				<h2>Constructors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class tsd-is-not-exported">
+					<a name="constructor" class="tsd-anchor"></a>
+					<h3>constructor</h3>
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">new <wbr>History<wbr>Stack<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_ui_history_.historystack.html" class="tsd-signature-type">HistoryStack</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/6f22f06/src/scripts/ui/history.ts#L54">ui/history.ts:54</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="_ui_history_.historystack.html" class="tsd-signature-type">HistoryStack</a></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
-					<a name="filter" class="tsd-anchor"></a>
-					<h3>filter</h3>
-					<div class="tsd-signature tsd-kind-icon">filter<span class="tsd-signature-symbol">:</span> <a href="_gcs_constraint_filter_.filterstring.html" class="tsd-signature-type">FilterString</a><span class="tsd-signature-symbol"> =&nbsp;new FilterString(&quot;line as 2 point:3+point&quot;)</span></div>
+					<a name="stack" class="tsd-anchor"></a>
+					<h3>stack</h3>
+					<div class="tsd-signature tsd-kind-icon">stack<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
-						<p>Implementation of <a href="../interfaces/_gcs_constraint_filter_.constraintfilter.html">ConstraintFilter</a>.<a href="../interfaces/_gcs_constraint_filter_.constraintfilter.html#filter">filter</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/6f22f06/src/scripts/gcs/constraint_filter.ts#L271">gcs/constraint_filter.ts:271</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
-					<a name="name" class="tsd-anchor"></a>
-					<h3>name</h3>
-					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;colinear&quot;</span></div>
-					<aside class="tsd-sources">
-						<p>Implementation of <a href="../interfaces/_gcs_constraint_filter_.constraintfilter.html">ConstraintFilter</a>.<a href="../interfaces/_gcs_constraint_filter_.constraintfilter.html#name">name</a></p>
-						<ul>
-							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/6f22f06/src/scripts/gcs/constraint_filter.ts#L270">gcs/constraint_filter.ts:270</a></li>
+							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/6f22f06/src/scripts/ui/history.ts#L54">ui/history.ts:54</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -131,26 +157,103 @@
 			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-					<a name="createconstraints" class="tsd-anchor"></a>
-					<h3>create<wbr>Constraints</h3>
+					<a name="clear" class="tsd-anchor"></a>
+					<h3>clear</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">create<wbr>Constraints<span class="tsd-signature-symbol">(</span>sortedFigures<span class="tsd-signature-symbol">: </span><a href="../modules/_gcs_constraint_filter_.html#sortedfigureselection" class="tsd-signature-type">SortedFigureSelection</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_gcs_constraint_.constraint.html" class="tsd-signature-type">Constraint</a><span class="tsd-signature-symbol">[]</span></li>
+						<li class="tsd-signature tsd-kind-icon">clear<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/_gcs_constraint_filter_.constraintfilter.html">ConstraintFilter</a>.<a href="../interfaces/_gcs_constraint_filter_.constraintfilter.html#createconstraints">createConstraints</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/6f22f06/src/scripts/gcs/constraint_filter.ts#L272">gcs/constraint_filter.ts:272</a></li>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/6f22f06/src/scripts/ui/history.ts#L80">ui/history.ts:80</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+					<a name="empty" class="tsd-anchor"></a>
+					<h3>empty</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">empty<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/6f22f06/src/scripts/ui/history.ts#L77">ui/history.ts:77</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+					<a name="pop" class="tsd-anchor"></a>
+					<h3>pop</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">pop<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/6f22f06/src/scripts/ui/history.ts#L73">ui/history.ts:73</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Get top element of stack and remove</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">T</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+					<a name="push" class="tsd-anchor"></a>
+					<h3>push</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">push<span class="tsd-signature-symbol">(</span>element<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/6f22f06/src/scripts/ui/history.ts#L65">ui/history.ts:65</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>sortedFigures: <a href="../modules/_gcs_constraint_filter_.html#sortedfigureselection" class="tsd-signature-type">SortedFigureSelection</a></h5>
+									<h5>element: <span class="tsd-signature-type">T</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_gcs_constraint_.constraint.html" class="tsd-signature-type">Constraint</a><span class="tsd-signature-symbol">[]</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+					<a name="top" class="tsd-anchor"></a>
+					<h3>top</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">top<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/6f22f06/src/scripts/ui/history.ts#L61">ui/history.ts:61</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Get top element of stack</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">T</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -165,7 +268,7 @@
 					<li class=" tsd-kind-external-module">
 						<a href="../modules/_gcs_constraint_.html">&quot;gcs/constraint&quot;</a>
 					</li>
-					<li class="current tsd-kind-external-module">
+					<li class=" tsd-kind-external-module">
 						<a href="../modules/_gcs_constraint_filter_.html">&quot;gcs/constraint_<wbr>filter&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
@@ -180,7 +283,7 @@
 					<li class=" tsd-kind-external-module">
 						<a href="../modules/_protractr_.html">&quot;protractr&quot;</a>
 					</li>
-					<li class=" tsd-kind-external-module">
+					<li class="current tsd-kind-external-module">
 						<a href="../modules/_ui_history_.html">&quot;ui/history&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
@@ -202,108 +305,39 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_gcs_constraint_filter_.arcpointfilter.html" class="tsd-kind-icon">Arc<wbr>Point<wbr>Filter</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_gcs_constraint_filter_.circleintersectionfilter.html" class="tsd-kind-icon">Circle<wbr>Intersection<wbr>Filter</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_gcs_constraint_filter_.coincidentpointfilter.html" class="tsd-kind-icon">Coincident<wbr>Point<wbr>Filter</a>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter">
+						<a href="_ui_history_.history.html" class="tsd-kind-icon">History</a>
 					</li>
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_gcs_constraint_filter_.colinearfilter.html" class="tsd-kind-icon">Colinear<wbr>Filter</a>
+					<li class="current tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter tsd-is-not-exported">
+						<a href="_ui_history_.historystack.html" class="tsd-kind-icon">History<wbr>Stack</a>
 						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
-								<a href="_gcs_constraint_filter_.colinearfilter.html#filter" class="tsd-kind-icon">filter</a>
+							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-not-exported">
+								<a href="_ui_history_.historystack.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
-								<a href="_gcs_constraint_filter_.colinearfilter.html#name" class="tsd-kind-icon">name</a>
+								<a href="_ui_history_.historystack.html#stack" class="tsd-kind-icon">stack</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-								<a href="_gcs_constraint_filter_.colinearfilter.html#createconstraints" class="tsd-kind-icon">create<wbr>Constraints</a>
+								<a href="_ui_history_.historystack.html#clear" class="tsd-kind-icon">clear</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+								<a href="_ui_history_.historystack.html#empty" class="tsd-kind-icon">empty</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+								<a href="_ui_history_.historystack.html#pop" class="tsd-kind-icon">pop</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+								<a href="_ui_history_.historystack.html#push" class="tsd-kind-icon">push</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+								<a href="_ui_history_.historystack.html#top" class="tsd-kind-icon">top</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_gcs_constraint_filter_.concentriccirclesfilter.html" class="tsd-kind-icon">Concentric<wbr>Circles<wbr>Filter</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_gcs_constraint_filter_.equalradiusfilter.html" class="tsd-kind-icon">Equal<wbr>Radius<wbr>Filter</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_gcs_constraint_filter_.filterstring.html" class="tsd-kind-icon">Filter<wbr>String</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_gcs_constraint_filter_.horizontallinefilter.html" class="tsd-kind-icon">Horizontal<wbr>Line<wbr>Filter</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_gcs_constraint_filter_.horizontalpointfilter.html" class="tsd-kind-icon">Horizontal<wbr>Point<wbr>Filter</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_gcs_constraint_filter_.lineintersectionfilter.html" class="tsd-kind-icon">Line<wbr>Intersection<wbr>Filter</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_gcs_constraint_filter_.linemidpointfilter.html" class="tsd-kind-icon">Line<wbr>Midpoint<wbr>Filter</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_gcs_constraint_filter_.tangentcirclesfilter.html" class="tsd-kind-icon">Tangent<wbr>Circles<wbr>Filter</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_gcs_constraint_filter_.tangentlinefilter.html" class="tsd-kind-icon">Tangent<wbr>Line<wbr>Filter</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_gcs_constraint_filter_.verticallinefilter.html" class="tsd-kind-icon">Vertical<wbr>Line<wbr>Filter</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_gcs_constraint_filter_.verticalpointfilter.html" class="tsd-kind-icon">Vertical<wbr>Point<wbr>Filter</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/_gcs_constraint_filter_.constraintfilter.html" class="tsd-kind-icon">Constraint<wbr>Filter</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_gcs_constraint_filter_.html#figuretype" class="tsd-kind-icon">Figure<wbr>Type</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_gcs_constraint_filter_.html#filter" class="tsd-kind-icon">Filter</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_gcs_constraint_filter_.html#filtercase" class="tsd-kind-icon">Filter<wbr>Case</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_gcs_constraint_filter_.html#matchquantifier" class="tsd-kind-icon">Match<wbr>Quantifier</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_gcs_constraint_filter_.html#sortedfigureselection" class="tsd-kind-icon">Sorted<wbr>Figure<wbr>Selection</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_gcs_constraint_filter_.html#typemap" class="tsd-kind-icon">Type<wbr>Map</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_gcs_constraint_filter_.html#typemaplist" class="tsd-kind-icon">Type<wbr>Map<wbr>List</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_gcs_constraint_filter_.html#typematch" class="tsd-kind-icon">Type<wbr>Match</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_gcs_constraint_filter_.html#typematchexpression" class="tsd-kind-icon">Type<wbr>Match<wbr>Expression</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_gcs_constraint_filter_.html#typematchexpressionlist" class="tsd-kind-icon">Type<wbr>Match<wbr>Expression<wbr>List</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_gcs_constraint_filter_.html#possibleconstraints" class="tsd-kind-icon">possible<wbr>Constraints</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module">
-						<a href="../modules/_gcs_constraint_filter_.html#getsatisfiedconstraintfilters" class="tsd-kind-icon">get<wbr>Satisfied<wbr>Constraint<wbr>Filters</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module">
-						<a href="../modules/_gcs_constraint_filter_.html#sortfigureselection" class="tsd-kind-icon">sort<wbr>Figure<wbr>Selection</a>
-					</li>
 				</ul>
 			</nav>
 		</div>

@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>VariablePoint | protractr</title>
+	<title>History | protractr</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,24 +56,41 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_gcs_constraint_.html">&quot;gcs/constraint&quot;</a>
+					<a href="../modules/_ui_history_.html">&quot;ui/history&quot;</a>
 				</li>
 				<li>
-					<a href="_gcs_constraint_.variablepoint.html">VariablePoint</a>
+					<a href="_ui_history_.history.html">History</a>
 				</li>
 			</ul>
-			<h1>Class VariablePoint</h1>
+			<h1>Class History&lt;T&gt;</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>Editing history manager.  Consists of two stacks: undo and redo history.
+							New states clear redo history, are added to undo history.
+						It&#39;s possible for current state to be undefined, in which case the app should load some default state.</p>
+					</div>
+				</div>
+			</section>
+			<section class="tsd-panel tsd-type-parameters">
+				<h3>Type parameters</h3>
+				<ul class="tsd-type-parameters">
+					<li>
+						<h4>T</h4>
+					</li>
+				</ul>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">VariablePoint</span>
+						<span class="target">History</span>
 					</li>
 				</ul>
 			</section>
@@ -84,23 +101,24 @@
 						<section class="tsd-index-section ">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="_gcs_constraint_.variablepoint.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="_ui_history_.history.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_gcs_constraint_.variablepoint.html#x" class="tsd-kind-icon">x</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_gcs_constraint_.variablepoint.html#y" class="tsd-kind-icon">y</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_ui_history_.history.html#currentstate" class="tsd-kind-icon">current<wbr>State</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_ui_history_.history.html#defaultstate" class="tsd-kind-icon">default<wbr>State</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_ui_history_.history.html#redohistory" class="tsd-kind-icon">redo<wbr>History</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_ui_history_.history.html#undohistory" class="tsd-kind-icon">undo<wbr>History</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_gcs_constraint_.variablepoint.html#deltavtowards" class="tsd-kind-icon">deltaVTowards</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_gcs_constraint_.variablepoint.html#has" class="tsd-kind-icon">has</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_gcs_constraint_.variablepoint.html#topoint" class="tsd-kind-icon">to<wbr>Point</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="_gcs_constraint_.variablepoint.html#fromvariables" class="tsd-kind-icon">from<wbr>Variables</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_ui_history_.history.html#recordstatechange" class="tsd-kind-icon">record<wbr>State<wbr>Change</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_ui_history_.history.html#redo" class="tsd-kind-icon">redo</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_ui_history_.history.html#undo" class="tsd-kind-icon">undo</a></li>
 							</ul>
 						</section>
 					</div>
@@ -112,25 +130,22 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Variable<wbr>Point<span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, y<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_gcs_constraint_.variablepoint.html" class="tsd-signature-type">VariablePoint</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>History<span class="tsd-signature-symbol">(</span>defaultState<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_ui_history_.history.html" class="tsd-signature-type">History</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/6f22f06/src/scripts/gcs/constraint.ts#L22">gcs/constraint.ts:22</a></li>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/6f22f06/src/scripts/ui/history.ts#L11">ui/history.ts:11</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>x: <span class="tsd-signature-type">number</span></h5>
-								</li>
-								<li>
-									<h5>y: <span class="tsd-signature-type">number</span></h5>
+									<h5>defaultState: <span class="tsd-signature-type">T</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_gcs_constraint_.variablepoint.html" class="tsd-signature-type">VariablePoint</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="_ui_history_.history.html" class="tsd-signature-type">History</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -138,22 +153,42 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="x" class="tsd-anchor"></a>
-					<h3>x</h3>
-					<div class="tsd-signature tsd-kind-icon">x<span class="tsd-signature-symbol">:</span> <a href="_gcs_constraint_.variable.html" class="tsd-signature-type">Variable</a></div>
+					<a name="currentstate" class="tsd-anchor"></a>
+					<h3>current<wbr>State</h3>
+					<div class="tsd-signature tsd-kind-icon">current<wbr>State<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">T</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/6f22f06/src/scripts/gcs/constraint.ts#L21">gcs/constraint.ts:21</a></li>
+							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/6f22f06/src/scripts/ui/history.ts#L10">ui/history.ts:10</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="y" class="tsd-anchor"></a>
-					<h3>y</h3>
-					<div class="tsd-signature tsd-kind-icon">y<span class="tsd-signature-symbol">:</span> <a href="_gcs_constraint_.variable.html" class="tsd-signature-type">Variable</a></div>
+					<a name="defaultstate" class="tsd-anchor"></a>
+					<h3>default<wbr>State</h3>
+					<div class="tsd-signature tsd-kind-icon">default<wbr>State<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">T</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/6f22f06/src/scripts/gcs/constraint.ts#L22">gcs/constraint.ts:22</a></li>
+							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/6f22f06/src/scripts/ui/history.ts#L11">ui/history.ts:11</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="redohistory" class="tsd-anchor"></a>
+					<h3>redo<wbr>History</h3>
+					<div class="tsd-signature tsd-kind-icon">redo<wbr>History<span class="tsd-signature-symbol">:</span> <a href="_ui_history_.historystack.html" class="tsd-signature-type">HistoryStack</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/6f22f06/src/scripts/ui/history.ts#L9">ui/history.ts:9</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="undohistory" class="tsd-anchor"></a>
+					<h3>undo<wbr>History</h3>
+					<div class="tsd-signature tsd-kind-icon">undo<wbr>History<span class="tsd-signature-symbol">:</span> <a href="_ui_history_.historystack.html" class="tsd-signature-type">HistoryStack</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/6f22f06/src/scripts/ui/history.ts#L8">ui/history.ts:8</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -161,94 +196,74 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="deltavtowards" class="tsd-anchor"></a>
-					<h3>deltaVTowards</h3>
+					<a name="recordstatechange" class="tsd-anchor"></a>
+					<h3>record<wbr>State<wbr>Change</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">deltaVTowards<span class="tsd-signature-symbol">(</span>v<span class="tsd-signature-symbol">: </span><a href="_gcs_constraint_.variable.html" class="tsd-signature-type">Variable</a>, goal<span class="tsd-signature-symbol">: </span><a href="_gcs_figures_.point.html" class="tsd-signature-type">Point</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+						<li class="tsd-signature tsd-kind-icon">record<wbr>State<wbr>Change<span class="tsd-signature-symbol">(</span>newState<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/6f22f06/src/scripts/gcs/constraint.ts#L33">gcs/constraint.ts:33</a></li>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/6f22f06/src/scripts/ui/history.ts#L21">ui/history.ts:21</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>A new state produced by something other than undo or redo.</p>
+								</div>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>v: <a href="_gcs_constraint_.variable.html" class="tsd-signature-type">Variable</a></h5>
-								</li>
-								<li>
-									<h5>goal: <a href="_gcs_figures_.point.html" class="tsd-signature-type">Point</a></h5>
+									<h5>newState: <span class="tsd-signature-type">T</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="has" class="tsd-anchor"></a>
-					<h3>has</h3>
+					<a name="redo" class="tsd-anchor"></a>
+					<h3>redo</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">has<span class="tsd-signature-symbol">(</span>v<span class="tsd-signature-symbol">: </span><a href="_gcs_constraint_.variable.html" class="tsd-signature-type">Variable</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+						<li class="tsd-signature tsd-kind-icon">redo<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/6f22f06/src/scripts/gcs/constraint.ts#L30">gcs/constraint.ts:30</a></li>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/6f22f06/src/scripts/ui/history.ts#L41">ui/history.ts:41</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>v: <a href="_gcs_constraint_.variable.html" class="tsd-signature-type">Variable</a></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>moves current state into undo, pops redo onto current state</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">T</span></h4>
 						</li>
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="topoint" class="tsd-anchor"></a>
-					<h3>to<wbr>Point</h3>
+					<a name="undo" class="tsd-anchor"></a>
+					<h3>undo</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">to<wbr>Point<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_gcs_figures_.point.html" class="tsd-signature-type">Point</a></li>
+						<li class="tsd-signature tsd-kind-icon">undo<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/6f22f06/src/scripts/gcs/constraint.ts#L27">gcs/constraint.ts:27</a></li>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/6f22f06/src/scripts/ui/history.ts#L31">ui/history.ts:31</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-returns-title">Returns <a href="_gcs_figures_.point.html" class="tsd-signature-type">Point</a></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
-					<a name="fromvariables" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagStatic">Static</span> from<wbr>Variables</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
-						<li class="tsd-signature tsd-kind-icon">from<wbr>Variables<span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><a href="_gcs_constraint_.variable.html" class="tsd-signature-type">Variable</a>, y<span class="tsd-signature-symbol">: </span><a href="_gcs_constraint_.variable.html" class="tsd-signature-type">Variable</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_gcs_constraint_.variablepoint.html" class="tsd-signature-type">VariablePoint</a></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/6f22f06/src/scripts/gcs/constraint.ts#L38">gcs/constraint.ts:38</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>x: <a href="_gcs_constraint_.variable.html" class="tsd-signature-type">Variable</a></h5>
-								</li>
-								<li>
-									<h5>y: <a href="_gcs_constraint_.variable.html" class="tsd-signature-type">Variable</a></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_gcs_constraint_.variablepoint.html" class="tsd-signature-type">VariablePoint</a></h4>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>moves current state into redo, pops undo onto current state</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">T</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -260,7 +275,7 @@
 					<li class="globals  ">
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
-					<li class="current tsd-kind-external-module">
+					<li class=" tsd-kind-external-module">
 						<a href="../modules/_gcs_constraint_.html">&quot;gcs/constraint&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
@@ -278,7 +293,7 @@
 					<li class=" tsd-kind-external-module">
 						<a href="../modules/_protractr_.html">&quot;protractr&quot;</a>
 					</li>
-					<li class=" tsd-kind-external-module">
+					<li class="current tsd-kind-external-module">
 						<a href="../modules/_ui_history_.html">&quot;ui/history&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
@@ -300,71 +315,41 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_gcs_constraint_.arcpointcoincidentconstraint.html" class="tsd-kind-icon">Arc<wbr>Point<wbr>Coincident<wbr>Constraint</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_gcs_constraint_.colinearpointsconstraint.html" class="tsd-kind-icon">Colinear<wbr>Points<wbr>Constraint</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_gcs_constraint_.equalconstraint.html" class="tsd-kind-icon">Equal<wbr>Constraint</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_gcs_constraint_.midpointconstraint.html" class="tsd-kind-icon">Midpoint<wbr>Constraint</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_gcs_constraint_.tangentcircleconstraint.html" class="tsd-kind-icon">Tangent<wbr>Circle<wbr>Constraint</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_gcs_constraint_.tangentlineconstraint.html" class="tsd-kind-icon">Tangent<wbr>Line<wbr>Constraint</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_gcs_constraint_.variable.html" class="tsd-kind-icon">Variable</a>
-					</li>
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_gcs_constraint_.variablepoint.html" class="tsd-kind-icon">Variable<wbr>Point</a>
+					<li class="current tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter">
+						<a href="_ui_history_.history.html" class="tsd-kind-icon">History</a>
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class">
-								<a href="_gcs_constraint_.variablepoint.html#constructor" class="tsd-kind-icon">constructor</a>
+								<a href="_ui_history_.history.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_gcs_constraint_.variablepoint.html#x" class="tsd-kind-icon">x</a>
+								<a href="_ui_history_.history.html#currentstate" class="tsd-kind-icon">current<wbr>State</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_gcs_constraint_.variablepoint.html#y" class="tsd-kind-icon">y</a>
+								<a href="_ui_history_.history.html#defaultstate" class="tsd-kind-icon">default<wbr>State</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_ui_history_.history.html#redohistory" class="tsd-kind-icon">redo<wbr>History</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_ui_history_.history.html#undohistory" class="tsd-kind-icon">undo<wbr>History</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_gcs_constraint_.variablepoint.html#deltavtowards" class="tsd-kind-icon">deltaVTowards</a>
+								<a href="_ui_history_.history.html#recordstatechange" class="tsd-kind-icon">record<wbr>State<wbr>Change</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_gcs_constraint_.variablepoint.html#has" class="tsd-kind-icon">has</a>
+								<a href="_ui_history_.history.html#redo" class="tsd-kind-icon">redo</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_gcs_constraint_.variablepoint.html#topoint" class="tsd-kind-icon">to<wbr>Point</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
-								<a href="_gcs_constraint_.variablepoint.html#fromvariables" class="tsd-kind-icon">from<wbr>Variables</a>
+								<a href="_ui_history_.history.html#undo" class="tsd-kind-icon">undo</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/_gcs_constraint_.constraint.html" class="tsd-kind-icon">Constraint</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module">
-						<a href="../modules/_gcs_constraint_.html#constraintfromobject" class="tsd-kind-icon">constraint<wbr>From<wbr>Object</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_gcs_constraint_.html#equalgoal" class="tsd-kind-icon">equal<wbr>Goal</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_gcs_constraint_.html#leastsquaresregression" class="tsd-kind-icon">least<wbr>Squares<wbr>Regression</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_gcs_constraint_.html#sum" class="tsd-kind-icon">sum</a>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter tsd-is-not-exported">
+						<a href="_ui_history_.historystack.html" class="tsd-kind-icon">History<wbr>Stack</a>
 					</li>
 				</ul>
 			</nav>

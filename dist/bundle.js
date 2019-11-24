@@ -1533,6 +1533,29 @@ var Sketch = /** @class */ (function () {
                 this.constraints.push(constraint);
             }
         }
+        else if (constraint.type == "arc-point-coincident") {
+            var apc1 = constraint;
+            var mergeable = void 0;
+            for (var _r = 0, _s = this.constraints; _r < _s.length; _r++) {
+                var c = _s[_r];
+                if (c.type == "arc-point-coincident") {
+                    var apc2 = c;
+                    if (apc1.center == apc2.center) {
+                        mergeable = apc2;
+                        break;
+                    }
+                }
+            }
+            if (mergeable) {
+                for (var _t = 0, _u = apc1.points; _t < _u.length; _t++) {
+                    var p = _u[_t];
+                    mergeable.points.push(p);
+                }
+            }
+            else {
+                this.constraints.push(constraint);
+            }
+        }
         else {
             this.constraints.push(constraint);
         }
@@ -1573,8 +1596,8 @@ var Sketch = /** @class */ (function () {
                 var constraint = _a[_i];
                 totalError += constraint.getError();
             }
-            if (totalError < 1)
-                return true; // solved
+            if (totalError < 1 && count > 10)
+                return true; // solved, still do a few iterations though...
             if (count > 100 && !tirelessSolve)
                 return false;
             if (count % 10000 == 0) {
@@ -1715,30 +1738,33 @@ var Protractr = /** @class */ (function () {
     function Protractr(canvas, sidePane, toolbar) {
         this.sketch = new sketch_1.Sketch();
         this.ui = new ui_1.UI(this, canvas, sidePane, toolbar);
-        this.ui.sketchView.pushState();
     }
     Protractr.prototype.loadSketch = function (json, push) {
         if (push === void 0) { push = true; }
+        if (json == undefined) {
+            this.resetSketch();
+            return;
+        }
         this.sketch = sketch_1.Sketch.fromObject(JSON.parse(json));
-        this.ui.sketchView.draw();
-        this.ui.infoPane.updateConstraintList(this.sketch.constraints);
-        if (push)
-            this.ui.sketchView.pushState();
+        this.ui.refresh();
     };
     Protractr.prototype.exportSketch = function () {
         return JSON.stringify(this.sketch.asObject());
     };
     Protractr.prototype.resetSketch = function () {
         this.sketch = new sketch_1.Sketch();
-        this.ui.sketchView.draw();
-        this.ui.infoPane.updateConstraintList(this.sketch.constraints);
-        this.ui.sketchView.pushState();
+        this.ui.refresh();
     };
     Protractr.prototype.loadFromURL = function (url) {
         var request = new XMLHttpRequest();
         var _this = this;
         request.addEventListener("load", function () {
-            _this.loadSketch(this.responseText);
+            if (this.status == 200) {
+                _this.loadSketch(this.responseText);
+            }
+            else {
+                console.log("Failed to load sketch, response code != 200: ", this);
+            }
         });
         request.open("GET", url);
         request.send();
@@ -1747,7 +1773,92 @@ var Protractr = /** @class */ (function () {
 }());
 exports.Protractr = Protractr;
 
-},{"./gcs/sketch":4,"./ui/ui":11}],7:[function(require,module,exports){
+},{"./gcs/sketch":4,"./ui/ui":12}],7:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * Editing history manager.  Consists of two stacks: undo and redo history.
+ * New states clear redo history, are added to undo history.
+ * It's possible for current state to be undefined, in which case the app should load some default state.
+ */
+var History = /** @class */ (function () {
+    function History(defaultState) {
+        this.undoHistory = new HistoryStack();
+        this.redoHistory = new HistoryStack();
+        this.defaultState = defaultState;
+        this.currentState = defaultState;
+    }
+    /**
+     * A new state produced by something other than undo or redo.
+     */
+    History.prototype.recordStateChange = function (newState) {
+        if (this.currentState != newState) {
+            this.undoHistory.push(this.currentState);
+            this.redoHistory.clear();
+            this.currentState = newState;
+        }
+    };
+    /**
+     * moves current state into redo, pops undo onto current state
+     */
+    History.prototype.undo = function () {
+        if (this.undoHistory.empty())
+            return this.currentState;
+        this.redoHistory.push(this.currentState);
+        this.currentState = this.undoHistory.pop();
+        return this.currentState;
+    };
+    /**
+     * moves current state into undo, pops redo onto current state
+     */
+    History.prototype.redo = function () {
+        if (this.redoHistory.empty())
+            return this.currentState;
+        this.undoHistory.push(this.currentState);
+        this.currentState = this.redoHistory.pop();
+        return this.currentState;
+    };
+    return History;
+}());
+exports.History = History;
+/**
+ * Simple stack structure.  Adjacent elements must be distinct.
+ */
+var HistoryStack = /** @class */ (function () {
+    function HistoryStack() {
+        this.stack = [];
+    }
+    /**
+     * Get top element of stack
+     */
+    HistoryStack.prototype.top = function () {
+        if (this.empty())
+            return undefined;
+        return this.stack[this.stack.length - 1];
+    };
+    HistoryStack.prototype.push = function (element) {
+        if (this.top() != element) {
+            this.stack.push(element);
+        }
+    };
+    /**
+     * Get top element of stack and remove
+     */
+    HistoryStack.prototype.pop = function () {
+        if (this.empty())
+            return undefined;
+        return this.stack.pop();
+    };
+    HistoryStack.prototype.empty = function () {
+        return this.stack.length == 0;
+    };
+    HistoryStack.prototype.clear = function () {
+        this.stack = [];
+    };
+    return HistoryStack;
+}());
+
+},{}],8:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var figures_1 = require("../gcs/figures");
@@ -1790,7 +1901,7 @@ var InfoPane = /** @class */ (function () {
             child.addEventListener("click", function () {
                 var sortedFigures = constraint_filter_1.sortFigureSelection(figures);
                 _this.ui.protractr.sketch.addConstraints(constraintFilter.createConstraints(sortedFigures));
-                _this.ui.sketchView.pushState();
+                _this.ui.sketchView.pushState(); // constraint added
             });
             this_1.possibleConstraints.appendChild(child);
         };
@@ -1828,7 +1939,7 @@ var InfoPane = /** @class */ (function () {
             event.preventDefault();
             if (event.which == 3) {
                 _this.ui.protractr.sketch.removeConstraint(constraint);
-                _this.ui.sketchView.pushState();
+                _this.ui.sketchView.pushState(); // constraint removed
             }
             _this.ui.sketchView.hoveredConstraint = null;
         };
@@ -1846,7 +1957,7 @@ var InfoPane = /** @class */ (function () {
 }());
 exports.InfoPane = InfoPane;
 
-},{"../gcs/constraint_filter":2,"../gcs/figures":3}],8:[function(require,module,exports){
+},{"../gcs/constraint_filter":2,"../gcs/figures":3}],9:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var figures_1 = require("../gcs/figures");
@@ -1854,7 +1965,6 @@ var SketchView = /** @class */ (function () {
     function SketchView(ui, canvas) {
         this.dragging = false;
         this.lastPanPoint = null;
-        this.history = [];
         this.ui = ui;
         this.canvas = canvas;
         this.selectedFigures = [];
@@ -2084,13 +2194,14 @@ var SketchView = /** @class */ (function () {
         this.ctx.fill();
     };
     SketchView.prototype.pushState = function () {
-        this.history.push(this.ui.protractr.exportSketch());
+        var s = this.ui.protractr.exportSketch();
+        this.ui.history.recordStateChange(s);
     };
     return SketchView;
 }());
 exports.SketchView = SketchView;
 
-},{"../gcs/figures":3}],9:[function(require,module,exports){
+},{"../gcs/figures":3}],10:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var tools_1 = require("./tools");
@@ -2107,6 +2218,7 @@ var Toolbar = /** @class */ (function () {
         this.addTool(new tools_1.CircleTool(), "circle.png");
         //this.addTool(new Tool("Arc", "Create an arc"), "arc.png");
         this.addTool(new tools_1.UndoTool(), "undo.png");
+        this.addTool(new tools_1.RedoTool(), "redo.png");
         this.addTool(new tools_1.ImportTool(), "import.png");
         this.addTool(new tools_1.ExportTool(), "export.png");
     };
@@ -2152,7 +2264,7 @@ var ToolElement = /** @class */ (function () {
     return ToolElement;
 }());
 
-},{"./tools":10}],10:[function(require,module,exports){
+},{"./tools":11}],11:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -2190,22 +2302,25 @@ exports.Tool = Tool;
 var UndoTool = /** @class */ (function (_super) {
     __extends(UndoTool, _super);
     function UndoTool() {
-        return _super.call(this, "Undo", "Undo as action") || this;
+        return _super.call(this, "Undo", "Undo an action") || this;
     }
     UndoTool.prototype.used = function () {
-        var history = main_1.protractr.ui.sketchView.history;
-        history.pop(); //pop current state
-        if (history.length > 0) {
-            var lastState = history[history.length - 1]; //restore last state
-            main_1.protractr.loadSketch(lastState, false);
-        }
-        else {
-            main_1.protractr.resetSketch();
-        }
+        main_1.protractr.loadSketch(main_1.protractr.ui.history.undo());
     };
     return UndoTool;
 }(Tool));
 exports.UndoTool = UndoTool;
+var RedoTool = /** @class */ (function (_super) {
+    __extends(RedoTool, _super);
+    function RedoTool() {
+        return _super.call(this, "Redo", "Redo an action") || this;
+    }
+    RedoTool.prototype.used = function () {
+        main_1.protractr.loadSketch(main_1.protractr.ui.history.redo());
+    };
+    return RedoTool;
+}(Tool));
+exports.RedoTool = RedoTool;
 var ExportTool = /** @class */ (function (_super) {
     __extends(ExportTool, _super);
     function ExportTool() {
@@ -2412,21 +2527,27 @@ function constrainPointBySnap(point, snapFigure) {
     }
 }
 
-},{"../gcs/constraint":1,"../gcs/figures":3,"../main":5}],11:[function(require,module,exports){
+},{"../gcs/constraint":1,"../gcs/figures":3,"../main":5}],12:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var toolbar_1 = require("./toolbar");
 var infopane_1 = require("./infopane");
 var sketchview_1 = require("./sketchview");
+var history_1 = require("./history");
 var UI = /** @class */ (function () {
     function UI(protractr, canvas, sidePane, toolbar) {
         this.protractr = protractr;
+        this.history = new history_1.History(protractr.exportSketch());
         this.sketchView = new sketchview_1.SketchView(this, canvas);
         this.infoPane = new infopane_1.InfoPane(this, sidePane);
         this.toolbar = new toolbar_1.Toolbar(toolbar, this.sketchView);
     }
+    UI.prototype.refresh = function () {
+        this.sketchView.draw();
+        this.infoPane.updateConstraintList(this.protractr.sketch.constraints);
+    };
     return UI;
 }());
 exports.UI = UI;
 
-},{"./infopane":7,"./sketchview":8,"./toolbar":9}]},{},[5]);
+},{"./history":7,"./infopane":8,"./sketchview":9,"./toolbar":10}]},{},[5]);

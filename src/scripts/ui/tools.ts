@@ -27,17 +27,19 @@ export class Tool {
 
 export class UndoTool extends Tool {
     constructor() {
-        super("Undo", "Undo as action");
+        super("Undo", "Undo an action");
     }
     used() {
-        let history = protractr.ui.sketchView.history;
-        history.pop(); //pop current state
-        if(history.length > 0) {
-            let lastState = history[history.length - 1]; //restore last state
-            protractr.loadSketch(lastState, false);
-        } else {
-            protractr.resetSketch();
-        }
+        protractr.loadSketch(protractr.ui.history.undo())
+    }
+}
+
+export class RedoTool extends Tool {
+    constructor() {
+        super("Redo", "Redo an action");
+    }
+    used() {
+        protractr.loadSketch(protractr.ui.history.redo());
     }
 }
 

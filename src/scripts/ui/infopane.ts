@@ -52,7 +52,7 @@ export class InfoPane {
             child.addEventListener("click", function () {
                 let sortedFigures = sortFigureSelection(figures);
                 _this.ui.protractr.sketch.addConstraints(constraintFilter.createConstraints(sortedFigures));
-                _this.ui.sketchView.pushState();
+                _this.ui.sketchView.pushState(); // constraint added
             });
             this.possibleConstraints.appendChild(child);
         }
@@ -82,7 +82,7 @@ export class InfoPane {
             event.preventDefault();
             if(event.which == 3) {
                 _this.ui.protractr.sketch.removeConstraint(constraint);
-                _this.ui.sketchView.pushState();
+                _this.ui.sketchView.pushState(); // constraint removed
             }
             _this.ui.sketchView.hoveredConstraint = null;
         }
