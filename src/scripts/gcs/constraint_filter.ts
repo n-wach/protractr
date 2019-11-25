@@ -7,8 +7,7 @@ import {
     EqualConstraint,
     ColinearPointsConstraint,
     TangentLineConstraint,
-    TangentCircleConstraint,
-    Variable,
+    TangentCircleConstraint, Variable, EqualLengthConstraint,
 } from "./constraint";
 
 type MatchQuantifier = string;
@@ -21,17 +20,16 @@ type TypeMapList = TypeMap[];
 type FilterCase = {mappings: TypeMapList, expressions: TypeMatchExpressionList};
 type Filter = FilterCase[];
 
-
+/**
+ * See type definitions
+ * - TypeMatches are joined by & to form a TypeMatchExpression
+ * - TypeMaps take the form "type as n type" such as "line as 2 point"
+ * - TypeMaps are joined by , to form a TypeMapList
+ * - MappedTypedMatchExpressionLists are formed as TypeMapList:TypeMatchExpression
+ * - MappedTypedMatchExpressionLists are joined by | to form
+ * - MatchQuantifier can be a number, a range (number-number), number+ or * (0+) or empty (1)
+ */
 class FilterString {
-    /**
-     * See type definitions above.
-     * - TypeMatches are joined by & to form a TypeMatchExpression
-     * - TypeMaps take the form "type as n type" such as "line as 2 point"
-     * - TypeMaps are joined by , to form a TypeMapList
-     * - MappedTypedMatchExpressionLists are formed as TypeMapList:TypeMatchExpression
-     * - MappedTypedMatchExpressionLists are joined by | to form
-     * - MatchQuantifier can be a number, a range (number-number), number+ or * (0+) or empty (1)
-     */
     filterString: string;
     filter: Filter;
     constructor(str: string) {
@@ -352,6 +350,19 @@ export class TangentCirclesFilter implements ConstraintFilter {
     }
 }
 
+export class EqualLengthFilter implements ConstraintFilter {
+    name: string = "equal";
+    filter = new FilterString(":2+line");
+    createConstraints(sortedFigures: SortedFigureSelection): Constraint[] {
+        let lines = sortedFigures.line;
+        let pairs: [VariablePoint, VariablePoint][] = [];
+        for(let line of lines) {
+            pairs.push([line.p1.variablePoint, line.p2.variablePoint]);
+        }
+        return [new EqualLengthConstraint(pairs, "equal lengths")]
+    }
+}
+
 let possibleConstraints = [
     //pointy
     new CoincidentPointFilter(),
@@ -363,6 +374,7 @@ let possibleConstraints = [
     new ColinearFilter(),
     new LineIntersectionFilter(),
     new LineMidpointFilter(),
+    new EqualLengthFilter(),
     //circley
     new EqualRadiusFilter(),
     new ConcentricCirclesFilter(),

@@ -575,6 +575,88 @@ export class TangentCircleConstraint implements Constraint {
     }
 }
 
+export class EqualLengthConstraint implements Constraint {
+    type = "equal-length";
+    name = "equal length";
+    pairs: [VariablePoint, VariablePoint][];
+    constructor(pairs: [VariablePoint, VariablePoint][], name: string="equal length") {
+        this.name = name;
+        this.pairs = pairs;
+    }
+    getError(): number {
+        let goal = this.getGoalLength();
+        let error = 0;
+        for(let pair of this.pairs) {
+            let p1 = pair[0].toPoint();
+            let p2 = pair[1].toPoint();
+            error += Math.abs(goal - p1.distTo(p2));
+        }
+        return error;
+    }
+    getGoalLength(): number {
+        let sumDist = 0;
+        for(let pair of this.pairs) {
+            let p1 = pair[0].toPoint();
+            let p2 = pair[1].toPoint();
+            let dist = p1.distTo(p2);
+            if(pair[0].x.constant && pair[0].y.constant && pair[1].x.constant && pair[1].y.constant) {
+                return dist;
+            }
+            sumDist += dist;
+        }
+        return sumDist / this.pairs.length;
+    }
+    getGradient(v: Variable): number {
+        for(let pair of this.pairs) {
+            if(pair[0].has(v) || pair[1].has(v)) {
+                let goal = this.getGoalLength();
+
+                if(pair[0].has(v)) {
+                    let p0 = pair[0].toPoint();
+                    let goalPoint = pair[1].toPoint().pointTowards(p0, goal);
+                    return pair[0].deltaVTowards(v, goalPoint);
+                }
+
+                if(pair[1].has(v)) {
+                    let p1 = pair[1].toPoint();
+                    let goalPoint = pair[0].toPoint().pointTowards(p1, goal);
+                    return pair[1].deltaVTowards(v, goalPoint);
+                }
+            }
+        }
+        return 0;
+    }
+    containsFigure(f: Figure): boolean {
+        if (f.type == "line") {
+            for(let pair of this.pairs) {
+                if(pair[0] == (f as LineFigure).p1.variablePoint && pair[1] == (f as LineFigure).p2.variablePoint) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    asObject(obj: SketchExport, sketch: Sketch): ConstraintExport {
+        let pairs = [];
+        for(let pair of this.pairs) {
+            pairs.push([sketch.points.indexOf(pair[0]), sketch.points.indexOf(pair[1])])
+        }
+        return {
+            "type": this.type,
+            "name": this.name,
+            "pairs": pairs,
+        };
+    }
+    static fromObject(c: ConstraintExport, sketch: Sketch): EqualLengthConstraint {
+        let pairs = [];
+        for(let pair of c["pairs"]) {
+            pairs.push([sketch.points[pair[0]], sketch.points[pair[1]]])
+        }
+        return new EqualLengthConstraint(pairs);
+    }
+}
+
 
 function leastSquaresRegression(points: VariablePoint[]): [Point, Point] {
     //hacky solution to avoid weird behavior when dragging vertical points
@@ -644,6 +726,8 @@ export function constraintFromObject(c: ConstraintExport, sketch: Sketch): Const
         case "tangent-circle":
             cs = TangentCircleConstraint.fromObject(c, sketch);
             break;
+        case "equal-length":
+            cs = EqualLengthConstraint.fromObject(c, sketch);
     }
     if(c.name) cs.name = c.name;
     return cs;

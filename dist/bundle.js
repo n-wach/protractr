@@ -607,6 +607,92 @@ var TangentCircleConstraint = /** @class */ (function () {
     return TangentCircleConstraint;
 }());
 exports.TangentCircleConstraint = TangentCircleConstraint;
+var EqualLengthConstraint = /** @class */ (function () {
+    function EqualLengthConstraint(pairs, name) {
+        if (name === void 0) { name = "equal length"; }
+        this.type = "equal-length";
+        this.name = "equal length";
+        this.name = name;
+        this.pairs = pairs;
+    }
+    EqualLengthConstraint.prototype.getError = function () {
+        var goal = this.getGoalLength();
+        var error = 0;
+        for (var _i = 0, _a = this.pairs; _i < _a.length; _i++) {
+            var pair = _a[_i];
+            var p1 = pair[0].toPoint();
+            var p2 = pair[1].toPoint();
+            error += Math.abs(goal - p1.distTo(p2));
+        }
+        return error;
+    };
+    EqualLengthConstraint.prototype.getGoalLength = function () {
+        var sumDist = 0;
+        for (var _i = 0, _a = this.pairs; _i < _a.length; _i++) {
+            var pair = _a[_i];
+            var p1 = pair[0].toPoint();
+            var p2 = pair[1].toPoint();
+            var dist = p1.distTo(p2);
+            if (pair[0].x.constant && pair[0].y.constant && pair[1].x.constant && pair[1].y.constant) {
+                return dist;
+            }
+            sumDist += dist;
+        }
+        return sumDist / this.pairs.length;
+    };
+    EqualLengthConstraint.prototype.getGradient = function (v) {
+        for (var _i = 0, _a = this.pairs; _i < _a.length; _i++) {
+            var pair = _a[_i];
+            if (pair[0].has(v) || pair[1].has(v)) {
+                var goal = this.getGoalLength();
+                if (pair[0].has(v)) {
+                    var p0 = pair[0].toPoint();
+                    var goalPoint = pair[1].toPoint().pointTowards(p0, goal);
+                    return pair[0].deltaVTowards(v, goalPoint);
+                }
+                if (pair[1].has(v)) {
+                    var p1 = pair[1].toPoint();
+                    var goalPoint = pair[0].toPoint().pointTowards(p1, goal);
+                    return pair[1].deltaVTowards(v, goalPoint);
+                }
+            }
+        }
+        return 0;
+    };
+    EqualLengthConstraint.prototype.containsFigure = function (f) {
+        if (f.type == "line") {
+            for (var _i = 0, _a = this.pairs; _i < _a.length; _i++) {
+                var pair = _a[_i];
+                if (pair[0] == f.p1.variablePoint && pair[1] == f.p2.variablePoint) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    };
+    EqualLengthConstraint.prototype.asObject = function (obj, sketch) {
+        var pairs = [];
+        for (var _i = 0, _a = this.pairs; _i < _a.length; _i++) {
+            var pair = _a[_i];
+            pairs.push([sketch.points.indexOf(pair[0]), sketch.points.indexOf(pair[1])]);
+        }
+        return {
+            "type": this.type,
+            "name": this.name,
+            "pairs": pairs,
+        };
+    };
+    EqualLengthConstraint.fromObject = function (c, sketch) {
+        var pairs = [];
+        for (var _i = 0, _a = c["pairs"]; _i < _a.length; _i++) {
+            var pair = _a[_i];
+            pairs.push([sketch.points[pair[0]], sketch.points[pair[1]]]);
+        }
+        return new EqualLengthConstraint(pairs);
+    };
+    return EqualLengthConstraint;
+}());
+exports.EqualLengthConstraint = EqualLengthConstraint;
 function leastSquaresRegression(points) {
     //hacky solution to avoid weird behavior when dragging vertical points
     var constantPoints = [];
@@ -672,6 +758,8 @@ function constraintFromObject(c, sketch) {
         case "tangent-circle":
             cs = TangentCircleConstraint.fromObject(c, sketch);
             break;
+        case "equal-length":
+            cs = EqualLengthConstraint.fromObject(c, sketch);
     }
     if (c.name)
         cs.name = c.name;
@@ -683,6 +771,15 @@ exports.constraintFromObject = constraintFromObject;
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var constraint_1 = require("./constraint");
+/**
+ * See type definitions
+ * - TypeMatches are joined by & to form a TypeMatchExpression
+ * - TypeMaps take the form "type as n type" such as "line as 2 point"
+ * - TypeMaps are joined by , to form a TypeMapList
+ * - MappedTypedMatchExpressionLists are formed as TypeMapList:TypeMatchExpression
+ * - MappedTypedMatchExpressionLists are joined by | to form
+ * - MatchQuantifier can be a number, a range (number-number), number+ or * (0+) or empty (1)
+ */
 var FilterString = /** @class */ (function () {
     function FilterString(str) {
         this.filterString = str;
@@ -1058,6 +1155,23 @@ var TangentCirclesFilter = /** @class */ (function () {
     return TangentCirclesFilter;
 }());
 exports.TangentCirclesFilter = TangentCirclesFilter;
+var EqualLengthFilter = /** @class */ (function () {
+    function EqualLengthFilter() {
+        this.name = "equal";
+        this.filter = new FilterString(":2+line");
+    }
+    EqualLengthFilter.prototype.createConstraints = function (sortedFigures) {
+        var lines = sortedFigures.line;
+        var pairs = [];
+        for (var _i = 0, lines_2 = lines; _i < lines_2.length; _i++) {
+            var line = lines_2[_i];
+            pairs.push([line.p1.variablePoint, line.p2.variablePoint]);
+        }
+        return [new constraint_1.EqualLengthConstraint(pairs, "equal lengths")];
+    };
+    return EqualLengthFilter;
+}());
+exports.EqualLengthFilter = EqualLengthFilter;
 var possibleConstraints = [
     //pointy
     new CoincidentPointFilter(),
@@ -1069,6 +1183,7 @@ var possibleConstraints = [
     new ColinearFilter(),
     new LineIntersectionFilter(),
     new LineMidpointFilter(),
+    new EqualLengthFilter(),
     //circley
     new EqualRadiusFilter(),
     new ConcentricCirclesFilter(),
