@@ -39,9 +39,18 @@ export class FigureInfoView {
     div: HTMLDivElement;
     figure: Figure;
     ui: UI;
+    fields: HTMLInputElement[];
+    variables: Variable[];
     constructor(ui: UI) {
         this.ui = ui;
         this.div = document.createElement("div");
+        this.fields = [];
+        this.variables = [];
+    }
+    refresh() {
+        for(let i = 0; i < this.variables.length; i++) {
+            this.fields[i].value = "" + this.variables[i].value;
+        }
     }
     setFigure(figure: Figure) {
         while(this.div.lastChild) {
@@ -87,6 +96,8 @@ export class FigureInfoView {
         }
         div.appendChild(field);
         this.div.appendChild(div);
+        this.fields.push(field);
+        this.variables.push(variable);
     }
 }
 

@@ -1996,7 +1996,14 @@ var FigureInfoView = /** @class */ (function () {
     function FigureInfoView(ui) {
         this.ui = ui;
         this.div = document.createElement("div");
+        this.fields = [];
+        this.variables = [];
     }
+    FigureInfoView.prototype.refresh = function () {
+        for (var i = 0; i < this.variables.length; i++) {
+            this.fields[i].value = "" + this.variables[i].value;
+        }
+    };
     FigureInfoView.prototype.setFigure = function (figure) {
         while (this.div.lastChild) {
             this.div.removeChild(this.div.lastChild);
@@ -2041,6 +2048,8 @@ var FigureInfoView = /** @class */ (function () {
         };
         div.appendChild(field);
         this.div.appendChild(div);
+        this.fields.push(field);
+        this.variables.push(variable);
     };
     return FigureInfoView;
 }());
@@ -2550,6 +2559,7 @@ var SketchView = /** @class */ (function () {
                 this.drawFigure(child);
             }
         }
+        this.ui.infoPane.selectedFigureView.refresh();
     };
     SketchView.prototype.drawPoint = function (point, size, color) {
         if (size === void 0) { size = 3; }

@@ -225,6 +225,7 @@ export class SketchView {
                 this.drawFigure(child);
             }
         }
+        this.ui.infoPane.selectedFigureView.refresh();
     }
     drawPoint(point: Point, size: number = 3, color: string = "black") {
         this.ctx.fillStyle = color;
