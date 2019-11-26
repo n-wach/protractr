@@ -14,7 +14,6 @@ export class SketchView {
 
     subscribedTool: Tool;
     hoveredFigure: Figure;
-    selectedFigures: Figure[];
     ui: UI;
     lastDrag: Point;
 
@@ -23,12 +22,10 @@ export class SketchView {
     dragging: boolean = false;
 
     lastPanPoint: Point = null;
-    hoveredConstraint: Constraint;
 
     constructor(ui: UI, canvas: HTMLCanvasElement) {
         this.ui = ui;
         this.canvas = canvas;
-        this.selectedFigures = [];
         this.ctxScale = 1;
         this.ctxOrigin = new Point(0, 0);
         this.ctx = this.canvas.getContext("2d");
@@ -99,8 +96,7 @@ export class SketchView {
                     if (this.hoveredFigure) {
                         this.toggleSelected(this.hoveredFigure);
                     } else {
-                        this.selectedFigures = [];
-                        this.updateSelected();
+                        this.ui.infoPane.selectedFiguresList.clear();
                     }
                 }
                 if(this.draggedFigure) {
@@ -172,18 +168,13 @@ export class SketchView {
         return this.hoveredFigure.getClosestPoint(point);
     }
     toggleSelected(fig: Figure) {
-        if(this.selectedFigures.indexOf(fig) == -1) {
-            this.selectedFigures.push(fig);
+        let selectedFigures = this.ui.infoPane.selectedFiguresList;
+        if(!selectedFigures.contains(fig)) {
+            selectedFigures.addFigure(fig);
         } else {
-            this.selectedFigures = this.selectedFigures.filter(function(value, index, arr){
-                return value != fig;
-            });
+            selectedFigures.removeFigure(fig);
         }
-        this.updateSelected();
-    }
-    updateSelected() {
-        this.ui.infoPane.setFocusedFigures(this.selectedFigures);
-        this.ui.infoPane.updateConstraintList(this.ui.protractr.sketch.constraints);
+        this.ui.refresh();
     }
     setCursor(cursor: string) {
         this.canvas.style.cursor = cursor;
@@ -192,14 +183,14 @@ export class SketchView {
         this.ctx.strokeStyle = "black";
         this.ctx.lineWidth = 2 / this.ctxScale;
         let pointSize = 3 / this.ctxScale;
-        if(this.hoveredFigure == fig) {
+        if(this.hoveredFigure == fig || this.ui.infoPane.selectedFiguresList.figureInHovered(fig)) {
             pointSize = 7 / this.ctxScale;
             this.ctx.lineWidth = 5 / this.ctxScale;
         }
-        if (this.selectedFigures.indexOf(fig) != -1) {
+        if (this.ui.infoPane.selectedFiguresList.contains(fig)) {
             this.ctx.strokeStyle = "#5e9cff";
         }
-        if (this.hoveredConstraint && this.hoveredConstraint.containsFigure(fig)) {
+        if (this.ui.infoPane.existingConstraintsList.figureInHovered(fig)) {
             this.ctx.strokeStyle = "purple";
             pointSize = 7 / this.ctxScale;
             this.ctx.lineWidth = 5 / this.ctxScale;

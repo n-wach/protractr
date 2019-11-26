@@ -159,14 +159,13 @@ export class Sketch {
         if(!this.solveConstraints(true)) {
             alert("That constraint couldn't be solved...");
         }
-        protractr.ui.infoPane.updateConstraintList(this.constraints);
-        protractr.ui.sketchView.draw();
+        protractr.ui.refresh();
     }
     removeConstraint(constraint: Constraint) {
         this.constraints = this.constraints.filter(function(value, index, arr) {
             return value != constraint;
         });
-        protractr.ui.infoPane.updateConstraintList(this.constraints);
+        protractr.ui.refresh();
     }
     addPoint(point: VariablePoint) {
         this.points.push(point);

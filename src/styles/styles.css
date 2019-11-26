@@ -45,12 +45,21 @@ table, tbody, tr, td {
 .tool-active {
     border-color: red;
 }
-.existing-constraint {
+.interactive-list {
+    background: white;
+    width: 100%;
+    max-height: 404px;
+    overflow: scroll;
+}
+.interactive-list-element {
     background: white;
     border: 1px black;
     color: black;
     margin: 0 5px;
 }
-.existing-constraint:hover {
-    background: gray;
+.interactive-list-element.hovered {
+    background: lightgray;
+}
+.interactive-list-element.selected {
+    background: orange !important;
 }

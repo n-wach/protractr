@@ -1,5 +1,5 @@
 import {Toolbar} from "./toolbar";
-import {InfoPane} from "./infopane";
+import {Sidepane} from "./sidepane";
 import {SketchView} from "./sketchview";
 import {Protractr} from "../protractr";
 import {History} from "./history";
@@ -7,18 +7,25 @@ import {History} from "./history";
 export class UI {
     protractr: Protractr;
     toolbar: Toolbar;
-    infoPane: InfoPane;
+    infoPane: Sidepane;
     sketchView: SketchView;
     history: History;
     constructor(protractr: Protractr, canvas: HTMLCanvasElement, sidePane: HTMLDivElement, toolbar: HTMLUListElement) {
         this.protractr = protractr;
         this.history = new History(protractr.exportSketch());
         this.sketchView = new SketchView(this, canvas);
-        this.infoPane = new InfoPane(this, sidePane);
+        this.infoPane = new Sidepane(this, sidePane);
         this.toolbar = new Toolbar(toolbar, this.sketchView);
     }
     refresh() {
         this.sketchView.draw();
-        this.infoPane.updateConstraintList(this.protractr.sketch.constraints);
+        this.infoPane.existingConstraintsList.setUnfilteredConstraints(this.protractr.sketch.constraints);
+        this.infoPane.possibleNewConstraintsList.update();
+        if(this.infoPane.selectedFiguresList.list.values.length == 1) {
+            let fig = this.infoPane.selectedFiguresList.list.values[0];
+            this.infoPane.selectedFigureView.setFigure(fig);
+        } else {
+            this.infoPane.selectedFigureView.setFigure(null);
+        }
     }
 }

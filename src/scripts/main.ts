@@ -1,7 +1,5 @@
 import {Protractr} from "./protractr";
 
-export let EPSILON: number = 1;
-
 let canvas: HTMLCanvasElement;
 let tools: HTMLUListElement;
 let sidePane: HTMLDivElement;
@@ -43,5 +41,4 @@ window.addEventListener("load", function() {
         let url = origin + "/examples/" + example;
         protractr.loadFromURL(url);
     }
-    protractr.ui.sketchView.updateSelected();
 });

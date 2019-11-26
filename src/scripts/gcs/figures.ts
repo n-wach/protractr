@@ -1,5 +1,5 @@
 import {Variable, VariablePoint} from "./constraint";
-import {EPSILON, protractr} from "../main";
+import {protractr} from "../main";
 import {FigureExport, Sketch, SketchExport} from "./sketch";
 
 export class Point {

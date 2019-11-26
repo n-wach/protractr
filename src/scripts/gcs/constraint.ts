@@ -1,5 +1,4 @@
 import {CircleFigure, Figure, LineFigure, Point, PointFigure} from "./figures";
-import {EPSILON} from "../main";
 import {ConstraintExport, Sketch, SketchExport} from "./sketch";
 
 export class Variable {

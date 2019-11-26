@@ -1683,14 +1683,13 @@ var Sketch = /** @class */ (function () {
         if (!this.solveConstraints(true)) {
             alert("That constraint couldn't be solved...");
         }
-        main_1.protractr.ui.infoPane.updateConstraintList(this.constraints);
-        main_1.protractr.ui.sketchView.draw();
+        main_1.protractr.ui.refresh();
     };
     Sketch.prototype.removeConstraint = function (constraint) {
         this.constraints = this.constraints.filter(function (value, index, arr) {
             return value != constraint;
         });
-        main_1.protractr.ui.infoPane.updateConstraintList(this.constraints);
+        main_1.protractr.ui.refresh();
     };
     Sketch.prototype.addPoint = function (point) {
         this.points.push(point);
@@ -1802,7 +1801,6 @@ exports.Sketch = Sketch;
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var protractr_1 = require("./protractr");
-exports.EPSILON = 1;
 var canvas;
 var tools;
 var sidePane;
@@ -1841,7 +1839,6 @@ window.addEventListener("load", function () {
         var url = origin_1 + "/examples/" + example;
         exports.protractr.loadFromURL(url);
     }
-    exports.protractr.ui.sketchView.updateSelected();
 });
 
 },{"./protractr":6}],6:[function(require,module,exports){
@@ -1977,102 +1974,364 @@ var HistoryStack = /** @class */ (function () {
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var figures_1 = require("../gcs/figures");
+var main_1 = require("../main");
 var constraint_filter_1 = require("../gcs/constraint_filter");
-var InfoPane = /** @class */ (function () {
-    function InfoPane(ui, sidePane) {
+var Sidepane = /** @class */ (function () {
+    function Sidepane(ui, sidePane) {
         this.ui = ui;
         this.sidePane = sidePane;
-        this.title = document.createElement("p");
-        this.sidePane.appendChild(this.title);
-        var d = document.createElement("p");
-        d.innerText = "Possible Constraints:";
-        this.sidePane.appendChild(d);
-        this.possibleConstraints = document.createElement("div");
-        this.sidePane.appendChild(this.possibleConstraints);
-        var e = document.createElement("p");
-        e.innerText = "Sketch Constraints:";
-        this.sidePane.appendChild(e);
-        this.existingConstraints = document.createElement("div");
-        this.existingConstraints.classList.add("existing-constraints");
-        this.existingConstraints.style.width = "100%";
-        this.existingConstraints.style.height = "400px";
-        this.existingConstraints.style.overflowY = "scroll";
-        this.sidePane.appendChild(this.existingConstraints);
+        this.selectedFiguresList = new SelectedFigureList(ui);
+        this.sidePane.appendChild(this.selectedFiguresList.div);
+        this.selectedFigureView = new FigureInfoView(ui);
+        this.sidePane.appendChild(this.selectedFigureView.div);
+        this.possibleNewConstraintsList = new PossibleNewConstraintsList(ui);
+        this.sidePane.appendChild(this.possibleNewConstraintsList.div);
+        this.existingConstraintsList = new ExistingConstraintList(ui);
+        this.sidePane.appendChild(this.existingConstraintsList.div);
     }
-    InfoPane.prototype.setFocusedFigures = function (figures) {
-        if (figures === null || figures.length == 0) {
-            this.title.innerText = "Nothing selected";
+    return Sidepane;
+}());
+exports.Sidepane = Sidepane;
+var FigureInfoView = /** @class */ (function () {
+    function FigureInfoView(ui) {
+        this.ui = ui;
+        this.div = document.createElement("div");
+    }
+    FigureInfoView.prototype.setFigure = function (figure) {
+        while (this.div.lastChild) {
+            this.div.removeChild(this.div.lastChild);
         }
-        else {
-            this.title.innerText = "Selected " + figures.map(figures_1.getFullName).join(", ");
-        }
-        while (this.possibleConstraints.lastChild) {
-            this.possibleConstraints.removeChild(this.possibleConstraints.lastChild);
-        }
-        var _loop_1 = function (constraintFilter) {
-            var child = document.createElement("button");
-            child.innerText = constraintFilter.name;
-            var _this = this_1;
-            child.addEventListener("click", function () {
-                var sortedFigures = constraint_filter_1.sortFigureSelection(figures);
-                _this.ui.protractr.sketch.addConstraints(constraintFilter.createConstraints(sortedFigures));
-                _this.ui.sketchView.pushState(); // constraint added
-            });
-            this_1.possibleConstraints.appendChild(child);
-        };
-        var this_1 = this;
-        for (var _i = 0, _a = constraint_filter_1.getSatisfiedConstraintFilters(figures); _i < _a.length; _i++) {
-            var constraintFilter = _a[_i];
-            _loop_1(constraintFilter);
+        if (figure) {
+            var p = document.createElement("p");
+            p.innerText = figures_1.getFullName(figure);
+            this.div.appendChild(p);
+            switch (figure.type) {
+                case "point":
+                    var point = figure;
+                    this.addVariable(point.p.variablePoint.x, "x");
+                    this.addVariable(point.p.variablePoint.y, "y");
+                    break;
+                case "line":
+                    var line = figure;
+                    this.addVariable(line.p1.variablePoint.x, "x1");
+                    this.addVariable(line.p1.variablePoint.y, "y1");
+                    this.addVariable(line.p2.variablePoint.x, "x2");
+                    this.addVariable(line.p2.variablePoint.y, "y2");
+                    break;
+                case "circle":
+                    var circle = figure;
+                    this.addVariable(circle.c.variablePoint.x, "center x");
+                    this.addVariable(circle.c.variablePoint.y, "center y");
+                    this.addVariable(circle.r, "radius");
+                    break;
+            }
         }
     };
-    InfoPane.prototype.updateConstraintList = function (constraints) {
-        while (this.existingConstraints.lastChild) {
-            this.existingConstraints.removeChild(this.existingConstraints.lastChild);
+    FigureInfoView.prototype.addVariable = function (variable, name) {
+        var div = document.createElement("div");
+        var label = document.createElement("span");
+        label.innerText = name + ":";
+        div.appendChild(label);
+        var field = document.createElement("input");
+        field.type = "number";
+        field.value = "" + variable.value;
+        field.onchange = function () {
+            variable.value = parseFloat(field.value);
+            main_1.protractr.ui.refresh();
+        };
+        div.appendChild(field);
+        this.div.appendChild(div);
+    };
+    return FigureInfoView;
+}());
+exports.FigureInfoView = FigureInfoView;
+var ConstraintInfoView = /** @class */ (function () {
+    function ConstraintInfoView() {
+    }
+    return ConstraintInfoView;
+}());
+exports.ConstraintInfoView = ConstraintInfoView;
+var PossibleNewConstraintsList = /** @class */ (function () {
+    function PossibleNewConstraintsList(ui) {
+        this.ui = ui;
+        this.div = document.createElement("div");
+        this.constraintsDiv = document.createElement("div");
+        this.title = document.createElement("p");
+        this.title.innerText = "Add a constraint:";
+        this.div.appendChild(this.title);
+        this.div.appendChild(this.constraintsDiv);
+    }
+    PossibleNewConstraintsList.prototype.update = function () {
+        while (this.constraintsDiv.lastChild) {
+            this.constraintsDiv.removeChild(this.constraintsDiv.lastChild);
         }
-        var figs = this.ui.sketchView.selectedFigures;
+        var figs = this.ui.infoPane.selectedFiguresList.list.values;
+        var filters = constraint_filter_1.getSatisfiedConstraintFilters(figs);
+        var _loop_1 = function (filter) {
+            var b = document.createElement("button");
+            b.innerText = filter.name;
+            b.onclick = function () {
+                main_1.protractr.sketch.addConstraints(filter.createConstraints(constraint_filter_1.sortFigureSelection(figs)));
+            };
+            this_1.constraintsDiv.appendChild(b);
+        };
+        var this_1 = this;
+        for (var _i = 0, filters_1 = filters; _i < filters_1.length; _i++) {
+            var filter = filters_1[_i];
+            _loop_1(filter);
+        }
+    };
+    return PossibleNewConstraintsList;
+}());
+exports.PossibleNewConstraintsList = PossibleNewConstraintsList;
+var ExistingConstraintList = /** @class */ (function () {
+    function ExistingConstraintList(ui) {
+        this.ui = ui;
+        this.div = document.createElement("div");
+        this.title = document.createElement("p");
+        this.title.innerText = "Existing Constraints:";
+        this.div.appendChild(this.title);
+        this.list = new InteractiveList([], true, true);
+        this.list.onhoveredchanged = this.onhoveredchanged.bind(this);
+        this.list.onselectedchanged = this.onselectedchanged.bind(this);
+        this.div.appendChild(this.list.div);
+    }
+    ExistingConstraintList.prototype.figureInHovered = function (fig) {
+        for (var _i = 0, _a = this.list.hovered; _i < _a.length; _i++) {
+            var hover = _a[_i];
+            if (hover.containsFigure(fig))
+                return true;
+        }
+        return false;
+    };
+    ExistingConstraintList.prototype.setConstraints = function (newConstraints) {
+        var toRemove = [];
+        for (var _i = 0, _a = this.list.values; _i < _a.length; _i++) {
+            var constraint = _a[_i];
+            if (newConstraints.indexOf(constraint) == -1) {
+                toRemove.push(constraint);
+            }
+        }
+        for (var _b = 0, toRemove_1 = toRemove; _b < toRemove_1.length; _b++) {
+            var remove = toRemove_1[_b];
+            this.removeConstraint(remove);
+        }
+        for (var _c = 0, newConstraints_1 = newConstraints; _c < newConstraints_1.length; _c++) {
+            var constraint = newConstraints_1[_c];
+            if (!this.contains(constraint))
+                this.addConstraint(constraint);
+        }
+    };
+    ExistingConstraintList.prototype.setUnfilteredConstraints = function (constraints) {
+        var filteredConstraints = [];
         for (var _i = 0, constraints_1 = constraints; _i < constraints_1.length; _i++) {
             var constraint = constraints_1[_i];
             var add = true;
-            for (var _a = 0, figs_1 = figs; _a < figs_1.length; _a++) {
-                var selectedFigure = figs_1[_a];
-                if (!constraint.containsFigure(selectedFigure)) {
+            for (var _a = 0, _b = this.ui.infoPane.selectedFiguresList.list.values; _a < _b.length; _a++) {
+                var figure = _b[_a];
+                if (!constraint.containsFigure(figure)) {
                     add = false;
                     break;
                 }
             }
             if (add)
-                this.addConstraintElement(constraint);
+                filteredConstraints.push(constraint);
+        }
+        this.setConstraints(filteredConstraints);
+    };
+    ExistingConstraintList.prototype.clear = function (noEvent) {
+        if (noEvent === void 0) { noEvent = false; }
+        this.list.clear(noEvent);
+    };
+    ExistingConstraintList.prototype.addConstraint = function (constraint) {
+        this.list.addElement(constraint, constraint.name);
+    };
+    ExistingConstraintList.prototype.removeConstraint = function (constraint) {
+        this.list.removeElement(constraint);
+    };
+    ExistingConstraintList.prototype.contains = function (constraint) {
+        return this.list.values.indexOf(constraint) != -1;
+    };
+    ExistingConstraintList.prototype.onhoveredchanged = function () {
+        this.ui.refresh();
+    };
+    ExistingConstraintList.prototype.onselectedchanged = function () {
+        this.ui.refresh();
+    };
+    return ExistingConstraintList;
+}());
+exports.ExistingConstraintList = ExistingConstraintList;
+var SelectedFigureList = /** @class */ (function () {
+    function SelectedFigureList(ui) {
+        this.ui = ui;
+        this.div = document.createElement("div");
+        this.title = document.createElement("p");
+        this.title.innerText = "Selected Figures:";
+        this.div.appendChild(this.title);
+        this.list = new InteractiveList([], false);
+        this.list.onhoveredchanged = this.onhoveredchanged.bind(this);
+        this.div.appendChild(this.list.div);
+    }
+    SelectedFigureList.prototype.clear = function () {
+        this.list.clear();
+    };
+    SelectedFigureList.prototype.addFigure = function (figure) {
+        this.list.addElement(figure, figures_1.getFullName(figure));
+    };
+    SelectedFigureList.prototype.removeFigure = function (figure) {
+        this.list.removeElement(figure);
+    };
+    SelectedFigureList.prototype.contains = function (figure) {
+        return this.list.values.indexOf(figure) != -1;
+    };
+    SelectedFigureList.prototype.onhoveredchanged = function () {
+        this.ui.refresh();
+    };
+    SelectedFigureList.prototype.onselectedchanged = function () {
+        this.ui.refresh();
+    };
+    SelectedFigureList.prototype.figureInHovered = function (fig) {
+        return this.list.hovered.indexOf(fig) != -1;
+    };
+    return SelectedFigureList;
+}());
+exports.SelectedFigureList = SelectedFigureList;
+var InteractiveList = /** @class */ (function () {
+    function InteractiveList(items, selectable, singleSelect, hoverable) {
+        if (items === void 0) { items = []; }
+        if (selectable === void 0) { selectable = true; }
+        if (singleSelect === void 0) { singleSelect = false; }
+        if (hoverable === void 0) { hoverable = true; }
+        this.div = document.createElement("div");
+        this.div.classList.add("interactive-list");
+        this.clear();
+        for (var _i = 0, items_1 = items; _i < items_1.length; _i++) {
+            var item = items_1[_i];
+            this.addElement(item[0], item[1]);
+        }
+        this.hoverable = hoverable;
+        this.selectable = selectable;
+        this.singleSelect = singleSelect;
+    }
+    InteractiveList.prototype.clear = function (noEvent) {
+        if (noEvent === void 0) { noEvent = false; }
+        this.selected = [];
+        this.hovered = [];
+        this.values = [];
+        this.elements = [];
+        while (this.div.lastChild) {
+            this.div.removeChild(this.div.lastChild);
+        }
+        if (this.onselectedchanged && !noEvent)
+            this.onselectedchanged([]);
+        if (this.onhoveredchanged && !noEvent)
+            this.onhoveredchanged([]);
+    };
+    InteractiveList.prototype.addElement = function (value, name) {
+        var element = new ListElement(this, value, name);
+        this.div.appendChild(element.p);
+        this.elements.push(element);
+        this.values.push(value);
+    };
+    InteractiveList.prototype.removeElement = function (value) {
+        this.unhover(value);
+        this.unselect(value);
+        var index = this.values.indexOf(value);
+        if (index > -1) {
+            this.values.splice(index, 1);
+            this.div.removeChild(this.elements[index].p);
+            this.elements.splice(index, 1);
         }
     };
-    InfoPane.prototype.addConstraintElement = function (constraint) {
-        var o = document.createElement("p");
-        o.innerText = constraint.name;
-        o.classList.add("existing-constraint");
-        var _this = this;
-        o.oncontextmenu = function (event) {
-            event.preventDefault();
-            if (event.which == 3) {
-                _this.ui.protractr.sketch.removeConstraint(constraint);
-                _this.ui.sketchView.pushState(); // constraint removed
-            }
-            _this.ui.sketchView.hoveredConstraint = null;
-        };
-        o.onmouseenter = function (event) {
-            _this.ui.sketchView.hoveredConstraint = constraint;
-            _this.ui.sketchView.draw();
-        };
-        o.onmouseleave = function (event) {
-            _this.ui.sketchView.hoveredConstraint = null;
-            _this.ui.sketchView.draw();
-        };
-        this.existingConstraints.appendChild(o);
+    InteractiveList.prototype.hover = function (item) {
+        if (!this.hoverable)
+            return;
+        this.hovered.push(item);
+        if (this.onhoveredchanged)
+            this.onhoveredchanged(this.hovered);
     };
-    return InfoPane;
+    InteractiveList.prototype.unhover = function (item) {
+        if (!this.hoverable)
+            return;
+        var index = this.hovered.indexOf(item);
+        if (index > -1) {
+            this.hovered.splice(index, 1);
+            if (this.onhoveredchanged)
+                this.onhoveredchanged(this.hovered);
+        }
+    };
+    InteractiveList.prototype.select = function (item) {
+        if (!this.selectable)
+            return;
+        if (this.singleSelect) {
+            for (var _i = 0, _a = this.selected; _i < _a.length; _i++) {
+                var item_1 = _a[_i];
+                this.elements[this.values.indexOf(item_1)].unselect();
+            }
+        }
+        this.selected.push(item);
+        if (this.onselectedchanged)
+            this.onselectedchanged(this.selected);
+    };
+    InteractiveList.prototype.unselect = function (item) {
+        if (!this.selectable)
+            return;
+        var index = this.selected.indexOf(item);
+        if (index > -1) {
+            this.selected.splice(index, 1);
+            if (this.onselectedchanged)
+                this.onselectedchanged(this.selected);
+        }
+    };
+    return InteractiveList;
 }());
-exports.InfoPane = InfoPane;
+exports.InteractiveList = InteractiveList;
+var ListElement = /** @class */ (function () {
+    function ListElement(parent, value, name) {
+        this.value = value;
+        this.parent = parent;
+        this.p = document.createElement("p");
+        this.p.classList.add("interactive-list-element");
+        this.p.innerText = name;
+        this.p.addEventListener("mouseenter", this.onmouseenter.bind(this));
+        this.p.addEventListener("mouseleave", this.onmouseleave.bind(this));
+        this.p.addEventListener("mousedown", this.onmousedown.bind(this));
+    }
+    ListElement.prototype.onmouseenter = function (event) {
+        this.parent.hover(this.value);
+        this.p.classList.add("hovered");
+    };
+    ListElement.prototype.onmouseleave = function (event) {
+        this.parent.unhover(this.value);
+        this.p.classList.remove("hovered");
+    };
+    ListElement.prototype.onmousedown = function (event) {
+        if (event.which == 1) {
+            if (this.selected) {
+                this.unselect();
+            }
+            else {
+                this.select();
+            }
+        }
+    };
+    ListElement.prototype.select = function () {
+        if (!this.parent.selectable)
+            return;
+        this.selected = true;
+        this.parent.select(this.value);
+        this.p.classList.add("selected");
+    };
+    ListElement.prototype.unselect = function () {
+        this.selected = false;
+        this.parent.unselect(this.value);
+        this.p.classList.remove("selected");
+    };
+    return ListElement;
+}());
+exports.ListElement = ListElement;
 
-},{"../gcs/constraint_filter":2,"../gcs/figures":3}],9:[function(require,module,exports){
+},{"../gcs/constraint_filter":2,"../gcs/figures":3,"../main":5}],9:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var figures_1 = require("../gcs/figures");
@@ -2082,7 +2341,6 @@ var SketchView = /** @class */ (function () {
         this.lastPanPoint = null;
         this.ui = ui;
         this.canvas = canvas;
-        this.selectedFigures = [];
         this.ctxScale = 1;
         this.ctxOrigin = new figures_1.Point(0, 0);
         this.ctx = this.canvas.getContext("2d");
@@ -2156,8 +2414,7 @@ var SketchView = /** @class */ (function () {
                         this.toggleSelected(this.hoveredFigure);
                     }
                     else {
-                        this.selectedFigures = [];
-                        this.updateSelected();
+                        this.ui.infoPane.selectedFiguresList.clear();
                     }
                 }
                 if (this.draggedFigure) {
@@ -2233,19 +2490,14 @@ var SketchView = /** @class */ (function () {
         return this.hoveredFigure.getClosestPoint(point);
     };
     SketchView.prototype.toggleSelected = function (fig) {
-        if (this.selectedFigures.indexOf(fig) == -1) {
-            this.selectedFigures.push(fig);
+        var selectedFigures = this.ui.infoPane.selectedFiguresList;
+        if (!selectedFigures.contains(fig)) {
+            selectedFigures.addFigure(fig);
         }
         else {
-            this.selectedFigures = this.selectedFigures.filter(function (value, index, arr) {
-                return value != fig;
-            });
+            selectedFigures.removeFigure(fig);
         }
-        this.updateSelected();
-    };
-    SketchView.prototype.updateSelected = function () {
-        this.ui.infoPane.setFocusedFigures(this.selectedFigures);
-        this.ui.infoPane.updateConstraintList(this.ui.protractr.sketch.constraints);
+        this.ui.refresh();
     };
     SketchView.prototype.setCursor = function (cursor) {
         this.canvas.style.cursor = cursor;
@@ -2254,14 +2506,14 @@ var SketchView = /** @class */ (function () {
         this.ctx.strokeStyle = "black";
         this.ctx.lineWidth = 2 / this.ctxScale;
         var pointSize = 3 / this.ctxScale;
-        if (this.hoveredFigure == fig) {
+        if (this.hoveredFigure == fig || this.ui.infoPane.selectedFiguresList.figureInHovered(fig)) {
             pointSize = 7 / this.ctxScale;
             this.ctx.lineWidth = 5 / this.ctxScale;
         }
-        if (this.selectedFigures.indexOf(fig) != -1) {
+        if (this.ui.infoPane.selectedFiguresList.contains(fig)) {
             this.ctx.strokeStyle = "#5e9cff";
         }
-        if (this.hoveredConstraint && this.hoveredConstraint.containsFigure(fig)) {
+        if (this.ui.infoPane.existingConstraintsList.figureInHovered(fig)) {
             this.ctx.strokeStyle = "purple";
             pointSize = 7 / this.ctxScale;
             this.ctx.lineWidth = 5 / this.ctxScale;
@@ -2646,7 +2898,7 @@ function constrainPointBySnap(point, snapFigure) {
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var toolbar_1 = require("./toolbar");
-var infopane_1 = require("./infopane");
+var sidepane_1 = require("./sidepane");
 var sketchview_1 = require("./sketchview");
 var history_1 = require("./history");
 var UI = /** @class */ (function () {
@@ -2654,15 +2906,23 @@ var UI = /** @class */ (function () {
         this.protractr = protractr;
         this.history = new history_1.History(protractr.exportSketch());
         this.sketchView = new sketchview_1.SketchView(this, canvas);
-        this.infoPane = new infopane_1.InfoPane(this, sidePane);
+        this.infoPane = new sidepane_1.Sidepane(this, sidePane);
         this.toolbar = new toolbar_1.Toolbar(toolbar, this.sketchView);
     }
     UI.prototype.refresh = function () {
         this.sketchView.draw();
-        this.infoPane.updateConstraintList(this.protractr.sketch.constraints);
+        this.infoPane.existingConstraintsList.setUnfilteredConstraints(this.protractr.sketch.constraints);
+        this.infoPane.possibleNewConstraintsList.update();
+        if (this.infoPane.selectedFiguresList.list.values.length == 1) {
+            var fig = this.infoPane.selectedFiguresList.list.values[0];
+            this.infoPane.selectedFigureView.setFigure(fig);
+        }
+        else {
+            this.infoPane.selectedFigureView.setFigure(null);
+        }
     };
     return UI;
 }());
 exports.UI = UI;
 
-},{"./history":7,"./infopane":8,"./sketchview":9,"./toolbar":10}]},{},[5]);
+},{"./history":7,"./sidepane":8,"./sketchview":9,"./toolbar":10}]},{},[5]);
