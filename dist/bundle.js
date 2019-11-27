@@ -1671,6 +1671,36 @@ var Sketch = /** @class */ (function () {
                 this.constraints.push(constraint);
             }
         }
+        else if (constraint.type == "equal-length") {
+            var el1 = constraint;
+            var mergeables = [];
+            for (var _v = 0, _w = this.constraints; _v < _w.length; _v++) {
+                var c = _w[_v];
+                if (c.type == "equal-length") {
+                    var el2 = c;
+                    for (var _x = 0, _y = el1.pairs; _x < _y.length; _x++) {
+                        var pair1 = _y[_x];
+                        for (var _z = 0, _0 = el2.pairs; _z < _0.length; _z++) {
+                            var pair2 = _0[_z];
+                            if (pair1[0] == pair2[0] && pair1[1] == pair2[1]) {
+                                mergeables.push(el2);
+                            }
+                        }
+                    }
+                }
+            }
+            if (mergeables.length > 0) {
+                for (var _1 = 0, mergeables_5 = mergeables; _1 < mergeables_5.length; _1++) {
+                    var mergeable = mergeables_5[_1];
+                    for (var _2 = 0, _3 = mergeable.pairs; _2 < _3.length; _2++) {
+                        var p = _3[_2];
+                        el1.pairs.push(p);
+                    }
+                    this.removeConstraint(mergeable);
+                }
+            }
+            this.constraints.push(constraint);
+        }
         else {
             this.constraints.push(constraint);
         }
@@ -2042,6 +2072,7 @@ var FigureInfoView = /** @class */ (function () {
         var field = document.createElement("input");
         field.type = "number";
         field.value = "" + variable.value;
+        field.step = "any";
         field.onchange = function () {
             variable.value = parseFloat(field.value);
             main_1.protractr.ui.refresh();

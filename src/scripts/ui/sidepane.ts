@@ -90,6 +90,7 @@ export class FigureInfoView {
         let field = document.createElement("input");
         field.type = "number";
         field.value = "" + variable.value;
+        field.step = "any";
         field.onchange = function() {
             variable.value = parseFloat(field.value);
             protractr.ui.refresh();

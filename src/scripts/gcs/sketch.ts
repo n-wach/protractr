@@ -3,7 +3,7 @@ import {
     ColinearPointsConstraint,
     Constraint,
     constraintFromObject,
-    EqualConstraint,
+    EqualConstraint, EqualLengthConstraint,
     Variable,
     VariablePoint
 } from "./constraint";
@@ -135,19 +135,43 @@ export class Sketch {
             for (let c of this.constraints) {
                 if (c.type == "arc-point-coincident") {
                     let apc2: ArcPointCoincidentConstraint = c as ArcPointCoincidentConstraint;
-                    if(apc1.center == apc2.center) {
+                    if (apc1.center == apc2.center) {
                         mergeable = apc2;
                         break;
                     }
                 }
             }
             if (mergeable) {
-                for(let p of apc1.points) {
+                for (let p of apc1.points) {
                     mergeable.points.push(p);
                 }
             } else {
                 this.constraints.push(constraint);
             }
+        } else if(constraint.type == "equal-length") {
+            let el1: EqualLengthConstraint = constraint as EqualLengthConstraint;
+            let mergeables: EqualLengthConstraint[] = [];
+            for (let c of this.constraints) {
+                if (c.type == "equal-length") {
+                    let el2: EqualLengthConstraint = c as EqualLengthConstraint;
+                    for(let pair1 of el1.pairs) {
+                        for(let pair2 of el2.pairs) {
+                            if(pair1[0] == pair2[0] && pair1[1] == pair2[1]) {
+                                mergeables.push(el2);
+                            }
+                        }
+                    }
+                }
+            }
+            if (mergeables.length > 0) {
+                for (let mergeable of mergeables) {
+                    for (let p of mergeable.pairs) {
+                        el1.pairs.push(p);
+                    }
+                    this.removeConstraint(mergeable);
+                }
+            }
+            this.constraints.push(constraint);
         } else {
             this.constraints.push(constraint);
         }
