@@ -15,7 +15,7 @@ export function saveAs(string: string, filename: string) {
 
 let adjustCanvasResolution = function(event) {
     canvas.width = canvas.parentElement.clientWidth - 1;
-    canvas.height = canvas.parentElement.clientHeight - 1;
+    canvas.height = window.innerHeight - document.getElementsByClassName("title")[0].clientHeight - 5;
     protractr.ui.sketchView.draw();
 };
 window.addEventListener("resize", adjustCanvasResolution);
