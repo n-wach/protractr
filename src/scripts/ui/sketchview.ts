@@ -149,10 +149,7 @@ export class SketchView {
         if(this.draggedFigure && this.dragging) {
             ignoredFigures.push.apply(ignoredFigures, this.draggedFigure.getRelatedFigures());
         }
-        closest = this.ui.protractr.sketch.getClosestFigure(point, ignoredFigures);
-        if(closest != null && closest.getClosestPoint(point).distTo(point) > 10 / this.ctxScale) {
-            closest = null;
-        }
+        closest = this.ui.protractr.sketch.getClosestFigure(point, ignoredFigures, 10, this.ctxScale);
         this.hoveredFigure = closest;
         if(this.hoveredFigure != null) {
             this.setCursor("move");

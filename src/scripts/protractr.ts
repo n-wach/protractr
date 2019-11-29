@@ -15,14 +15,14 @@ export class Protractr {
             return;
         }
         this.sketch = Sketch.fromObject(JSON.parse(json));
-        this.ui.refresh();
+        this.ui.reload();
     }
     exportSketch(): string {
         return JSON.stringify(this.sketch.asObject());
     }
     resetSketch() {
         this.sketch = new Sketch();
-        this.ui.refresh();
+        this.ui.reload();
     }
     loadFromURL(url: string) {
         let request = new XMLHttpRequest();

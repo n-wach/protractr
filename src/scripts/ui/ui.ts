@@ -17,6 +17,13 @@ export class UI {
         this.infoPane = new Sidepane(this, sidePane);
         this.toolbar = new Toolbar(toolbar, this.sketchView);
     }
+    reload() {
+        this.sketchView.draw();
+        this.infoPane.existingConstraintsList.setUnfilteredConstraints(this.protractr.sketch.constraints);
+        this.infoPane.selectedFiguresList.clear();
+        this.infoPane.possibleNewConstraintsList.update();
+        this.infoPane.selectedFigureView.setFigure(null);
+    }
     refresh() {
         this.sketchView.draw();
         this.infoPane.existingConstraintsList.setUnfilteredConstraints(this.protractr.sketch.constraints);

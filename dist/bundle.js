@@ -1536,8 +1536,10 @@ var Sketch = /** @class */ (function () {
         this.points = [];
         this.rootFigures = [];
     }
-    Sketch.prototype.getClosestFigure = function (point, ignoreFigures) {
+    Sketch.prototype.getClosestFigure = function (point, ignoreFigures, maxDist, scale) {
         if (ignoreFigures === void 0) { ignoreFigures = []; }
+        if (maxDist === void 0) { maxDist = 10; }
+        if (scale === void 0) { scale = 1; }
         var allFigures = [];
         for (var _i = 0, _a = this.rootFigures; _i < _a.length; _i++) {
             var fig = _a[_i];
@@ -1553,13 +1555,18 @@ var Sketch = /** @class */ (function () {
         for (var _b = 0, filteredFigures_1 = filteredFigures; _b < filteredFigures_1.length; _b++) {
             var fig = filteredFigures_1[_b];
             var p = fig.getClosestPoint(point);
-            var d = p.distTo(point) - typeMagnetism[fig.type];
+            var d = p.distTo(point) - typeMagnetism[fig.type] / scale;
             if (d < dist) {
                 closest = fig;
                 dist = d;
             }
         }
-        return closest;
+        if (dist <= maxDist / scale) {
+            return closest;
+        }
+        else {
+            return null;
+        }
     };
     Sketch.prototype.addConstraintAndCombine = function (constraint) {
         if (constraint.type == "equal") {
@@ -1888,14 +1895,14 @@ var Protractr = /** @class */ (function () {
             return;
         }
         this.sketch = sketch_1.Sketch.fromObject(JSON.parse(json));
-        this.ui.refresh();
+        this.ui.reload();
     };
     Protractr.prototype.exportSketch = function () {
         return JSON.stringify(this.sketch.asObject());
     };
     Protractr.prototype.resetSketch = function () {
         this.sketch = new sketch_1.Sketch();
-        this.ui.refresh();
+        this.ui.reload();
     };
     Protractr.prototype.loadFromURL = function (url) {
         var request = new XMLHttpRequest();
@@ -2035,13 +2042,12 @@ var FigureInfoView = /** @class */ (function () {
         }
     };
     FigureInfoView.prototype.setFigure = function (figure) {
+        this.fields = [];
+        this.variables = [];
         while (this.div.lastChild) {
             this.div.removeChild(this.div.lastChild);
         }
         if (figure) {
-            var p = document.createElement("p");
-            p.innerText = figures_1.getFullName(figure);
-            this.div.appendChild(p);
             switch (figure.type) {
                 case "point":
                     var point = figure;
@@ -2075,6 +2081,10 @@ var FigureInfoView = /** @class */ (function () {
         field.step = "any";
         field.onchange = function () {
             variable.value = parseFloat(field.value);
+            variable.constant = true;
+            main_1.protractr.sketch.solveConstraints(true);
+            variable.constant = false;
+            main_1.protractr.ui.history.recordStateChange(main_1.protractr.exportSketch());
             main_1.protractr.ui.refresh();
         };
         div.appendChild(field);
@@ -2097,7 +2107,7 @@ var PossibleNewConstraintsList = /** @class */ (function () {
         this.div = document.createElement("div");
         this.constraintsDiv = document.createElement("div");
         this.title = document.createElement("p");
-        this.title.innerText = "Add a constraint:";
+        this.title.innerText = "";
         this.div.appendChild(this.title);
         this.div.appendChild(this.constraintsDiv);
     }
@@ -2106,7 +2116,16 @@ var PossibleNewConstraintsList = /** @class */ (function () {
             this.constraintsDiv.removeChild(this.constraintsDiv.lastChild);
         }
         var figs = this.ui.infoPane.selectedFiguresList.list.values;
+        if (figs.length == 0) {
+            this.title.innerText = "";
+            return;
+        }
         var filters = constraint_filter_1.getSatisfiedConstraintFilters(figs);
+        if (filters.length == 0) {
+            this.title.innerText = "No possible constraints";
+            return;
+        }
+        this.title.innerText = "Add a constraint:";
         var _loop_1 = function (filter) {
             var b = document.createElement("button");
             b.innerText = filter.name;
@@ -2129,7 +2148,7 @@ var ExistingConstraintList = /** @class */ (function () {
         this.ui = ui;
         this.div = document.createElement("div");
         this.title = document.createElement("p");
-        this.title.innerText = "Existing Constraints:";
+        this.title.innerText = "Sketch has no constraints";
         this.div.appendChild(this.title);
         this.list = new InteractiveList([], true, true);
         this.list.onhoveredchanged = this.onhoveredchanged.bind(this);
@@ -2161,6 +2180,28 @@ var ExistingConstraintList = /** @class */ (function () {
             if (!this.contains(constraint))
                 this.addConstraint(constraint);
         }
+        var count = this.ui.infoPane.selectedFiguresList.count();
+        if (count == 0) {
+            if (newConstraints.length == 0) {
+                this.title.innerText = "Sketch has no constraints";
+            }
+            else {
+                this.title.innerText = "Sketch Constraints:";
+            }
+        }
+        else {
+            if (newConstraints.length == 0) {
+                if (count == 1) {
+                    this.title.innerText = "The selected figure has no constraints";
+                }
+                else {
+                    this.title.innerText = "No constraints exist between the selected figures";
+                }
+            }
+            else {
+                this.title.innerText = "Existing constraints:";
+            }
+        }
     };
     ExistingConstraintList.prototype.setUnfilteredConstraints = function (constraints) {
         var filteredConstraints = [];
@@ -2178,10 +2219,6 @@ var ExistingConstraintList = /** @class */ (function () {
                 filteredConstraints.push(constraint);
         }
         this.setConstraints(filteredConstraints);
-    };
-    ExistingConstraintList.prototype.clear = function (noEvent) {
-        if (noEvent === void 0) { noEvent = false; }
-        this.list.clear(noEvent);
     };
     ExistingConstraintList.prototype.addConstraint = function (constraint) {
         this.list.addElement(constraint, constraint.name);
@@ -2206,7 +2243,7 @@ var SelectedFigureList = /** @class */ (function () {
         this.ui = ui;
         this.div = document.createElement("div");
         this.title = document.createElement("p");
-        this.title.innerText = "Selected Figures:";
+        this.title.innerText = "";
         this.div.appendChild(this.title);
         this.list = new InteractiveList([], false);
         this.list.onhoveredchanged = this.onhoveredchanged.bind(this);
@@ -2214,12 +2251,27 @@ var SelectedFigureList = /** @class */ (function () {
     }
     SelectedFigureList.prototype.clear = function () {
         this.list.clear();
+        this.updateTitle();
     };
     SelectedFigureList.prototype.addFigure = function (figure) {
         this.list.addElement(figure, figures_1.getFullName(figure));
+        this.updateTitle();
+    };
+    SelectedFigureList.prototype.updateTitle = function () {
+        var count = this.count();
+        if (count == 0) {
+            this.title.innerText = "";
+        }
+        else if (count == 1) {
+            this.title.innerText = "Selected Figure:";
+        }
+        else {
+            this.title.innerText = "Selected Figures:";
+        }
     };
     SelectedFigureList.prototype.removeFigure = function (figure) {
         this.list.removeElement(figure);
+        this.updateTitle();
     };
     SelectedFigureList.prototype.contains = function (figure) {
         return this.list.values.indexOf(figure) != -1;
@@ -2232,6 +2284,9 @@ var SelectedFigureList = /** @class */ (function () {
     };
     SelectedFigureList.prototype.figureInHovered = function (fig) {
         return this.list.hovered.indexOf(fig) != -1;
+    };
+    SelectedFigureList.prototype.count = function () {
+        return this.list.values.length;
     };
     return SelectedFigureList;
 }());
@@ -2509,10 +2564,7 @@ var SketchView = /** @class */ (function () {
         if (this.draggedFigure && this.dragging) {
             ignoredFigures.push.apply(ignoredFigures, this.draggedFigure.getRelatedFigures());
         }
-        closest = this.ui.protractr.sketch.getClosestFigure(point, ignoredFigures);
-        if (closest != null && closest.getClosestPoint(point).distTo(point) > 10 / this.ctxScale) {
-            closest = null;
-        }
+        closest = this.ui.protractr.sketch.getClosestFigure(point, ignoredFigures, 10, this.ctxScale);
         this.hoveredFigure = closest;
         if (this.hoveredFigure != null) {
             this.setCursor("move");
@@ -2950,6 +3002,13 @@ var UI = /** @class */ (function () {
         this.infoPane = new sidepane_1.Sidepane(this, sidePane);
         this.toolbar = new toolbar_1.Toolbar(toolbar, this.sketchView);
     }
+    UI.prototype.reload = function () {
+        this.sketchView.draw();
+        this.infoPane.existingConstraintsList.setUnfilteredConstraints(this.protractr.sketch.constraints);
+        this.infoPane.selectedFiguresList.clear();
+        this.infoPane.possibleNewConstraintsList.update();
+        this.infoPane.selectedFigureView.setFigure(null);
+    };
     UI.prototype.refresh = function () {
         this.sketchView.draw();
         this.infoPane.existingConstraintsList.setUnfilteredConstraints(this.protractr.sketch.constraints);

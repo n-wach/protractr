@@ -36,7 +36,7 @@ export class Sketch {
     variables: Variable[] = [];
     points: VariablePoint[] = [];
     rootFigures: Figure[] = [];
-    getClosestFigure(point: Point, ignoreFigures: Figure[] = []): Figure {
+    getClosestFigure(point: Point, ignoreFigures: Figure[] = [], maxDist: number=10, scale: number=1): Figure {
         let allFigures = [];
         for(let fig of this.rootFigures) {
             allFigures.push.apply(allFigures, fig.getRelatedFigures());
@@ -52,13 +52,17 @@ export class Sketch {
 
         for(let fig of filteredFigures) {
             let p = fig.getClosestPoint(point);
-            let d = p.distTo(point) - typeMagnetism[fig.type];
+            let d = p.distTo(point) - typeMagnetism[fig.type] / scale;
             if(d < dist) {
                 closest = fig;
                 dist = d;
             }
         }
-        return closest;
+        if(dist <= maxDist / scale) {
+            return closest;
+        } else {
+            return null;
+        }
     }
     addConstraintAndCombine(constraint: Constraint) {
         if (constraint.type == "equal") {
