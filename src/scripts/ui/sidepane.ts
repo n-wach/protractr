@@ -128,8 +128,10 @@ export class PossibleNewConstraintsList {
         let figs = this.ui.infoPane.selectedFiguresList.list.values;
         if(figs.length == 0) {
             this.title.innerText = "";
+            this.title.style.display = "none";
             return;
         }
+        this.title.style.display = "block";
         let filters = getSatisfiedConstraintFilters(figs);
         if(filters.length == 0) {
             this.title.innerText = "No possible constraints";
@@ -149,18 +151,15 @@ export class PossibleNewConstraintsList {
 
 export class ExistingConstraintList {
     div: HTMLDivElement;
-    list: InteractiveList<Constraint>;
-    title: HTMLParagraphElement;
+    list: TitledInteractiveList<Constraint>;
     ui: UI;
     constructor(ui: UI) {
         this.ui = ui;
         this.div = document.createElement("div");
-        this.title = document.createElement("p");
-        this.title.innerText = "Sketch has no constraints";
-        this.div.appendChild(this.title);
-        this.list = new InteractiveList<Constraint>([], true, true);
-        this.list.onhoveredchanged = this.onhoveredchanged.bind(this);
-        this.list.onselectedchanged = this.onselectedchanged.bind(this);
+        this.list = new TitledInteractiveList<Constraint>(false);
+        this.list.setTitle("Sketch has no constraints");
+        this.list.onhover = this.ui.refresh.bind(this.ui);
+        this.list.onclick = this.ui.refresh.bind(this.ui);
         this.div.appendChild(this.list.div);
     }
     figureInHovered(fig: Figure) {
@@ -183,21 +182,21 @@ export class ExistingConstraintList {
             if(!this.contains(constraint)) this.addConstraint(constraint);
         }
         let count = this.ui.infoPane.selectedFiguresList.count();
-        if(count == 0) {
-            if(newConstraints.length == 0) {
-                this.title.innerText = "Sketch has no constraints";
+        if(newConstraints.length == 0) {
+            if(count == 0) {
+                this.list.setTitle("No constraints in sketch");
+            } else if(count == 1) {
+                this.list.setTitle("No constraints on selected figure");
             } else {
-                this.title.innerText = "Sketch Constraints:";
+                this.list.setTitle("No constraints exist between the selected figures");
             }
         } else {
-            if(newConstraints.length == 0) {
-                if(count == 1) {
-                    this.title.innerText = "The selected figure has no constraints";
-                } else {
-                    this.title.innerText = "No constraints exist between the selected figures";
-                }
+            if(count == 0) {
+                this.list.setTitle("Sketch Constraints:");
+            } else if(count == 1) {
+                this.list.setTitle("Figure Constraints:");
             } else {
-                this.title.innerText = "Existing constraints:";
+                this.list.setTitle("Selection Constraints:");
             }
         }
     }
@@ -224,27 +223,18 @@ export class ExistingConstraintList {
     contains(constraint: Constraint) {
         return this.list.values.indexOf(constraint) != -1;
     }
-    onhoveredchanged() {
-        this.ui.refresh();
-    }
-    onselectedchanged() {
-        this.ui.refresh();
-    }
 }
 
 export class SelectedFigureList {
     div: HTMLDivElement;
-    list: InteractiveList<Figure>;
-    title: HTMLParagraphElement;
+    list: TitledInteractiveList<Figure>;
     ui: UI;
     constructor(ui: UI) {
         this.ui = ui;
         this.div = document.createElement("div");
-        this.title = document.createElement("p");
-        this.title.innerText = "";
-        this.div.appendChild(this.title);
-        this.list = new InteractiveList<Figure>([], false);
-        this.list.onhoveredchanged = this.onhoveredchanged.bind(this);
+        this.list = new TitledInteractiveList<Figure>();
+        this.list.onhover = this.ui.refresh.bind(this.ui);
+        this.list.ondelete = this.ui.refresh.bind(this.ui);
         this.div.appendChild(this.list.div);
     }
     clear() {
@@ -258,27 +248,21 @@ export class SelectedFigureList {
     updateTitle() {
         let count = this.count();
         if(count == 0) {
-            this.title.innerText = "";
+            this.list.setTitle("");
         } else if (count == 1) {
-            this.title.innerText = "Selected Figure:";
+            this.list.setTitle("Selected Figure:");
         } else {
-            this.title.innerText = "Selected Figures:";
+            this.list.setTitle("Selected Figures:");
         }
     }
     removeFigure(figure: Figure) {
         this.list.removeElement(figure);
         this.updateTitle();
     }
-    contains(figure: Figure) {
+    figureSelected(figure: Figure) {
         return this.list.values.indexOf(figure) != -1;
     }
-    onhoveredchanged() {
-        this.ui.refresh();
-    }
-    onselectedchanged() {
-        this.ui.refresh();
-    }
-    figureInHovered(fig: Figure) {
+    figureHovered(fig: Figure) {
         return this.list.hovered.indexOf(fig) != -1;
     }
     count() {
@@ -288,128 +272,129 @@ export class SelectedFigureList {
 
 export class InteractiveList<T> {
     div: HTMLDivElement;
-    selected: T[];
-    hovered: T[];
+    list: HTMLDivElement;
     values: T[];
+    hovered: T[];
     elements: ListElement<T>[];
-    onhoveredchanged: Function;
-    onselectedchanged: Function;
-    selectable: boolean;
-    hoverable: boolean;
-    singleSelect: boolean;
-    constructor(items: [T, string][]=[], selectable: boolean=true, singleSelect: boolean=false, hoverable:boolean=true) {
+    onhover: Function;
+    ondelete: Function;
+    onclick: Function;
+    deleteable: boolean;
+    constructor(deleteable: boolean=true) {
+        this.deleteable = deleteable;
         this.div = document.createElement("div");
-        this.div.classList.add("interactive-list");
+        this.list = document.createElement("div");
+        this.list.classList.add("interactive-list");
+        this.div.appendChild(this.list);
         this.clear();
-        for(let item of items) {
-            this.addElement(item[0], item[1]);
-        }
-        this.hoverable = hoverable;
-        this.selectable = selectable;
-        this.singleSelect = singleSelect;
     }
     clear(noEvent: boolean=false) {
-        this.selected = [];
         this.hovered = [];
         this.values = [];
         this.elements = [];
-        while(this.div.lastChild) {
-            this.div.removeChild(this.div.lastChild);
+        while(this.list.lastChild) {
+            this.list.removeChild(this.list.lastChild);
         }
-        if(this.onselectedchanged && !noEvent) this.onselectedchanged([]);
-        if(this.onhoveredchanged && !noEvent) this.onhoveredchanged([]);
+        if(this.onhover && !noEvent) this.onhover([]);
     }
     addElement(value: T, name: string) {
-        let element = new ListElement(this, value, name);
-        this.div.appendChild(element.p);
+        let element = new ListElement(this, value, name, this.deleteable);
+        this.list.appendChild(element.div);
         this.elements.push(element);
         this.values.push(value);
     }
     removeElement(value: T) {
-        this.unhover(value);
-        this.unselect(value);
         let index = this.values.indexOf(value);
         if (index > -1) {
+            this.unhover(value);
             this.values.splice(index, 1);
-            this.div.removeChild(this.elements[index].p);
+            this.list.removeChild(this.elements[index].div);
             this.elements.splice(index, 1);
         }
     }
     hover(item: T) {
-        if(!this.hoverable) return;
         this.hovered.push(item);
-        if(this.onhoveredchanged) this.onhoveredchanged(this.hovered);
+        if(this.onhover) this.onhover(this.hovered);
     }
     unhover(item: T) {
-        if(!this.hoverable) return;
         let index = this.hovered.indexOf(item);
         if (index > -1) {
             this.hovered.splice(index, 1);
-            if(this.onhoveredchanged) this.onhoveredchanged(this.hovered);
+            if(this.onhover) this.onhover(this.hovered);
         }
     }
-    select(item: T) {
-        if(!this.selectable) return;
-        if(this.singleSelect) {
-            for(let item of this.selected) {
-                this.elements[this.values.indexOf(item)].unselect();
-            }
-        }
-        this.selected.push(item);
-        if(this.onselectedchanged) this.onselectedchanged(this.selected);
+    clicked(item: T){
+
     }
-    unselect(item: T) {
-        if(!this.selectable) return;
-        let index = this.selected.indexOf(item);
-        if (index > -1) {
-            this.selected.splice(index, 1);
-            if(this.onselectedchanged) this.onselectedchanged(this.selected);
+    delete(item: T) {
+        this.removeElement(item);
+        if(this.ondelete) this.ondelete(item);
+    }
+}
+
+export class TitledInteractiveList<T> extends InteractiveList<T> {
+    p: HTMLParagraphElement;
+    constructor(deleteable: boolean=true) {
+        super(deleteable);
+        this.p = document.createElement("p");
+        this.div.prepend(this.p);
+        this.setTitle("");
+    }
+    setTitle(value: string) {
+        if(value == "") {
+            this.p.style.display = "none";
+            this.p.innerText = "";
+        } else {
+            this.p.style.display = "block";
+            this.p.innerText = value;
         }
     }
 }
 
 export class ListElement<T> {
-    p: HTMLParagraphElement;
+    div: HTMLDivElement;
+    spanName: HTMLSpanElement;
+    deleteButton: HTMLSpanElement;
     value: T;
     parent: InteractiveList<T>;
     selected: boolean;
-    constructor(parent: InteractiveList<T>, value: T, name: string) {
+    constructor(parent: InteractiveList<T>, value: T, name: string, deleteable: boolean=true) {
         this.value = value;
         this.parent = parent;
-        this.p = document.createElement("p");
-        this.p.classList.add("interactive-list-element");
-        this.p.innerText = name;
-        this.p.addEventListener("mouseenter", this.onmouseenter.bind(this));
-        this.p.addEventListener("mouseleave", this.onmouseleave.bind(this));
-        this.p.addEventListener("mousedown", this.onmousedown.bind(this));
+
+        this.div = document.createElement("div");
+        this.div.classList.add("interactive-list-element");
+        this.div.addEventListener("mouseenter", this.onmouseenter.bind(this));
+        this.div.addEventListener("mouseleave", this.onmouseleave.bind(this));
+        this.div.addEventListener("mousedown", this.onmousedown.bind(this));
+
+        this.spanName = document.createElement("span");
+        this.spanName.innerText = name;
+        this.spanName.classList.add("element-name");
+        this.div.appendChild(this.spanName);
+
+        if(deleteable) {
+            this.deleteButton = document.createElement("span");
+            this.deleteButton.classList.add("element-delete");
+            this.deleteButton.addEventListener("mousedown", this.delete.bind(this));
+            this.div.appendChild(this.deleteButton);
+        }
     }
     onmouseenter(event) {
         this.parent.hover(this.value);
-        this.p.classList.add("hovered");
     }
     onmouseleave(event) {
         this.parent.unhover(this.value);
-        this.p.classList.remove("hovered");
     }
     onmousedown(event) {
         if(event.which == 1) {
-            if(this.selected) {
-                this.unselect();
-            } else {
-                this.select();
-            }
+            this.parent.clicked(this.value);
         }
     }
-    select() {
-        if(!this.parent.selectable) return;
-        this.selected = true;
-        this.parent.select(this.value);
-        this.p.classList.add("selected");
-    }
-    unselect() {
-        this.selected = false;
-        this.parent.unselect(this.value);
-        this.p.classList.remove("selected");
+    delete(event) {
+        if(event.which == 1) {
+            this.parent.delete(this.value);
+        }
     }
 }
 

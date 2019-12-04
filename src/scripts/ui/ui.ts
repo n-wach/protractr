@@ -28,6 +28,7 @@ export class UI {
         this.sketchView.draw();
         this.infoPane.existingConstraintsList.setUnfilteredConstraints(this.protractr.sketch.constraints);
         this.infoPane.possibleNewConstraintsList.update();
+        this.infoPane.selectedFiguresList.updateTitle();
         if(this.infoPane.selectedFiguresList.list.values.length == 1) {
             let fig = this.infoPane.selectedFiguresList.list.values[0];
             this.infoPane.selectedFigureView.setFigure(fig);

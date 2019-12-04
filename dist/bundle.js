@@ -2009,6 +2009,19 @@ var HistoryStack = /** @class */ (function () {
 
 },{}],8:[function(require,module,exports){
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 Object.defineProperty(exports, "__esModule", { value: true });
 var figures_1 = require("../gcs/figures");
 var main_1 = require("../main");
@@ -2118,8 +2131,10 @@ var PossibleNewConstraintsList = /** @class */ (function () {
         var figs = this.ui.infoPane.selectedFiguresList.list.values;
         if (figs.length == 0) {
             this.title.innerText = "";
+            this.title.style.display = "none";
             return;
         }
+        this.title.style.display = "block";
         var filters = constraint_filter_1.getSatisfiedConstraintFilters(figs);
         if (filters.length == 0) {
             this.title.innerText = "No possible constraints";
@@ -2147,12 +2162,10 @@ var ExistingConstraintList = /** @class */ (function () {
     function ExistingConstraintList(ui) {
         this.ui = ui;
         this.div = document.createElement("div");
-        this.title = document.createElement("p");
-        this.title.innerText = "Sketch has no constraints";
-        this.div.appendChild(this.title);
-        this.list = new InteractiveList([], true, true);
-        this.list.onhoveredchanged = this.onhoveredchanged.bind(this);
-        this.list.onselectedchanged = this.onselectedchanged.bind(this);
+        this.list = new TitledInteractiveList(false);
+        this.list.setTitle("Sketch has no constraints");
+        this.list.onhover = this.ui.refresh.bind(this.ui);
+        this.list.onclick = this.ui.refresh.bind(this.ui);
         this.div.appendChild(this.list.div);
     }
     ExistingConstraintList.prototype.figureInHovered = function (fig) {
@@ -2181,25 +2194,26 @@ var ExistingConstraintList = /** @class */ (function () {
                 this.addConstraint(constraint);
         }
         var count = this.ui.infoPane.selectedFiguresList.count();
-        if (count == 0) {
-            if (newConstraints.length == 0) {
-                this.title.innerText = "Sketch has no constraints";
+        if (newConstraints.length == 0) {
+            if (count == 0) {
+                this.list.setTitle("No constraints in sketch");
+            }
+            else if (count == 1) {
+                this.list.setTitle("No constraints on selected figure");
             }
             else {
-                this.title.innerText = "Sketch Constraints:";
+                this.list.setTitle("No constraints exist between the selected figures");
             }
         }
         else {
-            if (newConstraints.length == 0) {
-                if (count == 1) {
-                    this.title.innerText = "The selected figure has no constraints";
-                }
-                else {
-                    this.title.innerText = "No constraints exist between the selected figures";
-                }
+            if (count == 0) {
+                this.list.setTitle("Sketch Constraints:");
+            }
+            else if (count == 1) {
+                this.list.setTitle("Figure Constraints:");
             }
             else {
-                this.title.innerText = "Existing constraints:";
+                this.list.setTitle("Selection Constraints:");
             }
         }
     };
@@ -2229,12 +2243,6 @@ var ExistingConstraintList = /** @class */ (function () {
     ExistingConstraintList.prototype.contains = function (constraint) {
         return this.list.values.indexOf(constraint) != -1;
     };
-    ExistingConstraintList.prototype.onhoveredchanged = function () {
-        this.ui.refresh();
-    };
-    ExistingConstraintList.prototype.onselectedchanged = function () {
-        this.ui.refresh();
-    };
     return ExistingConstraintList;
 }());
 exports.ExistingConstraintList = ExistingConstraintList;
@@ -2242,11 +2250,9 @@ var SelectedFigureList = /** @class */ (function () {
     function SelectedFigureList(ui) {
         this.ui = ui;
         this.div = document.createElement("div");
-        this.title = document.createElement("p");
-        this.title.innerText = "";
-        this.div.appendChild(this.title);
-        this.list = new InteractiveList([], false);
-        this.list.onhoveredchanged = this.onhoveredchanged.bind(this);
+        this.list = new TitledInteractiveList();
+        this.list.onhover = this.ui.refresh.bind(this.ui);
+        this.list.ondelete = this.ui.refresh.bind(this.ui);
         this.div.appendChild(this.list.div);
     }
     SelectedFigureList.prototype.clear = function () {
@@ -2260,29 +2266,23 @@ var SelectedFigureList = /** @class */ (function () {
     SelectedFigureList.prototype.updateTitle = function () {
         var count = this.count();
         if (count == 0) {
-            this.title.innerText = "";
+            this.list.setTitle("");
         }
         else if (count == 1) {
-            this.title.innerText = "Selected Figure:";
+            this.list.setTitle("Selected Figure:");
         }
         else {
-            this.title.innerText = "Selected Figures:";
+            this.list.setTitle("Selected Figures:");
         }
     };
     SelectedFigureList.prototype.removeFigure = function (figure) {
         this.list.removeElement(figure);
         this.updateTitle();
     };
-    SelectedFigureList.prototype.contains = function (figure) {
+    SelectedFigureList.prototype.figureSelected = function (figure) {
         return this.list.values.indexOf(figure) != -1;
     };
-    SelectedFigureList.prototype.onhoveredchanged = function () {
-        this.ui.refresh();
-    };
-    SelectedFigureList.prototype.onselectedchanged = function () {
-        this.ui.refresh();
-    };
-    SelectedFigureList.prototype.figureInHovered = function (fig) {
+    SelectedFigureList.prototype.figureHovered = function (fig) {
         return this.list.hovered.indexOf(fig) != -1;
     };
     SelectedFigureList.prototype.count = function () {
@@ -2292,135 +2292,123 @@ var SelectedFigureList = /** @class */ (function () {
 }());
 exports.SelectedFigureList = SelectedFigureList;
 var InteractiveList = /** @class */ (function () {
-    function InteractiveList(items, selectable, singleSelect, hoverable) {
-        if (items === void 0) { items = []; }
-        if (selectable === void 0) { selectable = true; }
-        if (singleSelect === void 0) { singleSelect = false; }
-        if (hoverable === void 0) { hoverable = true; }
+    function InteractiveList(deleteable) {
+        if (deleteable === void 0) { deleteable = true; }
+        this.deleteable = deleteable;
         this.div = document.createElement("div");
-        this.div.classList.add("interactive-list");
+        this.list = document.createElement("div");
+        this.list.classList.add("interactive-list");
+        this.div.appendChild(this.list);
         this.clear();
-        for (var _i = 0, items_1 = items; _i < items_1.length; _i++) {
-            var item = items_1[_i];
-            this.addElement(item[0], item[1]);
-        }
-        this.hoverable = hoverable;
-        this.selectable = selectable;
-        this.singleSelect = singleSelect;
     }
     InteractiveList.prototype.clear = function (noEvent) {
         if (noEvent === void 0) { noEvent = false; }
-        this.selected = [];
         this.hovered = [];
         this.values = [];
         this.elements = [];
-        while (this.div.lastChild) {
-            this.div.removeChild(this.div.lastChild);
+        while (this.list.lastChild) {
+            this.list.removeChild(this.list.lastChild);
         }
-        if (this.onselectedchanged && !noEvent)
-            this.onselectedchanged([]);
-        if (this.onhoveredchanged && !noEvent)
-            this.onhoveredchanged([]);
+        if (this.onhover && !noEvent)
+            this.onhover([]);
     };
     InteractiveList.prototype.addElement = function (value, name) {
-        var element = new ListElement(this, value, name);
-        this.div.appendChild(element.p);
+        var element = new ListElement(this, value, name, this.deleteable);
+        this.list.appendChild(element.div);
         this.elements.push(element);
         this.values.push(value);
     };
     InteractiveList.prototype.removeElement = function (value) {
-        this.unhover(value);
-        this.unselect(value);
         var index = this.values.indexOf(value);
         if (index > -1) {
+            this.unhover(value);
             this.values.splice(index, 1);
-            this.div.removeChild(this.elements[index].p);
+            this.list.removeChild(this.elements[index].div);
             this.elements.splice(index, 1);
         }
     };
     InteractiveList.prototype.hover = function (item) {
-        if (!this.hoverable)
-            return;
         this.hovered.push(item);
-        if (this.onhoveredchanged)
-            this.onhoveredchanged(this.hovered);
+        if (this.onhover)
+            this.onhover(this.hovered);
     };
     InteractiveList.prototype.unhover = function (item) {
-        if (!this.hoverable)
-            return;
         var index = this.hovered.indexOf(item);
         if (index > -1) {
             this.hovered.splice(index, 1);
-            if (this.onhoveredchanged)
-                this.onhoveredchanged(this.hovered);
+            if (this.onhover)
+                this.onhover(this.hovered);
         }
     };
-    InteractiveList.prototype.select = function (item) {
-        if (!this.selectable)
-            return;
-        if (this.singleSelect) {
-            for (var _i = 0, _a = this.selected; _i < _a.length; _i++) {
-                var item_1 = _a[_i];
-                this.elements[this.values.indexOf(item_1)].unselect();
-            }
-        }
-        this.selected.push(item);
-        if (this.onselectedchanged)
-            this.onselectedchanged(this.selected);
+    InteractiveList.prototype.clicked = function (item) {
     };
-    InteractiveList.prototype.unselect = function (item) {
-        if (!this.selectable)
-            return;
-        var index = this.selected.indexOf(item);
-        if (index > -1) {
-            this.selected.splice(index, 1);
-            if (this.onselectedchanged)
-                this.onselectedchanged(this.selected);
-        }
+    InteractiveList.prototype.delete = function (item) {
+        this.removeElement(item);
+        if (this.ondelete)
+            this.ondelete(item);
     };
     return InteractiveList;
 }());
 exports.InteractiveList = InteractiveList;
+var TitledInteractiveList = /** @class */ (function (_super) {
+    __extends(TitledInteractiveList, _super);
+    function TitledInteractiveList(deleteable) {
+        if (deleteable === void 0) { deleteable = true; }
+        var _this = _super.call(this, deleteable) || this;
+        _this.p = document.createElement("p");
+        _this.div.prepend(_this.p);
+        _this.setTitle("");
+        return _this;
+    }
+    TitledInteractiveList.prototype.setTitle = function (value) {
+        if (value == "") {
+            this.p.style.display = "none";
+            this.p.innerText = "";
+        }
+        else {
+            this.p.style.display = "block";
+            this.p.innerText = value;
+        }
+    };
+    return TitledInteractiveList;
+}(InteractiveList));
+exports.TitledInteractiveList = TitledInteractiveList;
 var ListElement = /** @class */ (function () {
-    function ListElement(parent, value, name) {
+    function ListElement(parent, value, name, deleteable) {
+        if (deleteable === void 0) { deleteable = true; }
         this.value = value;
         this.parent = parent;
-        this.p = document.createElement("p");
-        this.p.classList.add("interactive-list-element");
-        this.p.innerText = name;
-        this.p.addEventListener("mouseenter", this.onmouseenter.bind(this));
-        this.p.addEventListener("mouseleave", this.onmouseleave.bind(this));
-        this.p.addEventListener("mousedown", this.onmousedown.bind(this));
+        this.div = document.createElement("div");
+        this.div.classList.add("interactive-list-element");
+        this.div.addEventListener("mouseenter", this.onmouseenter.bind(this));
+        this.div.addEventListener("mouseleave", this.onmouseleave.bind(this));
+        this.div.addEventListener("mousedown", this.onmousedown.bind(this));
+        this.spanName = document.createElement("span");
+        this.spanName.innerText = name;
+        this.spanName.classList.add("element-name");
+        this.div.appendChild(this.spanName);
+        if (deleteable) {
+            this.deleteButton = document.createElement("span");
+            this.deleteButton.classList.add("element-delete");
+            this.deleteButton.addEventListener("mousedown", this.delete.bind(this));
+            this.div.appendChild(this.deleteButton);
+        }
     }
     ListElement.prototype.onmouseenter = function (event) {
         this.parent.hover(this.value);
-        this.p.classList.add("hovered");
     };
     ListElement.prototype.onmouseleave = function (event) {
         this.parent.unhover(this.value);
-        this.p.classList.remove("hovered");
     };
     ListElement.prototype.onmousedown = function (event) {
         if (event.which == 1) {
-            if (this.selected) {
-                this.unselect();
-            }
-            else {
-                this.select();
-            }
+            this.parent.clicked(this.value);
         }
     };
-    ListElement.prototype.select = function () {
-        if (!this.parent.selectable)
-            return;
-        this.selected = true;
-        this.parent.select(this.value);
-        this.p.classList.add("selected");
-    };
-    ListElement.prototype.unselect = function () {
-        this.selected = false;
-        this.parent.unselect(this.value);
-        this.p.classList.remove("selected");
+    ListElement.prototype.delete = function (event) {
+        if (event.which == 1) {
+            this.parent.delete(this.value);
+        }
     };
     return ListElement;
 }());
@@ -2583,7 +2571,7 @@ var SketchView = /** @class */ (function () {
     };
     SketchView.prototype.toggleSelected = function (fig) {
         var selectedFigures = this.ui.infoPane.selectedFiguresList;
-        if (!selectedFigures.contains(fig)) {
+        if (!selectedFigures.figureSelected(fig)) {
             selectedFigures.addFigure(fig);
         }
         else {
@@ -2598,11 +2586,11 @@ var SketchView = /** @class */ (function () {
         this.ctx.strokeStyle = "black";
         this.ctx.lineWidth = 2 / this.ctxScale;
         var pointSize = 3 / this.ctxScale;
-        if (this.hoveredFigure == fig || this.ui.infoPane.selectedFiguresList.figureInHovered(fig)) {
+        if (this.hoveredFigure == fig || this.ui.infoPane.selectedFiguresList.figureHovered(fig)) {
             pointSize = 7 / this.ctxScale;
             this.ctx.lineWidth = 5 / this.ctxScale;
         }
-        if (this.ui.infoPane.selectedFiguresList.contains(fig)) {
+        if (this.ui.infoPane.selectedFiguresList.figureSelected(fig)) {
             this.ctx.strokeStyle = "#5e9cff";
         }
         if (this.ui.infoPane.existingConstraintsList.figureInHovered(fig)) {
@@ -3013,6 +3001,7 @@ var UI = /** @class */ (function () {
         this.sketchView.draw();
         this.infoPane.existingConstraintsList.setUnfilteredConstraints(this.protractr.sketch.constraints);
         this.infoPane.possibleNewConstraintsList.update();
+        this.infoPane.selectedFiguresList.updateTitle();
         if (this.infoPane.selectedFiguresList.list.values.length == 1) {
             var fig = this.infoPane.selectedFiguresList.list.values[0];
             this.infoPane.selectedFigureView.setFigure(fig);

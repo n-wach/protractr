@@ -30,8 +30,9 @@ table, tbody, tr, td {
     margin: 0;
 }
 .side-pane-td {
-    background: lightgray;
+    background: #e4e4e4;
     margin: 0;
+    vertical-align: top;
 }
 .tool {
     display: inline-block;
@@ -46,7 +47,6 @@ table, tbody, tr, td {
     border-color: red;
 }
 .interactive-list {
-    background: white;
     width: 100%;
     max-height: 404px;
     overflow: auto;
@@ -56,10 +56,22 @@ table, tbody, tr, td {
     border: 1px black;
     color: black;
     margin: 0 5px;
+    height: 18px;
 }
-.interactive-list-element.hovered {
+.interactive-list-element span.element-delete {
+    float: right;
+    display: none;
+    background-image: url("../../image/delete.png");
+    background-size: contain;
+    height: 18px;
+    width: 18px;
+}
+.interactive-list-element span.element-delete:hover {
+    background-color: gray;
+}
+.interactive-list-element:hover {
     background: lightgray;
 }
-.interactive-list-element.selected {
-    background: orange !important;
+.interactive-list-element:hover span.element-delete {
+    display: inline-block;
 }

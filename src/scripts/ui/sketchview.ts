@@ -166,7 +166,7 @@ export class SketchView {
     }
     toggleSelected(fig: Figure) {
         let selectedFigures = this.ui.infoPane.selectedFiguresList;
-        if(!selectedFigures.contains(fig)) {
+        if(!selectedFigures.figureSelected(fig)) {
             selectedFigures.addFigure(fig);
         } else {
             selectedFigures.removeFigure(fig);
@@ -180,11 +180,11 @@ export class SketchView {
         this.ctx.strokeStyle = "black";
         this.ctx.lineWidth = 2 / this.ctxScale;
         let pointSize = 3 / this.ctxScale;
-        if(this.hoveredFigure == fig || this.ui.infoPane.selectedFiguresList.figureInHovered(fig)) {
+        if(this.hoveredFigure == fig || this.ui.infoPane.selectedFiguresList.figureHovered(fig)) {
             pointSize = 7 / this.ctxScale;
             this.ctx.lineWidth = 5 / this.ctxScale;
         }
-        if (this.ui.infoPane.selectedFiguresList.contains(fig)) {
+        if (this.ui.infoPane.selectedFiguresList.figureSelected(fig)) {
             this.ctx.strokeStyle = "#5e9cff";
         }
         if (this.ui.infoPane.existingConstraintsList.figureInHovered(fig)) {

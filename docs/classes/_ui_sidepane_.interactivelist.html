@@ -82,6 +82,11 @@
 				<ul class="tsd-hierarchy">
 					<li>
 						<span class="target">InteractiveList</span>
+						<ul class="tsd-hierarchy">
+							<li>
+								<a href="_ui_sidepane_.titledinteractivelist.html" class="tsd-signature-type">TitledInteractiveList</a>
+							</li>
+						</ul>
 					</li>
 				</ul>
 			</section>
@@ -98,15 +103,14 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_ui_sidepane_.interactivelist.html#deleteable" class="tsd-kind-icon">deleteable</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_ui_sidepane_.interactivelist.html#div" class="tsd-kind-icon">div</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_ui_sidepane_.interactivelist.html#elements" class="tsd-kind-icon">elements</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_ui_sidepane_.interactivelist.html#hoverable" class="tsd-kind-icon">hoverable</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_ui_sidepane_.interactivelist.html#hovered" class="tsd-kind-icon">hovered</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_ui_sidepane_.interactivelist.html#onhoveredchanged" class="tsd-kind-icon">onhoveredchanged</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_ui_sidepane_.interactivelist.html#onselectedchanged" class="tsd-kind-icon">onselectedchanged</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_ui_sidepane_.interactivelist.html#selectable" class="tsd-kind-icon">selectable</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_ui_sidepane_.interactivelist.html#selected" class="tsd-kind-icon">selected</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_ui_sidepane_.interactivelist.html#singleselect" class="tsd-kind-icon">single<wbr>Select</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_ui_sidepane_.interactivelist.html#list" class="tsd-kind-icon">list</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_ui_sidepane_.interactivelist.html#onclick" class="tsd-kind-icon">onclick</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_ui_sidepane_.interactivelist.html#ondelete" class="tsd-kind-icon">ondelete</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_ui_sidepane_.interactivelist.html#onhover" class="tsd-kind-icon">onhover</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_ui_sidepane_.interactivelist.html#values" class="tsd-kind-icon">values</a></li>
 							</ul>
 						</section>
@@ -115,11 +119,11 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_ui_sidepane_.interactivelist.html#addelement" class="tsd-kind-icon">add<wbr>Element</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_ui_sidepane_.interactivelist.html#clear" class="tsd-kind-icon">clear</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_ui_sidepane_.interactivelist.html#clicked" class="tsd-kind-icon">clicked</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_ui_sidepane_.interactivelist.html#delete" class="tsd-kind-icon">delete</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_ui_sidepane_.interactivelist.html#hover" class="tsd-kind-icon">hover</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_ui_sidepane_.interactivelist.html#removeelement" class="tsd-kind-icon">remove<wbr>Element</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_ui_sidepane_.interactivelist.html#select" class="tsd-kind-icon">select</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_ui_sidepane_.interactivelist.html#unhover" class="tsd-kind-icon">unhover</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_ui_sidepane_.interactivelist.html#unselect" class="tsd-kind-icon">unselect</a></li>
 							</ul>
 						</section>
 					</div>
@@ -131,28 +135,19 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Interactive<wbr>List<span class="tsd-signature-symbol">(</span>items<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">[]</span>, selectable<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span>, singleSelect<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span>, hoverable<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_ui_sidepane_.interactivelist.html" class="tsd-signature-type">InteractiveList</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Interactive<wbr>List<span class="tsd-signature-symbol">(</span>deleteable<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_ui_sidepane_.interactivelist.html" class="tsd-signature-type">InteractiveList</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/a02edd3/src/scripts/ui/sidepane.ts#L299">ui/sidepane.ts:299</a></li>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/00af784/src/scripts/ui/sidepane.ts#L282">ui/sidepane.ts:282</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> items: <span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></h5>
-								</li>
-								<li>
-									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> selectable: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;true</span></h5>
-								</li>
-								<li>
-									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> singleSelect: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;false</span></h5>
-								</li>
-								<li>
-									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> hoverable: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;true</span></h5>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> deleteable: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;true</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="_ui_sidepane_.interactivelist.html" class="tsd-signature-type">InteractiveList</a></h4>
@@ -163,12 +158,22 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="deleteable" class="tsd-anchor"></a>
+					<h3>deleteable</h3>
+					<div class="tsd-signature tsd-kind-icon">deleteable<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/00af784/src/scripts/ui/sidepane.ts#L282">ui/sidepane.ts:282</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="div" class="tsd-anchor"></a>
 					<h3>div</h3>
 					<div class="tsd-signature tsd-kind-icon">div<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">HTMLDivElement</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/a02edd3/src/scripts/ui/sidepane.ts#L290">ui/sidepane.ts:290</a></li>
+							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/00af784/src/scripts/ui/sidepane.ts#L274">ui/sidepane.ts:274</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -178,17 +183,7 @@
 					<div class="tsd-signature tsd-kind-icon">elements<span class="tsd-signature-symbol">:</span> <a href="_ui_sidepane_.listelement.html" class="tsd-signature-type">ListElement</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/a02edd3/src/scripts/ui/sidepane.ts#L294">ui/sidepane.ts:294</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="hoverable" class="tsd-anchor"></a>
-					<h3>hoverable</h3>
-					<div class="tsd-signature tsd-kind-icon">hoverable<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/a02edd3/src/scripts/ui/sidepane.ts#L298">ui/sidepane.ts:298</a></li>
+							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/00af784/src/scripts/ui/sidepane.ts#L278">ui/sidepane.ts:278</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -198,57 +193,47 @@
 					<div class="tsd-signature tsd-kind-icon">hovered<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/a02edd3/src/scripts/ui/sidepane.ts#L292">ui/sidepane.ts:292</a></li>
+							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/00af784/src/scripts/ui/sidepane.ts#L277">ui/sidepane.ts:277</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="onhoveredchanged" class="tsd-anchor"></a>
-					<h3>onhoveredchanged</h3>
-					<div class="tsd-signature tsd-kind-icon">onhoveredchanged<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Function</span></div>
+					<a name="list" class="tsd-anchor"></a>
+					<h3>list</h3>
+					<div class="tsd-signature tsd-kind-icon">list<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">HTMLDivElement</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/a02edd3/src/scripts/ui/sidepane.ts#L295">ui/sidepane.ts:295</a></li>
+							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/00af784/src/scripts/ui/sidepane.ts#L275">ui/sidepane.ts:275</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="onselectedchanged" class="tsd-anchor"></a>
-					<h3>onselectedchanged</h3>
-					<div class="tsd-signature tsd-kind-icon">onselectedchanged<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Function</span></div>
+					<a name="onclick" class="tsd-anchor"></a>
+					<h3>onclick</h3>
+					<div class="tsd-signature tsd-kind-icon">onclick<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/a02edd3/src/scripts/ui/sidepane.ts#L296">ui/sidepane.ts:296</a></li>
+							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/00af784/src/scripts/ui/sidepane.ts#L281">ui/sidepane.ts:281</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="selectable" class="tsd-anchor"></a>
-					<h3>selectable</h3>
-					<div class="tsd-signature tsd-kind-icon">selectable<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+					<a name="ondelete" class="tsd-anchor"></a>
+					<h3>ondelete</h3>
+					<div class="tsd-signature tsd-kind-icon">ondelete<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/a02edd3/src/scripts/ui/sidepane.ts#L297">ui/sidepane.ts:297</a></li>
+							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/00af784/src/scripts/ui/sidepane.ts#L280">ui/sidepane.ts:280</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="selected" class="tsd-anchor"></a>
-					<h3>selected</h3>
-					<div class="tsd-signature tsd-kind-icon">selected<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span></div>
+					<a name="onhover" class="tsd-anchor"></a>
+					<h3>onhover</h3>
+					<div class="tsd-signature tsd-kind-icon">onhover<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/a02edd3/src/scripts/ui/sidepane.ts#L291">ui/sidepane.ts:291</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="singleselect" class="tsd-anchor"></a>
-					<h3>single<wbr>Select</h3>
-					<div class="tsd-signature tsd-kind-icon">single<wbr>Select<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/a02edd3/src/scripts/ui/sidepane.ts#L299">ui/sidepane.ts:299</a></li>
+							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/00af784/src/scripts/ui/sidepane.ts#L279">ui/sidepane.ts:279</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -258,7 +243,7 @@
 					<div class="tsd-signature tsd-kind-icon">values<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/a02edd3/src/scripts/ui/sidepane.ts#L293">ui/sidepane.ts:293</a></li>
+							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/00af784/src/scripts/ui/sidepane.ts#L276">ui/sidepane.ts:276</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -275,7 +260,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/a02edd3/src/scripts/ui/sidepane.ts#L322">ui/sidepane.ts:322</a></li>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/00af784/src/scripts/ui/sidepane.ts#L300">ui/sidepane.ts:300</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -301,13 +286,59 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/a02edd3/src/scripts/ui/sidepane.ts#L311">ui/sidepane.ts:311</a></li>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/00af784/src/scripts/ui/sidepane.ts#L291">ui/sidepane.ts:291</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> noEvent: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;false</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="clicked" class="tsd-anchor"></a>
+					<h3>clicked</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">clicked<span class="tsd-signature-symbol">(</span>item<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/00af784/src/scripts/ui/sidepane.ts#L326">ui/sidepane.ts:326</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>item: <span class="tsd-signature-type">T</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="delete" class="tsd-anchor"></a>
+					<h3>delete</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">delete<span class="tsd-signature-symbol">(</span>item<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/00af784/src/scripts/ui/sidepane.ts#L329">ui/sidepane.ts:329</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>item: <span class="tsd-signature-type">T</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -324,7 +355,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/a02edd3/src/scripts/ui/sidepane.ts#L338">ui/sidepane.ts:338</a></li>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/00af784/src/scripts/ui/sidepane.ts#L315">ui/sidepane.ts:315</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -347,36 +378,13 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/a02edd3/src/scripts/ui/sidepane.ts#L328">ui/sidepane.ts:328</a></li>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/00af784/src/scripts/ui/sidepane.ts#L306">ui/sidepane.ts:306</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>value: <span class="tsd-signature-type">T</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="select" class="tsd-anchor"></a>
-					<h3>select</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">select<span class="tsd-signature-symbol">(</span>item<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/a02edd3/src/scripts/ui/sidepane.ts#L351">ui/sidepane.ts:351</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>item: <span class="tsd-signature-type">T</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -393,30 +401,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/a02edd3/src/scripts/ui/sidepane.ts#L343">ui/sidepane.ts:343</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>item: <span class="tsd-signature-type">T</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="unselect" class="tsd-anchor"></a>
-					<h3>unselect</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">unselect<span class="tsd-signature-symbol">(</span>item<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/a02edd3/src/scripts/ui/sidepane.ts#L361">ui/sidepane.ts:361</a></li>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/00af784/src/scripts/ui/sidepane.ts#L319">ui/sidepane.ts:319</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -495,31 +480,28 @@
 								<a href="_ui_sidepane_.interactivelist.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_ui_sidepane_.interactivelist.html#deleteable" class="tsd-kind-icon">deleteable</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="_ui_sidepane_.interactivelist.html#div" class="tsd-kind-icon">div</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="_ui_sidepane_.interactivelist.html#elements" class="tsd-kind-icon">elements</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_ui_sidepane_.interactivelist.html#hoverable" class="tsd-kind-icon">hoverable</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="_ui_sidepane_.interactivelist.html#hovered" class="tsd-kind-icon">hovered</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_ui_sidepane_.interactivelist.html#onhoveredchanged" class="tsd-kind-icon">onhoveredchanged</a>
+								<a href="_ui_sidepane_.interactivelist.html#list" class="tsd-kind-icon">list</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_ui_sidepane_.interactivelist.html#onselectedchanged" class="tsd-kind-icon">onselectedchanged</a>
+								<a href="_ui_sidepane_.interactivelist.html#onclick" class="tsd-kind-icon">onclick</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_ui_sidepane_.interactivelist.html#selectable" class="tsd-kind-icon">selectable</a>
+								<a href="_ui_sidepane_.interactivelist.html#ondelete" class="tsd-kind-icon">ondelete</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_ui_sidepane_.interactivelist.html#selected" class="tsd-kind-icon">selected</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_ui_sidepane_.interactivelist.html#singleselect" class="tsd-kind-icon">single<wbr>Select</a>
+								<a href="_ui_sidepane_.interactivelist.html#onhover" class="tsd-kind-icon">onhover</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="_ui_sidepane_.interactivelist.html#values" class="tsd-kind-icon">values</a>
@@ -531,19 +513,19 @@
 								<a href="_ui_sidepane_.interactivelist.html#clear" class="tsd-kind-icon">clear</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_ui_sidepane_.interactivelist.html#clicked" class="tsd-kind-icon">clicked</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_ui_sidepane_.interactivelist.html#delete" class="tsd-kind-icon">delete</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_ui_sidepane_.interactivelist.html#hover" class="tsd-kind-icon">hover</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_ui_sidepane_.interactivelist.html#removeelement" class="tsd-kind-icon">remove<wbr>Element</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_ui_sidepane_.interactivelist.html#select" class="tsd-kind-icon">select</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_ui_sidepane_.interactivelist.html#unhover" class="tsd-kind-icon">unhover</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_ui_sidepane_.interactivelist.html#unselect" class="tsd-kind-icon">unselect</a>
 							</li>
 						</ul>
 					</li>
@@ -560,6 +542,9 @@
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
 						<a href="_ui_sidepane_.sidepane.html" class="tsd-kind-icon">Sidepane</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter">
+						<a href="_ui_sidepane_.titledinteractivelist.html" class="tsd-kind-icon">Titled<wbr>Interactive<wbr>List</a>
 					</li>
 				</ul>
 			</nav>
