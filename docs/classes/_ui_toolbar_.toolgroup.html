@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>History | protractr</title>
+	<title>ToolGroup | protractr</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,41 +56,29 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_ui_history_.html">&quot;ui/history&quot;</a>
+					<a href="../modules/_ui_toolbar_.html">&quot;ui/toolbar&quot;</a>
 				</li>
 				<li>
-					<a href="_ui_history_.history.html">History</a>
+					<a href="_ui_toolbar_.toolgroup.html">ToolGroup</a>
 				</li>
 			</ul>
-			<h1>Class History&lt;T&gt;</h1>
+			<h1>Class ToolGroup</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
-			<section class="tsd-panel tsd-comment">
-				<div class="tsd-comment tsd-typography">
-					<div class="lead">
-						<p>Editing history manager.  Consists of two stacks: undo and redo history.
-							New states clear redo history, are added to undo history.
-						It&#39;s possible for current state to be undefined, in which case the app should load some default state.</p>
-					</div>
-				</div>
-			</section>
-			<section class="tsd-panel tsd-type-parameters">
-				<h3>Type parameters</h3>
-				<ul class="tsd-type-parameters">
-					<li>
-						<h4>T</h4>
-					</li>
-				</ul>
-			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">History</span>
+						<span class="target">ToolGroup</span>
+						<ul class="tsd-hierarchy">
+							<li>
+								<a href="_ui_toolbar_.activatabletoolgroup.html" class="tsd-signature-type">ActivatableToolGroup</a>
+							</li>
+						</ul>
 					</li>
 				</ul>
 			</section>
@@ -98,172 +86,93 @@
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
-						<section class="tsd-index-section ">
+						<section class="tsd-index-section tsd-is-not-exported">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="_ui_history_.history.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-not-exported"><a href="_ui_toolbar_.toolgroup.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
-						<section class="tsd-index-section ">
+						<section class="tsd-index-section tsd-is-not-exported">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_ui_history_.history.html#currentstate" class="tsd-kind-icon">current<wbr>State</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_ui_history_.history.html#defaultstate" class="tsd-kind-icon">default<wbr>State</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_ui_history_.history.html#redohistory" class="tsd-kind-icon">redo<wbr>History</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_ui_history_.history.html#undohistory" class="tsd-kind-icon">undo<wbr>History</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-not-exported"><a href="_ui_toolbar_.toolgroup.html#div" class="tsd-kind-icon">div</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-not-exported"><a href="_ui_toolbar_.toolgroup.html#toolelements" class="tsd-kind-icon">tool<wbr>Elements</a></li>
 							</ul>
 						</section>
-						<section class="tsd-index-section ">
+						<section class="tsd-index-section tsd-is-not-exported">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_ui_history_.history.html#recordstatechange" class="tsd-kind-icon">record<wbr>State<wbr>Change</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_ui_history_.history.html#redo" class="tsd-kind-icon">redo</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_ui_history_.history.html#undo" class="tsd-kind-icon">undo</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_ui_toolbar_.toolgroup.html#addtool" class="tsd-kind-icon">add<wbr>Tool</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group ">
+			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
 				<h2>Constructors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class tsd-is-not-exported">
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
-					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>History<span class="tsd-signature-symbol">(</span>defaultState<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_ui_history_.history.html" class="tsd-signature-type">History</a></li>
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Tool<wbr>Group<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_ui_toolbar_.toolgroup.html" class="tsd-signature-type">ToolGroup</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/3d83211/src/scripts/ui/history.ts#L11">ui/history.ts:11</a></li>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/3d83211/src/scripts/ui/toolbar.ts#L54">ui/toolbar.ts:54</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>defaultState: <span class="tsd-signature-type">T</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_ui_history_.history.html" class="tsd-signature-type">History</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="_ui_toolbar_.toolgroup.html" class="tsd-signature-type">ToolGroup</a></h4>
 						</li>
 					</ul>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group ">
+			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="currentstate" class="tsd-anchor"></a>
-					<h3>current<wbr>State</h3>
-					<div class="tsd-signature tsd-kind-icon">current<wbr>State<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">T</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
+					<a name="div" class="tsd-anchor"></a>
+					<h3>div</h3>
+					<div class="tsd-signature tsd-kind-icon">div<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">HTMLDivElement</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/3d83211/src/scripts/ui/history.ts#L10">ui/history.ts:10</a></li>
+							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/3d83211/src/scripts/ui/toolbar.ts#L53">ui/toolbar.ts:53</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="defaultstate" class="tsd-anchor"></a>
-					<h3>default<wbr>State</h3>
-					<div class="tsd-signature tsd-kind-icon">default<wbr>State<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">T</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
+					<a name="toolelements" class="tsd-anchor"></a>
+					<h3>tool<wbr>Elements</h3>
+					<div class="tsd-signature tsd-kind-icon">tool<wbr>Elements<span class="tsd-signature-symbol">:</span> <a href="_ui_toolbar_.toolelement.html" class="tsd-signature-type">ToolElement</a><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/3d83211/src/scripts/ui/history.ts#L11">ui/history.ts:11</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="redohistory" class="tsd-anchor"></a>
-					<h3>redo<wbr>History</h3>
-					<div class="tsd-signature tsd-kind-icon">redo<wbr>History<span class="tsd-signature-symbol">:</span> <a href="_ui_history_.historystack.html" class="tsd-signature-type">HistoryStack</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/3d83211/src/scripts/ui/history.ts#L9">ui/history.ts:9</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="undohistory" class="tsd-anchor"></a>
-					<h3>undo<wbr>History</h3>
-					<div class="tsd-signature tsd-kind-icon">undo<wbr>History<span class="tsd-signature-symbol">:</span> <a href="_ui_history_.historystack.html" class="tsd-signature-type">HistoryStack</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/3d83211/src/scripts/ui/history.ts#L8">ui/history.ts:8</a></li>
+							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/3d83211/src/scripts/ui/toolbar.ts#L54">ui/toolbar.ts:54</a></li>
 						</ul>
 					</aside>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group ">
+			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
 				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="recordstatechange" class="tsd-anchor"></a>
-					<h3>record<wbr>State<wbr>Change</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">record<wbr>State<wbr>Change<span class="tsd-signature-symbol">(</span>newState<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+					<a name="addtool" class="tsd-anchor"></a>
+					<h3>add<wbr>Tool</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Tool<span class="tsd-signature-symbol">(</span>tool<span class="tsd-signature-symbol">: </span><a href="_ui_tools_.tool.html" class="tsd-signature-type">Tool</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/3d83211/src/scripts/ui/history.ts#L21">ui/history.ts:21</a></li>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/3d83211/src/scripts/ui/toolbar.ts#L60">ui/toolbar.ts:60</a></li>
 								</ul>
 							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>A new state produced by something other than undo or redo.</p>
-								</div>
-							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>newState: <span class="tsd-signature-type">T</span></h5>
+									<h5>tool: <a href="_ui_tools_.tool.html" class="tsd-signature-type">Tool</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="redo" class="tsd-anchor"></a>
-					<h3>redo</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">redo<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/3d83211/src/scripts/ui/history.ts#L41">ui/history.ts:41</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>moves current state into undo, pops redo onto current state</p>
-								</div>
-							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">T</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="undo" class="tsd-anchor"></a>
-					<h3>undo</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">undo<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/3d83211/src/scripts/ui/history.ts#L31">ui/history.ts:31</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>moves current state into redo, pops undo onto current state</p>
-								</div>
-							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">T</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -293,7 +202,7 @@
 					<li class=" tsd-kind-external-module">
 						<a href="../modules/_protractr_.html">&quot;protractr&quot;</a>
 					</li>
-					<li class="current tsd-kind-external-module">
+					<li class=" tsd-kind-external-module">
 						<a href="../modules/_ui_history_.html">&quot;ui/history&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
@@ -302,7 +211,7 @@
 					<li class=" tsd-kind-external-module">
 						<a href="../modules/_ui_sketchview_.html">&quot;ui/sketchview&quot;</a>
 					</li>
-					<li class=" tsd-kind-external-module">
+					<li class="current tsd-kind-external-module">
 						<a href="../modules/_ui_toolbar_.html">&quot;ui/toolbar&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
@@ -315,41 +224,38 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
+					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_ui_toolbar_.activatabletoolelement.html" class="tsd-kind-icon">Activatable<wbr>Tool<wbr>Element</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_ui_toolbar_.activatabletoolgroup.html" class="tsd-kind-icon">Activatable<wbr>Tool<wbr>Group</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_ui_toolbar_.toolelement.html" class="tsd-kind-icon">Tool<wbr>Element</a>
+					</li>
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter">
-						<a href="_ui_history_.history.html" class="tsd-kind-icon">History</a>
+					<li class="current tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_ui_toolbar_.toolgroup.html" class="tsd-kind-icon">Tool<wbr>Group</a>
 						<ul>
-							<li class=" tsd-kind-constructor tsd-parent-kind-class">
-								<a href="_ui_history_.history.html#constructor" class="tsd-kind-icon">constructor</a>
+							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-not-exported">
+								<a href="_ui_toolbar_.toolgroup.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_ui_history_.history.html#currentstate" class="tsd-kind-icon">current<wbr>State</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
+								<a href="_ui_toolbar_.toolgroup.html#div" class="tsd-kind-icon">div</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_ui_history_.history.html#defaultstate" class="tsd-kind-icon">default<wbr>State</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
+								<a href="_ui_toolbar_.toolgroup.html#toolelements" class="tsd-kind-icon">tool<wbr>Elements</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_ui_history_.history.html#redohistory" class="tsd-kind-icon">redo<wbr>History</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_ui_history_.history.html#undohistory" class="tsd-kind-icon">undo<wbr>History</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_ui_history_.history.html#recordstatechange" class="tsd-kind-icon">record<wbr>State<wbr>Change</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_ui_history_.history.html#redo" class="tsd-kind-icon">redo</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_ui_history_.history.html#undo" class="tsd-kind-icon">undo</a>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+								<a href="_ui_toolbar_.toolgroup.html#addtool" class="tsd-kind-icon">add<wbr>Tool</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter tsd-is-not-exported">
-						<a href="_ui_history_.historystack.html" class="tsd-kind-icon">History<wbr>Stack</a>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="_ui_toolbar_.toolbar.html" class="tsd-kind-icon">Toolbar</a>
 					</li>
 				</ul>
 			</nav>

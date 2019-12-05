@@ -73,7 +73,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<a href="_ui_tools_.figuretool.html" class="tsd-signature-type">FigureTool</a>
+						<a href="_ui_tools_.activatabletool.html" class="tsd-signature-type">ActivatableTool</a>
 						<ul class="tsd-hierarchy">
 							<li>
 								<span class="target">CircleTool</span>
@@ -95,21 +95,23 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_ui_tools_.circletool.html#active" class="tsd-kind-icon">active</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite"><a href="_ui_tools_.circletool.html#currentfigure" class="tsd-kind-icon">current<wbr>Figure</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_ui_tools_.circletool.html#currentpoint" class="tsd-kind-icon">current<wbr>Point</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_ui_tools_.circletool.html#hassetc" class="tsd-kind-icon">has<wbr>SetC</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_ui_tools_.circletool.html#center" class="tsd-kind-icon">center</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_ui_tools_.circletool.html#centerset" class="tsd-kind-icon">center<wbr>Set</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_ui_tools_.circletool.html#centersnapfigure" class="tsd-kind-icon">center<wbr>Snap<wbr>Figure</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_ui_tools_.circletool.html#dosnap" class="tsd-kind-icon">do<wbr>Snap</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_ui_tools_.circletool.html#image" class="tsd-kind-icon">image</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_ui_tools_.circletool.html#name" class="tsd-kind-icon">name</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_ui_tools_.circletool.html#points" class="tsd-kind-icon">points</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_ui_tools_.circletool.html#toolbar" class="tsd-kind-icon">toolbar</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_ui_tools_.circletool.html#radius" class="tsd-kind-icon">radius</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_ui_tools_.circletool.html#tooltip" class="tsd-kind-icon">tooltip</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="_ui_tools_.circletool.html#down" class="tsd-kind-icon">down</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="_ui_tools_.circletool.html#down" class="tsd-kind-icon">down</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="_ui_tools_.circletool.html#draw" class="tsd-kind-icon">draw</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="_ui_tools_.circletool.html#move" class="tsd-kind-icon">move</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="_ui_tools_.circletool.html#reset" class="tsd-kind-icon">reset</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="_ui_tools_.circletool.html#up" class="tsd-kind-icon">up</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="_ui_tools_.circletool.html#used" class="tsd-kind-icon">used</a></li>
 							</ul>
@@ -130,7 +132,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_ui_tools_.tool.html">Tool</a>.<a href="_ui_tools_.tool.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/00af784/src/scripts/ui/tools.ts#L166">ui/tools.ts:166</a></li>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/3d83211/src/scripts/ui/tools.ts#L275">ui/tools.ts:275</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="_ui_tools_.circletool.html" class="tsd-signature-type">CircleTool</a></h4>
@@ -140,46 +142,55 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-					<a name="active" class="tsd-anchor"></a>
-					<h3>active</h3>
-					<div class="tsd-signature tsd-kind-icon">active<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;false</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="center" class="tsd-anchor"></a>
+					<h3>center</h3>
+					<div class="tsd-signature tsd-kind-icon">center<span class="tsd-signature-symbol">:</span> <a href="_gcs_figures_.point.html" class="tsd-signature-type">Point</a></div>
 					<aside class="tsd-sources">
-						<p>Inherited from <a href="_ui_tools_.activatabletool.html">ActivatableTool</a>.<a href="_ui_tools_.activatabletool.html#active">active</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/00af784/src/scripts/ui/tools.ts#L70">ui/tools.ts:70</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-overwrite">
-					<a name="currentfigure" class="tsd-anchor"></a>
-					<h3>current<wbr>Figure</h3>
-					<div class="tsd-signature tsd-kind-icon">current<wbr>Figure<span class="tsd-signature-symbol">:</span> <a href="_gcs_figures_.circlefigure.html" class="tsd-signature-type">CircleFigure</a></div>
-					<aside class="tsd-sources">
-						<p>Overrides <a href="_ui_tools_.tool.html">Tool</a>.<a href="_ui_tools_.tool.html#currentfigure">currentFigure</a></p>
-						<ul>
-							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/00af784/src/scripts/ui/tools.ts#L165">ui/tools.ts:165</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-					<a name="currentpoint" class="tsd-anchor"></a>
-					<h3>current<wbr>Point</h3>
-					<div class="tsd-signature tsd-kind-icon">current<wbr>Point<span class="tsd-signature-symbol">:</span> <a href="_gcs_figures_.point.html" class="tsd-signature-type">Point</a></div>
-					<aside class="tsd-sources">
-						<p>Inherited from <a href="_ui_tools_.figuretool.html">FigureTool</a>.<a href="_ui_tools_.figuretool.html#currentpoint">currentPoint</a></p>
-						<ul>
-							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/00af784/src/scripts/ui/tools.ts#L88">ui/tools.ts:88</a></li>
+							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/3d83211/src/scripts/ui/tools.ts#L272">ui/tools.ts:272</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="hassetc" class="tsd-anchor"></a>
-					<h3>has<wbr>SetC</h3>
-					<div class="tsd-signature tsd-kind-icon">has<wbr>SetC<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;false</span></div>
+					<a name="centerset" class="tsd-anchor"></a>
+					<h3>center<wbr>Set</h3>
+					<div class="tsd-signature tsd-kind-icon">center<wbr>Set<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/00af784/src/scripts/ui/tools.ts#L166">ui/tools.ts:166</a></li>
+							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/3d83211/src/scripts/ui/tools.ts#L274">ui/tools.ts:274</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="centersnapfigure" class="tsd-anchor"></a>
+					<h3>center<wbr>Snap<wbr>Figure</h3>
+					<div class="tsd-signature tsd-kind-icon">center<wbr>Snap<wbr>Figure<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_gcs_figures_.figure.html" class="tsd-signature-type">Figure</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/3d83211/src/scripts/ui/tools.ts#L273">ui/tools.ts:273</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+					<a name="dosnap" class="tsd-anchor"></a>
+					<h3>do<wbr>Snap</h3>
+					<div class="tsd-signature tsd-kind-icon">do<wbr>Snap<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;true</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_ui_tools_.activatabletool.html">ActivatableTool</a>.<a href="_ui_tools_.activatabletool.html#dosnap">doSnap</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/3d83211/src/scripts/ui/tools.ts#L64">ui/tools.ts:64</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+					<a name="image" class="tsd-anchor"></a>
+					<h3>image</h3>
+					<div class="tsd-signature tsd-kind-icon">image<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_ui_tools_.tool.html">Tool</a>.<a href="_ui_tools_.tool.html#image">image</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/3d83211/src/scripts/ui/tools.ts#L11">ui/tools.ts:11</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -190,29 +201,17 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_ui_tools_.tool.html">Tool</a>.<a href="_ui_tools_.tool.html#name">name</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/00af784/src/scripts/ui/tools.ts#L10">ui/tools.ts:10</a></li>
+							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/3d83211/src/scripts/ui/tools.ts#L10">ui/tools.ts:10</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-					<a name="points" class="tsd-anchor"></a>
-					<h3>points</h3>
-					<div class="tsd-signature tsd-kind-icon">points<span class="tsd-signature-symbol">:</span> <a href="_gcs_figures_.point.html" class="tsd-signature-type">Point</a><span class="tsd-signature-symbol">[]</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="radius" class="tsd-anchor"></a>
+					<h3>radius</h3>
+					<div class="tsd-signature tsd-kind-icon">radius<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
-						<p>Inherited from <a href="_ui_tools_.figuretool.html">FigureTool</a>.<a href="_ui_tools_.figuretool.html#points">points</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/00af784/src/scripts/ui/tools.ts#L87">ui/tools.ts:87</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-					<a name="toolbar" class="tsd-anchor"></a>
-					<h3>toolbar</h3>
-					<div class="tsd-signature tsd-kind-icon">toolbar<span class="tsd-signature-symbol">:</span> <a href="_ui_toolbar_.toolbar.html" class="tsd-signature-type">Toolbar</a></div>
-					<aside class="tsd-sources">
-						<p>Inherited from <a href="_ui_tools_.tool.html">Tool</a>.<a href="_ui_tools_.tool.html#toolbar">toolbar</a></p>
-						<ul>
-							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/00af784/src/scripts/ui/tools.ts#L13">ui/tools.ts:13</a></li>
+							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/3d83211/src/scripts/ui/tools.ts#L275">ui/tools.ts:275</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -223,73 +222,25 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_ui_tools_.tool.html">Tool</a>.<a href="_ui_tools_.tool.html#tooltip">tooltip</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/00af784/src/scripts/ui/tools.ts#L11">ui/tools.ts:11</a></li>
+							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/3d83211/src/scripts/ui/tools.ts#L12">ui/tools.ts:12</a></li>
 						</ul>
 					</aside>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 					<a name="down" class="tsd-anchor"></a>
 					<h3>down</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">down<span class="tsd-signature-symbol">(</span>point<span class="tsd-signature-symbol">: </span><a href="_gcs_figures_.point.html" class="tsd-signature-type">Point</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<p>Inherited from <a href="_ui_tools_.tool.html">Tool</a>.<a href="_ui_tools_.tool.html#down">down</a></p>
-								<ul>
-									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/00af784/src/scripts/ui/tools.ts#L19">ui/tools.ts:19</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>point: <a href="_gcs_figures_.point.html" class="tsd-signature-type">Point</a></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-					<a name="move" class="tsd-anchor"></a>
-					<h3>move</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">move<span class="tsd-signature-symbol">(</span>point<span class="tsd-signature-symbol">: </span><a href="_gcs_figures_.point.html" class="tsd-signature-type">Point</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">down<span class="tsd-signature-symbol">(</span>point<span class="tsd-signature-symbol">: </span><a href="_gcs_figures_.point.html" class="tsd-signature-type">Point</a>, snapFigure<span class="tsd-signature-symbol">: </span><a href="../interfaces/_gcs_figures_.figure.html" class="tsd-signature-type">Figure</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Overrides <a href="_ui_tools_.figuretool.html">FigureTool</a>.<a href="_ui_tools_.figuretool.html#move">move</a></p>
+								<p>Overrides <a href="_ui_tools_.activatabletool.html">ActivatableTool</a>.<a href="_ui_tools_.activatabletool.html#down">down</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/00af784/src/scripts/ui/tools.ts#L191">ui/tools.ts:191</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>point: <a href="_gcs_figures_.point.html" class="tsd-signature-type">Point</a></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-					<a name="up" class="tsd-anchor"></a>
-					<h3>up</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">up<span class="tsd-signature-symbol">(</span>point<span class="tsd-signature-symbol">: </span><a href="_gcs_figures_.point.html" class="tsd-signature-type">Point</a>, snapFigure<span class="tsd-signature-symbol">: </span><a href="../interfaces/_gcs_figures_.figure.html" class="tsd-signature-type">Figure</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<p>Overrides <a href="_ui_tools_.figuretool.html">FigureTool</a>.<a href="_ui_tools_.figuretool.html#up">up</a></p>
-								<ul>
-									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/00af784/src/scripts/ui/tools.ts#L170">ui/tools.ts:170</a></li>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/3d83211/src/scripts/ui/tools.ts#L307">ui/tools.ts:307</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -301,7 +252,103 @@
 									<h5>snapFigure: <a href="../interfaces/_gcs_figures_.figure.html" class="tsd-signature-type">Figure</a></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+					<a name="draw" class="tsd-anchor"></a>
+					<h3>draw</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon">draw<span class="tsd-signature-symbol">(</span>sketchView<span class="tsd-signature-symbol">: </span><a href="_ui_sketchview_.sketchview.html" class="tsd-signature-type">SketchView</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides <a href="_ui_tools_.activatabletool.html">ActivatableTool</a>.<a href="_ui_tools_.activatabletool.html#draw">draw</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/3d83211/src/scripts/ui/tools.ts#L311">ui/tools.ts:311</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>sketchView: <a href="_ui_sketchview_.sketchview.html" class="tsd-signature-type">SketchView</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+					<a name="move" class="tsd-anchor"></a>
+					<h3>move</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon">move<span class="tsd-signature-symbol">(</span>point<span class="tsd-signature-symbol">: </span><a href="_gcs_figures_.point.html" class="tsd-signature-type">Point</a>, snapFigure<span class="tsd-signature-symbol">: </span><a href="../interfaces/_gcs_figures_.figure.html" class="tsd-signature-type">Figure</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides <a href="_ui_tools_.activatabletool.html">ActivatableTool</a>.<a href="_ui_tools_.activatabletool.html#move">move</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/3d83211/src/scripts/ui/tools.ts#L299">ui/tools.ts:299</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>point: <a href="_gcs_figures_.point.html" class="tsd-signature-type">Point</a></h5>
+								</li>
+								<li>
+									<h5>snapFigure: <a href="../interfaces/_gcs_figures_.figure.html" class="tsd-signature-type">Figure</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+					<a name="reset" class="tsd-anchor"></a>
+					<h3>reset</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon">reset<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides <a href="_ui_tools_.activatabletool.html">ActivatableTool</a>.<a href="_ui_tools_.activatabletool.html#reset">reset</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/3d83211/src/scripts/ui/tools.ts#L318">ui/tools.ts:318</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+					<a name="up" class="tsd-anchor"></a>
+					<h3>up</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon">up<span class="tsd-signature-symbol">(</span>point<span class="tsd-signature-symbol">: </span><a href="_gcs_figures_.point.html" class="tsd-signature-type">Point</a>, snapFigure<span class="tsd-signature-symbol">: </span><a href="../interfaces/_gcs_figures_.figure.html" class="tsd-signature-type">Figure</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides <a href="_ui_tools_.activatabletool.html">ActivatableTool</a>.<a href="_ui_tools_.activatabletool.html#up">up</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/3d83211/src/scripts/ui/tools.ts#L279">ui/tools.ts:279</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>point: <a href="_gcs_figures_.point.html" class="tsd-signature-type">Point</a></h5>
+								</li>
+								<li>
+									<h5>snapFigure: <a href="../interfaces/_gcs_figures_.figure.html" class="tsd-signature-type">Figure</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -317,7 +364,7 @@
 								<p>Inherited from <a href="_ui_tools_.activatabletool.html">ActivatableTool</a>.<a href="_ui_tools_.activatabletool.html#used">used</a></p>
 								<p>Overrides <a href="_ui_tools_.tool.html">Tool</a>.<a href="_ui_tools_.tool.html#used">used</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/00af784/src/scripts/ui/tools.ts#L71">ui/tools.ts:71</a></li>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/3d83211/src/scripts/ui/tools.ts#L65">ui/tools.ts:65</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -383,35 +430,41 @@
 							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
 								<a href="_ui_tools_.circletool.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="_ui_tools_.circletool.html#active" class="tsd-kind-icon">active</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-overwrite">
-								<a href="_ui_tools_.circletool.html#currentfigure" class="tsd-kind-icon">current<wbr>Figure</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="_ui_tools_.circletool.html#currentpoint" class="tsd-kind-icon">current<wbr>Point</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_ui_tools_.circletool.html#center" class="tsd-kind-icon">center</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_ui_tools_.circletool.html#hassetc" class="tsd-kind-icon">has<wbr>SetC</a>
+								<a href="_ui_tools_.circletool.html#centerset" class="tsd-kind-icon">center<wbr>Set</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_ui_tools_.circletool.html#centersnapfigure" class="tsd-kind-icon">center<wbr>Snap<wbr>Figure</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="_ui_tools_.circletool.html#dosnap" class="tsd-kind-icon">do<wbr>Snap</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="_ui_tools_.circletool.html#image" class="tsd-kind-icon">image</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 								<a href="_ui_tools_.circletool.html#name" class="tsd-kind-icon">name</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="_ui_tools_.circletool.html#points" class="tsd-kind-icon">points</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="_ui_tools_.circletool.html#toolbar" class="tsd-kind-icon">toolbar</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_ui_tools_.circletool.html#radius" class="tsd-kind-icon">radius</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 								<a href="_ui_tools_.circletool.html#tooltip" class="tsd-kind-icon">tooltip</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="_ui_tools_.circletool.html#down" class="tsd-kind-icon">down</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+								<a href="_ui_tools_.circletool.html#draw" class="tsd-kind-icon">draw</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="_ui_tools_.circletool.html#move" class="tsd-kind-icon">move</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+								<a href="_ui_tools_.circletool.html#reset" class="tsd-kind-icon">reset</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="_ui_tools_.circletool.html#up" class="tsd-kind-icon">up</a>
@@ -427,9 +480,6 @@
 						<a href="_ui_tools_.exporttool.html" class="tsd-kind-icon">Export<wbr>Tool</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_ui_tools_.figuretool.html" class="tsd-kind-icon">Figure<wbr>Tool</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
 						<a href="_ui_tools_.importtool.html" class="tsd-kind-icon">Import<wbr>Tool</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
@@ -440,6 +490,9 @@
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
 						<a href="_ui_tools_.redotool.html" class="tsd-kind-icon">Redo<wbr>Tool</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="_ui_tools_.selecttool.html" class="tsd-kind-icon">Select<wbr>Tool</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
 						<a href="_ui_tools_.tool.html" class="tsd-kind-icon">Tool</a>

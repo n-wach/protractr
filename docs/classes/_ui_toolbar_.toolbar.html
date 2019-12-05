@@ -90,6 +90,7 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_ui_toolbar_.toolbar.html#activatabletools" class="tsd-kind-icon">activatable<wbr>Tools</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_ui_toolbar_.toolbar.html#protractr" class="tsd-kind-icon">protractr</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_ui_toolbar_.toolbar.html#sketchview" class="tsd-kind-icon">sketch<wbr>View</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_ui_toolbar_.toolbar.html#toolelements" class="tsd-kind-icon">tool<wbr>Elements</a></li>
@@ -97,11 +98,16 @@
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
+							<h3>Accessors</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_ui_toolbar_.toolbar.html#activetool" class="tsd-kind-icon">active<wbr>Tool</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_ui_toolbar_.toolbar.html#addtool" class="tsd-kind-icon">add<wbr>Tool</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_ui_toolbar_.toolbar.html#addtoolgroup" class="tsd-kind-icon">add<wbr>Tool<wbr>Group</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_ui_toolbar_.toolbar.html#initializetools" class="tsd-kind-icon">initialize<wbr>Tools</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_ui_toolbar_.toolbar.html#setactive" class="tsd-kind-icon">set<wbr>Active</a></li>
 							</ul>
 						</section>
 					</div>
@@ -119,7 +125,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/00af784/src/scripts/ui/toolbar.ts#L19">ui/toolbar.ts:19</a></li>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/3d83211/src/scripts/ui/toolbar.ts#L20">ui/toolbar.ts:20</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -139,12 +145,22 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="activatabletools" class="tsd-anchor"></a>
+					<h3>activatable<wbr>Tools</h3>
+					<div class="tsd-signature tsd-kind-icon">activatable<wbr>Tools<span class="tsd-signature-symbol">:</span> <a href="_ui_toolbar_.activatabletoolgroup.html" class="tsd-signature-type">ActivatableToolGroup</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/3d83211/src/scripts/ui/toolbar.ts#L20">ui/toolbar.ts:20</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="protractr" class="tsd-anchor"></a>
 					<h3>protractr</h3>
 					<div class="tsd-signature tsd-kind-icon">protractr<span class="tsd-signature-symbol">:</span> <a href="_protractr_.protractr.html" class="tsd-signature-type">Protractr</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/00af784/src/scripts/ui/toolbar.ts#L17">ui/toolbar.ts:17</a></li>
+							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/3d83211/src/scripts/ui/toolbar.ts#L17">ui/toolbar.ts:17</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -154,7 +170,7 @@
 					<div class="tsd-signature tsd-kind-icon">sketch<wbr>View<span class="tsd-signature-symbol">:</span> <a href="_ui_sketchview_.sketchview.html" class="tsd-signature-type">SketchView</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/00af784/src/scripts/ui/toolbar.ts#L19">ui/toolbar.ts:19</a></li>
+							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/3d83211/src/scripts/ui/toolbar.ts#L19">ui/toolbar.ts:19</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -164,7 +180,7 @@
 					<div class="tsd-signature tsd-kind-icon">tool<wbr>Elements<span class="tsd-signature-symbol">:</span> <a href="_ui_toolbar_.toolelement.html" class="tsd-signature-type">ToolElement</a><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/00af784/src/scripts/ui/toolbar.ts#L16">ui/toolbar.ts:16</a></li>
+							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/3d83211/src/scripts/ui/toolbar.ts#L16">ui/toolbar.ts:16</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -174,33 +190,50 @@
 					<div class="tsd-signature tsd-kind-icon">toolbar<wbr>Element<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">HTMLUListElement</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/00af784/src/scripts/ui/toolbar.ts#L18">ui/toolbar.ts:18</a></li>
+							<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/3d83211/src/scripts/ui/toolbar.ts#L18">ui/toolbar.ts:18</a></li>
 						</ul>
 					</aside>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="addtool" class="tsd-anchor"></a>
-					<h3>add<wbr>Tool</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">add<wbr>Tool<span class="tsd-signature-symbol">(</span>tool<span class="tsd-signature-symbol">: </span><a href="_ui_tools_.tool.html" class="tsd-signature-type">Tool</a>, image<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+				<h2>Accessors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="activetool" class="tsd-anchor"></a>
+					<h3>active<wbr>Tool</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> activeTool<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_ui_tools_.activatabletool.html" class="tsd-signature-type">ActivatableTool</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/00af784/src/scripts/ui/toolbar.ts#L37">ui/toolbar.ts:37</a></li>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/3d83211/src/scripts/ui/toolbar.ts#L47">ui/toolbar.ts:47</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="_ui_tools_.activatabletool.html" class="tsd-signature-type">ActivatableTool</a></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="addtoolgroup" class="tsd-anchor"></a>
+					<h3>add<wbr>Tool<wbr>Group</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Tool<wbr>Group<span class="tsd-signature-symbol">(</span>group<span class="tsd-signature-symbol">: </span><a href="_ui_toolbar_.toolgroup.html" class="tsd-signature-type">ToolGroup</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/3d83211/src/scripts/ui/toolbar.ts#L44">ui/toolbar.ts:44</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>tool: <a href="_ui_tools_.tool.html" class="tsd-signature-type">Tool</a></h5>
-								</li>
-								<li>
-									<h5>image: <span class="tsd-signature-type">string</span></h5>
+									<h5>group: <a href="_ui_toolbar_.toolgroup.html" class="tsd-signature-type">ToolGroup</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -217,32 +250,9 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/00af784/src/scripts/ui/toolbar.ts#L27">ui/toolbar.ts:27</a></li>
+									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/3d83211/src/scripts/ui/toolbar.ts#L28">ui/toolbar.ts:28</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="setactive" class="tsd-anchor"></a>
-					<h3>set<wbr>Active</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">set<wbr>Active<span class="tsd-signature-symbol">(</span>tool<span class="tsd-signature-symbol">: </span><a href="_ui_tools_.tool.html" class="tsd-signature-type">Tool</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/CCS-1L-F19/protractr/blob/00af784/src/scripts/ui/toolbar.ts#L43">ui/toolbar.ts:43</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>tool: <a href="_ui_tools_.tool.html" class="tsd-signature-type">Tool</a></h5>
-								</li>
-							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
@@ -296,7 +306,16 @@
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_ui_toolbar_.activatabletoolelement.html" class="tsd-kind-icon">Activatable<wbr>Tool<wbr>Element</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_ui_toolbar_.activatabletoolgroup.html" class="tsd-kind-icon">Activatable<wbr>Tool<wbr>Group</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="_ui_toolbar_.toolelement.html" class="tsd-kind-icon">Tool<wbr>Element</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_ui_toolbar_.toolgroup.html" class="tsd-kind-icon">Tool<wbr>Group</a>
 					</li>
 				</ul>
 				<ul class="current">
@@ -305,6 +324,9 @@
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class">
 								<a href="_ui_toolbar_.toolbar.html#constructor" class="tsd-kind-icon">constructor</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_ui_toolbar_.toolbar.html#activatabletools" class="tsd-kind-icon">activatable<wbr>Tools</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="_ui_toolbar_.toolbar.html#protractr" class="tsd-kind-icon">protractr</a>
@@ -318,14 +340,14 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="_ui_toolbar_.toolbar.html#toolbarelement" class="tsd-kind-icon">toolbar<wbr>Element</a>
 							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="_ui_toolbar_.toolbar.html#activetool" class="tsd-kind-icon">active<wbr>Tool</a>
+							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_ui_toolbar_.toolbar.html#addtool" class="tsd-kind-icon">add<wbr>Tool</a>
+								<a href="_ui_toolbar_.toolbar.html#addtoolgroup" class="tsd-kind-icon">add<wbr>Tool<wbr>Group</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_ui_toolbar_.toolbar.html#initializetools" class="tsd-kind-icon">initialize<wbr>Tools</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_ui_toolbar_.toolbar.html#setactive" class="tsd-kind-icon">set<wbr>Active</a>
 							</li>
 						</ul>
 					</li>
