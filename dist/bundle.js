@@ -1328,6 +1328,59 @@ var Point = /** @class */ (function () {
             return 1;
         return segFrac;
     };
+    /**
+     * Determine if three points are clockwise (1), counterclockwise(-1) or colinear(0)
+     * @param p1
+     * @param p2
+     * @param p3
+     */
+    Point.orientation = function (p1, p2, p3) {
+        var val = (p2.y - p1.y) * (p3.x - p2.x) -
+            (p2.x - p1.x) * (p3.y - p2.y);
+        if (Math.abs(val) < 0.1)
+            return 0; // colinear
+        return (val > 0) ? 1 : -1; // clock or counterclock wise
+    };
+    /**
+     * Determine if p1 lies on the line between p2 and p3
+     * @param p1
+     * @param p2
+     * @param p3
+     */
+    Point.onSegment = function (p1, p2, p3) {
+        return (p2.x <= Math.max(p1.x, p3.x) && p2.x >= Math.min(p1.x, p3.x) &&
+            p2.y <= Math.max(p1.y, p3.y) && p2.y >= Math.min(p1.y, p3.y));
+    };
+    /**
+     * Returns true of the line p1q1 intersects q2p2
+     * @param p1
+     * @param p2
+     * @param p3
+     * @param p4
+     */
+    Point.doIntersect = function (p1, q1, p2, q2) {
+        var o1 = Point.orientation(p1, q1, p2);
+        var o2 = Point.orientation(p1, q1, q2);
+        var o3 = Point.orientation(p2, q2, p1);
+        var o4 = Point.orientation(p2, q2, q1);
+        //General case
+        if (o1 != o2 && o3 != o4)
+            return true;
+        // Special Cases
+        // p1, q1 and p2 are colinear and p2 lies on segment p1q1
+        if (o1 == 0 && Point.onSegment(p1, p2, q1))
+            return true;
+        // p1, q1 and q2 are colinear and q2 lies on segment p1q1
+        if (o2 == 0 && Point.onSegment(p1, q2, q1))
+            return true;
+        // p2, q2 and p1 are colinear and p1 lies on segment p2q2
+        if (o3 == 0 && Point.onSegment(p2, p1, q2))
+            return true;
+        // p2, q2 and q1 are colinear and q1 lies on segment p2q2
+        if (o4 == 0 && Point.onSegment(p2, q1, q2))
+            return true;
+        return false; // Doesn't fall in any of the above cases
+    };
     Point.fromVariablePoint = function (v) {
         var p = new Point(0, 0);
         p.variablePoint = v;
@@ -2092,13 +2145,14 @@ var FigureInfoView = /** @class */ (function () {
         field.type = "number";
         field.value = "" + variable.value;
         field.step = "any";
+        var _this = this;
         field.onchange = function () {
             variable.value = parseFloat(field.value);
             variable.constant = true;
-            main_1.protractr.sketch.solveConstraints(true);
+            _this.ui.protractr.sketch.solveConstraints(true);
             variable.constant = false;
-            main_1.protractr.ui.history.recordStateChange(main_1.protractr.exportSketch());
-            main_1.protractr.ui.refresh();
+            _this.ui.history.recordStateChange(main_1.protractr.exportSketch());
+            _this.ui.refresh();
         };
         div.appendChild(field);
         this.div.appendChild(div);
@@ -2163,7 +2217,7 @@ var ExistingConstraintList = /** @class */ (function () {
         this.ui = ui;
         this.div = document.createElement("div");
         this.list = new TitledInteractiveList(false);
-        this.list.setTitle("Sketch has no constraints");
+        this.list.setTitle("No constraints in sketch");
         this.list.onhover = this.ui.refresh.bind(this.ui);
         this.list.onclick = this.ui.refresh.bind(this.ui);
         this.div.appendChild(this.list.div);
@@ -2177,22 +2231,12 @@ var ExistingConstraintList = /** @class */ (function () {
         return false;
     };
     ExistingConstraintList.prototype.setConstraints = function (newConstraints) {
-        var toRemove = [];
-        for (var _i = 0, _a = this.list.values; _i < _a.length; _i++) {
-            var constraint = _a[_i];
-            if (newConstraints.indexOf(constraint) == -1) {
-                toRemove.push(constraint);
-            }
+        var elements = [];
+        for (var _i = 0, newConstraints_1 = newConstraints; _i < newConstraints_1.length; _i++) {
+            var constraint = newConstraints_1[_i];
+            elements.push([constraint, constraint.name]);
         }
-        for (var _b = 0, toRemove_1 = toRemove; _b < toRemove_1.length; _b++) {
-            var remove = toRemove_1[_b];
-            this.removeConstraint(remove);
-        }
-        for (var _c = 0, newConstraints_1 = newConstraints; _c < newConstraints_1.length; _c++) {
-            var constraint = newConstraints_1[_c];
-            if (!this.contains(constraint))
-                this.addConstraint(constraint);
-        }
+        this.list.setElements(elements);
         var count = this.ui.infoPane.selectedFiguresList.count();
         if (newConstraints.length == 0) {
             if (count == 0) {
@@ -2257,11 +2301,20 @@ var SelectedFigureList = /** @class */ (function () {
     }
     SelectedFigureList.prototype.clear = function () {
         this.list.clear();
-        this.updateTitle();
+        this.ui.refresh();
+    };
+    SelectedFigureList.prototype.setFigures = function (figures) {
+        var elements = [];
+        for (var _i = 0, figures_2 = figures; _i < figures_2.length; _i++) {
+            var figure = figures_2[_i];
+            elements.push([figure, figures_1.getFullName(figure)]);
+        }
+        this.list.setElements(elements);
+        this.ui.refresh();
     };
     SelectedFigureList.prototype.addFigure = function (figure) {
         this.list.addElement(figure, figures_1.getFullName(figure));
-        this.updateTitle();
+        this.ui.refresh();
     };
     SelectedFigureList.prototype.updateTitle = function () {
         var count = this.count();
@@ -2277,7 +2330,7 @@ var SelectedFigureList = /** @class */ (function () {
     };
     SelectedFigureList.prototype.removeFigure = function (figure) {
         this.list.removeElement(figure);
-        this.updateTitle();
+        this.ui.refresh();
     };
     SelectedFigureList.prototype.figureSelected = function (figure) {
         return this.list.values.indexOf(figure) != -1;
@@ -2311,6 +2364,32 @@ var InteractiveList = /** @class */ (function () {
         }
         if (this.onhover && !noEvent)
             this.onhover([]);
+    };
+    InteractiveList.prototype.setElements = function (elements) {
+        var toRemove = [];
+        for (var _i = 0, _a = this.values; _i < _a.length; _i++) {
+            var value = _a[_i];
+            var remove = true;
+            for (var _b = 0, elements_1 = elements; _b < elements_1.length; _b++) {
+                var element = elements_1[_b];
+                if (element[0] == value) {
+                    remove = false;
+                    break;
+                }
+                ;
+            }
+            if (remove)
+                toRemove.push(value);
+        }
+        for (var _c = 0, toRemove_1 = toRemove; _c < toRemove_1.length; _c++) {
+            var remove = toRemove_1[_c];
+            this.removeElement(remove);
+        }
+        for (var _d = 0, elements_2 = elements; _d < elements_2.length; _d++) {
+            var element = elements_2[_d];
+            if (this.values.indexOf(element[0]) == -1)
+                this.addElement(element[0], element[1]);
+        }
     };
     InteractiveList.prototype.addElement = function (value, name) {
         var element = new ListElement(this, value, name, this.deleteable);
@@ -2354,11 +2433,11 @@ var TitledInteractiveList = /** @class */ (function (_super) {
     __extends(TitledInteractiveList, _super);
     function TitledInteractiveList(deleteable) {
         if (deleteable === void 0) { deleteable = true; }
-        var _this = _super.call(this, deleteable) || this;
-        _this.p = document.createElement("p");
-        _this.div.prepend(_this.p);
-        _this.setTitle("");
-        return _this;
+        var _this_1 = _super.call(this, deleteable) || this;
+        _this_1.p = document.createElement("p");
+        _this_1.div.prepend(_this_1.p);
+        _this_1.setTitle("");
+        return _this_1;
     }
     TitledInteractiveList.prototype.setTitle = function (value) {
         if (value == "") {
@@ -2420,7 +2499,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var figures_1 = require("../gcs/figures");
 var SketchView = /** @class */ (function () {
     function SketchView(ui, canvas) {
-        this.dragging = false;
         this.lastPanPoint = null;
         this.ui = ui;
         this.canvas = canvas;
@@ -2460,55 +2538,13 @@ var SketchView = /** @class */ (function () {
     SketchView.prototype.handleToolEvent = function (type, point, snapFigure) {
         switch (type) {
             case "mousedown":
-                this.subscribedTool.down(point);
+                this.ui.toolbar.activeTool.down(point, snapFigure);
                 break;
             case "mousemove":
-                this.subscribedTool.move(point);
+                this.ui.toolbar.activeTool.move(point, snapFigure);
                 break;
             case "mouseup":
-                this.subscribedTool.up(point, snapFigure);
-                if (this.subscribedTool.currentFigure == null)
-                    this.pushState(); //new figure just added
-                break;
-        }
-    };
-    SketchView.prototype.handleDragEvent = function (type, point) {
-        switch (type) {
-            case "mousedown":
-                if (this.hoveredFigure) {
-                    this.dragging = false;
-                    this.draggedFigure = this.hoveredFigure;
-                    this.lastFigureDrag = point.copy();
-                }
-                break;
-            case "mousemove":
-                if (this.draggedFigure != null) {
-                    this.dragging = true;
-                    this.draggedFigure.setLocked(false);
-                    this.draggedFigure.translate(this.lastFigureDrag, point.copy());
-                    this.draggedFigure.setLocked(true);
-                    this.lastFigureDrag = point.copy();
-                    this.ui.protractr.sketch.solveConstraints();
-                }
-                break;
-            case "mouseup":
-                if (this.dragging === false) {
-                    if (this.hoveredFigure) {
-                        this.toggleSelected(this.hoveredFigure);
-                    }
-                    else {
-                        this.ui.infoPane.selectedFiguresList.clear();
-                    }
-                }
-                if (this.draggedFigure) {
-                    this.draggedFigure.setLocked(false);
-                    this.draggedFigure = null;
-                    if (!this.ui.protractr.sketch.solveConstraints(true)) {
-                        alert("That state couldn't be solved...");
-                    }
-                    this.pushState(); //figure modified
-                }
-                this.dragging = false;
+                this.ui.toolbar.activeTool.up(point, snapFigure);
                 break;
         }
     };
@@ -2534,25 +2570,13 @@ var SketchView = /** @class */ (function () {
             this.handlePanEvent(event.type, offset);
         }
         if (event.which == 1 || event.type == "mousemove") {
-            if (this.subscribedTool) {
-                this.handleToolEvent(event.type, snapPoint, this.hoveredFigure);
-            }
-            else {
-                this.handleDragEvent(event.type, point);
-            }
+            this.handleToolEvent(event.type, snapPoint, this.hoveredFigure);
         }
         this.draw();
     };
     SketchView.prototype.updateHover = function (point) {
         var closest;
-        var ignoredFigures = [];
-        if (this.subscribedTool && this.subscribedTool.currentFigure) {
-            ignoredFigures.push.apply(ignoredFigures, this.subscribedTool.currentFigure.getRelatedFigures());
-        }
-        if (this.draggedFigure && this.dragging) {
-            ignoredFigures.push.apply(ignoredFigures, this.draggedFigure.getRelatedFigures());
-        }
-        closest = this.ui.protractr.sketch.getClosestFigure(point, ignoredFigures, 10, this.ctxScale);
+        closest = this.ui.protractr.sketch.getClosestFigure(point, [], 10, this.ctxScale);
         this.hoveredFigure = closest;
         if (this.hoveredFigure != null) {
             this.setCursor("move");
@@ -2561,23 +2585,12 @@ var SketchView = /** @class */ (function () {
             this.setCursor("default");
         }
     };
-    SketchView.prototype.subscribeTool = function (tool) {
-        this.subscribedTool = tool;
-    };
     SketchView.prototype.snapPoint = function (point) {
+        if (!this.ui.toolbar.activeTool.doSnap)
+            return point;
         if (!this.hoveredFigure)
             return point;
         return this.hoveredFigure.getClosestPoint(point);
-    };
-    SketchView.prototype.toggleSelected = function (fig) {
-        var selectedFigures = this.ui.infoPane.selectedFiguresList;
-        if (!selectedFigures.figureSelected(fig)) {
-            selectedFigures.addFigure(fig);
-        }
-        else {
-            selectedFigures.removeFigure(fig);
-        }
-        this.ui.refresh();
     };
     SketchView.prototype.setCursor = function (cursor) {
         this.canvas.style.cursor = cursor;
@@ -2585,9 +2598,9 @@ var SketchView = /** @class */ (function () {
     SketchView.prototype.drawFigure = function (fig) {
         this.ctx.strokeStyle = "black";
         this.ctx.lineWidth = 2 / this.ctxScale;
-        var pointSize = 3 / this.ctxScale;
+        var pointSize = 3;
         if (this.hoveredFigure == fig || this.ui.infoPane.selectedFiguresList.figureHovered(fig)) {
-            pointSize = 7 / this.ctxScale;
+            pointSize = 7;
             this.ctx.lineWidth = 5 / this.ctxScale;
         }
         if (this.ui.infoPane.selectedFiguresList.figureSelected(fig)) {
@@ -2595,16 +2608,13 @@ var SketchView = /** @class */ (function () {
         }
         if (this.ui.infoPane.existingConstraintsList.figureInHovered(fig)) {
             this.ctx.strokeStyle = "purple";
-            pointSize = 7 / this.ctxScale;
+            pointSize = 7;
             this.ctx.lineWidth = 5 / this.ctxScale;
         }
         switch (fig.type) {
             case "line":
                 var line = fig;
-                this.ctx.beginPath();
-                this.ctx.moveTo(line.p1.x, line.p1.y);
-                this.ctx.lineTo(line.p2.x, line.p2.y);
-                this.ctx.stroke();
+                this.drawLine(line.p1, line.p2);
                 break;
             case "point":
                 var point = fig;
@@ -2612,9 +2622,7 @@ var SketchView = /** @class */ (function () {
                 break;
             case "circle":
                 var circle = fig;
-                this.ctx.beginPath();
-                this.ctx.arc(circle.c.x, circle.c.y, circle.r.value, 0, Math.PI * 2);
-                this.ctx.stroke();
+                this.drawCircle(circle.c, circle.r.value);
                 break;
         }
     };
@@ -2630,16 +2638,36 @@ var SketchView = /** @class */ (function () {
                 this.drawFigure(child);
             }
         }
+        this.ctx.strokeStyle = "black";
+        this.ctx.lineWidth = 2 / this.ctxScale;
+        this.ui.toolbar.activeTool.draw(this);
         this.ui.infoPane.selectedFigureView.refresh();
     };
     SketchView.prototype.drawPoint = function (point, size, color) {
         if (size === void 0) { size = 3; }
         if (color === void 0) { color = "black"; }
+        if (!point)
+            return;
         this.ctx.fillStyle = color;
         this.ctx.beginPath();
         this.ctx.moveTo(point.x, point.y);
-        this.ctx.arc(point.x, point.y, size, 0, Math.PI * 2);
+        this.ctx.arc(point.x, point.y, size / this.ctxScale, 0, Math.PI * 2);
         this.ctx.fill();
+    };
+    SketchView.prototype.drawLine = function (p1, p2) {
+        if (!p1 || !p2)
+            return;
+        this.ctx.beginPath();
+        this.ctx.moveTo(p1.x, p1.y);
+        this.ctx.lineTo(p2.x, p2.y);
+        this.ctx.stroke();
+    };
+    SketchView.prototype.drawCircle = function (center, radius) {
+        if (!center)
+            return;
+        this.ctx.beginPath();
+        this.ctx.arc(center.x, center.y, radius, 0, Math.PI * 2);
+        this.ctx.stroke();
     };
     SketchView.prototype.pushState = function () {
         var s = this.ui.protractr.exportSketch();
@@ -2651,6 +2679,19 @@ exports.SketchView = SketchView;
 
 },{"../gcs/figures":3}],10:[function(require,module,exports){
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 Object.defineProperty(exports, "__esModule", { value: true });
 var tools_1 = require("./tools");
 var Toolbar = /** @class */ (function () {
@@ -2661,56 +2702,113 @@ var Toolbar = /** @class */ (function () {
         this.initializeTools();
     }
     Toolbar.prototype.initializeTools = function () {
-        this.addTool(new tools_1.PointTool(), "point.png");
-        this.addTool(new tools_1.LineTool(), "line.png");
-        this.addTool(new tools_1.CircleTool(), "circle.png");
-        //this.addTool(new Tool("Arc", "Create an arc"), "arc.png");
-        this.addTool(new tools_1.UndoTool(), "undo.png");
-        this.addTool(new tools_1.RedoTool(), "redo.png");
-        this.addTool(new tools_1.ImportTool(), "import.png");
-        this.addTool(new tools_1.ExportTool(), "export.png");
+        this.activatableTools = new ActivatableToolGroup();
+        this.activatableTools.addTool(new tools_1.SelectTool());
+        this.activatableTools.addTool(new tools_1.PointTool());
+        this.activatableTools.addTool(new tools_1.LineTool());
+        this.activatableTools.addTool(new tools_1.CircleTool());
+        this.addToolGroup(this.activatableTools);
+        var editHistory = new ToolGroup();
+        editHistory.addTool(new tools_1.UndoTool());
+        editHistory.addTool(new tools_1.RedoTool());
+        this.addToolGroup(editHistory);
+        var importExport = new ToolGroup();
+        importExport.addTool(new tools_1.ImportTool());
+        importExport.addTool(new tools_1.ExportTool());
+        this.addToolGroup(importExport);
     };
-    Toolbar.prototype.addTool = function (tool, image) {
-        var e = new ToolElement(tool, image);
-        e.tool.toolbar = this;
-        this.toolElements.push(e);
-        this.toolbarElement.appendChild(e.li);
+    Toolbar.prototype.addToolGroup = function (group) {
+        this.toolbarElement.appendChild(group.div);
     };
-    Toolbar.prototype.setActive = function (tool) {
-        this.sketchView.subscribeTool(tool);
-        for (var _i = 0, _a = this.toolElements; _i < _a.length; _i++) {
-            var e = _a[_i];
-            if (e.tool == tool) {
-                e.activate();
-            }
-            else {
-                e.deactivate();
-            }
-        }
-        this.sketchView.draw();
-    };
+    Object.defineProperty(Toolbar.prototype, "activeTool", {
+        get: function () {
+            return this.activatableTools.activeTool;
+        },
+        enumerable: true,
+        configurable: true
+    });
     return Toolbar;
 }());
 exports.Toolbar = Toolbar;
+var ToolGroup = /** @class */ (function () {
+    function ToolGroup() {
+        this.div = document.createElement("div");
+        this.div.classList.add("tool-group");
+        this.toolElements = [];
+    }
+    ToolGroup.prototype.addTool = function (tool) {
+        var e = new ToolElement(this, tool);
+        this.toolElements.push(e);
+        this.div.appendChild(e.li);
+    };
+    return ToolGroup;
+}());
+var ActivatableToolGroup = /** @class */ (function (_super) {
+    __extends(ActivatableToolGroup, _super);
+    function ActivatableToolGroup() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    ActivatableToolGroup.prototype.addTool = function (tool) {
+        var e = new ActivatableToolElement(this, tool);
+        this.toolElements.push(e);
+        this.div.appendChild(e.li);
+        this.select(this.toolElements[0]);
+    };
+    ActivatableToolGroup.prototype.select = function (toolElement) {
+        for (var _i = 0, _a = this.toolElements; _i < _a.length; _i++) {
+            var element = _a[_i];
+            if (element == toolElement) {
+                element.activate();
+                this.activeTool = element.tool;
+            }
+            else {
+                element.deactivate();
+            }
+        }
+    };
+    return ActivatableToolGroup;
+}(ToolGroup));
 var ToolElement = /** @class */ (function () {
-    function ToolElement(tool, image) {
+    function ToolElement(parent, tool) {
+        this.parent = parent;
         this.tool = tool;
         this.li = document.createElement("li");
         this.li.title = tool.tooltip;
         this.li.classList.add("tool");
-        this.li.style.backgroundImage = "url('../image/" + image + "')";
-        this.li.addEventListener("click", this.tool.used.bind(tool));
+        this.li.style.backgroundImage = "url('../image/" + tool.image + "')";
+        this.li.addEventListener("mousedown", this.press.bind(this));
+        this.li.addEventListener("mouseleave", this.unpress.bind(this));
+        this.li.addEventListener("mouseup", this.unpress.bind(this));
+        this.li.addEventListener("click", this.click.bind(this));
     }
-    ToolElement.prototype.activate = function () {
-        this.li.classList.add("tool-active");
-        this.tool.active = true;
+    ToolElement.prototype.press = function () {
+        this.li.classList.add("pressed");
     };
-    ToolElement.prototype.deactivate = function () {
-        this.li.classList.remove("tool-active");
-        this.tool.active = false;
+    ToolElement.prototype.unpress = function () {
+        this.li.classList.remove("pressed");
+    };
+    ToolElement.prototype.click = function () {
+        this.tool.used();
     };
     return ToolElement;
 }());
+var ActivatableToolElement = /** @class */ (function (_super) {
+    __extends(ActivatableToolElement, _super);
+    function ActivatableToolElement() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    ActivatableToolElement.prototype.click = function () {
+        this.parent.select(this);
+    };
+    ActivatableToolElement.prototype.activate = function () {
+        this.li.classList.add("active");
+    };
+    ActivatableToolElement.prototype.deactivate = function () {
+        this.tool.reset();
+        this.li.classList.remove("active");
+    };
+    return ActivatableToolElement;
+}(ToolElement));
 
 },{"./tools":11}],11:[function(require,module,exports){
 "use strict";
@@ -2732,25 +2830,18 @@ var figures_1 = require("../gcs/figures");
 var main_1 = require("../main");
 var constraint_1 = require("../gcs/constraint");
 var Tool = /** @class */ (function () {
-    function Tool(name, tooltip) {
+    function Tool(name, tooltip, image) {
         this.name = name;
         this.tooltip = tooltip;
+        this.image = image;
     }
-    Tool.prototype.down = function (point) { };
-    ;
-    Tool.prototype.move = function (point) { };
-    ;
-    Tool.prototype.up = function (point, snapFigure) { };
-    ;
-    Tool.prototype.used = function () { };
-    ;
     return Tool;
 }());
 exports.Tool = Tool;
 var UndoTool = /** @class */ (function (_super) {
     __extends(UndoTool, _super);
     function UndoTool() {
-        return _super.call(this, "Undo", "Undo an action") || this;
+        return _super.call(this, "Undo", "Undo an action", "undo.png") || this;
     }
     UndoTool.prototype.used = function () {
         main_1.protractr.loadSketch(main_1.protractr.ui.history.undo());
@@ -2761,7 +2852,7 @@ exports.UndoTool = UndoTool;
 var RedoTool = /** @class */ (function (_super) {
     __extends(RedoTool, _super);
     function RedoTool() {
-        return _super.call(this, "Redo", "Redo an action") || this;
+        return _super.call(this, "Redo", "Redo an action", "redo.png") || this;
     }
     RedoTool.prototype.used = function () {
         main_1.protractr.loadSketch(main_1.protractr.ui.history.redo());
@@ -2772,7 +2863,7 @@ exports.RedoTool = RedoTool;
 var ExportTool = /** @class */ (function (_super) {
     __extends(ExportTool, _super);
     function ExportTool() {
-        return _super.call(this, "Export", "Export your Sketch") || this;
+        return _super.call(this, "Export", "Export your Sketch", "export.png") || this;
     }
     ExportTool.prototype.used = function () {
         main_1.saveAs(main_1.protractr.exportSketch(), "sketch.json");
@@ -2783,7 +2874,7 @@ exports.ExportTool = ExportTool;
 var ImportTool = /** @class */ (function (_super) {
     __extends(ImportTool, _super);
     function ImportTool() {
-        return _super.call(this, "Import", "Import a Sketch from a file or web") || this;
+        return _super.call(this, "Import", "Import a Sketch from a file or web", "import.png") || this;
     }
     ImportTool.prototype.used = function () {
         var input = prompt("JSON or URL to import");
@@ -2801,159 +2892,260 @@ var ActivatableTool = /** @class */ (function (_super) {
     __extends(ActivatableTool, _super);
     function ActivatableTool() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.active = false;
+        _this.doSnap = true;
         return _this;
     }
-    ActivatableTool.prototype.used = function () {
-        if (this.active) {
-            this.toolbar.setActive(null);
-            this.active = false;
-            if (this.currentFigure != null) {
-                this.currentFigure = null;
-                main_1.protractr.sketch.rootFigures.pop();
-            }
-        }
-        else {
-            this.toolbar.setActive(this);
-            this.active = true;
-        }
-    };
+    ActivatableTool.prototype.used = function () { };
     return ActivatableTool;
 }(Tool));
 exports.ActivatableTool = ActivatableTool;
-var FigureTool = /** @class */ (function (_super) {
-    __extends(FigureTool, _super);
-    function FigureTool() {
-        return _super !== null && _super.apply(this, arguments) || this;
+var SelectTool = /** @class */ (function (_super) {
+    __extends(SelectTool, _super);
+    function SelectTool() {
+        var _this = _super.call(this, "Select", "Select and edit figures", "drag.png") || this;
+        _this.doSnap = false;
+        return _this;
     }
-    FigureTool.prototype.move = function (point) {
-        if (!this.currentPoint) {
-            this.currentPoint = point.copy();
-            this.points.push(this.currentPoint);
+    SelectTool.prototype.down = function (point, snapFigure) {
+        this.pressed = true;
+        this.downFigure = snapFigure;
+        if (!this.downFigure) {
+            main_1.protractr.ui.infoPane.selectedFiguresList.clear();
+            this.selectionStart = point;
+            this.selectionEnd = point;
         }
-        this.currentPoint.set(point);
+        else {
+            this.downFigure.setLocked(true);
+            this.lastDrag = point.copy();
+        }
     };
-    FigureTool.prototype.up = function (point, snapFigure) {
-        if (!this.currentPoint)
+    SelectTool.prototype.draw = function (sketchView) {
+        if (!this.selectionStart || !this.selectionEnd)
             return;
-        this.currentPoint = point.copy();
-        this.points.push(this.currentPoint);
+        sketchView.ctx.fillStyle = "green";
+        sketchView.ctx.globalAlpha = 0.5;
+        var w = this.selectionEnd.x - this.selectionStart.x;
+        var h = this.selectionEnd.y - this.selectionStart.y;
+        sketchView.ctx.fillRect(this.selectionStart.x, this.selectionStart.y, w, h);
+        sketchView.ctx.globalAlpha = 1;
+        sketchView.ctx.strokeStyle = "green";
+        sketchView.ctx.strokeRect(this.selectionStart.x, this.selectionStart.y, w, h);
     };
-    return FigureTool;
+    SelectTool.prototype.move = function (point, snapFigure) {
+        if (this.pressed)
+            this.dragging = true;
+        if (this.downFigure && this.dragging) {
+            this.downFigure.setLocked(false);
+            this.downFigure.translate(this.lastDrag, point.copy());
+            this.downFigure.setLocked(true);
+            main_1.protractr.sketch.solveConstraints();
+            this.lastDrag = point.copy();
+        }
+        else {
+            this.selectionEnd = point;
+            if (this.selectionStart) {
+                var selection = [];
+                for (var _i = 0, _a = main_1.protractr.sketch.rootFigures; _i < _a.length; _i++) {
+                    var figure = _a[_i];
+                    for (var _b = 0, _c = figure.getRelatedFigures(); _b < _c.length; _b++) {
+                        var relatedFigure = _c[_b];
+                        if (this.figureInSelection(relatedFigure)) {
+                            selection.push(relatedFigure);
+                        }
+                    }
+                }
+                main_1.protractr.ui.infoPane.selectedFiguresList.setFigures(selection);
+            }
+        }
+    };
+    SelectTool.prototype.up = function (point, snapFigure) {
+        if (this.downFigure) {
+            main_1.protractr.sketch.solveConstraints();
+            this.downFigure.setLocked(false);
+            if (!main_1.protractr.sketch.solveConstraints(true)) {
+                alert("That state couldn't be solved...");
+            }
+            main_1.protractr.ui.sketchView.pushState();
+        }
+        if (!this.dragging && this.downFigure) {
+            var list = main_1.protractr.ui.infoPane.selectedFiguresList;
+            if (list.figureSelected(this.downFigure)) {
+                list.removeFigure(this.downFigure);
+            }
+            else {
+                list.addFigure(this.downFigure);
+            }
+        }
+        this.reset();
+    };
+    SelectTool.prototype.reset = function () {
+        this.selectionEnd = null;
+        this.selectionStart = null;
+        this.dragging = false;
+        this.pressed = false;
+    };
+    SelectTool.prototype.figureInSelection = function (figure) {
+        if (figure.type == "point") {
+            var p = figure.p;
+            return ((this.selectionStart.x > p.x && this.selectionEnd.x < p.x) ||
+                (this.selectionStart.x < p.x && this.selectionEnd.x > p.x)) &&
+                ((this.selectionStart.y > p.y && this.selectionEnd.y < p.y) ||
+                    (this.selectionStart.y < p.y && this.selectionEnd.y > p.y));
+        }
+        var p1 = this.selectionStart;
+        var p2 = new figures_1.Point(this.selectionStart.x, this.selectionEnd.y);
+        var p3 = this.selectionEnd;
+        var p4 = new figures_1.Point(this.selectionEnd.x, this.selectionStart.y);
+        if (figure.type == "line") {
+            var line = figure;
+            if (this.figureInSelection(line.childFigures[0]) || this.figureInSelection(line.childFigures[1])) {
+                return true;
+            }
+            //test if line intersects any of the edges
+            if (figures_1.Point.doIntersect(p1, p2, line.p1, line.p2))
+                return true;
+            if (figures_1.Point.doIntersect(p2, p3, line.p1, line.p2))
+                return true;
+            if (figures_1.Point.doIntersect(p3, p4, line.p1, line.p2))
+                return true;
+            if (figures_1.Point.doIntersect(p4, p1, line.p1, line.p2))
+                return true;
+            return false;
+        }
+        else if (figure.type == "circle") {
+            var circle = figure;
+            //test if circle intersects any of the edges... somehow...
+            return false;
+        }
+        return false;
+    };
+    return SelectTool;
 }(ActivatableTool));
-exports.FigureTool = FigureTool;
+exports.SelectTool = SelectTool;
 var PointTool = /** @class */ (function (_super) {
     __extends(PointTool, _super);
     function PointTool() {
-        return _super.call(this, "Point", "Create a point") || this;
+        return _super.call(this, "Point", "Create a point", "point.png") || this;
     }
-    PointTool.prototype.up = function (point, snapFigure) {
-        if (this.currentFigure) {
-            if (snapFigure) {
-                constrainPointBySnap(this.currentFigure.p, snapFigure);
-            }
-            this.currentFigure = null;
-        }
+    PointTool.prototype.down = function (point, snapFigure) {
     };
-    PointTool.prototype.move = function (point) {
-        if (this.currentFigure) {
-            this.currentFigure.p.set(point);
-        }
-        else {
-            this.currentFigure = new figures_1.PointFigure(point);
-            main_1.protractr.sketch.rootFigures.push(this.currentFigure);
-        }
+    PointTool.prototype.up = function (point, snapFigure) {
+        var pointFigure = new figures_1.PointFigure(point);
+        constrainPointBySnap(pointFigure.p, snapFigure);
+        main_1.protractr.sketch.rootFigures.push(pointFigure);
+    };
+    PointTool.prototype.move = function (point, snapFigure) {
+        this.point = point;
+    };
+    PointTool.prototype.draw = function (sketchView) {
+        sketchView.drawPoint(this.point);
+    };
+    PointTool.prototype.reset = function () {
+        this.point = null;
     };
     return PointTool;
-}(FigureTool));
+}(ActivatableTool));
 exports.PointTool = PointTool;
 var LineTool = /** @class */ (function (_super) {
     __extends(LineTool, _super);
     function LineTool() {
-        var _this = _super.call(this, "Line", "Create a line") || this;
-        _this.hasSetP1 = false;
-        return _this;
+        return _super.call(this, "Line", "Create a line", "line.png") || this;
     }
     LineTool.prototype.up = function (point, snapFigure) {
-        if (this.currentFigure) {
-            if (this.hasSetP1) {
-                this.currentFigure.p2.set(point);
-                if (snapFigure) {
-                    constrainPointBySnap(this.currentFigure.p2, snapFigure);
-                }
-                this.currentFigure = null;
-            }
-            else {
-                this.hasSetP1 = true;
-                this.currentFigure.p1.set(point);
-                if (snapFigure) {
-                    constrainPointBySnap(this.currentFigure.p1, snapFigure);
-                }
-            }
-        }
-    };
-    LineTool.prototype.move = function (point) {
-        if (this.currentFigure) {
-            if (!this.hasSetP1) {
-                this.currentFigure.p1.set(point);
-            }
-            this.currentFigure.p2.set(point);
+        if (!this.point1Set) {
+            this.point1 = point;
+            this.point1SnapFigure = snapFigure;
+            this.point1Set = true;
+            this.point2 = point;
         }
         else {
-            this.hasSetP1 = false;
-            this.currentFigure = new figures_1.LineFigure(point, point.copy());
-            main_1.protractr.sketch.rootFigures.push(this.currentFigure);
+            var lineFigure = new figures_1.LineFigure(this.point1, this.point2);
+            constrainPointBySnap(lineFigure.p1, this.point1SnapFigure);
+            constrainPointBySnap(lineFigure.p2, snapFigure);
+            main_1.protractr.sketch.rootFigures.push(lineFigure);
+            this.reset();
         }
     };
+    LineTool.prototype.move = function (point, snapFigure) {
+        if (!this.point1Set) {
+            this.point1 = point;
+        }
+        else {
+            this.point2 = point;
+        }
+    };
+    LineTool.prototype.down = function (point, snapFigure) {
+    };
+    LineTool.prototype.draw = function (sketchView) {
+        sketchView.drawPoint(this.point1);
+        if (this.point1Set) {
+            sketchView.drawPoint(this.point2);
+            sketchView.drawLine(this.point1, this.point2);
+        }
+    };
+    LineTool.prototype.reset = function () {
+        this.point1Set = false;
+        this.point1SnapFigure = null;
+        this.point1 = null;
+        this.point2 = null;
+    };
     return LineTool;
-}(FigureTool));
+}(ActivatableTool));
 exports.LineTool = LineTool;
 var CircleTool = /** @class */ (function (_super) {
     __extends(CircleTool, _super);
     function CircleTool() {
-        var _this = _super.call(this, "Circle", "Create a circle") || this;
-        _this.hasSetC = false;
-        return _this;
+        return _super.call(this, "Circle", "Create a circle", "circle.png") || this;
     }
     CircleTool.prototype.up = function (point, snapFigure) {
-        if (this.currentFigure) {
-            if (this.hasSetC) {
-                this.currentFigure.r.value = this.currentFigure.c.distTo(point);
-                if (snapFigure && snapFigure.type == "point") {
-                    var r = this.currentFigure.r;
-                    var c = this.currentFigure.c.variablePoint;
-                    var p = snapFigure.p.variablePoint;
-                    main_1.protractr.sketch.addConstraints([new constraint_1.ArcPointCoincidentConstraint(c, r, [p])]);
-                }
-                this.currentFigure = null;
-            }
-            else {
-                this.hasSetC = true;
-                this.currentFigure.c.set(point);
-                if (snapFigure) {
-                    constrainPointBySnap(this.currentFigure.c, snapFigure);
-                }
-            }
-        }
-        return true;
-    };
-    CircleTool.prototype.move = function (point) {
-        if (this.currentFigure) {
-            if (!this.hasSetC) {
-                this.currentFigure.c.set(point);
-            }
-            this.currentFigure.r.value = this.currentFigure.c.distTo(point);
+        if (!this.centerSet) {
+            this.centerSet = true;
+            this.center = point;
+            this.centerSnapFigure = snapFigure;
         }
         else {
-            this.hasSetC = false;
-            this.currentFigure = new figures_1.CircleFigure(point, 0);
-            main_1.protractr.sketch.rootFigures.push(this.currentFigure);
+            this.radius = this.center.distTo(point);
+            var circleFigure = new figures_1.CircleFigure(this.center, this.radius);
+            constrainPointBySnap(circleFigure.c, this.centerSnapFigure);
+            //constrain point on circle
+            if (snapFigure && snapFigure.type == "point") {
+                var r = circleFigure.r;
+                var c = circleFigure.c.variablePoint;
+                var p = snapFigure.p.variablePoint;
+                main_1.protractr.sketch.addConstraints([new constraint_1.ArcPointCoincidentConstraint(c, r, [p])]);
+            }
+            main_1.protractr.sketch.rootFigures.push(circleFigure);
+            this.reset();
         }
     };
+    CircleTool.prototype.move = function (point, snapFigure) {
+        if (!this.centerSet) {
+            this.center = point;
+        }
+        else {
+            this.radius = this.center.distTo(point);
+        }
+    };
+    CircleTool.prototype.down = function (point, snapFigure) {
+    };
+    CircleTool.prototype.draw = function (sketchView) {
+        sketchView.drawPoint(this.center);
+        if (this.centerSet) {
+            sketchView.drawCircle(this.center, this.radius);
+        }
+    };
+    CircleTool.prototype.reset = function () {
+        this.radius = 0;
+        this.center = null;
+        this.centerSet = false;
+        this.centerSnapFigure = null;
+    };
     return CircleTool;
-}(FigureTool));
+}(ActivatableTool));
 exports.CircleTool = CircleTool;
 function constrainPointBySnap(point, snapFigure) {
+    if (!snapFigure)
+        return;
     var p = point.variablePoint;
     switch (snapFigure.type) {
         case "point":

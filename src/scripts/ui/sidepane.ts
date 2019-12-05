@@ -88,13 +88,14 @@ export class FigureInfoView {
         field.type = "number";
         field.value = "" + variable.value;
         field.step = "any";
+        let _this = this;
         field.onchange = function() {
             variable.value = parseFloat(field.value);
             variable.constant = true;
-            protractr.sketch.solveConstraints(true);
+            _this.ui.protractr.sketch.solveConstraints(true);
             variable.constant = false;
-            protractr.ui.history.recordStateChange(protractr.exportSketch());
-            protractr.ui.refresh();
+            _this.ui.history.recordStateChange(protractr.exportSketch());
+            _this.ui.refresh();
         };
         div.appendChild(field);
         this.div.appendChild(div);
@@ -157,7 +158,7 @@ export class ExistingConstraintList {
         this.ui = ui;
         this.div = document.createElement("div");
         this.list = new TitledInteractiveList<Constraint>(false);
-        this.list.setTitle("Sketch has no constraints");
+        this.list.setTitle("No constraints in sketch");
         this.list.onhover = this.ui.refresh.bind(this.ui);
         this.list.onclick = this.ui.refresh.bind(this.ui);
         this.div.appendChild(this.list.div);
@@ -169,18 +170,11 @@ export class ExistingConstraintList {
         return false;
     }
     setConstraints(newConstraints: Constraint[]) {
-        let toRemove = [];
-        for(let constraint of this.list.values) {
-            if(newConstraints.indexOf(constraint) == -1) {
-                toRemove.push(constraint);
-            }
-        }
-        for(let remove of toRemove) {
-            this.removeConstraint(remove);
-        }
+        let elements: [Constraint, string][] = [];
         for(let constraint of newConstraints) {
-            if(!this.contains(constraint)) this.addConstraint(constraint);
+            elements.push([constraint, constraint.name]);
         }
+        this.list.setElements(elements);
         let count = this.ui.infoPane.selectedFiguresList.count();
         if(newConstraints.length == 0) {
             if(count == 0) {
@@ -239,11 +233,19 @@ export class SelectedFigureList {
     }
     clear() {
         this.list.clear();
-        this.updateTitle();
+        this.ui.refresh();
+    }
+    setFigures(figures: Figure[]) {
+        let elements: [Figure, string][] = [];
+        for(let figure of figures) {
+            elements.push([figure, getFullName(figure)]);
+        }
+        this.list.setElements(elements);
+        this.ui.refresh();
     }
     addFigure(figure: Figure) {
         this.list.addElement(figure, getFullName(figure));
-        this.updateTitle();
+        this.ui.refresh();
     }
     updateTitle() {
         let count = this.count();
@@ -257,7 +259,7 @@ export class SelectedFigureList {
     }
     removeFigure(figure: Figure) {
         this.list.removeElement(figure);
-        this.updateTitle();
+        this.ui.refresh();
     }
     figureSelected(figure: Figure) {
         return this.list.values.indexOf(figure) != -1;
@@ -296,6 +298,25 @@ export class InteractiveList<T> {
             this.list.removeChild(this.list.lastChild);
         }
         if(this.onhover && !noEvent) this.onhover([]);
+    }
+    setElements(elements: [T, string][]) {
+        let toRemove = [];
+        for(let value of this.values) {
+            let remove = true;
+            for(let element of elements) {
+                if(element[0] == value){
+                    remove = false;
+                    break;
+                };
+            }
+            if(remove) toRemove.push(value);
+        }
+        for(let remove of toRemove) {
+            this.removeElement(remove);
+        }
+        for(let element of elements) {
+            if(this.values.indexOf(element[0]) == -1) this.addElement(element[0], element[1]);
+        }
     }
     addElement(value: T, name: string) {
         let element = new ListElement(this, value, name, this.deleteable);

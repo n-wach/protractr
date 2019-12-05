@@ -12,14 +12,8 @@ export class SketchView {
     ctxOrigin: Point;
     ctxScale: number;
 
-    subscribedTool: Tool;
     hoveredFigure: Figure;
     ui: UI;
-    lastDrag: Point;
-
-    draggedFigure: Figure;
-    lastFigureDrag: Point;
-    dragging: boolean = false;
 
     lastPanPoint: Point = null;
 
@@ -61,53 +55,13 @@ export class SketchView {
     handleToolEvent(type: string, point: Point, snapFigure: Figure) {
         switch(type) {
             case "mousedown":
-                this.subscribedTool.down(point);
+                this.ui.toolbar.activeTool.down(point, snapFigure);
                 break;
             case "mousemove":
-                this.subscribedTool.move(point);
+                this.ui.toolbar.activeTool.move(point, snapFigure);
                 break;
             case "mouseup":
-                this.subscribedTool.up(point, snapFigure);
-                if(this.subscribedTool.currentFigure == null) this.pushState(); //new figure just added
-                break;
-        }
-    }
-    handleDragEvent(type: string, point: Point) {
-        switch (type) {
-            case "mousedown":
-                if (this.hoveredFigure) {
-                    this.dragging = false;
-                    this.draggedFigure = this.hoveredFigure;
-                    this.lastFigureDrag = point.copy();
-                }
-                break;
-            case "mousemove":
-                if (this.draggedFigure != null) {
-                    this.dragging = true;
-                    this.draggedFigure.setLocked(false);
-                    this.draggedFigure.translate(this.lastFigureDrag, point.copy());
-                    this.draggedFigure.setLocked(true);
-                    this.lastFigureDrag = point.copy();
-                    this.ui.protractr.sketch.solveConstraints();
-                }
-                break;
-            case "mouseup":
-                if (this.dragging === false) {
-                    if (this.hoveredFigure) {
-                        this.toggleSelected(this.hoveredFigure);
-                    } else {
-                        this.ui.infoPane.selectedFiguresList.clear();
-                    }
-                }
-                if(this.draggedFigure) {
-                    this.draggedFigure.setLocked(false);
-                    this.draggedFigure = null;
-                    if(!this.ui.protractr.sketch.solveConstraints(true)) {
-                        alert("That state couldn't be solved...");
-                    }
-                    this.pushState(); //figure modified
-                }
-                this.dragging = false;
+                this.ui.toolbar.activeTool.up(point, snapFigure);
                 break;
         }
     }
@@ -132,24 +86,13 @@ export class SketchView {
             this.handlePanEvent(event.type, offset);
         }
         if(event.which == 1 || event.type == "mousemove") {
-            if(this.subscribedTool) {
-                this.handleToolEvent(event.type, snapPoint, this.hoveredFigure);
-            } else {
-                this.handleDragEvent(event.type, point);
-            }
+            this.handleToolEvent(event.type, snapPoint, this.hoveredFigure);
         }
         this.draw();
     }
     updateHover(point: Point) {
         let closest;
-        let ignoredFigures = [];
-        if (this.subscribedTool && this.subscribedTool.currentFigure) {
-            ignoredFigures.push.apply(ignoredFigures, this.subscribedTool.currentFigure.getRelatedFigures());
-        }
-        if(this.draggedFigure && this.dragging) {
-            ignoredFigures.push.apply(ignoredFigures, this.draggedFigure.getRelatedFigures());
-        }
-        closest = this.ui.protractr.sketch.getClosestFigure(point, ignoredFigures, 10, this.ctxScale);
+        closest = this.ui.protractr.sketch.getClosestFigure(point, [], 10, this.ctxScale);
         this.hoveredFigure = closest;
         if(this.hoveredFigure != null) {
             this.setCursor("move");
@@ -157,21 +100,10 @@ export class SketchView {
             this.setCursor("default");
         }
     }
-    subscribeTool(tool: Tool) {
-        this.subscribedTool = tool;
-    }
     snapPoint(point: Point): Point {
+        if(!this.ui.toolbar.activeTool.doSnap) return point;
         if(!this.hoveredFigure) return point;
         return this.hoveredFigure.getClosestPoint(point);
-    }
-    toggleSelected(fig: Figure) {
-        let selectedFigures = this.ui.infoPane.selectedFiguresList;
-        if(!selectedFigures.figureSelected(fig)) {
-            selectedFigures.addFigure(fig);
-        } else {
-            selectedFigures.removeFigure(fig);
-        }
-        this.ui.refresh();
     }
     setCursor(cursor: string) {
         this.canvas.style.cursor = cursor;
@@ -179,9 +111,9 @@ export class SketchView {
     drawFigure(fig: Figure) {
         this.ctx.strokeStyle = "black";
         this.ctx.lineWidth = 2 / this.ctxScale;
-        let pointSize = 3 / this.ctxScale;
+        let pointSize = 3;
         if(this.hoveredFigure == fig || this.ui.infoPane.selectedFiguresList.figureHovered(fig)) {
-            pointSize = 7 / this.ctxScale;
+            pointSize = 7;
             this.ctx.lineWidth = 5 / this.ctxScale;
         }
         if (this.ui.infoPane.selectedFiguresList.figureSelected(fig)) {
@@ -189,16 +121,13 @@ export class SketchView {
         }
         if (this.ui.infoPane.existingConstraintsList.figureInHovered(fig)) {
             this.ctx.strokeStyle = "purple";
-            pointSize = 7 / this.ctxScale;
+            pointSize = 7;
             this.ctx.lineWidth = 5 / this.ctxScale;
         }
         switch(fig.type) {
             case "line":
                 let line = (fig as LineFigure);
-                this.ctx.beginPath();
-                this.ctx.moveTo(line.p1.x, line.p1.y);
-                this.ctx.lineTo(line.p2.x, line.p2.y);
-                this.ctx.stroke();
+                this.drawLine(line.p1, line.p2);
                 break;
             case "point":
                 let point = (fig as PointFigure);
@@ -206,9 +135,7 @@ export class SketchView {
                 break;
             case "circle":
                 let circle = (fig as CircleFigure);
-                this.ctx.beginPath();
-                this.ctx.arc(circle.c.x, circle.c.y, circle.r.value, 0, Math.PI * 2);
-                this.ctx.stroke();
+                this.drawCircle(circle.c, circle.r.value);
                 break;
         }
     }
@@ -222,14 +149,31 @@ export class SketchView {
                 this.drawFigure(child);
             }
         }
+        this.ctx.strokeStyle = "black";
+        this.ctx.lineWidth = 2 / this.ctxScale;
+        this.ui.toolbar.activeTool.draw(this);
         this.ui.infoPane.selectedFigureView.refresh();
     }
     drawPoint(point: Point, size: number = 3, color: string = "black") {
+        if(!point) return;
         this.ctx.fillStyle = color;
         this.ctx.beginPath();
         this.ctx.moveTo(point.x, point.y);
-        this.ctx.arc(point.x, point.y, size, 0, Math.PI * 2);
+        this.ctx.arc(point.x, point.y, size / this.ctxScale, 0, Math.PI * 2);
         this.ctx.fill();
+    }
+    drawLine(p1: Point, p2: Point) {
+        if(!p1 || !p2) return;
+        this.ctx.beginPath();
+        this.ctx.moveTo(p1.x, p1.y);
+        this.ctx.lineTo(p2.x, p2.y);
+        this.ctx.stroke();
+    }
+    drawCircle(center: Point, radius: number) {
+        if(!center) return;
+        this.ctx.beginPath();
+        this.ctx.arc(center.x, center.y, radius, 0, Math.PI * 2);
+        this.ctx.stroke();
     }
     pushState() {
         let s = this.ui.protractr.exportSketch();

@@ -84,6 +84,64 @@ export class Point {
         if (segFrac > 1 || isNaN(segFrac)) return 1;
         return segFrac;
     }
+
+    /**
+     * Determine if three points are clockwise (1), counterclockwise(-1) or colinear(0)
+     * @param p1
+     * @param p2
+     * @param p3
+     */
+    static orientation(p1: Point, p2: Point, p3: Point): number {
+        let val = (p2.y - p1.y) * (p3.x - p2.x) -
+                  (p2.x - p1.x) * (p3.y - p2.y);
+
+        if (Math.abs(val) < 0.1) return 0;  // colinear
+
+        return (val > 0) ? 1 : -1; // clock or counterclock wise
+    }
+
+    /**
+     * Determine if p1 lies on the line between p2 and p3
+     * @param p1
+     * @param p2
+     * @param p3
+     */
+    static onSegment(p1: Point, p2: Point, p3: Point) {
+            return (p2.x <= Math.max(p1.x, p3.x) && p2.x >= Math.min(p1.x, p3.x) &&
+                p2.y <= Math.max(p1.y, p3.y) && p2.y >= Math.min(p1.y, p3.y));
+    }
+
+    /**
+     * Returns true of the line p1q1 intersects q2p2
+     * @param p1
+     * @param p2
+     * @param p3
+     * @param p4
+     */
+    static doIntersect(p1: Point, q1: Point, p2: Point, q2: Point) {
+        let o1 = Point.orientation(p1, q1, p2);
+        let o2 = Point.orientation(p1, q1, q2);
+        let o3 = Point.orientation(p2, q2, p1);
+        let o4 = Point.orientation(p2, q2, q1);
+        //General case
+        if (o1 != o2 && o3 != o4) return true;
+
+        // Special Cases
+        // p1, q1 and p2 are colinear and p2 lies on segment p1q1
+        if (o1 == 0 && Point.onSegment(p1, p2, q1)) return true;
+
+        // p1, q1 and q2 are colinear and q2 lies on segment p1q1
+        if (o2 == 0 && Point.onSegment(p1, q2, q1)) return true;
+
+        // p2, q2 and p1 are colinear and p1 lies on segment p2q2
+        if (o3 == 0 && Point.onSegment(p2, p1, q2)) return true;
+
+        // p2, q2 and q1 are colinear and q1 lies on segment p2q2
+        if (o4 == 0 && Point.onSegment(p2, q1, q2)) return true;
+
+        return false; // Doesn't fall in any of the above cases
+
+    }
     static fromVariablePoint(v: VariablePoint): Point {
         let p = new Point(0, 0);
         p.variablePoint = v;
