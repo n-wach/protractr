@@ -147,6 +147,16 @@ export class Point {
         p.variablePoint = v;
         return p;
     }
+
+    static averagePoint(...points: Point[]) {
+        let x = 0;
+        let y = 0;
+        for(let point of points) {
+            x += point.x;
+            y += point.y;
+        }
+        return new Point(x / points.length, y / points.length);
+    }
 }
 
 
@@ -258,7 +268,13 @@ export class LineFigure extends BasicFigure {
         this.childFigures[1].parentFigure = this;
     }
     getClosestPoint(point: Point): Point {
-        return point.projectBetween(this.p1, this.p2, true);
+        let projection = point.projectBetween(this.p1, this.p2, true);
+
+        let midpoint = Point.averagePoint(this.p1, this.p2);
+        if(midpoint.distTo(point) < 5 / protractr.ui.sketchView.ctxScale) {
+            return midpoint;
+        }
+        return projection;
     }
     translate(from: Point, to: Point) {
         let diff = to.sub(from).copy();

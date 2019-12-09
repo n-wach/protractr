@@ -1386,6 +1386,20 @@ var Point = /** @class */ (function () {
         p.variablePoint = v;
         return p;
     };
+    Point.averagePoint = function () {
+        var points = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            points[_i] = arguments[_i];
+        }
+        var x = 0;
+        var y = 0;
+        for (var _a = 0, points_1 = points; _a < points_1.length; _a++) {
+            var point = points_1[_a];
+            x += point.x;
+            y += point.y;
+        }
+        return new Point(x / points.length, y / points.length);
+    };
     return Point;
 }());
 exports.Point = Point;
@@ -1489,7 +1503,12 @@ var LineFigure = /** @class */ (function (_super) {
         return _this;
     }
     LineFigure.prototype.getClosestPoint = function (point) {
-        return point.projectBetween(this.p1, this.p2, true);
+        var projection = point.projectBetween(this.p1, this.p2, true);
+        var midpoint = Point.averagePoint(this.p1, this.p2);
+        if (midpoint.distTo(point) < 5 / main_1.protractr.ui.sketchView.ctxScale) {
+            return midpoint;
+        }
+        return projection;
     };
     LineFigure.prototype.translate = function (from, to) {
         var diff = to.sub(from).copy();
@@ -2599,12 +2618,12 @@ var SketchView = /** @class */ (function () {
         this.ctx.strokeStyle = "black";
         this.ctx.lineWidth = 2 / this.ctxScale;
         var pointSize = 3;
+        if (this.ui.infoPane.selectedFiguresList.figureSelected(fig)) {
+            this.ctx.strokeStyle = "#5e9cff";
+        }
         if (this.hoveredFigure == fig || this.ui.infoPane.selectedFiguresList.figureHovered(fig)) {
             pointSize = 7;
             this.ctx.lineWidth = 5 / this.ctxScale;
-        }
-        if (this.ui.infoPane.selectedFiguresList.figureSelected(fig)) {
-            this.ctx.strokeStyle = "#5e9cff";
         }
         if (this.ui.infoPane.existingConstraintsList.figureInHovered(fig)) {
             this.ctx.strokeStyle = "purple";
@@ -2615,6 +2634,12 @@ var SketchView = /** @class */ (function () {
             case "line":
                 var line = fig;
                 this.drawLine(line.p1, line.p2);
+                if (this.hoveredFigure == fig) {
+                    var midpoint = figures_1.Point.averagePoint(line.p1, line.p2);
+                    this.drawPoint(midpoint, pointSize, this.ctx.strokeStyle);
+                    this.drawPoint(line.p1, pointSize, this.ctx.strokeStyle);
+                    this.drawPoint(line.p2, pointSize, this.ctx.strokeStyle);
+                }
                 break;
             case "point":
                 var point = fig;
@@ -2702,10 +2727,12 @@ var Toolbar = /** @class */ (function () {
         this.initializeTools();
     }
     Toolbar.prototype.initializeTools = function () {
+        var filters = new ToolGroup();
         this.activatableTools = new ActivatableToolGroup();
         this.activatableTools.addTool(new tools_1.SelectTool());
         this.activatableTools.addTool(new tools_1.PointTool());
         this.activatableTools.addTool(new tools_1.LineTool());
+        this.activatableTools.addTool(new tools_1.RectTool());
         this.activatableTools.addTool(new tools_1.CircleTool());
         this.addToolGroup(this.activatableTools);
         var editHistory = new ToolGroup();
@@ -3033,6 +3060,7 @@ var PointTool = /** @class */ (function (_super) {
         var pointFigure = new figures_1.PointFigure(point);
         constrainPointBySnap(pointFigure.p, snapFigure);
         main_1.protractr.sketch.rootFigures.push(pointFigure);
+        main_1.protractr.ui.sketchView.pushState();
     };
     PointTool.prototype.move = function (point, snapFigure) {
         this.point = point;
@@ -3063,6 +3091,7 @@ var LineTool = /** @class */ (function (_super) {
             constrainPointBySnap(lineFigure.p1, this.point1SnapFigure);
             constrainPointBySnap(lineFigure.p2, snapFigure);
             main_1.protractr.sketch.rootFigures.push(lineFigure);
+            main_1.protractr.ui.sketchView.pushState();
             this.reset();
         }
     };
@@ -3115,6 +3144,7 @@ var CircleTool = /** @class */ (function (_super) {
                 main_1.protractr.sketch.addConstraints([new constraint_1.ArcPointCoincidentConstraint(c, r, [p])]);
             }
             main_1.protractr.sketch.rootFigures.push(circleFigure);
+            main_1.protractr.ui.sketchView.pushState();
             this.reset();
         }
     };
@@ -3143,6 +3173,74 @@ var CircleTool = /** @class */ (function (_super) {
     return CircleTool;
 }(ActivatableTool));
 exports.CircleTool = CircleTool;
+var RectTool = /** @class */ (function (_super) {
+    __extends(RectTool, _super);
+    function RectTool() {
+        return _super.call(this, "Rectangle", "Create a rectangle", "rect.png") || this;
+    }
+    RectTool.prototype.up = function (point, snapFigure) {
+        if (!this.point1Set) {
+            this.point1 = point;
+            this.point1SnapFigure = snapFigure;
+            this.point1Set = true;
+            this.point2 = point;
+        }
+        else {
+            var p1 = this.point1;
+            var p2 = new figures_1.Point(this.point2.x, this.point1.y);
+            var p3 = this.point2;
+            var p4 = new figures_1.Point(this.point1.x, this.point2.y);
+            var h1 = new figures_1.LineFigure(p1.copy(), p2.copy());
+            var v1 = new figures_1.LineFigure(p2.copy(), p3.copy());
+            var h2 = new figures_1.LineFigure(p3.copy(), p4.copy());
+            var v2 = new figures_1.LineFigure(p4.copy(), p1.copy());
+            main_1.protractr.sketch.rootFigures.push(h1, h2, v1, v2);
+            var hc1 = new constraint_1.EqualConstraint([h1.p1.variablePoint.y, h1.p2.variablePoint.y, v1.p1.variablePoint.y, v2.p2.variablePoint.y], "horizontal");
+            var hc2 = new constraint_1.EqualConstraint([h2.p1.variablePoint.y, h2.p2.variablePoint.y, v2.p1.variablePoint.y, v1.p2.variablePoint.y], "horizontal");
+            var vc1 = new constraint_1.EqualConstraint([v1.p1.variablePoint.x, v1.p2.variablePoint.x, h1.p2.variablePoint.x, h2.p1.variablePoint.x], "vertical");
+            var vc2 = new constraint_1.EqualConstraint([v2.p1.variablePoint.x, v2.p2.variablePoint.x, h1.p1.variablePoint.x, h2.p2.variablePoint.x], "vertical");
+            main_1.protractr.sketch.addConstraints([hc1, hc2, vc1, vc2]);
+            constrainPointBySnap(h1.p1, this.point1SnapFigure);
+            constrainPointBySnap(v2.p2, this.point1SnapFigure);
+            constrainPointBySnap(v1.p2, snapFigure);
+            constrainPointBySnap(h2.p1, snapFigure);
+            main_1.protractr.ui.sketchView.pushState();
+            this.reset();
+        }
+    };
+    RectTool.prototype.move = function (point, snapFigure) {
+        if (!this.point1Set) {
+            this.point1 = point;
+        }
+        else {
+            this.point2 = point;
+        }
+    };
+    RectTool.prototype.down = function (point, snapFigure) {
+    };
+    RectTool.prototype.draw = function (sketchView) {
+        sketchView.drawPoint(this.point1);
+        if (this.point1Set) {
+            var p3 = new figures_1.Point(this.point2.x, this.point1.y);
+            var p4 = new figures_1.Point(this.point1.x, this.point2.y);
+            sketchView.drawPoint(this.point2);
+            sketchView.drawPoint(p3);
+            sketchView.drawPoint(p4);
+            sketchView.drawLine(this.point1, p3);
+            sketchView.drawLine(p3, this.point2);
+            sketchView.drawLine(this.point2, p4);
+            sketchView.drawLine(p4, this.point1);
+        }
+    };
+    RectTool.prototype.reset = function () {
+        this.point1Set = false;
+        this.point1SnapFigure = null;
+        this.point1 = null;
+        this.point2 = null;
+    };
+    return RectTool;
+}(ActivatableTool));
+exports.RectTool = RectTool;
 function constrainPointBySnap(point, snapFigure) {
     if (!snapFigure)
         return;
@@ -3160,9 +3258,15 @@ function constrainPointBySnap(point, snapFigure) {
             main_1.protractr.sketch.addConstraints([new constraint_1.ArcPointCoincidentConstraint(c, r, [p])]);
             break;
         case "line":
-            var p1 = snapFigure.p1.variablePoint;
-            var p2 = snapFigure.p2.variablePoint;
-            main_1.protractr.sketch.addConstraints([new constraint_1.ColinearPointsConstraint([p1, p2, p])]);
+            var p1 = snapFigure.p1;
+            var p2 = snapFigure.p2;
+            var midpoint = figures_1.Point.averagePoint(p1, p2);
+            if (midpoint.distTo(point) < 5 / main_1.protractr.ui.sketchView.ctxScale) {
+                main_1.protractr.sketch.addConstraints([new constraint_1.MidpointConstraint(p1.variablePoint, p2.variablePoint, p)]);
+            }
+            else {
+                main_1.protractr.sketch.addConstraints([new constraint_1.ColinearPointsConstraint([p1.variablePoint, p2.variablePoint, p])]);
+            }
             break;
     }
 }

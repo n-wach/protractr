@@ -7,7 +7,7 @@ import {
     Tool,
     ExportTool,
     UndoTool,
-    RedoTool, SelectTool
+    RedoTool, SelectTool, RectTool
 } from "./tools";
 import {Protractr} from "../protractr";
 import {SketchView} from "./sketchview";
@@ -26,10 +26,12 @@ export class Toolbar {
         this.initializeTools();
     }
     initializeTools() {
+        let filters = new ToolGroup();
         this.activatableTools = new ActivatableToolGroup();
         this.activatableTools.addTool(new SelectTool());
         this.activatableTools.addTool(new PointTool());
         this.activatableTools.addTool(new LineTool());
+        this.activatableTools.addTool(new RectTool());
         this.activatableTools.addTool(new CircleTool());
         this.addToolGroup(this.activatableTools);
         let editHistory = new ToolGroup();

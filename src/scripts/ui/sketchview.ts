@@ -112,12 +112,12 @@ export class SketchView {
         this.ctx.strokeStyle = "black";
         this.ctx.lineWidth = 2 / this.ctxScale;
         let pointSize = 3;
+        if (this.ui.infoPane.selectedFiguresList.figureSelected(fig)) {
+            this.ctx.strokeStyle = "#5e9cff";
+        }
         if(this.hoveredFigure == fig || this.ui.infoPane.selectedFiguresList.figureHovered(fig)) {
             pointSize = 7;
             this.ctx.lineWidth = 5 / this.ctxScale;
-        }
-        if (this.ui.infoPane.selectedFiguresList.figureSelected(fig)) {
-            this.ctx.strokeStyle = "#5e9cff";
         }
         if (this.ui.infoPane.existingConstraintsList.figureInHovered(fig)) {
             this.ctx.strokeStyle = "purple";
@@ -128,6 +128,12 @@ export class SketchView {
             case "line":
                 let line = (fig as LineFigure);
                 this.drawLine(line.p1, line.p2);
+                if(this.hoveredFigure == fig) {
+                    let midpoint = Point.averagePoint(line.p1, line.p2);
+                    this.drawPoint(midpoint, pointSize, this.ctx.strokeStyle);
+                    this.drawPoint(line.p1, pointSize, this.ctx.strokeStyle);
+                    this.drawPoint(line.p2, pointSize, this.ctx.strokeStyle);
+                }
                 break;
             case "point":
                 let point = (fig as PointFigure);
