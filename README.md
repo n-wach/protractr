@@ -9,6 +9,7 @@ Functionality is planned to match basic Solidworks sketches containing Points, L
 - [beach](https://n-wach.github.io/protractr/src/?beach.json)
 - [shield](https://n-wach.github.io/protractr/src/?shield.json)
 - [aww_man](https://n-wach.github.io/protractr/src/?aww_man.json)
+- [diagram](https://n-wach.github.io/protractr/src/?diagram.json)
 
 ## Structure and Documenation
 
