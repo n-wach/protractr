@@ -140,7 +140,19 @@ export class Point {
         if (o4 == 0 && Point.onSegment(p2, q1, q2)) return true;
 
         return false; // Doesn't fall in any of the above cases
+    }
 
+    /**
+     *
+     * @param {Point} p1
+     * @param {Point} p2
+     * @param {Point} p
+     * @param segment determine if p1p2 is an infinite line or a line segment for projection
+     * @returns {number} Distance from p to p's projection onto the line p1p2
+     */
+    static distToLine(p1: Point, p2: Point, p: Point, segment: boolean=false): number {
+        let projection = p.projectBetween(p1, p2, segment);
+        return projection.distTo(p);
     }
     static fromVariablePoint(v: VariablePoint): Point {
         let p = new Point(0, 0);

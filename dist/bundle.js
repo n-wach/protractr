@@ -1382,6 +1382,19 @@ var Point = /** @class */ (function () {
             return true;
         return false; // Doesn't fall in any of the above cases
     };
+    /**
+     *
+     * @param {Point} p1
+     * @param {Point} p2
+     * @param {Point} p
+     * @param segment determine if p1p2 is an infinite line or a line segment for projection
+     * @returns {number} Distance from p to p's projection onto the line p1p2
+     */
+    Point.distToLine = function (p1, p2, p, segment) {
+        if (segment === void 0) { segment = false; }
+        var projection = p.projectBetween(p1, p2, segment);
+        return projection.distTo(p);
+    };
     Point.fromVariablePoint = function (v) {
         var p = new Point(0, 0);
         p.variablePoint = v;
@@ -3093,7 +3106,28 @@ var SelectTool = /** @class */ (function (_super) {
         }
         else if (figure.type == "circle") {
             var circle = figure;
-            //test if circle intersects any of the edges... somehow...
+            var center = circle.c;
+            var radius = circle.r.value;
+            var p1In = center.distTo(p1) < radius;
+            var p2In = center.distTo(p2) < radius;
+            var p3In = center.distTo(p3) < radius;
+            var p4In = center.distTo(p4) < radius;
+            var allInside = p1In && p2In && p3In && p4In;
+            if (allInside)
+                return false;
+            var allOutside = !p1In && !p2In && !p3In && !p4In;
+            if (!allOutside)
+                return true;
+            if (this.figureInSelection(circle.childFigures[0], false))
+                return true;
+            if (figures_1.Point.distToLine(p1, p2, center, true) < radius)
+                return true;
+            if (figures_1.Point.distToLine(p2, p3, center, true) < radius)
+                return true;
+            if (figures_1.Point.distToLine(p3, p4, center, true) < radius)
+                return true;
+            if (figures_1.Point.distToLine(p4, p1, center, true) < radius)
+                return true;
             return false;
         }
         return false;

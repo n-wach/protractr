@@ -193,9 +193,29 @@ export class SelectTool extends ActivatableTool {
             if (Point.doIntersect(p4, p1, line.p1, line.p2)) return true;
             return false;
         } else if (figure.type == "circle") {
-                let circle = (figure as CircleFigure);
-                //test if circle intersects any of the edges... somehow...
-                return false;
+            let circle = (figure as CircleFigure);
+            let center = circle.c;
+            let radius = circle.r.value;
+
+            let p1In = center.distTo(p1) < radius;
+            let p2In = center.distTo(p2) < radius;
+            let p3In = center.distTo(p3) < radius;
+            let p4In = center.distTo(p4) < radius;
+
+            let allInside = p1In && p2In && p3In && p4In;
+            if(allInside) return false;
+
+            let allOutside = !p1In && !p2In && !p3In && !p4In;
+            if(!allOutside) return true;
+
+            if (this.figureInSelection(circle.childFigures[0], false)) return true;
+
+            if (Point.distToLine(p1, p2, center, true) < radius) return true;
+            if (Point.distToLine(p2, p3, center, true) < radius) return true;
+            if (Point.distToLine(p3, p4, center, true) < radius) return true;
+            if (Point.distToLine(p4, p1, center, true) < radius) return true;
+
+            return false;
         }
         return false;
     }
