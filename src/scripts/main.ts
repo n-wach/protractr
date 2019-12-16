@@ -34,7 +34,7 @@ window.addEventListener("load", function() {
 "                                        \\/     \\/                                    ");
     console.log("Protractr: ", protractr);
     let example = document.location.search.substr(1);
-    if(example.length > 0) {
+    if(example.length > 0 && example.indexOf(".json") != -1) {
         console.log("Loading ", example);
         let path = document.location.pathname;
         let origin = path.substr(0, path.indexOf("/src/"));

@@ -9,6 +9,7 @@ import {
 } from "../gcs/constraint";
 import {SketchView} from "./sketchview";
 import {Protractr} from "../protractr";
+import {FilterString} from "../gcs/constraint_filter";
 
 
 export abstract class Tool {
@@ -162,7 +163,7 @@ export class SelectTool extends ActivatableTool {
         this.pressed = false;
     }
 
-    figureInSelection(figure: Figure) {
+    figureInSelection(figure: Figure, filter: boolean=false): boolean {
         if(figure.type == "point") {
             let p = (figure as PointFigure).p;
             return (
@@ -182,7 +183,7 @@ export class SelectTool extends ActivatableTool {
 
         if(figure.type == "line") {
             let line = (figure as LineFigure);
-            if (this.figureInSelection(line.childFigures[0]) || this.figureInSelection(line.childFigures[1])) {
+            if (this.figureInSelection(line.childFigures[0], false) || this.figureInSelection(line.childFigures[1], false)) {
                 return true;
             }
             //test if line intersects any of the edges
@@ -197,6 +198,24 @@ export class SelectTool extends ActivatableTool {
                 return false;
         }
         return false;
+    }
+}
+
+export class FilterSelectTool extends SelectTool {
+    filter: FilterString;
+    constructor(name: string, tooltip: string, image: string, filterString: string) {
+        super();
+        this.tooltip = tooltip;
+        this.name = name;
+        this.image = image;
+        this.filter = new FilterString(filterString);
+    }
+    figureInSelection(figure: Figure, filter: boolean=true): boolean {
+        if(filter) {
+            return this.filter.satisfiesFilter([figure]) && super.figureInSelection(figure, false);
+        } else {
+            return super.figureInSelection(figure, false);
+        }
     }
 }
 

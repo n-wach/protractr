@@ -7,7 +7,7 @@ import {
     Tool,
     ExportTool,
     UndoTool,
-    RedoTool, SelectTool, RectTool
+    RedoTool, SelectTool, RectTool, FilterSelectTool
 } from "./tools";
 import {Protractr} from "../protractr";
 import {SketchView} from "./sketchview";
@@ -26,9 +26,12 @@ export class Toolbar {
         this.initializeTools();
     }
     initializeTools() {
-        let filters = new ToolGroup();
         this.activatableTools = new ActivatableToolGroup();
-        this.activatableTools.addTool(new SelectTool());
+        this.activatableTools.addToolDropdown([new SelectTool(),
+            new FilterSelectTool("Select", "Filter select to points", "filter-point.png", ":*point"),
+            new FilterSelectTool("Select", "Filter select to lines", "filter-line.png", ":*line"),
+            new FilterSelectTool("Select", "Filter select to circles", "filter-circle.png", ":*circle")
+        ]);
         this.activatableTools.addTool(new PointTool());
         this.activatableTools.addTool(new LineTool());
         this.activatableTools.addTool(new RectTool());
@@ -64,6 +67,11 @@ class ToolGroup {
         this.toolElements.push(e);
         this.div.appendChild(e.li);
     }
+    addToolDropdown(tools: ActivatableTool[]) {
+        let e = new DropdownToolSelect(this, tools);
+        this.toolElements.push(e);
+        this.div.appendChild(e.li);
+    }
 }
 
 class ActivatableToolGroup extends ToolGroup {
@@ -86,7 +94,6 @@ class ActivatableToolGroup extends ToolGroup {
         }
     }
 }
-
 
 class ToolElement {
     li: HTMLLIElement;
@@ -128,6 +135,49 @@ class ActivatableToolElement extends ToolElement {
     deactivate() {
         this.tool.reset();
         this.li.classList.remove("active");
+    }
+}
+
+
+class DropdownToolSelect extends ActivatableToolElement {
+    availableTools: ActivatableTool[];
+    ul: HTMLUListElement;
+    lis: HTMLLIElement[]=[];
+    constructor(parent: ToolGroup, tools: ActivatableTool[]) {
+        super(parent, tools[0]);
+        this.availableTools = tools;
+        this.li.classList.add("tool-dropdown");
+        this.ul = document.createElement("ul");
+        this.ul.classList.add("tool-dropdown-content");
+        for(let i = 0; i < tools.length - 1; i++) {
+            let li = document.createElement("li");
+            li.classList.add("tool");
+            this.lis.push(li);
+            this.ul.appendChild(li);
+        }
+        this.updateLis();
+        this.li.appendChild(this.ul);
+    }
+    selectTool(tool) {
+        this.tool = tool;
+        this.li.title = this.tool.tooltip;
+        this.li.style.backgroundImage = "url('../image/" + this.tool.image + "')";
+
+        this.updateLis();
+    }
+    updateLis() {
+        let toolIndex = 0;
+        for(let liIndex = 0; liIndex < this.lis.length; liIndex++) {
+            if(this.availableTools[toolIndex] == this.tool) {
+                toolIndex++;
+            }
+            let tool = this.availableTools[toolIndex];
+            let li = this.lis[liIndex];
+            li.title = tool.tooltip;
+            li.onclick = this.selectTool.bind(this, tool);
+            li.style.backgroundImage = "url('../image/" + tool.image + "')";
+            toolIndex += 1;
+        }
     }
 }
 

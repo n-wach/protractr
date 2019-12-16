@@ -48,13 +48,17 @@ table, tbody, tr, td {
 .tool-group .tool {
     border-radius: 0;
 }
-.tool-group .tool:first-child {
+.tool-group>.tool:first-child {
     border-bottom-left-radius: 4px;
     border-top-left-radius: 4px;
 }
-.tool-group .tool:last-child {
+.tool-group>.tool:last-child {
     border-bottom-right-radius: 4px;
     border-top-right-radius: 4px;
+}
+.tool-dropdown-content>.tool:last-child {
+    border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 4px;
 }
 .tool {
     display: inline-block;
@@ -71,6 +75,25 @@ table, tbody, tr, td {
 }
 .tool:hover:not(.pressed):not(.active) {
     background-color: lightgray;
+}
+.tool-dropdown {
+    position: relative;
+    display: inline-block;
+}
+.tool-dropdown-content {
+    display: none;
+    position: absolute;
+    background: none;
+    top: 35px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    padding-inline-start: 0px;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+.tool-dropdown:hover *,
+.tool-dropdown-content *:hover {
+    display: block;
 }
 .interactive-list {
     width: 100%;

@@ -926,6 +926,7 @@ var FilterString = /** @class */ (function () {
     };
     return FilterString;
 }());
+exports.FilterString = FilterString;
 var HorizontalPointFilter = /** @class */ (function () {
     function HorizontalPointFilter() {
         this.name = "horizontal";
@@ -1941,7 +1942,7 @@ window.addEventListener("load", function () {
         "                                        \\/     \\/                                    ");
     console.log("Protractr: ", exports.protractr);
     var example = document.location.search.substr(1);
-    if (example.length > 0) {
+    if (example.length > 0 && example.indexOf(".json") != -1) {
         console.log("Loading ", example);
         var path = document.location.pathname;
         var origin_1 = path.substr(0, path.indexOf("/src/"));
@@ -2727,9 +2728,12 @@ var Toolbar = /** @class */ (function () {
         this.initializeTools();
     }
     Toolbar.prototype.initializeTools = function () {
-        var filters = new ToolGroup();
         this.activatableTools = new ActivatableToolGroup();
-        this.activatableTools.addTool(new tools_1.SelectTool());
+        this.activatableTools.addToolDropdown([new tools_1.SelectTool(),
+            new tools_1.FilterSelectTool("Select", "Filter select to points", "filter-point.png", ":*point"),
+            new tools_1.FilterSelectTool("Select", "Filter select to lines", "filter-line.png", ":*line"),
+            new tools_1.FilterSelectTool("Select", "Filter select to circles", "filter-circle.png", ":*circle")
+        ]);
         this.activatableTools.addTool(new tools_1.PointTool());
         this.activatableTools.addTool(new tools_1.LineTool());
         this.activatableTools.addTool(new tools_1.RectTool());
@@ -2765,6 +2769,11 @@ var ToolGroup = /** @class */ (function () {
     }
     ToolGroup.prototype.addTool = function (tool) {
         var e = new ToolElement(this, tool);
+        this.toolElements.push(e);
+        this.div.appendChild(e.li);
+    };
+    ToolGroup.prototype.addToolDropdown = function (tools) {
+        var e = new DropdownToolSelect(this, tools);
         this.toolElements.push(e);
         this.div.appendChild(e.li);
     };
@@ -2836,6 +2845,47 @@ var ActivatableToolElement = /** @class */ (function (_super) {
     };
     return ActivatableToolElement;
 }(ToolElement));
+var DropdownToolSelect = /** @class */ (function (_super) {
+    __extends(DropdownToolSelect, _super);
+    function DropdownToolSelect(parent, tools) {
+        var _this = _super.call(this, parent, tools[0]) || this;
+        _this.lis = [];
+        _this.availableTools = tools;
+        _this.li.classList.add("tool-dropdown");
+        _this.ul = document.createElement("ul");
+        _this.ul.classList.add("tool-dropdown-content");
+        for (var i = 0; i < tools.length - 1; i++) {
+            var li = document.createElement("li");
+            li.classList.add("tool");
+            _this.lis.push(li);
+            _this.ul.appendChild(li);
+        }
+        _this.updateLis();
+        _this.li.appendChild(_this.ul);
+        return _this;
+    }
+    DropdownToolSelect.prototype.selectTool = function (tool) {
+        this.tool = tool;
+        this.li.title = this.tool.tooltip;
+        this.li.style.backgroundImage = "url('../image/" + this.tool.image + "')";
+        this.updateLis();
+    };
+    DropdownToolSelect.prototype.updateLis = function () {
+        var toolIndex = 0;
+        for (var liIndex = 0; liIndex < this.lis.length; liIndex++) {
+            if (this.availableTools[toolIndex] == this.tool) {
+                toolIndex++;
+            }
+            var tool = this.availableTools[toolIndex];
+            var li = this.lis[liIndex];
+            li.title = tool.tooltip;
+            li.onclick = this.selectTool.bind(this, tool);
+            li.style.backgroundImage = "url('../image/" + tool.image + "')";
+            toolIndex += 1;
+        }
+    };
+    return DropdownToolSelect;
+}(ActivatableToolElement));
 
 },{"./tools":11}],11:[function(require,module,exports){
 "use strict";
@@ -2856,6 +2906,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var figures_1 = require("../gcs/figures");
 var main_1 = require("../main");
 var constraint_1 = require("../gcs/constraint");
+var constraint_filter_1 = require("../gcs/constraint_filter");
 var Tool = /** @class */ (function () {
     function Tool(name, tooltip, image) {
         this.name = name;
@@ -3011,7 +3062,8 @@ var SelectTool = /** @class */ (function (_super) {
         this.dragging = false;
         this.pressed = false;
     };
-    SelectTool.prototype.figureInSelection = function (figure) {
+    SelectTool.prototype.figureInSelection = function (figure, filter) {
+        if (filter === void 0) { filter = false; }
         if (figure.type == "point") {
             var p = figure.p;
             return ((this.selectionStart.x > p.x && this.selectionEnd.x < p.x) ||
@@ -3025,7 +3077,7 @@ var SelectTool = /** @class */ (function (_super) {
         var p4 = new figures_1.Point(this.selectionEnd.x, this.selectionStart.y);
         if (figure.type == "line") {
             var line = figure;
-            if (this.figureInSelection(line.childFigures[0]) || this.figureInSelection(line.childFigures[1])) {
+            if (this.figureInSelection(line.childFigures[0], false) || this.figureInSelection(line.childFigures[1], false)) {
                 return true;
             }
             //test if line intersects any of the edges
@@ -3049,6 +3101,28 @@ var SelectTool = /** @class */ (function (_super) {
     return SelectTool;
 }(ActivatableTool));
 exports.SelectTool = SelectTool;
+var FilterSelectTool = /** @class */ (function (_super) {
+    __extends(FilterSelectTool, _super);
+    function FilterSelectTool(name, tooltip, image, filterString) {
+        var _this = _super.call(this) || this;
+        _this.tooltip = tooltip;
+        _this.name = name;
+        _this.image = image;
+        _this.filter = new constraint_filter_1.FilterString(filterString);
+        return _this;
+    }
+    FilterSelectTool.prototype.figureInSelection = function (figure, filter) {
+        if (filter === void 0) { filter = true; }
+        if (filter) {
+            return this.filter.satisfiesFilter([figure]) && _super.prototype.figureInSelection.call(this, figure, false);
+        }
+        else {
+            return _super.prototype.figureInSelection.call(this, figure, false);
+        }
+    };
+    return FilterSelectTool;
+}(SelectTool));
+exports.FilterSelectTool = FilterSelectTool;
 var PointTool = /** @class */ (function (_super) {
     __extends(PointTool, _super);
     function PointTool() {
@@ -3271,7 +3345,7 @@ function constrainPointBySnap(point, snapFigure) {
     }
 }
 
-},{"../gcs/constraint":1,"../gcs/figures":3,"../main":5}],12:[function(require,module,exports){
+},{"../gcs/constraint":1,"../gcs/constraint_filter":2,"../gcs/figures":3,"../main":5}],12:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var toolbar_1 = require("./toolbar");

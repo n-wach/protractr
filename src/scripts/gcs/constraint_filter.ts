@@ -29,7 +29,7 @@ type Filter = FilterCase[];
  * - MappedTypedMatchExpressionLists are joined by | to form
  * - MatchQuantifier can be a number, a range (number-number), number+ or * (0+) or empty (1)
  */
-class FilterString {
+export class FilterString {
     filterString: string;
     filter: Filter;
     constructor(str: string) {
@@ -395,7 +395,7 @@ export function sortFigureSelection(figures: Figure[]): SortedFigureSelection {
         point: [],
         line: [],
         circle: [],
-    }
+    };
     for(let f of figures) {
         sortedFigures[f.type].push(f);
     }

@@ -1,6 +1,5 @@
 import {Sketch} from "./gcs/sketch";
 import {UI} from "./ui/ui";
-import {protractr} from "./main";
 
 export class Protractr {
     sketch: Sketch;
