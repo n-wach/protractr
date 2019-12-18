@@ -36,4 +36,7 @@ export class UI {
             this.infoPane.selectedFigureView.setFigure(null);
         }
     }
+    pushState() {
+        this.history.recordStateChange(this.protractr.exportSketch());
+    }
 }

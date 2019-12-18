@@ -264,16 +264,16 @@ export class PointFigure extends BasicFigure {
 
 export class LineFigure extends BasicFigure {
     type = "line";
-    name = "line"
+    name = "line";
     p1: Point;
     p2: Point;
     childFigures: Figure[];
     parentFigure: Figure;
 
-    constructor(p1: Point, p2: Point, name: string = "line", add=true) {
+    constructor(p0: Point, p1: Point, name: string = "line", add=true) {
         super();
-        this.p1 = p1;
-        this.p2 = p2;
+        this.p1 = p0;
+        this.p2 = p1;
         this.name = name;
         this.childFigures = [new PointFigure(this.p1, "p1", add), new PointFigure(this.p2, "p2", add)];
         this.childFigures[0].parentFigure = this;

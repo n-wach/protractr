@@ -184,9 +184,7 @@ export class Sketch {
         for(let c of constraints) {
             this.addConstraintAndCombine(c);
         }
-        if(!this.solveConstraints(true)) {
-            alert("That constraint couldn't be solved...");
-        }
+        this.solveConstraints(true);
         protractr.ui.refresh();
     }
     removeConstraint(constraint: Constraint) {
@@ -203,20 +201,19 @@ export class Sketch {
     addVariable(variable: Variable) {
         this.variables.push(variable);
     }
-    solveConstraints(tirelessSolve:boolean=false): boolean {
+    solveConstraints(tirelessSolve:boolean=false) {
         let startTime = new Date().getTime();
         let count = 1;
-        let previousError = 0;
         while(true) {
             let totalError = 0;
             for (let constraint of this.constraints) {
                 totalError += constraint.getError();
             }
-            if (totalError < 1 && count > 10) return true; // solved, still do a few iterations though...
-            if (count > 100 && !tirelessSolve) return false;
+            if (totalError < 1 && count > 10) return; // solved, still do a few iterations though...
+            if (count > 100 && !tirelessSolve) break;
             if (count % 10000 == 0) {
                 let currentTime = new Date().getTime();
-                if(currentTime - startTime > 1000) return false; //give up after one second.
+                if(currentTime - startTime > 1000) break; //give up after one second.
             }
             let variableGradients = [];
             let contributorCount = [];
@@ -237,8 +234,9 @@ export class Sketch {
                 this.variables[i].value += variableGradients[i] / (2 + contributorCount[i]);
             }
             count += 1;
-            previousError = totalError;
         }
+        //state solve failed.  display an error:
+        alert("That state couldn't be solved...");
     }
     asObject(): SketchExport {
         let obj: SketchExport = {

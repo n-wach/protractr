@@ -5,13 +5,6 @@ let tools: HTMLUListElement;
 let sidePane: HTMLDivElement;
 export let protractr: Protractr;
 
-export function saveAs(string: string, filename: string) {
-    let a = document.createElement("a");
-    var data = "text/json;charset=utf-8," + encodeURIComponent(string);
-    a.href = "data:" + data;
-    a.download = filename;
-    a.click();
-}
 
 let adjustCanvasResolution = function(event) {
     canvas.width = canvas.parentElement.clientWidth - 1;

@@ -181,8 +181,4 @@ export class SketchView {
         this.ctx.arc(center.x, center.y, radius, 0, Math.PI * 2);
         this.ctx.stroke();
     }
-    pushState() {
-        let s = this.ui.protractr.exportSketch();
-        this.ui.history.recordStateChange(s);
-    }
 }

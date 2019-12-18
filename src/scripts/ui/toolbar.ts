@@ -1,14 +1,3 @@
-import {
-    ActivatableTool,
-    CircleTool,
-    LineTool,
-    PointTool,
-    ImportTool,
-    Tool,
-    ExportTool,
-    UndoTool,
-    RedoTool, SelectTool, RectTool, FilterSelectTool
-} from "./tools";
 import {Protractr} from "../protractr";
 import {SketchView} from "./sketchview";
 
@@ -28,9 +17,9 @@ export class Toolbar {
     initializeTools() {
         this.activatableTools = new ActivatableToolGroup();
         this.activatableTools.addToolDropdown([new SelectTool(),
-            new FilterSelectTool("Select", "Filter select to points", "filter-point.png", ":*point"),
-            new FilterSelectTool("Select", "Filter select to lines", "filter-line.png", ":*line"),
-            new FilterSelectTool("Select", "Filter select to circles", "filter-circle.png", ":*circle")
+            new FilterSelectTool("Filter select to points", "filter-point.png", ":*point"),
+            new FilterSelectTool("Filter select to lines", "filter-line.png", ":*line"),
+            new FilterSelectTool("Filter select to circles", "filter-circle.png", ":*circle")
         ]);
         this.activatableTools.addTool(new PointTool());
         this.activatableTools.addTool(new LineTool());
@@ -38,7 +27,7 @@ export class Toolbar {
         this.activatableTools.addTool(new CircleTool());
         this.addToolGroup(this.activatableTools);
         let editHistory = new ToolGroup();
-        editHistory.addTool(new UndoTool());
+        //editHistory.addTool(new UndoTool());
         editHistory.addTool(new RedoTool());
         this.addToolGroup(editHistory);
         let importExport = new ToolGroup();
