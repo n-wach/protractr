@@ -1,3 +1,8 @@
+/**
+ * @module ui/util
+ */
+/** */
+
 export function saveAs(string: string, filename: string) {
     let a = document.createElement("a");
     let data = "text/json;charset=utf-8," + encodeURIComponent(string);

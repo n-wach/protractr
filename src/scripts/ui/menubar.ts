@@ -1,3 +1,8 @@
+/**
+ * @module ui/menubar
+ */
+/** */
+
 import Action from "./actions/action";
 import Tool from "./tools/tool";
 

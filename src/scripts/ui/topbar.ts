@@ -1,4 +1,9 @@
-import {Protractr} from "../protractr";
+/**
+ * @module ui/topbar
+ */
+/** */
+
+import Protractr from "../protractr";
 import {ActionMenuItem, MenuBar, ToolGroup, ToolMenuItem} from "./menubar";
 import ToolSelect from "./tools/toolSelect";
 import ToolFilterSelect from "./tools/toolFilterSelect";
@@ -12,7 +17,7 @@ import ActionImport from "./actions/actionImport";
 import ActionExport from "./actions/actionExport";
 import Tool from "./tools/tool";
 
-export class TopBar {
+export default class TopBar {
     menuBar: MenuBar;
     toolGroup: ToolGroup;
 

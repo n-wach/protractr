@@ -1,4 +1,10 @@
-import {Protractr} from "../../protractr";
+/**
+ * @module ui/actions
+ * @preferred
+ */
+/** */
+
+import Protractr from "../../protractr";
 
 export default abstract class Action {
     protractr: Protractr;

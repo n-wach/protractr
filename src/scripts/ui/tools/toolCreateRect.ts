@@ -1,8 +1,13 @@
+/**
+ * @module ui/tools
+ */
+/** */
+
 import ToolCreateFigure from "./toolCreateFigure";
 import {SketchView} from "../sketchview";
 import {LineFigure, Point} from "../../gcs/figures";
 import {EqualConstraint} from "../../gcs/constraint";
-import {Protractr} from "../../protractr";
+import Protractr from "../../protractr";
 
 export default class ToolCreateRect extends ToolCreateFigure {
     constructor(protractr: Protractr) {
@@ -34,6 +39,11 @@ export default class ToolCreateRect extends ToolCreateFigure {
 
         this.constrainBySnap(h1.childFigures[0], this.points[1].snapFigure);
         this.constrainBySnap(v0.childFigures[1], this.points[1].snapFigure);
+
+        this.protractr.sketch.addFigure(h0);
+        this.protractr.sketch.addFigure(h1);
+        this.protractr.sketch.addFigure(v0);
+        this.protractr.sketch.addFigure(v1);
     }
 
     draw(sketchView: SketchView) {

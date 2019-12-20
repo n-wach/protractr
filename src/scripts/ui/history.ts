@@ -1,9 +1,12 @@
 /**
+ * @module ui/history
+ */
+/**
  * Editing history manager.  Consists of two stacks: undo and redo history.
  * New states clear redo history, are added to undo history.
  * It's possible for current state to be undefined, in which case the app should load some default state.
  */
-export class History<T = string> {
+export default class History<T = string> {
     undoHistory: HistoryStack<T>;
     redoHistory: HistoryStack<T>;
     currentState: T;

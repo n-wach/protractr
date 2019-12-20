@@ -1,3 +1,8 @@
+/**
+ * @module gcs/sketch
+ */
+/** */
+
 import {
     ArcPointCoincidentConstraint,
     ColinearPointsConstraint,
@@ -8,8 +13,7 @@ import {
     Variable,
     VariablePoint
 } from "./constraint";
-import {Figure, figureFromObject, Point} from "./figures";
-import {protractr} from "../main";
+import {CircleFigure, Figure, figureFromObject, LineFigure, Point, PointFigure} from "./figures";
 
 let typeMagnetism = {
     circle: 0,
@@ -189,14 +193,12 @@ export class Sketch {
             this.addConstraintAndCombine(c);
         }
         this.solveConstraints(true);
-        protractr.ui.refresh();
     }
 
     removeConstraint(constraint: Constraint) {
         this.constraints = this.constraints.filter(function(value, index, arr) {
             return value != constraint;
         });
-        protractr.ui.refresh();
     }
 
     addPoint(point: VariablePoint) {
@@ -289,6 +291,23 @@ export class Sketch {
             sketch.constraints.push(constraintFromObject(constraint, sketch));
         }
         return sketch;
+    }
+
+    addFigure(figure: Figure) {
+        this.rootFigures.push(figure);
+        switch(figure.type){
+            case "point":
+                this.addPoint((figure as PointFigure).p.variablePoint);
+                break;
+            case "line":
+                this.addPoint((figure as LineFigure).p1.variablePoint);
+                this.addPoint((figure as LineFigure).p2.variablePoint);
+                break;
+            case "circle":
+                this.addPoint((figure as CircleFigure).c.variablePoint);
+                this.addVariable((figure as CircleFigure).r);
+                break;
+        }
     }
 }
 

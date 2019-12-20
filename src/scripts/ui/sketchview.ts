@@ -1,3 +1,8 @@
+/**
+ * @module ui/sketchview
+ */
+/** */
+
 import {CircleFigure, Figure, LineFigure, Point, PointFigure} from "../gcs/figures";
 import {UI} from "./ui";
 

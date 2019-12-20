@@ -1,4 +1,10 @@
-import {Protractr} from "../../protractr";
+/**
+ * @module ui/tools
+ * @preferred
+ */
+/** */
+
+import Protractr from "../../protractr";
 import {Point} from "../../gcs/figures";
 import {SketchView} from "../sketchview";
 

@@ -1,9 +1,14 @@
-import {Protractr} from "./protractr";
+/**
+ * @module main
+ */
+/** */
+
+import Protractr from "./protractr";
 
 let canvas: HTMLCanvasElement;
 let topBar: HTMLDivElement;
 let sidePane: HTMLDivElement;
-export let protractr: Protractr;
+let protractr: Protractr;
 
 
 let adjustCanvasResolution = function(event) {

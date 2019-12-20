@@ -1,3 +1,8 @@
+/**
+ * @module gcs/constraints
+ */
+/** */
+
 import {CircleFigure, Figure, LineFigure, Point, PointFigure} from "./figures";
 import {ConstraintExport, Sketch, SketchExport} from "./sketch";
 

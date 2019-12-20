@@ -1,7 +1,12 @@
+/**
+ * @module ui/tools
+ */
+/** */
+
 import ToolCreateFigure from "./toolCreateFigure";
 import {SketchView} from "../sketchview";
 import {LineFigure} from "../../gcs/figures";
-import {Protractr} from "../../protractr";
+import Protractr from "../../protractr";
 
 export default class ToolCreateLine extends ToolCreateFigure {
     constructor(protractr: Protractr) {
@@ -14,7 +19,7 @@ export default class ToolCreateLine extends ToolCreateFigure {
         let lineFigure = new LineFigure(p0, p1);
         this.constrainBySnap(lineFigure.childFigures[0], this.points[0].snapFigure);
         this.constrainBySnap(lineFigure.childFigures[1], this.points[1].snapFigure);
-        this.protractr.sketch.rootFigures.push(lineFigure);
+        this.protractr.sketch.addFigure(lineFigure);
     }
 
     draw(sketchView: SketchView) {

@@ -1,7 +1,11 @@
+/**
+ * @module protractr
+ */
+/** */
 import {Sketch} from "./gcs/sketch";
 import {UI} from "./ui/ui";
 
-export class Protractr {
+export default class Protractr {
     sketch: Sketch;
     ui: UI;
 

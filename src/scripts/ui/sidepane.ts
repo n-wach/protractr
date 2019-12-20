@@ -1,5 +1,9 @@
+/**
+ * @module ui/sidepane
+ */
+/** */
+
 import {CircleFigure, Figure, getFullName, LineFigure, PointFigure} from "../gcs/figures";
-import {protractr} from "../main";
 import {getSatisfiedConstraintFilters, sortFigureSelection} from "../gcs/constraintFilter";
 import {Constraint, Variable} from "../gcs/constraint";
 import {UI} from "./ui";
@@ -98,7 +102,7 @@ export class FigureInfoView {
             variable.constant = true;
             _this.ui.protractr.sketch.solveConstraints(true);
             variable.constant = false;
-            _this.ui.history.recordStateChange(protractr.exportSketch());
+            _this.ui.pushState();
             _this.ui.refresh();
         };
         div.appendChild(field);
@@ -148,8 +152,11 @@ export class PossibleNewConstraintsList {
         for(let filter of filters) {
             let b = document.createElement("button");
             b.innerText = filter.name;
+            let _this = this;
             b.onclick = function() {
-                protractr.sketch.addConstraints(filter.createConstraints(sortFigureSelection(figs)));
+                _this.ui.protractr.sketch.addConstraints(filter.createConstraints(sortFigureSelection(figs)));
+                _this.ui.pushState();
+                _this.ui.refresh();
             };
             this.constraintsDiv.appendChild(b);
         }

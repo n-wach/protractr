@@ -1,5 +1,9 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
+/**
+ * @module constraints
+ */
+/** */
 Object.defineProperty(exports, "__esModule", { value: true });
 var figures_1 = require("./figures");
 var Variable = /** @class */ (function () {
@@ -769,168 +773,17 @@ exports.constraintFromObject = constraintFromObject;
 
 },{"./figures":3}],2:[function(require,module,exports){
 "use strict";
+/**
+ * @module constraintFilters
+ */
+/** */
 Object.defineProperty(exports, "__esModule", { value: true });
 var constraint_1 = require("./constraint");
-/**
- * See type definitions
- * - TypeMatches are joined by & to form a TypeMatchExpression
- * - TypeMaps take the form "type as n type" such as "line as 2 point"
- * - TypeMaps are joined by , to form a TypeMapList
- * - MappedTypedMatchExpressionLists are formed as TypeMapList:TypeMatchExpression
- * - MappedTypedMatchExpressionLists are joined by | to form
- * - MatchQuantifier can be a number, a range (number-number), number+ or * (0+) or empty (1)
- */
-var FilterString = /** @class */ (function () {
-    function FilterString(str) {
-        this.filterString = str;
-        this.filter = this.parseFilter(this.filterString);
-    }
-    FilterString.prototype.parseFilter = function (filterString) {
-        var filter = [];
-        for (var _i = 0, _a = filterString.split("|"); _i < _a.length; _i++) {
-            var mappedTypeMatchExpressionList = _a[_i];
-            filter.push(this.parseFilterCase(mappedTypeMatchExpressionList));
-        }
-        return filter;
-    };
-    FilterString.prototype.parseFilterCase = function (filterCase) {
-        var split = filterCase.split(":");
-        var mapList = split[0] ? this.parseTypeMapList(split[0]) : [];
-        var matchExpressionList = this.parseTypeMatchExpressionList(split[1]);
-        return { mappings: mapList, expressions: matchExpressionList };
-    };
-    FilterString.prototype.parseTypeMapList = function (typeMapList) {
-        var maps = [];
-        for (var _i = 0, _a = typeMapList.split(","); _i < _a.length; _i++) {
-            var typeMap = _a[_i];
-            maps.push(this.parseTypeMap(typeMap));
-        }
-        return maps;
-    };
-    FilterString.prototype.parseTypeMap = function (typeMap) {
-        var split = typeMap.split(" ");
-        var fromType = split[0];
-        //let as = split[1];
-        var toTypeCount = parseInt(split[2]);
-        var toType = split[3];
-        return { from: fromType, count: toTypeCount, to: toType };
-    };
-    FilterString.prototype.parseTypeMatchExpressionList = function (typeMatchExpressionList) {
-        var expressions = [];
-        for (var _i = 0, _a = typeMatchExpressionList.split(","); _i < _a.length; _i++) {
-            var typeMatchExpression = _a[_i];
-            expressions.push(this.parseTypeMatchExpression(typeMatchExpression));
-        }
-        return expressions;
-    };
-    FilterString.prototype.parseTypeMatchExpression = function (typeMatchExpression) {
-        var matches = [];
-        for (var _i = 0, _a = typeMatchExpression.split("&"); _i < _a.length; _i++) {
-            var typeMatch = _a[_i];
-            matches.push(this.parseTypeMatch(typeMatch));
-        }
-        return matches;
-    };
-    FilterString.prototype.parseTypeMatch = function (typeMatch) {
-        for (var i = 0; i < typeMatch.length; i++) {
-            if (typeMatch[i].toLowerCase() != typeMatch[i].toUpperCase()) {
-                //we've hit a letter!
-                var quantifier = typeMatch.substr(0, i);
-                if (quantifier == "*")
-                    quantifier = "0+";
-                if (quantifier == "" || quantifier == undefined)
-                    quantifier = "1";
-                var type = typeMatch.substr(i);
-                return { quantifier: quantifier, type: type };
-            }
-        }
-        console.error("Invalid TypeMatch:", typeMatch);
-        return { quantifier: "0", type: "point" };
-    };
-    FilterString.prototype.satisfiesFilter = function (figures) {
-        var rawTypes = {};
-        for (var _i = 0, figures_1 = figures; _i < figures_1.length; _i++) {
-            var fig = figures_1[_i];
-            if (rawTypes[fig.type] === undefined) {
-                rawTypes[fig.type] = 1;
-                continue;
-            }
-            rawTypes[fig.type] += 1;
-        }
-        for (var _a = 0, _b = this.filter; _a < _b.length; _a++) {
-            var filterCase = _b[_a];
-            var typeCopy = {};
-            for (var key in rawTypes) {
-                typeCopy[key] = rawTypes[key];
-            }
-            if (this.satisfiesFilterCase(filterCase, typeCopy))
-                return true;
-        }
-        return false;
-    };
-    FilterString.prototype.satisfiesFilterCase = function (filterCase, types) {
-        for (var _i = 0, _a = filterCase.mappings; _i < _a.length; _i++) {
-            var typeMapping = _a[_i];
-            this.mapTypes(typeMapping, types);
-        }
-        for (var _b = 0, _c = filterCase.expressions; _b < _c.length; _b++) {
-            var expression = _c[_b];
-            if (this.satisfiesTypeMatchExpression(expression, types))
-                return true;
-        }
-        return false;
-    };
-    FilterString.prototype.mapTypes = function (typeMapping, types) {
-        if (types[typeMapping.from] !== undefined) {
-            var additionalTypes = types[typeMapping.from] * typeMapping.count;
-            delete types[typeMapping.from];
-            if (types[typeMapping.to] === undefined) {
-                types[typeMapping.to] = additionalTypes;
-            }
-            else {
-                types[typeMapping.to] += additionalTypes;
-            }
-        }
-    };
-    FilterString.prototype.satisfiesTypeMatchExpression = function (expression, types) {
-        var addressedTypes = {};
-        for (var _i = 0, expression_1 = expression; _i < expression_1.length; _i++) {
-            var typeMatch = expression_1[_i];
-            if (!this.satisfiesTypeMatch(typeMatch, types))
-                return false;
-            addressedTypes[typeMatch.type] = true;
-        }
-        for (var type in types) {
-            //all types must be addressed.
-            if (!addressedTypes[type])
-                return false;
-        }
-        return true;
-    };
-    FilterString.prototype.satisfiesTypeMatch = function (typeMatch, types) {
-        var count = types[typeMatch.type];
-        var quantifier = typeMatch.quantifier;
-        if (quantifier.indexOf("-") != -1) {
-            //range
-            var min = parseInt(quantifier.substr(0, quantifier.indexOf("-") - 1));
-            var max = parseInt(quantifier.substr(quantifier.indexOf("-") + 1));
-            return count >= min && count <= max;
-        }
-        if (quantifier.indexOf("+") != -1) {
-            //min+
-            var min = parseInt(quantifier.substr(0, quantifier.indexOf("+")));
-            return count >= min;
-        }
-        var exact = parseInt(quantifier);
-        return count == exact;
-    };
-    return FilterString;
-}());
-exports.FilterString = FilterString;
+var filterString_1 = require("./filterString");
 var HorizontalPointFilter = /** @class */ (function () {
     function HorizontalPointFilter() {
         this.name = "horizontal";
-        this.filter = new FilterString(":2+point");
+        this.filter = new filterString_1.default(":2+point");
     }
     HorizontalPointFilter.prototype.createConstraints = function (sortedFigures) {
         var ys = [];
@@ -945,7 +798,7 @@ var HorizontalPointFilter = /** @class */ (function () {
 var VerticalPointFilter = /** @class */ (function () {
     function VerticalPointFilter() {
         this.name = "vertical";
-        this.filter = new FilterString(":2+point");
+        this.filter = new filterString_1.default(":2+point");
     }
     VerticalPointFilter.prototype.createConstraints = function (sortedFigures) {
         var xs = [];
@@ -960,7 +813,7 @@ var VerticalPointFilter = /** @class */ (function () {
 var VerticalLineFilter = /** @class */ (function () {
     function VerticalLineFilter() {
         this.name = "vertical";
-        this.filter = new FilterString(":1+line");
+        this.filter = new filterString_1.default(":1+line");
     }
     VerticalLineFilter.prototype.createConstraints = function (sortedFigures) {
         var constraints = [];
@@ -975,7 +828,7 @@ var VerticalLineFilter = /** @class */ (function () {
 var HorizontalLineFilter = /** @class */ (function () {
     function HorizontalLineFilter() {
         this.name = "horizontal";
-        this.filter = new FilterString(":1+line");
+        this.filter = new filterString_1.default(":1+line");
     }
     HorizontalLineFilter.prototype.createConstraints = function (sortedFigures) {
         var constraints = [];
@@ -990,7 +843,7 @@ var HorizontalLineFilter = /** @class */ (function () {
 var CoincidentPointFilter = /** @class */ (function () {
     function CoincidentPointFilter() {
         this.name = "coincident";
-        this.filter = new FilterString(":2+point");
+        this.filter = new filterString_1.default(":2+point");
     }
     CoincidentPointFilter.prototype.createConstraints = function (sortedFigures) {
         var xs = [];
@@ -1007,7 +860,7 @@ var CoincidentPointFilter = /** @class */ (function () {
 var ArcPointFilter = /** @class */ (function () {
     function ArcPointFilter() {
         this.name = "coincident";
-        this.filter = new FilterString(":circle&1+point");
+        this.filter = new filterString_1.default(":circle&1+point");
     }
     ArcPointFilter.prototype.createConstraints = function (sortedFigures) {
         var points = [];
@@ -1023,7 +876,7 @@ var ArcPointFilter = /** @class */ (function () {
 var LineMidpointFilter = /** @class */ (function () {
     function LineMidpointFilter() {
         this.name = "midpoint";
-        this.filter = new FilterString(":line&point");
+        this.filter = new filterString_1.default(":line&point");
     }
     LineMidpointFilter.prototype.createConstraints = function (sortedFigures) {
         var point = sortedFigures.point[0];
@@ -1035,7 +888,7 @@ var LineMidpointFilter = /** @class */ (function () {
 var EqualRadiusFilter = /** @class */ (function () {
     function EqualRadiusFilter() {
         this.name = "equal";
-        this.filter = new FilterString(":2+circle");
+        this.filter = new filterString_1.default(":2+circle");
     }
     EqualRadiusFilter.prototype.createConstraints = function (sortedFigures) {
         var radii = [];
@@ -1050,7 +903,7 @@ var EqualRadiusFilter = /** @class */ (function () {
 var ColinearFilter = /** @class */ (function () {
     function ColinearFilter() {
         this.name = "colinear";
-        this.filter = new FilterString("line as 2 point:3+point");
+        this.filter = new filterString_1.default("line as 2 point:3+point");
     }
     ColinearFilter.prototype.createConstraints = function (sortedFigures) {
         var points = [];
@@ -1070,7 +923,7 @@ var ColinearFilter = /** @class */ (function () {
 var TangentLineFilter = /** @class */ (function () {
     function TangentLineFilter() {
         this.name = "tangent";
-        this.filter = new FilterString(":circle&1+line");
+        this.filter = new filterString_1.default(":circle&1+line");
     }
     TangentLineFilter.prototype.createConstraints = function (sortedFigures) {
         var circle = sortedFigures.circle[0];
@@ -1087,7 +940,7 @@ exports.TangentLineFilter = TangentLineFilter;
 var ConcentricCirclesFilter = /** @class */ (function () {
     function ConcentricCirclesFilter() {
         this.name = "concentric";
-        this.filter = new FilterString(":1+circle&*point");
+        this.filter = new filterString_1.default(":1+circle&*point");
     }
     ConcentricCirclesFilter.prototype.createConstraints = function (sortedFigures) {
         var xs = [];
@@ -1110,7 +963,7 @@ exports.ConcentricCirclesFilter = ConcentricCirclesFilter;
 var LineIntersectionFilter = /** @class */ (function () {
     function LineIntersectionFilter() {
         this.name = "intersection";
-        this.filter = new FilterString(":point&2+line");
+        this.filter = new filterString_1.default(":point&2+line");
     }
     LineIntersectionFilter.prototype.createConstraints = function (sortedFigures) {
         var lines = sortedFigures.line;
@@ -1128,7 +981,7 @@ exports.LineIntersectionFilter = LineIntersectionFilter;
 var CircleIntersectionFilter = /** @class */ (function () {
     function CircleIntersectionFilter() {
         this.name = "intersection";
-        this.filter = new FilterString(":point&2+circle");
+        this.filter = new filterString_1.default(":point&2+circle");
     }
     CircleIntersectionFilter.prototype.createConstraints = function (sortedFigures) {
         var circles = sortedFigures.circle;
@@ -1146,7 +999,7 @@ exports.CircleIntersectionFilter = CircleIntersectionFilter;
 var TangentCirclesFilter = /** @class */ (function () {
     function TangentCirclesFilter() {
         this.name = "tangent";
-        this.filter = new FilterString(":2circle");
+        this.filter = new filterString_1.default(":2circle");
     }
     TangentCirclesFilter.prototype.createConstraints = function (sortedFigures) {
         var circle1 = sortedFigures.circle[0];
@@ -1159,7 +1012,7 @@ exports.TangentCirclesFilter = TangentCirclesFilter;
 var EqualLengthFilter = /** @class */ (function () {
     function EqualLengthFilter() {
         this.name = "equal";
-        this.filter = new FilterString(":2+line");
+        this.filter = new filterString_1.default(":2+line");
     }
     EqualLengthFilter.prototype.createConstraints = function (sortedFigures) {
         var lines = sortedFigures.line;
@@ -1199,8 +1052,8 @@ function sortFigureSelection(figures) {
         line: [],
         circle: [],
     };
-    for (var _i = 0, figures_2 = figures; _i < figures_2.length; _i++) {
-        var f = figures_2[_i];
+    for (var _i = 0, figures_1 = figures; _i < figures_1.length; _i++) {
+        var f = figures_1[_i];
         sortedFigures[f.type].push(f);
     }
     return sortedFigures;
@@ -1217,8 +1070,12 @@ function getSatisfiedConstraintFilters(figs) {
 }
 exports.getSatisfiedConstraintFilters = getSatisfiedConstraintFilters;
 
-},{"./constraint":1}],3:[function(require,module,exports){
+},{"./constraint":1,"./filterString":4}],3:[function(require,module,exports){
 "use strict";
+/**
+ * @module figures
+ */
+/** */
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -1234,7 +1091,6 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var constraint_1 = require("./constraint");
-var main_1 = require("../main");
 var Point = /** @class */ (function () {
     function Point(x, y) {
         this.variablePoint = new constraint_1.VariablePoint(x, y);
@@ -1467,9 +1323,8 @@ var BasicFigure = /** @class */ (function () {
 exports.BasicFigure = BasicFigure;
 var PointFigure = /** @class */ (function (_super) {
     __extends(PointFigure, _super);
-    function PointFigure(p, name, add) {
+    function PointFigure(p, name) {
         if (name === void 0) { name = "point"; }
-        if (add === void 0) { add = true; }
         var _this = _super.call(this) || this;
         _this.type = "point";
         _this.name = "point";
@@ -1477,8 +1332,6 @@ var PointFigure = /** @class */ (function (_super) {
         _this.parentFigure = null;
         _this.p = p;
         _this.name = name;
-        if (add)
-            main_1.protractr.sketch.addPoint(_this.p.variablePoint);
         return _this;
     }
     PointFigure.prototype.getClosestPoint = function (point) {
@@ -1502,16 +1355,15 @@ var PointFigure = /** @class */ (function (_super) {
 exports.PointFigure = PointFigure;
 var LineFigure = /** @class */ (function (_super) {
     __extends(LineFigure, _super);
-    function LineFigure(p0, p1, name, add) {
+    function LineFigure(p0, p1, name) {
         if (name === void 0) { name = "line"; }
-        if (add === void 0) { add = true; }
         var _this = _super.call(this) || this;
         _this.type = "line";
         _this.name = "line";
         _this.p1 = p0;
         _this.p2 = p1;
         _this.name = name;
-        _this.childFigures = [new PointFigure(_this.p1, "p1", add), new PointFigure(_this.p2, "p2", add)];
+        _this.childFigures = [new PointFigure(_this.p1, "p1"), new PointFigure(_this.p2, "p2")];
         _this.childFigures[0].parentFigure = _this;
         _this.childFigures[1].parentFigure = _this;
         return _this;
@@ -1519,7 +1371,7 @@ var LineFigure = /** @class */ (function (_super) {
     LineFigure.prototype.getClosestPoint = function (point) {
         var projection = point.projectBetween(this.p1, this.p2, true);
         var midpoint = Point.averagePoint(this.p1, this.p2);
-        if (midpoint.distTo(point) < 5 / main_1.protractr.ui.sketchView.ctxScale) {
+        if (midpoint.distTo(point) < 5) {
             return midpoint;
         }
         return projection;
@@ -1540,17 +1392,14 @@ var LineFigure = /** @class */ (function (_super) {
 exports.LineFigure = LineFigure;
 var CircleFigure = /** @class */ (function (_super) {
     __extends(CircleFigure, _super);
-    function CircleFigure(c, r, name, add) {
+    function CircleFigure(c, r, name) {
         if (name === void 0) { name = "circle"; }
-        if (add === void 0) { add = true; }
         var _this = _super.call(this) || this;
         _this.type = "circle";
         _this.c = c;
         _this.r = new constraint_1.Variable(r);
         _this.name = name;
-        if (add)
-            main_1.protractr.sketch.addVariable(_this.r);
-        _this.childFigures = [new PointFigure(_this.c, "center", add)];
+        _this.childFigures = [new PointFigure(_this.c, "center")];
         _this.childFigures[0].parentFigure = _this;
         return _this;
     }
@@ -1588,15 +1437,15 @@ function figureFromObject(obj, sketch) {
     switch (obj.type) {
         case "point":
             var p = sketch.points[obj["p"]];
-            return new PointFigure(Point.fromVariablePoint(p), "point", false);
+            return new PointFigure(Point.fromVariablePoint(p), "point");
         case "line":
             var p1 = sketch.points[obj["p1"]];
             var p2 = sketch.points[obj["p2"]];
-            return new LineFigure(Point.fromVariablePoint(p1), Point.fromVariablePoint(p2), "line", false);
+            return new LineFigure(Point.fromVariablePoint(p1), Point.fromVariablePoint(p2), "line");
         case "circle":
             var c = sketch.points[obj["c"]];
             var r = sketch.variables[obj["r"]];
-            var circle = new CircleFigure(Point.fromVariablePoint(c), 0, "circle", false);
+            var circle = new CircleFigure(Point.fromVariablePoint(c), 0, "circle");
             circle.r = r;
             return circle;
     }
@@ -1604,12 +1453,179 @@ function figureFromObject(obj, sketch) {
 }
 exports.figureFromObject = figureFromObject;
 
-},{"../main":5,"./constraint":1}],4:[function(require,module,exports){
+},{"./constraint":1}],4:[function(require,module,exports){
 "use strict";
+/**
+ * @module filterString
+ */
+/** */
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * See type definitions
+ * - TypeMatches are joined by & to form a TypeMatchExpression
+ * - TypeMaps take the form "type as n type" such as "line as 2 point"
+ * - TypeMaps are joined by , to form a TypeMapList
+ * - MappedTypedMatchExpressionLists are formed as TypeMapList:TypeMatchExpression
+ * - MappedTypedMatchExpressionLists are joined by | to form
+ * - MatchQuantifier can be a number, a range (number-number), number+ or * (0+) or empty (1)
+ */
+var FilterString = /** @class */ (function () {
+    function FilterString(str) {
+        this.filterString = str;
+        this.filter = this.parseFilter(this.filterString);
+    }
+    FilterString.prototype.parseFilter = function (filterString) {
+        var filter = [];
+        for (var _i = 0, _a = filterString.split("|"); _i < _a.length; _i++) {
+            var mappedTypeMatchExpressionList = _a[_i];
+            filter.push(this.parseFilterCase(mappedTypeMatchExpressionList));
+        }
+        return filter;
+    };
+    FilterString.prototype.parseFilterCase = function (filterCase) {
+        var split = filterCase.split(":");
+        var mapList = split[0] ? this.parseTypeMapList(split[0]) : [];
+        var matchExpressionList = this.parseTypeMatchExpressionList(split[1]);
+        return { mappings: mapList, expressions: matchExpressionList };
+    };
+    FilterString.prototype.parseTypeMapList = function (typeMapList) {
+        var maps = [];
+        for (var _i = 0, _a = typeMapList.split(","); _i < _a.length; _i++) {
+            var typeMap = _a[_i];
+            maps.push(this.parseTypeMap(typeMap));
+        }
+        return maps;
+    };
+    FilterString.prototype.parseTypeMap = function (typeMap) {
+        var split = typeMap.split(" ");
+        var fromType = split[0];
+        //let as = split[1];
+        var toTypeCount = parseInt(split[2]);
+        var toType = split[3];
+        return { from: fromType, count: toTypeCount, to: toType };
+    };
+    FilterString.prototype.parseTypeMatchExpressionList = function (typeMatchExpressionList) {
+        var expressions = [];
+        for (var _i = 0, _a = typeMatchExpressionList.split(","); _i < _a.length; _i++) {
+            var typeMatchExpression = _a[_i];
+            expressions.push(this.parseTypeMatchExpression(typeMatchExpression));
+        }
+        return expressions;
+    };
+    FilterString.prototype.parseTypeMatchExpression = function (typeMatchExpression) {
+        var matches = [];
+        for (var _i = 0, _a = typeMatchExpression.split("&"); _i < _a.length; _i++) {
+            var typeMatch = _a[_i];
+            matches.push(this.parseTypeMatch(typeMatch));
+        }
+        return matches;
+    };
+    FilterString.prototype.parseTypeMatch = function (typeMatch) {
+        for (var i = 0; i < typeMatch.length; i++) {
+            if (typeMatch[i].toLowerCase() != typeMatch[i].toUpperCase()) {
+                //we've hit a letter!
+                var quantifier = typeMatch.substr(0, i);
+                if (quantifier == "*")
+                    quantifier = "0+";
+                if (quantifier == "" || quantifier == undefined)
+                    quantifier = "1";
+                var type = typeMatch.substr(i);
+                return { quantifier: quantifier, type: type };
+            }
+        }
+        console.error("Invalid TypeMatch:", typeMatch);
+        return { quantifier: "0", type: "point" };
+    };
+    FilterString.prototype.satisfiesFilter = function (figures) {
+        var rawTypes = {};
+        for (var _i = 0, figures_1 = figures; _i < figures_1.length; _i++) {
+            var fig = figures_1[_i];
+            if (rawTypes[fig.type] === undefined) {
+                rawTypes[fig.type] = 1;
+                continue;
+            }
+            rawTypes[fig.type] += 1;
+        }
+        for (var _a = 0, _b = this.filter; _a < _b.length; _a++) {
+            var filterCase = _b[_a];
+            var typeCopy = {};
+            for (var key in rawTypes) {
+                typeCopy[key] = rawTypes[key];
+            }
+            if (this.satisfiesFilterCase(filterCase, typeCopy))
+                return true;
+        }
+        return false;
+    };
+    FilterString.prototype.satisfiesFilterCase = function (filterCase, types) {
+        for (var _i = 0, _a = filterCase.mappings; _i < _a.length; _i++) {
+            var typeMapping = _a[_i];
+            this.mapTypes(typeMapping, types);
+        }
+        for (var _b = 0, _c = filterCase.expressions; _b < _c.length; _b++) {
+            var expression = _c[_b];
+            if (this.satisfiesTypeMatchExpression(expression, types))
+                return true;
+        }
+        return false;
+    };
+    FilterString.prototype.mapTypes = function (typeMapping, types) {
+        if (types[typeMapping.from] !== undefined) {
+            var additionalTypes = types[typeMapping.from] * typeMapping.count;
+            delete types[typeMapping.from];
+            if (types[typeMapping.to] === undefined) {
+                types[typeMapping.to] = additionalTypes;
+            }
+            else {
+                types[typeMapping.to] += additionalTypes;
+            }
+        }
+    };
+    FilterString.prototype.satisfiesTypeMatchExpression = function (expression, types) {
+        var addressedTypes = {};
+        for (var _i = 0, expression_1 = expression; _i < expression_1.length; _i++) {
+            var typeMatch = expression_1[_i];
+            if (!this.satisfiesTypeMatch(typeMatch, types))
+                return false;
+            addressedTypes[typeMatch.type] = true;
+        }
+        for (var type in types) {
+            //all types must be addressed.
+            if (!addressedTypes[type])
+                return false;
+        }
+        return true;
+    };
+    FilterString.prototype.satisfiesTypeMatch = function (typeMatch, types) {
+        var count = types[typeMatch.type];
+        var quantifier = typeMatch.quantifier;
+        if (quantifier.indexOf("-") != -1) {
+            //range
+            var min = parseInt(quantifier.substr(0, quantifier.indexOf("-") - 1));
+            var max = parseInt(quantifier.substr(quantifier.indexOf("-") + 1));
+            return count >= min && count <= max;
+        }
+        if (quantifier.indexOf("+") != -1) {
+            //min+
+            var min = parseInt(quantifier.substr(0, quantifier.indexOf("+")));
+            return count >= min;
+        }
+        var exact = parseInt(quantifier);
+        return count == exact;
+    };
+    return FilterString;
+}());
+exports.default = FilterString;
+
+},{}],5:[function(require,module,exports){
+"use strict";
+/**
+ * @module sketch
+ */
+/** */
 Object.defineProperty(exports, "__esModule", { value: true });
 var constraint_1 = require("./constraint");
 var figures_1 = require("./figures");
-var main_1 = require("../main");
 var typeMagnetism = {
     circle: 0,
     line: 0,
@@ -1804,13 +1820,11 @@ var Sketch = /** @class */ (function () {
             this.addConstraintAndCombine(c);
         }
         this.solveConstraints(true);
-        main_1.protractr.ui.refresh();
     };
     Sketch.prototype.removeConstraint = function (constraint) {
         this.constraints = this.constraints.filter(function (value, index, arr) {
             return value != constraint;
         });
-        main_1.protractr.ui.refresh();
     };
     Sketch.prototype.addPoint = function (point) {
         this.points.push(point);
@@ -1914,28 +1928,49 @@ var Sketch = /** @class */ (function () {
         }
         return sketch;
     };
+    Sketch.prototype.addFigure = function (figure) {
+        this.rootFigures.push(figure);
+        switch (figure.type) {
+            case "point":
+                this.addPoint(figure.p.variablePoint);
+                break;
+            case "line":
+                this.addPoint(figure.p1.variablePoint);
+                this.addPoint(figure.p2.variablePoint);
+                break;
+            case "circle":
+                this.addPoint(figure.c.variablePoint);
+                this.addVariable(figure.r);
+                break;
+        }
+    };
     return Sketch;
 }());
 exports.Sketch = Sketch;
 
-},{"../main":5,"./constraint":1,"./figures":3}],5:[function(require,module,exports){
+},{"./constraint":1,"./figures":3}],6:[function(require,module,exports){
 "use strict";
+/**
+ * @module main
+ */
+/** */
 Object.defineProperty(exports, "__esModule", { value: true });
 var protractr_1 = require("./protractr");
 var canvas;
 var topBar;
 var sidePane;
+var protractr;
 var adjustCanvasResolution = function (event) {
     canvas.width = canvas.parentElement.clientWidth - 1;
     canvas.height = window.innerHeight - document.getElementsByClassName("title")[0].clientHeight - 5;
-    exports.protractr.ui.sketchView.draw();
+    protractr.ui.sketchView.draw();
 };
 window.addEventListener("resize", adjustCanvasResolution);
 window.addEventListener("load", function () {
     canvas = document.getElementById("canvas");
     sidePane = document.getElementById("side-pane");
     topBar = document.getElementById("tools");
-    exports.protractr = new protractr_1.Protractr(canvas, sidePane, topBar);
+    protractr = new protractr_1.default(canvas, sidePane, topBar);
     adjustCanvasResolution(null);
     console.log("________                __                        __                   " + "\n" +
         "\\_____  \\_______  _____/  |_____________    _____/  |________        " + "\n" +
@@ -1943,20 +1978,24 @@ window.addEventListener("load", function () {
         "|   |     |  | \\(  <_> )  |  |  | \\// __ \\\\  \\___|  |  |  | \\/   " + "\n" +
         "|___|     |__|   \\____/|__|  |__|  (____  /\\___  >__|  |__|          " + "\n" +
         "                                        \\/     \\/                                    ");
-    console.log("Protractr: ", exports.protractr);
+    console.log("Protractr: ", protractr);
     var example = document.location.search.substr(1);
     if (example.length > 0 && example.indexOf(".json") != -1) {
         console.log("Loading ", example);
         var path = document.location.pathname;
         var origin_1 = path.substr(0, path.indexOf("/src/"));
         var url = origin_1 + "/examples/" + example;
-        exports.protractr.loadFromURL(url);
+        protractr.loadFromURL(url);
     }
 });
 
-},{"./protractr":6}],6:[function(require,module,exports){
+},{"./protractr":7}],7:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @module protractr
+ */
+/** */
 var sketch_1 = require("./gcs/sketch");
 var ui_1 = require("./ui/ui");
 var Protractr = /** @class */ (function () {
@@ -1996,10 +2035,15 @@ var Protractr = /** @class */ (function () {
     };
     return Protractr;
 }());
-exports.Protractr = Protractr;
+exports.default = Protractr;
 
-},{"./gcs/sketch":4,"./ui/ui":25}],7:[function(require,module,exports){
+},{"./gcs/sketch":5,"./ui/ui":26}],8:[function(require,module,exports){
 "use strict";
+/**
+ * @module actions
+ * @preferred
+ */
+/** */
 Object.defineProperty(exports, "__esModule", { value: true });
 var Action = /** @class */ (function () {
     function Action(protractr) {
@@ -2009,8 +2053,12 @@ var Action = /** @class */ (function () {
 }());
 exports.default = Action;
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 "use strict";
+/**
+ * @module actions
+ */
+/** */
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -2039,8 +2087,12 @@ var ActionExport = /** @class */ (function (_super) {
 }(action_1.default));
 exports.default = ActionExport;
 
-},{"../util":26,"./action":7}],9:[function(require,module,exports){
+},{"../util":27,"./action":8}],10:[function(require,module,exports){
 "use strict";
+/**
+ * @module actions
+ */
+/** */
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -2074,8 +2126,12 @@ var ActionImport = /** @class */ (function (_super) {
 }(action_1.default));
 exports.default = ActionImport;
 
-},{"./action":7}],10:[function(require,module,exports){
+},{"./action":8}],11:[function(require,module,exports){
 "use strict";
+/**
+ * @module actions
+ */
+/** */
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -2103,8 +2159,12 @@ var ActionRedo = /** @class */ (function (_super) {
 }(action_1.default));
 exports.default = ActionRedo;
 
-},{"./action":7}],11:[function(require,module,exports){
+},{"./action":8}],12:[function(require,module,exports){
 "use strict";
+/**
+ * @module actions
+ */
+/** */
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -2132,9 +2192,12 @@ var ActionUndo = /** @class */ (function (_super) {
 }(action_1.default));
 exports.default = ActionUndo;
 
-},{"./action":7}],12:[function(require,module,exports){
+},{"./action":8}],13:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @module history
+ */
 /**
  * Editing history manager.  Consists of two stacks: undo and redo history.
  * New states clear redo history, are added to undo history.
@@ -2178,7 +2241,7 @@ var History = /** @class */ (function () {
     };
     return History;
 }());
-exports.History = History;
+exports.default = History;
 /**
  * Simple stack structure.  Adjacent elements must be distinct.
  */
@@ -2216,8 +2279,12 @@ var HistoryStack = /** @class */ (function () {
     return HistoryStack;
 }());
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 "use strict";
+/**
+ * @module menubar
+ */
+/** */
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -2334,8 +2401,12 @@ var ToolGroup = /** @class */ (function () {
 }());
 exports.ToolGroup = ToolGroup;
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 "use strict";
+/**
+ * @module sidepane
+ */
+/** */
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -2351,8 +2422,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var figures_1 = require("../gcs/figures");
-var main_1 = require("../main");
-var constraint_filter_1 = require("../gcs/constraint_filter");
+var constraintFilter_1 = require("../gcs/constraintFilter");
 var Sidepane = /** @class */ (function () {
     function Sidepane(ui, sidePane) {
         this.ui = ui;
@@ -2425,7 +2495,7 @@ var FigureInfoView = /** @class */ (function () {
             variable.constant = true;
             _this.ui.protractr.sketch.solveConstraints(true);
             variable.constant = false;
-            _this.ui.history.recordStateChange(main_1.protractr.exportSketch());
+            _this.ui.pushState();
             _this.ui.refresh();
         };
         div.appendChild(field);
@@ -2463,7 +2533,7 @@ var PossibleNewConstraintsList = /** @class */ (function () {
             return;
         }
         this.title.style.display = "block";
-        var filters = constraint_filter_1.getSatisfiedConstraintFilters(figs);
+        var filters = constraintFilter_1.getSatisfiedConstraintFilters(figs);
         if (filters.length == 0) {
             this.title.innerText = "No possible constraints";
             return;
@@ -2472,8 +2542,11 @@ var PossibleNewConstraintsList = /** @class */ (function () {
         var _loop_1 = function (filter) {
             var b = document.createElement("button");
             b.innerText = filter.name;
+            var _this = this_1;
             b.onclick = function () {
-                main_1.protractr.sketch.addConstraints(filter.createConstraints(constraint_filter_1.sortFigureSelection(figs)));
+                _this.ui.protractr.sketch.addConstraints(filter.createConstraints(constraintFilter_1.sortFigureSelection(figs)));
+                _this.ui.pushState();
+                _this.ui.refresh();
             };
             this_1.constraintsDiv.appendChild(b);
         };
@@ -2767,8 +2840,12 @@ var ListElement = /** @class */ (function () {
 }());
 exports.ListElement = ListElement;
 
-},{"../gcs/constraint_filter":2,"../gcs/figures":3,"../main":5}],15:[function(require,module,exports){
+},{"../gcs/constraintFilter":2,"../gcs/figures":3}],16:[function(require,module,exports){
 "use strict";
+/**
+ * @module sketchview
+ */
+/** */
 Object.defineProperty(exports, "__esModule", { value: true });
 var figures_1 = require("../gcs/figures");
 var SketchView = /** @class */ (function () {
@@ -2945,8 +3022,13 @@ var SketchView = /** @class */ (function () {
 }());
 exports.SketchView = SketchView;
 
-},{"../gcs/figures":3}],16:[function(require,module,exports){
+},{"../gcs/figures":3}],17:[function(require,module,exports){
 "use strict";
+/**
+ * @module tools
+ * @preferred
+ */
+/** */
 Object.defineProperty(exports, "__esModule", { value: true });
 var Tool = /** @class */ (function () {
     function Tool(protractr) {
@@ -2957,8 +3039,12 @@ var Tool = /** @class */ (function () {
 }());
 exports.default = Tool;
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 "use strict";
+/**
+ * @module tools
+ */
+/** */
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -2986,7 +3072,7 @@ var ToolCreateCircle = /** @class */ (function (_super) {
         var circleFigure = new figures_1.CircleFigure(center, radius);
         this.constrainBySnap(circleFigure.childFigures[0], this.points[0].snapFigure);
         this.constrainBySnap(circleFigure, this.points[1].snapFigure);
-        this.protractr.sketch.rootFigures.push(circleFigure);
+        this.protractr.sketch.addFigure(circleFigure);
     };
     ToolCreateCircle.prototype.draw = function (sketchView) {
         if (this.points.length == 1) {
@@ -3003,8 +3089,12 @@ var ToolCreateCircle = /** @class */ (function (_super) {
 }(toolCreateFigure_1.default));
 exports.default = ToolCreateCircle;
 
-},{"../../gcs/figures":3,"./toolCreateFigure":18}],18:[function(require,module,exports){
+},{"../../gcs/figures":3,"./toolCreateFigure":19}],19:[function(require,module,exports){
 "use strict";
+/**
+ * @module tools
+ */
+/** */
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -3035,8 +3125,9 @@ var ToolCreateFigure = /** @class */ (function (_super) {
     ToolCreateFigure.prototype.up = function (point) {
         if (this.points.length >= this.pointsPerFigure) {
             this.addFigure();
-            this.points = [];
+            this.protractr.ui.refresh();
             this.protractr.ui.pushState();
+            this.points = [];
         }
         this.currentPoint = { point: null, snapFigure: null };
         this.points.push(this.currentPoint);
@@ -3101,8 +3192,12 @@ var ToolCreateFigure = /** @class */ (function (_super) {
 }(tool_1.default));
 exports.default = ToolCreateFigure;
 
-},{"../../gcs/constraint":1,"../../gcs/figures":3,"./tool":16}],19:[function(require,module,exports){
+},{"../../gcs/constraint":1,"../../gcs/figures":3,"./tool":17}],20:[function(require,module,exports){
 "use strict";
+/**
+ * @module tools
+ */
+/** */
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -3130,7 +3225,7 @@ var ToolCreateLine = /** @class */ (function (_super) {
         var lineFigure = new figures_1.LineFigure(p0, p1);
         this.constrainBySnap(lineFigure.childFigures[0], this.points[0].snapFigure);
         this.constrainBySnap(lineFigure.childFigures[1], this.points[1].snapFigure);
-        this.protractr.sketch.rootFigures.push(lineFigure);
+        this.protractr.sketch.addFigure(lineFigure);
     };
     ToolCreateLine.prototype.draw = function (sketchView) {
         if (this.points.length == 1) {
@@ -3148,8 +3243,12 @@ var ToolCreateLine = /** @class */ (function (_super) {
 }(toolCreateFigure_1.default));
 exports.default = ToolCreateLine;
 
-},{"../../gcs/figures":3,"./toolCreateFigure":18}],20:[function(require,module,exports){
+},{"../../gcs/figures":3,"./toolCreateFigure":19}],21:[function(require,module,exports){
 "use strict";
+/**
+ * @module tools
+ */
+/** */
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -3175,7 +3274,7 @@ var ToolCreatePoint = /** @class */ (function (_super) {
         var p = this.points[0].point;
         var pointFigure = new figures_1.PointFigure(p);
         this.constrainBySnap(pointFigure, this.points[0].snapFigure);
-        this.protractr.sketch.rootFigures.push(pointFigure);
+        this.protractr.sketch.addFigure(pointFigure);
     };
     ToolCreatePoint.prototype.draw = function (sketchView) {
         if (this.points.length == 1) {
@@ -3186,8 +3285,12 @@ var ToolCreatePoint = /** @class */ (function (_super) {
 }(toolCreateFigure_1.default));
 exports.default = ToolCreatePoint;
 
-},{"../../gcs/figures":3,"./toolCreateFigure":18}],21:[function(require,module,exports){
+},{"../../gcs/figures":3,"./toolCreateFigure":19}],22:[function(require,module,exports){
 "use strict";
+/**
+ * @module tools
+ */
+/** */
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -3229,6 +3332,10 @@ var ToolCreateRect = /** @class */ (function (_super) {
         this.constrainBySnap(v1.childFigures[1], this.points[0].snapFigure);
         this.constrainBySnap(h1.childFigures[0], this.points[1].snapFigure);
         this.constrainBySnap(v0.childFigures[1], this.points[1].snapFigure);
+        this.protractr.sketch.addFigure(h0);
+        this.protractr.sketch.addFigure(h1);
+        this.protractr.sketch.addFigure(v0);
+        this.protractr.sketch.addFigure(v1);
     };
     ToolCreateRect.prototype.draw = function (sketchView) {
         if (this.points.length == 1) {
@@ -3253,8 +3360,12 @@ var ToolCreateRect = /** @class */ (function (_super) {
 }(toolCreateFigure_1.default));
 exports.default = ToolCreateRect;
 
-},{"../../gcs/constraint":1,"../../gcs/figures":3,"./toolCreateFigure":18}],22:[function(require,module,exports){
+},{"../../gcs/constraint":1,"../../gcs/figures":3,"./toolCreateFigure":19}],23:[function(require,module,exports){
 "use strict";
+/**
+ * @module tools
+ */
+/** */
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -3270,12 +3381,12 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var toolSelect_1 = require("./toolSelect");
-var constraint_filter_1 = require("../../gcs/constraint_filter");
+var filterString_1 = require("../../gcs/filterString");
 var ToolFilterSelect = /** @class */ (function (_super) {
     __extends(ToolFilterSelect, _super);
     function ToolFilterSelect(protractr, filterString) {
         var _this = _super.call(this, protractr) || this;
-        _this.filter = new constraint_filter_1.FilterString(filterString);
+        _this.filter = new filterString_1.default(filterString);
         return _this;
     }
     ToolFilterSelect.prototype.figureShouldBeSelected = function (figure) {
@@ -3285,8 +3396,12 @@ var ToolFilterSelect = /** @class */ (function (_super) {
 }(toolSelect_1.default));
 exports.default = ToolFilterSelect;
 
-},{"../../gcs/constraint_filter":2,"./toolSelect":23}],23:[function(require,module,exports){
+},{"../../gcs/filterString":4,"./toolSelect":24}],24:[function(require,module,exports){
 "use strict";
+/**
+ * @module tools
+ */
+/** */
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -3303,7 +3418,6 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var tool_1 = require("./tool");
 var figures_1 = require("../../gcs/figures");
-var main_1 = require("../../main");
 var ToolSelect = /** @class */ (function (_super) {
     __extends(ToolSelect, _super);
     function ToolSelect() {
@@ -3354,7 +3468,7 @@ var ToolSelect = /** @class */ (function (_super) {
             this.selectionEnd = point;
             if (this.selectionStart) {
                 var selection = [];
-                for (var _i = 0, _a = main_1.protractr.sketch.rootFigures; _i < _a.length; _i++) {
+                for (var _i = 0, _a = this.protractr.sketch.rootFigures; _i < _a.length; _i++) {
                     var figure = _a[_i];
                     for (var _b = 0, _c = figure.getRelatedFigures(); _b < _c.length; _b++) {
                         var relatedFigure = _c[_b];
@@ -3450,8 +3564,12 @@ var ToolSelect = /** @class */ (function (_super) {
 }(tool_1.default));
 exports.default = ToolSelect;
 
-},{"../../gcs/figures":3,"../../main":5,"./tool":16}],24:[function(require,module,exports){
+},{"../../gcs/figures":3,"./tool":17}],25:[function(require,module,exports){
 "use strict";
+/**
+ * @module topbar
+ */
+/** */
 Object.defineProperty(exports, "__esModule", { value: true });
 var menubar_1 = require("./menubar");
 var toolSelect_1 = require("./tools/toolSelect");
@@ -3494,10 +3612,14 @@ var TopBar = /** @class */ (function () {
     });
     return TopBar;
 }());
-exports.TopBar = TopBar;
+exports.default = TopBar;
 
-},{"./actions/actionExport":8,"./actions/actionImport":9,"./actions/actionRedo":10,"./actions/actionUndo":11,"./menubar":13,"./tools/toolCreateCircle":17,"./tools/toolCreateLine":19,"./tools/toolCreatePoint":20,"./tools/toolCreateRect":21,"./tools/toolFilterSelect":22,"./tools/toolSelect":23}],25:[function(require,module,exports){
+},{"./actions/actionExport":9,"./actions/actionImport":10,"./actions/actionRedo":11,"./actions/actionUndo":12,"./menubar":14,"./tools/toolCreateCircle":18,"./tools/toolCreateLine":20,"./tools/toolCreatePoint":21,"./tools/toolCreateRect":22,"./tools/toolFilterSelect":23,"./tools/toolSelect":24}],26:[function(require,module,exports){
 "use strict";
+/**
+ * @module ui
+ */
+/** */
 Object.defineProperty(exports, "__esModule", { value: true });
 var sidepane_1 = require("./sidepane");
 var sketchview_1 = require("./sketchview");
@@ -3506,10 +3628,10 @@ var topbar_1 = require("./topbar");
 var UI = /** @class */ (function () {
     function UI(protractr, canvas, sidePane, topBar) {
         this.protractr = protractr;
-        this.history = new history_1.History(protractr.exportSketch());
+        this.history = new history_1.default(protractr.exportSketch());
         this.sketchView = new sketchview_1.SketchView(this, canvas);
         this.infoPane = new sidepane_1.Sidepane(this, sidePane);
-        this.topBar = new topbar_1.TopBar(protractr, topBar);
+        this.topBar = new topbar_1.default(protractr, topBar);
     }
     UI.prototype.reload = function () {
         this.sketchView.draw();
@@ -3538,8 +3660,12 @@ var UI = /** @class */ (function () {
 }());
 exports.UI = UI;
 
-},{"./history":12,"./sidepane":14,"./sketchview":15,"./topbar":24}],26:[function(require,module,exports){
+},{"./history":13,"./sidepane":15,"./sketchview":16,"./topbar":25}],27:[function(require,module,exports){
 "use strict";
+/**
+ * @module ui
+ */
+/** */
 Object.defineProperty(exports, "__esModule", { value: true });
 function saveAs(string, filename) {
     var a = document.createElement("a");
@@ -3550,4 +3676,4 @@ function saveAs(string, filename) {
 }
 exports.saveAs = saveAs;
 
-},{}]},{},[5]);
+},{}]},{},[6]);

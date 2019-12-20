@@ -1,7 +1,12 @@
+/**
+ * @module ui/tools
+ */
+/** */
+
 import ToolCreateFigure from "./toolCreateFigure";
 import {SketchView} from "../sketchview";
 import {CircleFigure} from "../../gcs/figures";
-import {Protractr} from "../../protractr";
+import Protractr from "../../protractr";
 
 export default class ToolCreateCircle extends ToolCreateFigure {
     constructor(protractr: Protractr) {
@@ -15,7 +20,7 @@ export default class ToolCreateCircle extends ToolCreateFigure {
         let circleFigure = new CircleFigure(center, radius);
         this.constrainBySnap(circleFigure.childFigures[0], this.points[0].snapFigure);
         this.constrainBySnap(circleFigure, this.points[1].snapFigure);
-        this.protractr.sketch.rootFigures.push(circleFigure);
+        this.protractr.sketch.addFigure(circleFigure);
     }
 
     draw(sketchView: SketchView) {

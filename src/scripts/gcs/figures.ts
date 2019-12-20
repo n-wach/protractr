@@ -1,5 +1,9 @@
+/**
+ * @module gcs/figures
+ */
+/** */
+
 import {Variable, VariablePoint} from "./constraint";
-import {protractr} from "../main";
 import {FigureExport, Sketch, SketchExport} from "./sketch";
 
 export class Point {
@@ -269,11 +273,10 @@ export class PointFigure extends BasicFigure {
     childFigures: Figure[] = [];
     parentFigure: Figure = null;
 
-    constructor(p: Point, name: string = "point", add = true) {
+    constructor(p: Point, name: string = "point") {
         super();
         this.p = p;
         this.name = name;
-        if (add) protractr.sketch.addPoint(this.p.variablePoint);
     }
 
     getClosestPoint(point: Point): Point {
@@ -305,12 +308,12 @@ export class LineFigure extends BasicFigure {
     childFigures: Figure[];
     parentFigure: Figure;
 
-    constructor(p0: Point, p1: Point, name: string = "line", add = true) {
+    constructor(p0: Point, p1: Point, name: string = "line") {
         super();
         this.p1 = p0;
         this.p2 = p1;
         this.name = name;
-        this.childFigures = [new PointFigure(this.p1, "p1", add), new PointFigure(this.p2, "p2", add)];
+        this.childFigures = [new PointFigure(this.p1, "p1"), new PointFigure(this.p2, "p2")];
         this.childFigures[0].parentFigure = this;
         this.childFigures[1].parentFigure = this;
     }
@@ -319,7 +322,7 @@ export class LineFigure extends BasicFigure {
         let projection = point.projectBetween(this.p1, this.p2, true);
 
         let midpoint = Point.averagePoint(this.p1, this.p2);
-        if (midpoint.distTo(point) < 5 / protractr.ui.sketchView.ctxScale) {
+        if (midpoint.distTo(point) < 5) {
             return midpoint;
         }
         return projection;
@@ -346,13 +349,12 @@ export class CircleFigure extends BasicFigure {
     childFigures: Figure[];
     parentFigure: Figure;
 
-    constructor(c: Point, r: number, name: string = "circle", add = true) {
+    constructor(c: Point, r: number, name: string = "circle") {
         super();
         this.c = c;
         this.r = new Variable(r);
         this.name = name;
-        if (add) protractr.sketch.addVariable(this.r);
-        this.childFigures = [new PointFigure(this.c, "center", add)];
+        this.childFigures = [new PointFigure(this.c, "center")];
         this.childFigures[0].parentFigure = this;
     }
 
@@ -391,15 +393,15 @@ export function figureFromObject(obj: FigureExport, sketch: Sketch): Figure {
     switch(obj.type) {
         case "point":
             let p = sketch.points[obj["p"]];
-            return new PointFigure(Point.fromVariablePoint(p), "point", false);
+            return new PointFigure(Point.fromVariablePoint(p), "point");
         case "line":
             let p1 = sketch.points[obj["p1"]];
             let p2 = sketch.points[obj["p2"]];
-            return new LineFigure(Point.fromVariablePoint(p1), Point.fromVariablePoint(p2), "line", false);
+            return new LineFigure(Point.fromVariablePoint(p1), Point.fromVariablePoint(p2), "line");
         case "circle":
             let c = sketch.points[obj["c"]];
             let r = sketch.variables[obj["r"]];
-            let circle = new CircleFigure(Point.fromVariablePoint(c), 0, "circle", false);
+            let circle = new CircleFigure(Point.fromVariablePoint(c), 0, "circle");
             circle.r = r;
             return circle;
     }

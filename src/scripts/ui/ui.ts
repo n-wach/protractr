@@ -1,8 +1,13 @@
+/**
+ * @module ui
+ */
+/** */
+
 import {Sidepane} from "./sidepane";
 import {SketchView} from "./sketchview";
-import {Protractr} from "../protractr";
-import {History} from "./history";
-import {TopBar} from "./topbar";
+import Protractr from "../protractr";
+import History from "./history";
+import TopBar from "./topbar";
 
 export class UI {
     protractr: Protractr;

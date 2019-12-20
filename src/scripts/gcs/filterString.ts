@@ -1,3 +1,8 @@
+/**
+ * @module gcs/filterString
+ */
+/** */
+
 import {Figure} from "./figures";
 
 type MatchQuantifier = string;

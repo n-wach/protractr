@@ -1,3 +1,8 @@
+/**
+ * @module gcs/constraintFilters
+ */
+/** */
+
 import {CircleFigure, Figure, LineFigure, PointFigure} from "./figures";
 import {
     ArcPointCoincidentConstraint,

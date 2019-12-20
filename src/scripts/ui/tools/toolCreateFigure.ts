@@ -1,3 +1,8 @@
+/**
+ * @module ui/tools
+ */
+/** */
+
 import Tool from "./tool";
 import {CircleFigure, Figure, LineFigure, Point, PointFigure} from "../../gcs/figures";
 import {
@@ -26,8 +31,9 @@ export default abstract class ToolCreateFigure extends Tool {
     up(point: Point) {
         if (this.points.length >= this.pointsPerFigure) {
             this.addFigure();
-            this.points = [];
+            this.protractr.ui.refresh();
             this.protractr.ui.pushState();
+            this.points = [];
         }
         this.currentPoint = {point: null, snapFigure: null};
         this.points.push(this.currentPoint);

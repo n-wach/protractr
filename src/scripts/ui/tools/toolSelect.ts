@@ -1,7 +1,11 @@
+/**
+ * @module ui/tools
+ */
+/** */
+
 import Tool from "./tool";
 import {CircleFigure, Figure, LineFigure, Point, PointFigure} from "../../gcs/figures";
 import {SketchView} from "../sketchview";
-import {protractr} from "../../main";
 
 export default class ToolSelect extends Tool {
     selectionStart: Point;
@@ -54,7 +58,7 @@ export default class ToolSelect extends Tool {
             this.selectionEnd = point;
             if (this.selectionStart) {
                 let selection = [];
-                for(let figure of protractr.sketch.rootFigures) {
+                for(let figure of this.protractr.sketch.rootFigures) {
                     for(let relatedFigure of figure.getRelatedFigures()) {
                         if (this.figureShouldBeSelected(relatedFigure)) {
                             selection.push(relatedFigure);
