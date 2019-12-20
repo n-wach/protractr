@@ -41,41 +41,30 @@ table, tbody, tr, td {
     vertical-align: top;
     padding: 10px;
 }
-.tool-group {
+
+.menu-item {
     display: inline-block;
-    margin: 3px;
-}
-.tool-group .tool {
-    border-radius: 0;
-}
-.tool-group>.tool:first-child {
-    border-bottom-left-radius: 4px;
-    border-top-left-radius: 4px;
-}
-.tool-group>.tool:last-child {
-    border-bottom-right-radius: 4px;
-    border-top-right-radius: 4px;
-}
-.tool-dropdown-content>.tool:last-child {
-    border-bottom-right-radius: 4px;
-    border-bottom-left-radius: 4px;
-}
-.tool {
-    display: inline-block;
-    width: 35px;
-    height: 35px;
     background-size: contain;
     background-color: white;
+    width: 35px;
+    height: 35px;
 }
-.active {
-    background-color: #5e9cff;
-}
-.tool.pressed {
-    background-color: #3385ff;
-}
-.tool:hover:not(.pressed):not(.active) {
+
+.menu-item:hover {
     background-color: lightgray;
 }
+.menu-item.selected {
+    background-color: #5e9cff;
+}
+.menu-item:active {
+    background-color: #3385ff;
+}
+
+.menu-divider {
+    display: inline-block;
+    width: 6px;
+}
+/*
 .tool-dropdown {
     position: relative;
     display: inline-block;
@@ -94,7 +83,7 @@ table, tbody, tr, td {
 .tool-dropdown:hover *,
 .tool-dropdown-content *:hover {
     display: block;
-}
+}*/
 .interactive-list {
     width: 100%;
     max-height: 404px;

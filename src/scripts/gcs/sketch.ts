@@ -3,7 +3,8 @@ import {
     ColinearPointsConstraint,
     Constraint,
     constraintFromObject,
-    EqualConstraint, EqualLengthConstraint,
+    EqualConstraint,
+    EqualLengthConstraint,
     Variable,
     VariablePoint
 } from "./constraint";
@@ -210,7 +211,7 @@ export class Sketch {
                 totalError += constraint.getError();
             }
             if (totalError < 1 && count > 10) return; // solved, still do a few iterations though...
-            if (count > 100 && !tirelessSolve) break;
+            if (count > 100 && !tirelessSolve) return;
             if (count % 10000 == 0) {
                 let currentTime = new Date().getTime();
                 if(currentTime - startTime > 1000) break; //give up after one second.

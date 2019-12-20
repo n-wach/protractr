@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>RedoTool | protractr</title>
+	<title>TopBar | protractr</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,13 +56,13 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_ui_tools_.html">&quot;ui/tools&quot;</a>
+					<a href="../modules/_ui_topbar_.html">&quot;ui/topbar&quot;</a>
 				</li>
 				<li>
-					<a href="_ui_tools_.redotool.html">RedoTool</a>
+					<a href="_ui_topbar_.topbar.html">TopBar</a>
 				</li>
 			</ul>
-			<h1>Class RedoTool</h1>
+			<h1>Class TopBar</h1>
 		</div>
 	</div>
 </header>
@@ -73,12 +73,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<a href="_ui_tools_.tool.html" class="tsd-signature-type">Tool</a>
-						<ul class="tsd-hierarchy">
-							<li>
-								<span class="target">RedoTool</span>
-							</li>
-						</ul>
+						<span class="target">TopBar</span>
 					</li>
 				</ul>
 			</section>
@@ -89,21 +84,20 @@
 						<section class="tsd-index-section ">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite"><a href="_ui_tools_.redotool.html#constructor" class="tsd-kind-icon">constructor</a></li>
-							</ul>
-						</section>
-						<section class="tsd-index-section tsd-is-inherited">
-							<h3>Properties</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_ui_tools_.redotool.html#image" class="tsd-kind-icon">image</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_ui_tools_.redotool.html#name" class="tsd-kind-icon">name</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_ui_tools_.redotool.html#tooltip" class="tsd-kind-icon">tooltip</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="_ui_topbar_.topbar.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
-							<h3>Methods</h3>
+							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="_ui_tools_.redotool.html#used" class="tsd-kind-icon">used</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_ui_topbar_.topbar.html#menubar" class="tsd-kind-icon">menu<wbr>Bar</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_ui_topbar_.topbar.html#toolgroup" class="tsd-kind-icon">tool<wbr>Group</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Accessors</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_ui_topbar_.topbar.html#activetool" class="tsd-kind-icon">active<wbr>Tool</a></li>
 							</ul>
 						</section>
 					</div>
@@ -111,78 +105,72 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Constructors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class">
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
-					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Redo<wbr>Tool<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_ui_tools_.redotool.html" class="tsd-signature-type">RedoTool</a></li>
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Top<wbr>Bar<span class="tsd-signature-symbol">(</span>protractr<span class="tsd-signature-symbol">: </span><a href="_protractr_.protractr.html" class="tsd-signature-type">Protractr</a>, topBarElement<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HTMLDivElement</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_ui_topbar_.topbar.html" class="tsd-signature-type">TopBar</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Overrides <a href="_ui_tools_.tool.html">Tool</a>.<a href="_ui_tools_.tool.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/n-wach/protractr/blob/d7c6613/src/scripts/ui/tools.ts#L36">ui/tools.ts:36</a></li>
+									<li>Defined in <a href="https://github.com/n-wach/protractr/blob/1205da5/src/scripts/ui/topbar.ts#L17">ui/topbar.ts:17</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-returns-title">Returns <a href="_ui_tools_.redotool.html" class="tsd-signature-type">RedoTool</a></h4>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>protractr: <a href="_protractr_.protractr.html" class="tsd-signature-type">Protractr</a></h5>
+								</li>
+								<li>
+									<h5>topBarElement: <span class="tsd-signature-type">HTMLDivElement</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="_ui_topbar_.topbar.html" class="tsd-signature-type">TopBar</a></h4>
 						</li>
 					</ul>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
+			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-					<a name="image" class="tsd-anchor"></a>
-					<h3>image</h3>
-					<div class="tsd-signature tsd-kind-icon">image<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="menubar" class="tsd-anchor"></a>
+					<h3>menu<wbr>Bar</h3>
+					<div class="tsd-signature tsd-kind-icon">menu<wbr>Bar<span class="tsd-signature-symbol">:</span> <a href="_ui_menubar_.menubar.html" class="tsd-signature-type">MenuBar</a></div>
 					<aside class="tsd-sources">
-						<p>Inherited from <a href="_ui_tools_.tool.html">Tool</a>.<a href="_ui_tools_.tool.html#image">image</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/n-wach/protractr/blob/d7c6613/src/scripts/ui/tools.ts#L17">ui/tools.ts:17</a></li>
+							<li>Defined in <a href="https://github.com/n-wach/protractr/blob/1205da5/src/scripts/ui/topbar.ts#L16">ui/topbar.ts:16</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-					<a name="name" class="tsd-anchor"></a>
-					<h3>name</h3>
-					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="toolgroup" class="tsd-anchor"></a>
+					<h3>tool<wbr>Group</h3>
+					<div class="tsd-signature tsd-kind-icon">tool<wbr>Group<span class="tsd-signature-symbol">:</span> <a href="_ui_menubar_.toolgroup.html" class="tsd-signature-type">ToolGroup</a></div>
 					<aside class="tsd-sources">
-						<p>Inherited from <a href="_ui_tools_.tool.html">Tool</a>.<a href="_ui_tools_.tool.html#name">name</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/n-wach/protractr/blob/d7c6613/src/scripts/ui/tools.ts#L16">ui/tools.ts:16</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-					<a name="tooltip" class="tsd-anchor"></a>
-					<h3>tooltip</h3>
-					<div class="tsd-signature tsd-kind-icon">tooltip<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
-					<aside class="tsd-sources">
-						<p>Inherited from <a href="_ui_tools_.tool.html">Tool</a>.<a href="_ui_tools_.tool.html#tooltip">tooltip</a></p>
-						<ul>
-							<li>Defined in <a href="https://github.com/n-wach/protractr/blob/d7c6613/src/scripts/ui/tools.ts#L18">ui/tools.ts:18</a></li>
+							<li>Defined in <a href="https://github.com/n-wach/protractr/blob/1205da5/src/scripts/ui/topbar.ts#L17">ui/topbar.ts:17</a></li>
 						</ul>
 					</aside>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-					<a name="used" class="tsd-anchor"></a>
-					<h3>used</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">used<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+				<h2>Accessors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="activetool" class="tsd-anchor"></a>
+					<h3>active<wbr>Tool</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> activeTool<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_ui_tools_tool_.tool.html" class="tsd-signature-type">Tool</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Overrides <a href="_ui_tools_.tool.html">Tool</a>.<a href="_ui_tools_.tool.html#used">used</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/n-wach/protractr/blob/d7c6613/src/scripts/ui/tools.ts#L40">ui/tools.ts:40</a></li>
+									<li>Defined in <a href="https://github.com/n-wach/protractr/blob/1205da5/src/scripts/ui/topbar.ts#L59">ui/topbar.ts:59</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+							<h4 class="tsd-returns-title">Returns <a href="_ui_tools_tool_.tool.html" class="tsd-signature-type">Tool</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -194,106 +182,34 @@
 					<li class="globals  ">
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_gcs_constraint_.html">&quot;gcs/constraint&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_gcs_constraint_filter_.html">&quot;gcs/constraint_<wbr>filter&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_gcs_figures_.html">&quot;gcs/figures&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_gcs_sketch_.html">&quot;gcs/sketch&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_main_.html">&quot;main&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_protractr_.html">&quot;protractr&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_ui_history_.html">&quot;ui/history&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_ui_sidepane_.html">&quot;ui/sidepane&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_ui_sketchview_.html">&quot;ui/sketchview&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_ui_toolbar_.html">&quot;ui/toolbar&quot;</a>
-					</li>
 					<li class="current tsd-kind-external-module">
-						<a href="../modules/_ui_tools_.html">&quot;ui/tools&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_ui_ui_.html">&quot;ui/ui&quot;</a>
+						<a href="../modules/_ui_topbar_.html">&quot;ui/topbar&quot;</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_ui_tools_.activatabletool.html" class="tsd-kind-icon">Activatable<wbr>Tool</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_ui_tools_.circletool.html" class="tsd-kind-icon">Circle<wbr>Tool</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_ui_tools_.exporttool.html" class="tsd-kind-icon">Export<wbr>Tool</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_ui_tools_.filterselecttool.html" class="tsd-kind-icon">Filter<wbr>Select<wbr>Tool</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_ui_tools_.importtool.html" class="tsd-kind-icon">Import<wbr>Tool</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_ui_tools_.linetool.html" class="tsd-kind-icon">Line<wbr>Tool</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_ui_tools_.pointtool.html" class="tsd-kind-icon">Point<wbr>Tool</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_ui_tools_.recttool.html" class="tsd-kind-icon">Rect<wbr>Tool</a>
-					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_ui_tools_.redotool.html" class="tsd-kind-icon">Redo<wbr>Tool</a>
+						<a href="_ui_topbar_.topbar.html" class="tsd-kind-icon">Top<wbr>Bar</a>
 						<ul>
-							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-								<a href="_ui_tools_.redotool.html#constructor" class="tsd-kind-icon">constructor</a>
+							<li class=" tsd-kind-constructor tsd-parent-kind-class">
+								<a href="_ui_topbar_.topbar.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="_ui_tools_.redotool.html#image" class="tsd-kind-icon">image</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_ui_topbar_.topbar.html#menubar" class="tsd-kind-icon">menu<wbr>Bar</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="_ui_tools_.redotool.html#name" class="tsd-kind-icon">name</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_ui_topbar_.topbar.html#toolgroup" class="tsd-kind-icon">tool<wbr>Group</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="_ui_tools_.redotool.html#tooltip" class="tsd-kind-icon">tooltip</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-								<a href="_ui_tools_.redotool.html#used" class="tsd-kind-icon">used</a>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="_ui_topbar_.topbar.html#activetool" class="tsd-kind-icon">active<wbr>Tool</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_ui_tools_.selecttool.html" class="tsd-kind-icon">Select<wbr>Tool</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_ui_tools_.tool.html" class="tsd-kind-icon">Tool</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_ui_tools_.undotool.html" class="tsd-kind-icon">Undo<wbr>Tool</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_ui_tools_.html#constrainpointbysnap" class="tsd-kind-icon">constrain<wbr>Point<wbr>BySnap</a>
-					</li>
 				</ul>
 			</nav>
 		</div>

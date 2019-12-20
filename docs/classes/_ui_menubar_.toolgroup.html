@@ -56,10 +56,10 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_ui_toolbar_.html">&quot;ui/toolbar&quot;</a>
+					<a href="../modules/_ui_menubar_.html">&quot;ui/menubar&quot;</a>
 				</li>
 				<li>
-					<a href="_ui_toolbar_.toolgroup.html">ToolGroup</a>
+					<a href="_ui_menubar_.toolgroup.html">ToolGroup</a>
 				</li>
 			</ul>
 			<h1>Class ToolGroup</h1>
@@ -74,11 +74,6 @@
 				<ul class="tsd-hierarchy">
 					<li>
 						<span class="target">ToolGroup</span>
-						<ul class="tsd-hierarchy">
-							<li>
-								<a href="_ui_toolbar_.activatabletoolgroup.html" class="tsd-signature-type">ActivatableToolGroup</a>
-							</li>
-						</ul>
 					</li>
 				</ul>
 			</section>
@@ -86,114 +81,88 @@
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
-						<section class="tsd-index-section tsd-is-not-exported">
-							<h3>Constructors</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-not-exported"><a href="_ui_toolbar_.toolgroup.html#constructor" class="tsd-kind-icon">constructor</a></li>
-							</ul>
-						</section>
-						<section class="tsd-index-section tsd-is-not-exported">
+						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-not-exported"><a href="_ui_toolbar_.toolgroup.html#div" class="tsd-kind-icon">div</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-not-exported"><a href="_ui_toolbar_.toolgroup.html#toolelements" class="tsd-kind-icon">tool<wbr>Elements</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_ui_menubar_.toolgroup.html#selectedtool" class="tsd-kind-icon">selected<wbr>Tool</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_ui_menubar_.toolgroup.html#toolmenuitems" class="tsd-kind-icon">tool<wbr>Menu<wbr>Items</a></li>
 							</ul>
 						</section>
-						<section class="tsd-index-section tsd-is-not-exported">
+						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_ui_toolbar_.toolgroup.html#addtool" class="tsd-kind-icon">add<wbr>Tool</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_ui_toolbar_.toolgroup.html#addtooldropdown" class="tsd-kind-icon">add<wbr>Tool<wbr>Dropdown</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_ui_menubar_.toolgroup.html#addtool" class="tsd-kind-icon">add<wbr>Tool</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_ui_menubar_.toolgroup.html#selecttool" class="tsd-kind-icon">select<wbr>Tool</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
-				<h2>Constructors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class tsd-is-not-exported">
-					<a name="constructor" class="tsd-anchor"></a>
-					<h3>constructor</h3>
-					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Tool<wbr>Group<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_ui_toolbar_.toolgroup.html" class="tsd-signature-type">ToolGroup</a></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/n-wach/protractr/blob/d7c6613/src/scripts/ui/toolbar.ts#L59">ui/toolbar.ts:59</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-returns-title">Returns <a href="_ui_toolbar_.toolgroup.html" class="tsd-signature-type">ToolGroup</a></h4>
-						</li>
-					</ul>
-				</section>
-			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
+			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
-					<a name="div" class="tsd-anchor"></a>
-					<h3>div</h3>
-					<div class="tsd-signature tsd-kind-icon">div<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">HTMLDivElement</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="selectedtool" class="tsd-anchor"></a>
+					<h3>selected<wbr>Tool</h3>
+					<div class="tsd-signature tsd-kind-icon">selected<wbr>Tool<span class="tsd-signature-symbol">:</span> <a href="_ui_tools_tool_.tool.html" class="tsd-signature-type">Tool</a><span class="tsd-signature-symbol"> =&nbsp;null</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/n-wach/protractr/blob/d7c6613/src/scripts/ui/toolbar.ts#L58">ui/toolbar.ts:58</a></li>
+							<li>Defined in <a href="https://github.com/n-wach/protractr/blob/1205da5/src/scripts/ui/menubar.ts#L83">ui/menubar.ts:83</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
-					<a name="toolelements" class="tsd-anchor"></a>
-					<h3>tool<wbr>Elements</h3>
-					<div class="tsd-signature tsd-kind-icon">tool<wbr>Elements<span class="tsd-signature-symbol">:</span> <a href="_ui_toolbar_.toolelement.html" class="tsd-signature-type">ToolElement</a><span class="tsd-signature-symbol">[]</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="toolmenuitems" class="tsd-anchor"></a>
+					<h3>tool<wbr>Menu<wbr>Items</h3>
+					<div class="tsd-signature tsd-kind-icon">tool<wbr>Menu<wbr>Items<span class="tsd-signature-symbol">:</span> <a href="_ui_menubar_.toolmenuitem.html" class="tsd-signature-type">ToolMenuItem</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/n-wach/protractr/blob/d7c6613/src/scripts/ui/toolbar.ts#L59">ui/toolbar.ts:59</a></li>
+							<li>Defined in <a href="https://github.com/n-wach/protractr/blob/1205da5/src/scripts/ui/menubar.ts#L84">ui/menubar.ts:84</a></li>
 						</ul>
 					</aside>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
+			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="addtool" class="tsd-anchor"></a>
 					<h3>add<wbr>Tool</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">add<wbr>Tool<span class="tsd-signature-symbol">(</span>tool<span class="tsd-signature-symbol">: </span><a href="_ui_tools_.tool.html" class="tsd-signature-type">Tool</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Tool<span class="tsd-signature-symbol">(</span>toolMenuItem<span class="tsd-signature-symbol">: </span><a href="_ui_menubar_.toolmenuitem.html" class="tsd-signature-type">ToolMenuItem</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/n-wach/protractr/blob/d7c6613/src/scripts/ui/toolbar.ts#L65">ui/toolbar.ts:65</a></li>
+									<li>Defined in <a href="https://github.com/n-wach/protractr/blob/1205da5/src/scripts/ui/menubar.ts#L85">ui/menubar.ts:85</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>tool: <a href="_ui_tools_.tool.html" class="tsd-signature-type">Tool</a></h5>
+									<h5>toolMenuItem: <a href="_ui_menubar_.toolmenuitem.html" class="tsd-signature-type">ToolMenuItem</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-					<a name="addtooldropdown" class="tsd-anchor"></a>
-					<h3>add<wbr>Tool<wbr>Dropdown</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">add<wbr>Tool<wbr>Dropdown<span class="tsd-signature-symbol">(</span>tools<span class="tsd-signature-symbol">: </span><a href="_ui_tools_.activatabletool.html" class="tsd-signature-type">ActivatableTool</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="selecttool" class="tsd-anchor"></a>
+					<h3>select<wbr>Tool</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">select<wbr>Tool<span class="tsd-signature-symbol">(</span>toolMenuItem<span class="tsd-signature-symbol">: </span><a href="_ui_menubar_.toolmenuitem.html" class="tsd-signature-type">ToolMenuItem</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/n-wach/protractr/blob/d7c6613/src/scripts/ui/toolbar.ts#L70">ui/toolbar.ts:70</a></li>
+									<li>Defined in <a href="https://github.com/n-wach/protractr/blob/1205da5/src/scripts/ui/menubar.ts#L89">ui/menubar.ts:89</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>tools: <a href="_ui_tools_.activatabletool.html" class="tsd-signature-type">ActivatableTool</a><span class="tsd-signature-symbol">[]</span></h5>
+									<h5>toolMenuItem: <a href="_ui_menubar_.toolmenuitem.html" class="tsd-signature-type">ToolMenuItem</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -208,84 +177,45 @@
 					<li class="globals  ">
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_gcs_constraint_.html">&quot;gcs/constraint&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_gcs_constraint_filter_.html">&quot;gcs/constraint_<wbr>filter&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_gcs_figures_.html">&quot;gcs/figures&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_gcs_sketch_.html">&quot;gcs/sketch&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_main_.html">&quot;main&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_protractr_.html">&quot;protractr&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_ui_history_.html">&quot;ui/history&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_ui_sidepane_.html">&quot;ui/sidepane&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_ui_sketchview_.html">&quot;ui/sketchview&quot;</a>
-					</li>
 					<li class="current tsd-kind-external-module">
-						<a href="../modules/_ui_toolbar_.html">&quot;ui/toolbar&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_ui_tools_.html">&quot;ui/tools&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_ui_ui_.html">&quot;ui/ui&quot;</a>
+						<a href="../modules/_ui_menubar_.html">&quot;ui/menubar&quot;</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_ui_toolbar_.activatabletoolelement.html" class="tsd-kind-icon">Activatable<wbr>Tool<wbr>Element</a>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="_ui_menubar_.actionmenuitem.html" class="tsd-kind-icon">Action<wbr>Menu<wbr>Item</a>
 					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_ui_toolbar_.activatabletoolgroup.html" class="tsd-kind-icon">Activatable<wbr>Tool<wbr>Group</a>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="_ui_menubar_.menubar.html" class="tsd-kind-icon">Menu<wbr>Bar</a>
 					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_ui_toolbar_.dropdowntoolselect.html" class="tsd-kind-icon">Dropdown<wbr>Tool<wbr>Select</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_ui_toolbar_.toolelement.html" class="tsd-kind-icon">Tool<wbr>Element</a>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="_ui_menubar_.menuitem.html" class="tsd-kind-icon">Menu<wbr>Item</a>
 					</li>
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_ui_toolbar_.toolgroup.html" class="tsd-kind-icon">Tool<wbr>Group</a>
+					<li class="current tsd-kind-class tsd-parent-kind-external-module">
+						<a href="_ui_menubar_.toolgroup.html" class="tsd-kind-icon">Tool<wbr>Group</a>
 						<ul>
-							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-not-exported">
-								<a href="_ui_toolbar_.toolgroup.html#constructor" class="tsd-kind-icon">constructor</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_ui_menubar_.toolgroup.html#selectedtool" class="tsd-kind-icon">selected<wbr>Tool</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
-								<a href="_ui_toolbar_.toolgroup.html#div" class="tsd-kind-icon">div</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_ui_menubar_.toolgroup.html#toolmenuitems" class="tsd-kind-icon">tool<wbr>Menu<wbr>Items</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
-								<a href="_ui_toolbar_.toolgroup.html#toolelements" class="tsd-kind-icon">tool<wbr>Elements</a>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_ui_menubar_.toolgroup.html#addtool" class="tsd-kind-icon">add<wbr>Tool</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-								<a href="_ui_toolbar_.toolgroup.html#addtool" class="tsd-kind-icon">add<wbr>Tool</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-								<a href="_ui_toolbar_.toolgroup.html#addtooldropdown" class="tsd-kind-icon">add<wbr>Tool<wbr>Dropdown</a>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_ui_menubar_.toolgroup.html#selecttool" class="tsd-kind-icon">select<wbr>Tool</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_ui_toolbar_.toolbar.html" class="tsd-kind-icon">Toolbar</a>
+						<a href="_ui_menubar_.toolmenuitem.html" class="tsd-kind-icon">Tool<wbr>Menu<wbr>Item</a>
 					</li>
 				</ul>
 			</nav>

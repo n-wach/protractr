@@ -1,7 +1,7 @@
 import {Protractr} from "./protractr";
 
 let canvas: HTMLCanvasElement;
-let tools: HTMLUListElement;
+let topBar: HTMLDivElement;
 let sidePane: HTMLDivElement;
 export let protractr: Protractr;
 
@@ -16,8 +16,8 @@ window.addEventListener("resize", adjustCanvasResolution);
 window.addEventListener("load", function() {
     canvas = document.getElementById("canvas") as HTMLCanvasElement;
     sidePane = document.getElementById("side-pane") as HTMLDivElement;
-    tools = document.getElementById("tools") as HTMLUListElement;
-    protractr = new Protractr(canvas, sidePane, tools);
+    topBar = document.getElementById("tools") as HTMLDivElement;
+    protractr = new Protractr(canvas, sidePane, topBar);
     adjustCanvasResolution(null);
     console.log("________                __                        __                   " + "\n" +
                 "\\_____  \\_______  _____/  |_____________    _____/  |________        " + "\n" +

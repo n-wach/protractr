@@ -1,21 +1,21 @@
-import {Toolbar} from "./toolbar";
 import {Sidepane} from "./sidepane";
 import {SketchView} from "./sketchview";
 import {Protractr} from "../protractr";
 import {History} from "./history";
+import {TopBar} from "./topbar";
 
 export class UI {
     protractr: Protractr;
-    toolbar: Toolbar;
+    topBar: TopBar;
     infoPane: Sidepane;
     sketchView: SketchView;
     history: History;
-    constructor(protractr: Protractr, canvas: HTMLCanvasElement, sidePane: HTMLDivElement, toolbar: HTMLUListElement) {
+    constructor(protractr: Protractr, canvas: HTMLCanvasElement, sidePane: HTMLDivElement, topBar: HTMLDivElement) {
         this.protractr = protractr;
         this.history = new History(protractr.exportSketch());
         this.sketchView = new SketchView(this, canvas);
         this.infoPane = new Sidepane(this, sidePane);
-        this.toolbar = new Toolbar(toolbar, this.sketchView);
+        this.topBar = new TopBar(protractr, topBar);
     }
     reload() {
         this.sketchView.draw();

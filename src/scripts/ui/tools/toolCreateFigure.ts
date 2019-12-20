@@ -1,7 +1,9 @@
 import Tool from "./tool";
-import {Point, CircleFigure, Figure, LineFigure, PointFigure} from "../../gcs/figures";
+import {CircleFigure, Figure, LineFigure, Point, PointFigure} from "../../gcs/figures";
 import {
-    ArcPointCoincidentConstraint, ColinearPointsConstraint, EqualConstraint,
+    ArcPointCoincidentConstraint,
+    ColinearPointsConstraint,
+    EqualConstraint,
     MidpointConstraint
 } from "../../gcs/constraint";
 
@@ -12,11 +14,16 @@ export default abstract class ToolCreateFigure extends Tool {
     currentPoint: FigureCreationPoint;
     pointsPerFigure: number;
 
+    protected constructor(protractr, pointsPerFigure: number) {
+        super(protractr);
+        this.pointsPerFigure = pointsPerFigure;
+    }
+
     down(point: Point) {
         //do nothing
     }
     up(point: Point) {
-        if(this.points.length > this.pointsPerFigure) {
+        if(this.points.length >= this.pointsPerFigure) {
             this.addFigure();
             this.points = [];
             this.protractr.ui.pushState();

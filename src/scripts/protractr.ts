@@ -4,9 +4,9 @@ import {UI} from "./ui/ui";
 export class Protractr {
     sketch: Sketch;
     ui: UI;
-    constructor(canvas: HTMLCanvasElement, sidePane: HTMLDivElement, toolbar: HTMLUListElement) {
+    constructor(canvas: HTMLCanvasElement, sidePane: HTMLDivElement, topBar: HTMLDivElement) {
         this.sketch = new Sketch();
-        this.ui = new UI(this, canvas, sidePane, toolbar);
+        this.ui = new UI(this, canvas, sidePane, topBar);
     }
     loadSketch(json: string, push: boolean=true) {
         if(json == undefined) {

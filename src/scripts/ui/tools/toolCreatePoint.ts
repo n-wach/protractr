@@ -1,8 +1,12 @@
 import {PointFigure} from "../../gcs/figures";
 import {SketchView} from "../sketchview";
 import ToolCreateFigure from "./toolCreateFigure";
+import {Protractr} from "../../protractr";
 
 export default class ToolCreatePoint extends ToolCreateFigure {
+    constructor(protractr: Protractr) {
+        super(protractr, 1);
+    }
     addFigure() {
         let p = this.points[0].point;
         let pointFigure = new PointFigure(p);

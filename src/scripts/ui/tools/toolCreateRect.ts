@@ -2,8 +2,13 @@ import ToolCreateFigure from "./toolCreateFigure";
 import {SketchView} from "../sketchview";
 import {LineFigure, Point} from "../../gcs/figures";
 import {EqualConstraint} from "../../gcs/constraint";
+import {Protractr} from "../../protractr";
 
-export default class ToolCreateCircle extends ToolCreateFigure {
+export default class ToolCreateRect extends ToolCreateFigure {
+    constructor(protractr: Protractr) {
+        super(protractr, 2);
+    }
+
     addFigure() {
         let p0 = this.points[0].point;
         let p2 = this.points[1].point;

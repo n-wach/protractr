@@ -1,8 +1,14 @@
 import ToolCreateFigure from "./toolCreateFigure";
 import {SketchView} from "../sketchview";
 import {CircleFigure} from "../../gcs/figures";
+import {Protractr} from "../../protractr";
 
 export default class ToolCreateCircle extends ToolCreateFigure {
+    constructor(protractr: Protractr) {
+        super(protractr, 2);
+    }
+
+
     addFigure() {
         let center = this.points[0].point;
         let radius = center.distTo(this.points[1].point);

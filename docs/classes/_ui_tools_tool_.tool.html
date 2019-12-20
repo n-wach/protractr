@@ -56,10 +56,10 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_ui_tools_.html">&quot;ui/tools&quot;</a>
+					<a href="../modules/_ui_tools_tool_.html">&quot;ui/tools/tool&quot;</a>
 				</li>
 				<li>
-					<a href="_ui_tools_.tool.html">Tool</a>
+					<a href="_ui_tools_tool_.tool.html">Tool</a>
 				</li>
 			</ul>
 			<h1>Class Tool</h1>
@@ -76,19 +76,10 @@
 						<span class="target">Tool</span>
 						<ul class="tsd-hierarchy">
 							<li>
-								<a href="_ui_tools_.undotool.html" class="tsd-signature-type">UndoTool</a>
+								<a href="_ui_tools_toolselect_.toolselect.html" class="tsd-signature-type">ToolSelect</a>
 							</li>
 							<li>
-								<a href="_ui_tools_.redotool.html" class="tsd-signature-type">RedoTool</a>
-							</li>
-							<li>
-								<a href="_ui_tools_.exporttool.html" class="tsd-signature-type">ExportTool</a>
-							</li>
-							<li>
-								<a href="_ui_tools_.importtool.html" class="tsd-signature-type">ImportTool</a>
-							</li>
-							<li>
-								<a href="_ui_tools_.activatabletool.html" class="tsd-signature-type">ActivatableTool</a>
+								<a href="_ui_tools_toolcreatefigure_.toolcreatefigure.html" class="tsd-signature-type">ToolCreateFigure</a>
 							</li>
 						</ul>
 					</li>
@@ -101,21 +92,23 @@
 						<section class="tsd-index-section ">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="_ui_tools_.tool.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="_ui_tools_tool_.tool.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_ui_tools_.tool.html#image" class="tsd-kind-icon">image</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_ui_tools_.tool.html#name" class="tsd-kind-icon">name</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_ui_tools_.tool.html#tooltip" class="tsd-kind-icon">tooltip</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_ui_tools_tool_.tool.html#protractr" class="tsd-kind-icon">protractr</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_ui_tools_.tool.html#used" class="tsd-kind-icon">used</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_ui_tools_tool_.tool.html#down" class="tsd-kind-icon">down</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_ui_tools_tool_.tool.html#draw" class="tsd-kind-icon">draw</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_ui_tools_tool_.tool.html#move" class="tsd-kind-icon">move</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_ui_tools_tool_.tool.html#reset" class="tsd-kind-icon">reset</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_ui_tools_tool_.tool.html#up" class="tsd-kind-icon">up</a></li>
 							</ul>
 						</section>
 					</div>
@@ -127,28 +120,22 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Tool<span class="tsd-signature-symbol">(</span>name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, tooltip<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, image<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_ui_tools_.tool.html" class="tsd-signature-type">Tool</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Tool<span class="tsd-signature-symbol">(</span>protractr<span class="tsd-signature-symbol">: </span><a href="_protractr_.protractr.html" class="tsd-signature-type">Protractr</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_ui_tools_tool_.tool.html" class="tsd-signature-type">Tool</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/n-wach/protractr/blob/d7c6613/src/scripts/ui/tools.ts#L18">ui/tools.ts:18</a></li>
+									<li>Defined in <a href="https://github.com/n-wach/protractr/blob/1205da5/src/scripts/ui/tools/tool.ts#L6">ui/tools/tool.ts:6</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>name: <span class="tsd-signature-type">string</span></h5>
-								</li>
-								<li>
-									<h5>tooltip: <span class="tsd-signature-type">string</span></h5>
-								</li>
-								<li>
-									<h5>image: <span class="tsd-signature-type">string</span></h5>
+									<h5>protractr: <a href="_protractr_.protractr.html" class="tsd-signature-type">Protractr</a></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_ui_tools_.tool.html" class="tsd-signature-type">Tool</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="_ui_tools_tool_.tool.html" class="tsd-signature-type">Tool</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -156,32 +143,12 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="image" class="tsd-anchor"></a>
-					<h3>image</h3>
-					<div class="tsd-signature tsd-kind-icon">image<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="protractr" class="tsd-anchor"></a>
+					<h3>protractr</h3>
+					<div class="tsd-signature tsd-kind-icon">protractr<span class="tsd-signature-symbol">:</span> <a href="_protractr_.protractr.html" class="tsd-signature-type">Protractr</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/n-wach/protractr/blob/d7c6613/src/scripts/ui/tools.ts#L17">ui/tools.ts:17</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="name" class="tsd-anchor"></a>
-					<h3>name</h3>
-					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/n-wach/protractr/blob/d7c6613/src/scripts/ui/tools.ts#L16">ui/tools.ts:16</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="tooltip" class="tsd-anchor"></a>
-					<h3>tooltip</h3>
-					<div class="tsd-signature tsd-kind-icon">tooltip<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/n-wach/protractr/blob/d7c6613/src/scripts/ui/tools.ts#L18">ui/tools.ts:18</a></li>
+							<li>Defined in <a href="https://github.com/n-wach/protractr/blob/1205da5/src/scripts/ui/tools/tool.ts#L6">ui/tools/tool.ts:6</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -189,18 +156,110 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="used" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagAbstract">Abstract</span> used</h3>
+					<a name="down" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagAbstract">Abstract</span> down</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">used<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+						<li class="tsd-signature tsd-kind-icon">down<span class="tsd-signature-symbol">(</span>point<span class="tsd-signature-symbol">: </span><a href="_gcs_figures_.point.html" class="tsd-signature-type">Point</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/n-wach/protractr/blob/d7c6613/src/scripts/ui/tools.ts#L24">ui/tools.ts:24</a></li>
+									<li>Defined in <a href="https://github.com/n-wach/protractr/blob/1205da5/src/scripts/ui/tools/tool.ts#L12">ui/tools/tool.ts:12</a></li>
 								</ul>
 							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>point: <a href="_gcs_figures_.point.html" class="tsd-signature-type">Point</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="draw" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagAbstract">Abstract</span> draw</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">draw<span class="tsd-signature-symbol">(</span>sketchView<span class="tsd-signature-symbol">: </span><a href="_ui_sketchview_.sketchview.html" class="tsd-signature-type">SketchView</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/n-wach/protractr/blob/1205da5/src/scripts/ui/tools/tool.ts#L15">ui/tools/tool.ts:15</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>sketchView: <a href="_ui_sketchview_.sketchview.html" class="tsd-signature-type">SketchView</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="move" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagAbstract">Abstract</span> move</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">move<span class="tsd-signature-symbol">(</span>point<span class="tsd-signature-symbol">: </span><a href="_gcs_figures_.point.html" class="tsd-signature-type">Point</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/n-wach/protractr/blob/1205da5/src/scripts/ui/tools/tool.ts#L14">ui/tools/tool.ts:14</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>point: <a href="_gcs_figures_.point.html" class="tsd-signature-type">Point</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="reset" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagAbstract">Abstract</span> reset</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">reset<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/n-wach/protractr/blob/1205da5/src/scripts/ui/tools/tool.ts#L16">ui/tools/tool.ts:16</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="up" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagAbstract">Abstract</span> up</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">up<span class="tsd-signature-symbol">(</span>point<span class="tsd-signature-symbol">: </span><a href="_gcs_figures_.point.html" class="tsd-signature-type">Point</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/n-wach/protractr/blob/1205da5/src/scripts/ui/tools/tool.ts#L13">ui/tools/tool.ts:13</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>point: <a href="_gcs_figures_.point.html" class="tsd-signature-type">Point</a></h5>
+								</li>
+							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
 						</li>
 					</ul>
@@ -213,106 +272,43 @@
 					<li class="globals  ">
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_gcs_constraint_.html">&quot;gcs/constraint&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_gcs_constraint_filter_.html">&quot;gcs/constraint_<wbr>filter&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_gcs_figures_.html">&quot;gcs/figures&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_gcs_sketch_.html">&quot;gcs/sketch&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_main_.html">&quot;main&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_protractr_.html">&quot;protractr&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_ui_history_.html">&quot;ui/history&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_ui_sidepane_.html">&quot;ui/sidepane&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_ui_sketchview_.html">&quot;ui/sketchview&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_ui_toolbar_.html">&quot;ui/toolbar&quot;</a>
-					</li>
 					<li class="current tsd-kind-external-module">
-						<a href="../modules/_ui_tools_.html">&quot;ui/tools&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_ui_ui_.html">&quot;ui/ui&quot;</a>
+						<a href="../modules/_ui_tools_tool_.html">&quot;ui/tools/tool&quot;</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_ui_tools_.activatabletool.html" class="tsd-kind-icon">Activatable<wbr>Tool</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_ui_tools_.circletool.html" class="tsd-kind-icon">Circle<wbr>Tool</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_ui_tools_.exporttool.html" class="tsd-kind-icon">Export<wbr>Tool</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_ui_tools_.filterselecttool.html" class="tsd-kind-icon">Filter<wbr>Select<wbr>Tool</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_ui_tools_.importtool.html" class="tsd-kind-icon">Import<wbr>Tool</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_ui_tools_.linetool.html" class="tsd-kind-icon">Line<wbr>Tool</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_ui_tools_.pointtool.html" class="tsd-kind-icon">Point<wbr>Tool</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_ui_tools_.recttool.html" class="tsd-kind-icon">Rect<wbr>Tool</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_ui_tools_.redotool.html" class="tsd-kind-icon">Redo<wbr>Tool</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_ui_tools_.selecttool.html" class="tsd-kind-icon">Select<wbr>Tool</a>
-					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_ui_tools_.tool.html" class="tsd-kind-icon">Tool</a>
+						<a href="_ui_tools_tool_.tool.html" class="tsd-kind-icon">Tool</a>
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class">
-								<a href="_ui_tools_.tool.html#constructor" class="tsd-kind-icon">constructor</a>
+								<a href="_ui_tools_tool_.tool.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_ui_tools_.tool.html#image" class="tsd-kind-icon">image</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_ui_tools_.tool.html#name" class="tsd-kind-icon">name</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_ui_tools_.tool.html#tooltip" class="tsd-kind-icon">tooltip</a>
+								<a href="_ui_tools_tool_.tool.html#protractr" class="tsd-kind-icon">protractr</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_ui_tools_.tool.html#used" class="tsd-kind-icon">used</a>
+								<a href="_ui_tools_tool_.tool.html#down" class="tsd-kind-icon">down</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_ui_tools_tool_.tool.html#draw" class="tsd-kind-icon">draw</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_ui_tools_tool_.tool.html#move" class="tsd-kind-icon">move</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_ui_tools_tool_.tool.html#reset" class="tsd-kind-icon">reset</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_ui_tools_tool_.tool.html#up" class="tsd-kind-icon">up</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_ui_tools_.undotool.html" class="tsd-kind-icon">Undo<wbr>Tool</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_ui_tools_.html#constrainpointbysnap" class="tsd-kind-icon">constrain<wbr>Point<wbr>BySnap</a>
-					</li>
 				</ul>
 			</nav>
 		</div>

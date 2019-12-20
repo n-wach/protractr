@@ -1,6 +1,6 @@
 import Action from "./action";
 
-export default class ActionUndo extends Action {
+export default class ActionRedo extends Action {
     use() {
         this.protractr.loadSketch(this.protractr.ui.history.redo())
     }

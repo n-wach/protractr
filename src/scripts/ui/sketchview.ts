@@ -1,9 +1,5 @@
 import {CircleFigure, Figure, LineFigure, Point, PointFigure} from "../gcs/figures";
-import {Sketch} from "../gcs/sketch";
-import {Tool} from "./tools";
 import {UI} from "./ui";
-import {Constraint} from "../gcs/constraint";
-import {protractr} from "../main";
 
 export class SketchView {
     canvas: HTMLCanvasElement;
@@ -25,10 +21,11 @@ export class SketchView {
         this.ctx = this.canvas.getContext("2d");
         let mouseEventHandler = this.handleMouseEvent.bind(this);
         let events = ["mousemove", "mousedown", "mouseup", "wheel"];
-        for(let event of events) {
+        for (let event of events) {
             this.canvas.addEventListener(event, mouseEventHandler);
         }
     }
+
     handleZoomEvent(deltaY: number, point: Point) {
         let originalScale = this.ctxScale;
         let s = this.ctxScale - (deltaY * 0.005 * this.ctxScale);
@@ -37,8 +34,9 @@ export class SketchView {
         this.ctxOrigin.x += (point.x * scaleChange);
         this.ctxOrigin.y += (point.y * scaleChange);
     }
+
     handlePanEvent(type: string, offset: Point) {
-        switch(type) {
+        switch (type) {
             case "mousedown":
                 this.lastPanPoint = offset.copy();
                 break;
@@ -52,62 +50,61 @@ export class SketchView {
                 break;
         }
     }
-    handleToolEvent(type: string, point: Point, snapFigure: Figure) {
-        switch(type) {
+
+    handleToolEvent(type: string, point: Point) {
+        switch (type) {
             case "mousedown":
-                this.ui.toolbar.activeTool.down(point, snapFigure);
+                this.ui.topBar.activeTool.down(point);
                 break;
             case "mousemove":
-                this.ui.toolbar.activeTool.move(point, snapFigure);
+                this.ui.topBar.activeTool.move(point);
                 break;
             case "mouseup":
-                this.ui.toolbar.activeTool.up(point, snapFigure);
+                this.ui.topBar.activeTool.up(point);
                 break;
         }
     }
+
     handleMouseEvent(event: MouseEvent & WheelEvent) {
         event.preventDefault();
         let offset = new Point(event.offsetX, event.offsetY);
         let scaled = new Point(offset.x / this.ctxScale, offset.y / this.ctxScale);
         let point = new Point(scaled.x - this.ctxOrigin.x / this.ctxScale, scaled.y - this.ctxOrigin.y / this.ctxScale);
         this.updateHover(point);
-        let snapPoint = this.snapPoint(point);
-        if(event.type == "wheel") {
+        if (event.type == "wheel") {
             let delta = event.deltaY;
             //convert delta into pixels...
-            if(event.deltaMode == WheelEvent.DOM_DELTA_LINE) {
+            if (event.deltaMode == WheelEvent.DOM_DELTA_LINE) {
                 delta *= 16; // just a guess--depends on inaccessible user settings
             } else if (event.deltaMode == WheelEvent.DOM_DELTA_PAGE) {
                 delta *= 800;  // also just a guess--no good way to predict these...
             }
             this.handleZoomEvent(delta, point);
         }
-        if(event.which == 2 || (event.type == "mousemove" && this.lastPanPoint != null)) {
+        if (event.which == 2 || (event.type == "mousemove" && this.lastPanPoint != null)) {
             this.handlePanEvent(event.type, offset);
         }
-        if(event.which == 1 || event.type == "mousemove") {
-            this.handleToolEvent(event.type, snapPoint, this.hoveredFigure);
+        if (event.which == 1 || event.type == "mousemove") {
+            this.handleToolEvent(event.type, point);
         }
         this.draw();
     }
+
     updateHover(point: Point) {
         let closest;
         closest = this.ui.protractr.sketch.getClosestFigure(point, [], 10, this.ctxScale);
         this.hoveredFigure = closest;
-        if(this.hoveredFigure != null) {
+        if (this.hoveredFigure != null) {
             this.setCursor("move");
         } else {
             this.setCursor("default");
         }
     }
-    snapPoint(point: Point): Point {
-        if(!this.ui.toolbar.activeTool.doSnap) return point;
-        if(!this.hoveredFigure) return point;
-        return this.hoveredFigure.getClosestPoint(point);
-    }
+
     setCursor(cursor: string) {
         this.canvas.style.cursor = cursor;
     }
+
     drawFigure(fig: Figure) {
         this.ctx.strokeStyle = "black";
         this.ctx.lineWidth = 2 / this.ctxScale;
@@ -115,7 +112,7 @@ export class SketchView {
         if (this.ui.infoPane.selectedFiguresList.figureSelected(fig)) {
             this.ctx.strokeStyle = "#5e9cff";
         }
-        if(this.hoveredFigure == fig || this.ui.infoPane.selectedFiguresList.figureHovered(fig)) {
+        if (this.hoveredFigure == fig || this.ui.infoPane.selectedFiguresList.figureHovered(fig)) {
             pointSize = 7;
             this.ctx.lineWidth = 5 / this.ctxScale;
         }
@@ -124,11 +121,11 @@ export class SketchView {
             pointSize = 7;
             this.ctx.lineWidth = 5 / this.ctxScale;
         }
-        switch(fig.type) {
+        switch (fig.type) {
             case "line":
                 let line = (fig as LineFigure);
                 this.drawLine(line.p1, line.p2);
-                if(this.hoveredFigure == fig) {
+                if (this.hoveredFigure == fig) {
                     let midpoint = Point.averagePoint(line.p1, line.p2);
                     this.drawPoint(midpoint, pointSize, this.ctx.strokeStyle);
                     this.drawPoint(line.p1, pointSize, this.ctx.strokeStyle);
@@ -145,38 +142,42 @@ export class SketchView {
                 break;
         }
     }
+
     draw() {
         this.ctx.resetTransform();
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
         this.ctx.translate(this.ctxOrigin.x, this.ctxOrigin.y);
         this.ctx.scale(this.ctxScale, this.ctxScale);
-        for(let fig of this.ui.protractr.sketch.rootFigures) {
-            for(let child of fig.getRelatedFigures()) {
+        for (let fig of this.ui.protractr.sketch.rootFigures) {
+            for (let child of fig.getRelatedFigures()) {
                 this.drawFigure(child);
             }
         }
         this.ctx.strokeStyle = "black";
         this.ctx.lineWidth = 2 / this.ctxScale;
-        this.ui.toolbar.activeTool.draw(this);
+        this.ui.topBar.activeTool.draw(this);
         this.ui.infoPane.selectedFigureView.refresh();
     }
+
     drawPoint(point: Point, size: number = 3, color: string = "black") {
-        if(!point) return;
+        if (!point) return;
         this.ctx.fillStyle = color;
         this.ctx.beginPath();
         this.ctx.moveTo(point.x, point.y);
         this.ctx.arc(point.x, point.y, size / this.ctxScale, 0, Math.PI * 2);
         this.ctx.fill();
     }
+
     drawLine(p1: Point, p2: Point) {
-        if(!p1 || !p2) return;
+        if (!p1 || !p2) return;
         this.ctx.beginPath();
         this.ctx.moveTo(p1.x, p1.y);
         this.ctx.lineTo(p2.x, p2.y);
         this.ctx.stroke();
     }
+
     drawCircle(center: Point, radius: number) {
-        if(!center) return;
+        if (!center) return;
         this.ctx.beginPath();
         this.ctx.arc(center.x, center.y, radius, 0, Math.PI * 2);
         this.ctx.stroke();

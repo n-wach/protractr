@@ -8,12 +8,10 @@ export class History<T=string> {
     undoHistory: HistoryStack<T>;
     redoHistory: HistoryStack<T>;
     currentState: T;
-    defaultState: T;
-    constructor(defaultState: T) {
+    constructor(startingState: T) {
         this.undoHistory = new HistoryStack<T>();
         this.redoHistory = new HistoryStack<T>();
-        this.defaultState = defaultState;
-        this.currentState = defaultState;
+        this.currentState = startingState;
     }
     /**
      * A new state produced by something other than undo or redo.

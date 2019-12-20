@@ -68,10 +68,10 @@ export default class ToolSelect extends Tool {
 
     draw(sketchView: SketchView) {
         if(!this.selectionStart || !this.selectionEnd) return;
-        sketchView.ctx.fillStyle = "green";
-        sketchView.ctx.globalAlpha = 0.5;
         let w = this.selectionEnd.x - this.selectionStart.x;
         let h = this.selectionEnd.y - this.selectionStart.y;
+        sketchView.ctx.fillStyle = "green";
+        sketchView.ctx.globalAlpha = 0.5;
         sketchView.ctx.fillRect(this.selectionStart.x, this.selectionStart.y, w, h);
         sketchView.ctx.globalAlpha = 1;
         sketchView.ctx.strokeStyle = "green";
@@ -133,7 +133,7 @@ export default class ToolSelect extends Tool {
             let allOutside = !p1In && !p2In && !p3In && !p4In;
             if(!allOutside) return true;
 
-            if (this.figureShouldBeSelected(circle.childFigures[0])) return true;
+            if (this.figureInRectangle(circle.childFigures[0])) return true;
 
             if (Point.distToLine(p1, p2, center, true) < radius) return true;
             if (Point.distToLine(p2, p3, center, true) < radius) return true;

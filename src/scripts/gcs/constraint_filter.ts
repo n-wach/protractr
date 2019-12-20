@@ -1,13 +1,15 @@
 import {CircleFigure, Figure, LineFigure, PointFigure} from "./figures";
 import {
-    Constraint,
-    MidpointConstraint,
     ArcPointCoincidentConstraint,
-    VariablePoint,
-    EqualConstraint,
     ColinearPointsConstraint,
+    Constraint,
+    EqualConstraint,
+    EqualLengthConstraint,
+    MidpointConstraint,
+    TangentCircleConstraint,
     TangentLineConstraint,
-    TangentCircleConstraint, Variable, EqualLengthConstraint,
+    Variable,
+    VariablePoint,
 } from "./constraint";
 
 type MatchQuantifier = string;
