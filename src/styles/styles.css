@@ -6,18 +6,22 @@ html, body, canvas {
     padding: 0;
     font-family: "Roboto Light", sans-serif;
 }
+
 table, tbody {
     height: 100%;
     width: 100%;
     border: 0;
 }
+
 table, tbody, tr, td {
     padding: 0;
     border: 0;
 }
+
 .first-row {
     background: #aaaaaa;
 }
+
 .title {
     height: 30pt;
     width: 20%;
@@ -26,15 +30,18 @@ table, tbody, tr, td {
     font-size: xx-large;
     font-weight: bolder;
 }
+
 .toolbar {
     width: 80%;
     margin: 0;
     padding: 0;
 }
+
 #tools {
     margin: 16px;
     padding: 0;
 }
+
 .side-pane-td {
     background: #e4e4e4;
     margin: 0;
@@ -53,9 +60,11 @@ table, tbody, tr, td {
 .menu-item:hover {
     background-color: lightgray;
 }
+
 .menu-item.selected {
     background-color: #5e9cff;
 }
+
 .menu-item:active {
     background-color: #3385ff;
 }
@@ -64,6 +73,7 @@ table, tbody, tr, td {
     display: inline-block;
     width: 6px;
 }
+
 /*
 .tool-dropdown {
     position: relative;
@@ -89,6 +99,7 @@ table, tbody, tr, td {
     max-height: 404px;
     overflow: auto;
 }
+
 .interactive-list-element {
     background: white;
     border: 1px black;
@@ -96,6 +107,7 @@ table, tbody, tr, td {
     margin: 0 5px;
     height: 18px;
 }
+
 .interactive-list-element span.element-delete {
     float: right;
     display: none;
@@ -104,12 +116,15 @@ table, tbody, tr, td {
     height: 18px;
     width: 18px;
 }
+
 .interactive-list-element span.element-delete:hover {
     background-color: gray;
 }
+
 .interactive-list-element:hover {
     background: lightgray;
 }
+
 .interactive-list-element:hover span.element-delete {
     display: inline-block;
 }

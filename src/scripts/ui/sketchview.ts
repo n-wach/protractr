@@ -21,7 +21,7 @@ export class SketchView {
         this.ctx = this.canvas.getContext("2d");
         let mouseEventHandler = this.handleMouseEvent.bind(this);
         let events = ["mousemove", "mousedown", "mouseup", "wheel"];
-        for (let event of events) {
+        for(let event of events) {
             this.canvas.addEventListener(event, mouseEventHandler);
         }
     }
@@ -36,7 +36,7 @@ export class SketchView {
     }
 
     handlePanEvent(type: string, offset: Point) {
-        switch (type) {
+        switch(type) {
             case "mousedown":
                 this.lastPanPoint = offset.copy();
                 break;
@@ -52,7 +52,7 @@ export class SketchView {
     }
 
     handleToolEvent(type: string, point: Point) {
-        switch (type) {
+        switch(type) {
             case "mousedown":
                 this.ui.topBar.activeTool.down(point);
                 break;
@@ -121,7 +121,7 @@ export class SketchView {
             pointSize = 7;
             this.ctx.lineWidth = 5 / this.ctxScale;
         }
-        switch (fig.type) {
+        switch(fig.type) {
             case "line":
                 let line = (fig as LineFigure);
                 this.drawLine(line.p1, line.p2);
@@ -148,8 +148,8 @@ export class SketchView {
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
         this.ctx.translate(this.ctxOrigin.x, this.ctxOrigin.y);
         this.ctx.scale(this.ctxScale, this.ctxScale);
-        for (let fig of this.ui.protractr.sketch.rootFigures) {
-            for (let child of fig.getRelatedFigures()) {
+        for(let fig of this.ui.protractr.sketch.rootFigures) {
+            for(let child of fig.getRelatedFigures()) {
                 this.drawFigure(child);
             }
         }

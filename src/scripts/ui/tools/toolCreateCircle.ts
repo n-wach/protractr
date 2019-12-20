@@ -19,7 +19,7 @@ export default class ToolCreateCircle extends ToolCreateFigure {
     }
 
     draw(sketchView: SketchView) {
-        if(this.points.length == 1) {
+        if (this.points.length == 1) {
             sketchView.drawPoint(this.currentPoint.point);
         } else {
             let center = this.points[0].point;

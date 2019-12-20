@@ -9,9 +9,14 @@ export default abstract class Tool {
         this.protractr = protractr;
         this.reset();
     }
+
     abstract down(point: Point);
+
     abstract up(point: Point);
+
     abstract move(point: Point);
+
     abstract draw(sketchView: SketchView);
+
     abstract reset();
 }

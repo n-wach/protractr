@@ -37,42 +37,44 @@ export class Sketch {
     variables: Variable[] = [];
     points: VariablePoint[] = [];
     rootFigures: Figure[] = [];
-    getClosestFigure(point: Point, ignoreFigures: Figure[] = [], maxDist: number=10, scale: number=1): Figure {
+
+    getClosestFigure(point: Point, ignoreFigures: Figure[] = [], maxDist: number = 10, scale: number = 1): Figure {
         let allFigures = [];
         for(let fig of this.rootFigures) {
             allFigures.push.apply(allFigures, fig.getRelatedFigures());
         }
 
-        let filteredFigures = allFigures.filter(function(value, index, arr){
+        let filteredFigures = allFigures.filter(function(value, index, arr) {
             return ignoreFigures.indexOf(value) == -1;
         });
 
-        if(filteredFigures.length == 0) return null;
+        if (filteredFigures.length == 0) return null;
         let dist = filteredFigures[0].getClosestPoint(point).distTo(point);
         let closest = filteredFigures[0];
 
         for(let fig of filteredFigures) {
             let p = fig.getClosestPoint(point);
             let d = p.distTo(point) - typeMagnetism[fig.type] / scale;
-            if(d < dist) {
+            if (d < dist) {
                 closest = fig;
                 dist = d;
             }
         }
-        if(dist <= maxDist / scale) {
+        if (dist <= maxDist / scale) {
             return closest;
         } else {
             return null;
         }
     }
+
     addConstraintAndCombine(constraint: Constraint) {
         if (constraint.type == "equal") {
             let e1: EqualConstraint = constraint as EqualConstraint;
             let mergeables: EqualConstraint[] = [];
-            for (let c of this.constraints) {
+            for(let c of this.constraints) {
                 if (c.type == "equal") {
                     let e2: EqualConstraint = c as EqualConstraint;
-                    for (let v of e1.variables) {
+                    for(let v of e1.variables) {
                         if (e2.variables.indexOf(v) != -1) {
                             //intersection constraint domain
                             mergeables.push(e2);
@@ -83,17 +85,17 @@ export class Sketch {
             }
             if (mergeables.length > 0) {
                 let newVariables: Variable[] = [];
-                for (let m of mergeables) {
+                for(let m of mergeables) {
                     newVariables = newVariables.concat(m.variables);
                 }
-                for (let v of e1.variables) {
+                for(let v of e1.variables) {
                     if (newVariables.indexOf(v) == -1) {
                         //variable not present in merged intersecting constraints
                         newVariables.push(v);
                     }
                 }
                 let newEqual = new EqualConstraint(newVariables, constraint.name);
-                for (let m of mergeables) this.removeConstraint(m);
+                for(let m of mergeables) this.removeConstraint(m);
                 this.constraints.push(newEqual);
             } else {
                 this.constraints.push(constraint);
@@ -101,11 +103,11 @@ export class Sketch {
         } else if (constraint.type == "colinear") {
             let cl1: ColinearPointsConstraint = constraint as ColinearPointsConstraint;
             let mergeables: ColinearPointsConstraint[] = [];
-            for (let c of this.constraints) {
+            for(let c of this.constraints) {
                 if (c.type == "colinear") {
                     let cl2: ColinearPointsConstraint = c as ColinearPointsConstraint;
                     let count = 0;
-                    for (let p of cl1.points) {
+                    for(let p of cl1.points) {
                         if (cl2.points.indexOf(p) != -1) {
                             count += 1;
                             if (count >= 2) {
@@ -119,25 +121,25 @@ export class Sketch {
             }
             if (mergeables.length > 0) {
                 let newPoints: VariablePoint[] = [];
-                for (let m of mergeables) {
+                for(let m of mergeables) {
                     newPoints = newPoints.concat(m.points);
                 }
-                for (let p of cl1.points) {
+                for(let p of cl1.points) {
                     if (newPoints.indexOf(p) == -1) {
                         //variable not present in merged intersecting constraints
                         newPoints.push(p);
                     }
                 }
                 let newColinear = new ColinearPointsConstraint(newPoints, constraint.name);
-                for (let m of mergeables) this.removeConstraint(m);
+                for(let m of mergeables) this.removeConstraint(m);
                 this.constraints.push(newColinear);
             } else {
                 this.constraints.push(constraint);
             }
-        } else if(constraint.type == "arc-point-coincident") {
+        } else if (constraint.type == "arc-point-coincident") {
             let apc1: ArcPointCoincidentConstraint = constraint as ArcPointCoincidentConstraint;
             let mergeable: ArcPointCoincidentConstraint;
-            for (let c of this.constraints) {
+            for(let c of this.constraints) {
                 if (c.type == "arc-point-coincident") {
                     let apc2: ArcPointCoincidentConstraint = c as ArcPointCoincidentConstraint;
                     if (apc1.center == apc2.center) {
@@ -147,21 +149,21 @@ export class Sketch {
                 }
             }
             if (mergeable) {
-                for (let p of apc1.points) {
+                for(let p of apc1.points) {
                     mergeable.points.push(p);
                 }
             } else {
                 this.constraints.push(constraint);
             }
-        } else if(constraint.type == "equal-length") {
+        } else if (constraint.type == "equal-length") {
             let el1: EqualLengthConstraint = constraint as EqualLengthConstraint;
             let mergeables: EqualLengthConstraint[] = [];
-            for (let c of this.constraints) {
+            for(let c of this.constraints) {
                 if (c.type == "equal-length") {
                     let el2: EqualLengthConstraint = c as EqualLengthConstraint;
                     for(let pair1 of el1.pairs) {
                         for(let pair2 of el2.pairs) {
-                            if(pair1[0] == pair2[0] && pair1[1] == pair2[1]) {
+                            if (pair1[0] == pair2[0] && pair1[1] == pair2[1]) {
                                 mergeables.push(el2);
                             }
                         }
@@ -169,8 +171,8 @@ export class Sketch {
                 }
             }
             if (mergeables.length > 0) {
-                for (let mergeable of mergeables) {
-                    for (let p of mergeable.pairs) {
+                for(let mergeable of mergeables) {
+                    for(let p of mergeable.pairs) {
                         el1.pairs.push(p);
                     }
                     this.removeConstraint(mergeable);
@@ -181,6 +183,7 @@ export class Sketch {
             this.constraints.push(constraint);
         }
     }
+
     addConstraints(constraints: Constraint[]) {
         for(let c of constraints) {
             this.addConstraintAndCombine(c);
@@ -188,42 +191,46 @@ export class Sketch {
         this.solveConstraints(true);
         protractr.ui.refresh();
     }
+
     removeConstraint(constraint: Constraint) {
         this.constraints = this.constraints.filter(function(value, index, arr) {
             return value != constraint;
         });
         protractr.ui.refresh();
     }
+
     addPoint(point: VariablePoint) {
         this.points.push(point);
         this.addVariable(point.x);
         this.addVariable(point.y);
     }
+
     addVariable(variable: Variable) {
         this.variables.push(variable);
     }
-    solveConstraints(tirelessSolve:boolean=false) {
+
+    solveConstraints(tirelessSolve: boolean = false) {
         let startTime = new Date().getTime();
         let count = 1;
         while(true) {
             let totalError = 0;
-            for (let constraint of this.constraints) {
+            for(let constraint of this.constraints) {
                 totalError += constraint.getError();
             }
             if (totalError < 1 && count > 10) return; // solved, still do a few iterations though...
             if (count > 100 && !tirelessSolve) return;
             if (count % 10000 == 0) {
                 let currentTime = new Date().getTime();
-                if(currentTime - startTime > 1000) break; //give up after one second.
+                if (currentTime - startTime > 1000) break; //give up after one second.
             }
             let variableGradients = [];
             let contributorCount = [];
-            for (let variable of this.variables) {
+            for(let variable of this.variables) {
                 let gradient = 0;
                 let count = 0;
-                for (let constraint of this.constraints) {
+                for(let constraint of this.constraints) {
                     let g = constraint.getGradient(variable);
-                    if(g != 0) {
+                    if (g != 0) {
                         gradient += g;
                         count++;
                     }
@@ -231,7 +238,7 @@ export class Sketch {
                 variableGradients.push(gradient);
                 contributorCount.push(count);
             }
-            for (let i = 0; i < variableGradients.length; i++) {
+            for(let i = 0; i < variableGradients.length; i++) {
                 this.variables[i].value += variableGradients[i] / (2 + contributorCount[i]);
             }
             count += 1;
@@ -239,6 +246,7 @@ export class Sketch {
         //state solve failed.  display an error:
         alert("That state couldn't be solved...");
     }
+
     asObject(): SketchExport {
         let obj: SketchExport = {
             "variables": [],
@@ -262,6 +270,7 @@ export class Sketch {
         }
         return obj;
     }
+
     static fromObject(obj: SketchExport): Sketch {
         let sketch = new Sketch();
         for(let v of obj.variables) {

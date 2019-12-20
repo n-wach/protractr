@@ -1,6 +1,6 @@
 import {CircleFigure, Figure, getFullName, LineFigure, PointFigure} from "../gcs/figures";
 import {protractr} from "../main";
-import {getSatisfiedConstraintFilters, sortFigureSelection} from "../gcs/constraint_filter";
+import {getSatisfiedConstraintFilters, sortFigureSelection} from "../gcs/constraintFilter";
 import {Constraint, Variable} from "../gcs/constraint";
 import {UI} from "./ui";
 
@@ -39,24 +39,27 @@ export class FigureInfoView {
     ui: UI;
     fields: HTMLInputElement[];
     variables: Variable[];
+
     constructor(ui: UI) {
         this.ui = ui;
         this.div = document.createElement("div");
         this.fields = [];
         this.variables = [];
     }
+
     refresh() {
         for(let i = 0; i < this.variables.length; i++) {
             this.fields[i].value = "" + this.variables[i].value;
         }
     }
+
     setFigure(figure: Figure) {
         this.fields = [];
         this.variables = [];
         while(this.div.lastChild) {
             this.div.removeChild(this.div.lastChild);
         }
-        if(figure) {
+        if (figure) {
             switch(figure.type) {
                 case "point":
                     let point: PointFigure = figure as PointFigure;
@@ -79,6 +82,7 @@ export class FigureInfoView {
             }
         }
     }
+
     addVariable(variable: Variable, name: string) {
         let div = document.createElement("div");
         let label = document.createElement("span");
@@ -113,6 +117,7 @@ export class PossibleNewConstraintsList {
     constraintsDiv: HTMLDivElement;
     title: HTMLParagraphElement;
     ui: UI;
+
     constructor(ui: UI) {
         this.ui = ui;
         this.div = document.createElement("div");
@@ -122,19 +127,20 @@ export class PossibleNewConstraintsList {
         this.div.appendChild(this.title);
         this.div.appendChild(this.constraintsDiv);
     }
+
     update() {
         while(this.constraintsDiv.lastChild) {
             this.constraintsDiv.removeChild(this.constraintsDiv.lastChild);
         }
         let figs = this.ui.infoPane.selectedFiguresList.list.values;
-        if(figs.length == 0) {
+        if (figs.length == 0) {
             this.title.innerText = "";
             this.title.style.display = "none";
             return;
         }
         this.title.style.display = "block";
         let filters = getSatisfiedConstraintFilters(figs);
-        if(filters.length == 0) {
+        if (filters.length == 0) {
             this.title.innerText = "No possible constraints";
             return;
         }
@@ -154,6 +160,7 @@ export class ExistingConstraintList {
     div: HTMLDivElement;
     list: TitledInteractiveList<Constraint>;
     ui: UI;
+
     constructor(ui: UI) {
         this.ui = ui;
         this.div = document.createElement("div");
@@ -163,12 +170,14 @@ export class ExistingConstraintList {
         this.list.onclick = this.ui.refresh.bind(this.ui);
         this.div.appendChild(this.list.div);
     }
+
     figureInHovered(fig: Figure) {
         for(let hover of this.list.hovered) {
-            if(hover.containsFigure(fig)) return true;
+            if (hover.containsFigure(fig)) return true;
         }
         return false;
     }
+
     setConstraints(newConstraints: Constraint[]) {
         let elements: [Constraint, string][] = [];
         for(let constraint of newConstraints) {
@@ -176,44 +185,48 @@ export class ExistingConstraintList {
         }
         this.list.setElements(elements);
         let count = this.ui.infoPane.selectedFiguresList.count();
-        if(newConstraints.length == 0) {
-            if(count == 0) {
+        if (newConstraints.length == 0) {
+            if (count == 0) {
                 this.list.setTitle("No constraints in sketch");
-            } else if(count == 1) {
+            } else if (count == 1) {
                 this.list.setTitle("No constraints on selected figure");
             } else {
                 this.list.setTitle("No constraints exist between the selected figures");
             }
         } else {
-            if(count == 0) {
+            if (count == 0) {
                 this.list.setTitle("Sketch Constraints:");
-            } else if(count == 1) {
+            } else if (count == 1) {
                 this.list.setTitle("Figure Constraints:");
             } else {
                 this.list.setTitle("Selection Constraints:");
             }
         }
     }
+
     setUnfilteredConstraints(constraints: Constraint[]) {
         let filteredConstraints = [];
         for(let constraint of constraints) {
             let add = true;
             for(let figure of this.ui.infoPane.selectedFiguresList.list.values) {
-                if(!constraint.containsFigure(figure)) {
+                if (!constraint.containsFigure(figure)) {
                     add = false;
                     break;
                 }
             }
-            if(add) filteredConstraints.push(constraint);
+            if (add) filteredConstraints.push(constraint);
         }
         this.setConstraints(filteredConstraints);
     }
+
     addConstraint(constraint: Constraint) {
         this.list.addElement(constraint, constraint.name);
     }
+
     removeConstraint(constraint: Constraint) {
         this.list.removeElement(constraint);
     }
+
     contains(constraint: Constraint) {
         return this.list.values.indexOf(constraint) != -1;
     }
@@ -223,6 +236,7 @@ export class SelectedFigureList {
     div: HTMLDivElement;
     list: TitledInteractiveList<Figure>;
     ui: UI;
+
     constructor(ui: UI) {
         this.ui = ui;
         this.div = document.createElement("div");
@@ -231,10 +245,12 @@ export class SelectedFigureList {
         this.list.ondelete = this.ui.refresh.bind(this.ui);
         this.div.appendChild(this.list.div);
     }
+
     clear() {
         this.list.clear();
         this.ui.refresh();
     }
+
     setFigures(figures: Figure[]) {
         let elements: [Figure, string][] = [];
         for(let figure of figures) {
@@ -243,13 +259,15 @@ export class SelectedFigureList {
         this.list.setElements(elements);
         this.ui.refresh();
     }
+
     addFigure(figure: Figure) {
         this.list.addElement(figure, getFullName(figure));
         this.ui.refresh();
     }
+
     updateTitle() {
         let count = this.count();
-        if(count == 0) {
+        if (count == 0) {
             this.list.setTitle("");
         } else if (count == 1) {
             this.list.setTitle("Selected Figure:");
@@ -257,16 +275,20 @@ export class SelectedFigureList {
             this.list.setTitle("Selected Figures:");
         }
     }
+
     removeFigure(figure: Figure) {
         this.list.removeElement(figure);
         this.ui.refresh();
     }
+
     figureSelected(figure: Figure) {
         return this.list.values.indexOf(figure) != -1;
     }
+
     figureHovered(fig: Figure) {
         return this.list.hovered.indexOf(fig) != -1;
     }
+
     count() {
         return this.list.values.length;
     }
@@ -282,7 +304,8 @@ export class InteractiveList<T> {
     ondelete: Function;
     onclick: Function;
     deleteable: boolean;
-    constructor(deleteable: boolean=true) {
+
+    constructor(deleteable: boolean = true) {
         this.deleteable = deleteable;
         this.div = document.createElement("div");
         this.list = document.createElement("div");
@@ -290,40 +313,45 @@ export class InteractiveList<T> {
         this.div.appendChild(this.list);
         this.clear();
     }
-    clear(noEvent: boolean=false) {
+
+    clear(noEvent: boolean = false) {
         this.hovered = [];
         this.values = [];
         this.elements = [];
         while(this.list.lastChild) {
             this.list.removeChild(this.list.lastChild);
         }
-        if(this.onhover && !noEvent) this.onhover([]);
+        if (this.onhover && !noEvent) this.onhover([]);
     }
+
     setElements(elements: [T, string][]) {
         let toRemove = [];
         for(let value of this.values) {
             let remove = true;
             for(let element of elements) {
-                if(element[0] == value){
+                if (element[0] == value) {
                     remove = false;
                     break;
-                };
+                }
+                ;
             }
-            if(remove) toRemove.push(value);
+            if (remove) toRemove.push(value);
         }
         for(let remove of toRemove) {
             this.removeElement(remove);
         }
         for(let element of elements) {
-            if(this.values.indexOf(element[0]) == -1) this.addElement(element[0], element[1]);
+            if (this.values.indexOf(element[0]) == -1) this.addElement(element[0], element[1]);
         }
     }
+
     addElement(value: T, name: string) {
         let element = new ListElement(this, value, name, this.deleteable);
         this.list.appendChild(element.div);
         this.elements.push(element);
         this.values.push(value);
     }
+
     removeElement(value: T) {
         let index = this.values.indexOf(value);
         if (index > -1) {
@@ -333,36 +361,42 @@ export class InteractiveList<T> {
             this.elements.splice(index, 1);
         }
     }
+
     hover(item: T) {
         this.hovered.push(item);
-        if(this.onhover) this.onhover(this.hovered);
+        if (this.onhover) this.onhover(this.hovered);
     }
+
     unhover(item: T) {
         let index = this.hovered.indexOf(item);
         if (index > -1) {
             this.hovered.splice(index, 1);
-            if(this.onhover) this.onhover(this.hovered);
+            if (this.onhover) this.onhover(this.hovered);
         }
     }
-    clicked(item: T){
+
+    clicked(item: T) {
 
     }
+
     delete(item: T) {
         this.removeElement(item);
-        if(this.ondelete) this.ondelete(item);
+        if (this.ondelete) this.ondelete(item);
     }
 }
 
 export class TitledInteractiveList<T> extends InteractiveList<T> {
     p: HTMLParagraphElement;
-    constructor(deleteable: boolean=true) {
+
+    constructor(deleteable: boolean = true) {
         super(deleteable);
         this.p = document.createElement("p");
         this.div.prepend(this.p);
         this.setTitle("");
     }
+
     setTitle(value: string) {
-        if(value == "") {
+        if (value == "") {
             this.p.style.display = "none";
             this.p.innerText = "";
         } else {
@@ -379,7 +413,8 @@ export class ListElement<T> {
     value: T;
     parent: InteractiveList<T>;
     selected: boolean;
-    constructor(parent: InteractiveList<T>, value: T, name: string, deleteable: boolean=true) {
+
+    constructor(parent: InteractiveList<T>, value: T, name: string, deleteable: boolean = true) {
         this.value = value;
         this.parent = parent;
 
@@ -394,26 +429,30 @@ export class ListElement<T> {
         this.spanName.classList.add("element-name");
         this.div.appendChild(this.spanName);
 
-        if(deleteable) {
+        if (deleteable) {
             this.deleteButton = document.createElement("span");
             this.deleteButton.classList.add("element-delete");
             this.deleteButton.addEventListener("mousedown", this.delete.bind(this));
             this.div.appendChild(this.deleteButton);
         }
     }
+
     onmouseenter(event) {
         this.parent.hover(this.value);
     }
+
     onmouseleave(event) {
         this.parent.unhover(this.value);
     }
+
     onmousedown(event) {
-        if(event.which == 1) {
+        if (event.which == 1) {
             this.parent.clicked(this.value);
         }
     }
+
     delete(event) {
-        if(event.which == 1) {
+        if (event.which == 1) {
             this.parent.delete(this.value);
         }
     }

@@ -7,6 +7,7 @@ export default class ToolCreatePoint extends ToolCreateFigure {
     constructor(protractr: Protractr) {
         super(protractr, 1);
     }
+
     addFigure() {
         let p = this.points[0].point;
         let pointFigure = new PointFigure(p);
@@ -15,7 +16,7 @@ export default class ToolCreatePoint extends ToolCreateFigure {
     }
 
     draw(sketchView: SketchView) {
-        if(this.points.length == 1) {
+        if (this.points.length == 1) {
             sketchView.drawPoint(this.currentPoint.point);
         }
     }

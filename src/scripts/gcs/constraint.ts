@@ -4,12 +4,15 @@ import {ConstraintExport, Sketch, SketchExport} from "./sketch";
 export class Variable {
     _value: number;
     constant: boolean;
+
     get value() {
         return this._value;
     }
+
     set value(v: number) {
-        if(!this.constant) this._value = v;
+        if (!this.constant) this._value = v;
     }
+
     constructor(v: number) {
         this.value = v;
         this.constant = false;
@@ -19,21 +22,26 @@ export class Variable {
 export class VariablePoint {
     x: Variable;
     y: Variable;
+
     constructor(x: number, y: number) {
         this.x = new Variable(x);
         this.y = new Variable(y);
     }
+
     toPoint(): Point {
         return new Point(this.x.value, this.y.value);
     }
+
     has(v: Variable): boolean {
         return this.x == v || this.y == v;
     }
+
     deltaVTowards(v: Variable, goal: Point) {
-        if(this.x == v) return goal.x - v.value;
-        if(this.y == v) return goal.y - v.value;
+        if (this.x == v) return goal.x - v.value;
+        if (this.y == v) return goal.y - v.value;
         return 0;
     }
+
     static fromVariables(x: Variable, y: Variable): VariablePoint {
         let v = new VariablePoint(0, 0);
         v.x = x;
@@ -44,7 +52,7 @@ export class VariablePoint {
 
 function sum(vals: Variable[]): number {
     let sum = 0;
-    for(let v of vals){
+    for(let v of vals) {
         sum += v.value;
     }
     return sum;
@@ -53,7 +61,7 @@ function sum(vals: Variable[]): number {
 function equalGoal(vals: Variable[]): number {
     let sum = 0;
     for(let v of vals) {
-        if(v.constant) return v._value;
+        if (v.constant) return v._value;
         sum += v._value;
     }
     return sum / vals.length;
@@ -62,7 +70,9 @@ function equalGoal(vals: Variable[]): number {
 export interface Constraint {
     type: string;
     name: string;
+
     getError(): number;
+
     getGradient(v: Variable): number; //how to adjust v to reduce error
     containsFigure(f: Figure): boolean; // should a given figure be highlighted as a part of this constraint
     asObject(obj: SketchExport, sketch: Sketch): ConstraintExport;
@@ -72,10 +82,12 @@ export class EqualConstraint implements Constraint {
     type = "equal";
     name = "equal";
     variables: Variable[];
-    constructor(vals: Variable[], name: string="equal") {
+
+    constructor(vals: Variable[], name: string = "equal") {
         this.name = name;
         this.variables = vals;
     }
+
     getError(): number {
         let error = 0;
         let avg = equalGoal(this.variables);
@@ -84,15 +96,17 @@ export class EqualConstraint implements Constraint {
         }
         return error;
     }
+
     getGradient(v: Variable): number {
-        if(this.variables.indexOf(v) == -1) return 0;
+        if (this.variables.indexOf(v) == -1) return 0;
         let avg = equalGoal(this.variables);
         return avg - v.value;
     }
+
     containsFigure(f: Figure): boolean {
-        if(f.type == "point") {
+        if (f.type == "point") {
             for(let v of this.variables) {
-                if((f as PointFigure).p.variablePoint.has(v)) return true;
+                if ((f as PointFigure).p.variablePoint.has(v)) return true;
             }
             return false;
         } else if (f.type == "line") {
@@ -132,12 +146,14 @@ export class ArcPointCoincidentConstraint implements Constraint {
     center: VariablePoint;
     radius: Variable;
     points: VariablePoint[];
-    constructor(center: VariablePoint, radius: Variable, points: VariablePoint[], name: string="point on circle") {
+
+    constructor(center: VariablePoint, radius: Variable, points: VariablePoint[], name: string = "point on circle") {
         this.name = name;
         this.center = center;
         this.radius = radius;
         this.points = points;
     }
+
     getError(): number {
         let error = 0;
         let center = this.center.toPoint();
@@ -146,16 +162,17 @@ export class ArcPointCoincidentConstraint implements Constraint {
         }
         return error;
     }
+
     getGradient(v: Variable): number {
         for(let p of this.points) {
-            if(p.has(v)) {
+            if (p.has(v)) {
                 let center = this.center.toPoint();
                 let target = p.toPoint()
                 let goal = center.pointTowards(target, this.radius.value);
                 return p.deltaVTowards(v, goal);
             }
         }
-        if(v === this.radius) {
+        if (v === this.radius) {
             let totalDist = 0;
             for(let p of this.points) {
                 let dx = p.x.value - this.center.x.value;
@@ -165,11 +182,11 @@ export class ArcPointCoincidentConstraint implements Constraint {
             let averageRadius = totalDist / this.points.length;
             return averageRadius - v.value;
         }
-        if(this.center.x == v) {
+        if (this.center.x == v) {
             let error = 0;
             for(let p of this.points) {
                 let dist = this.center.toPoint().distTo(p.toPoint());
-                if(dist == 0) continue;
+                if (dist == 0) continue;
                 let dx = this.center.x.value - p.x.value;
                 let d = this.radius.value / dist;
                 error += (1 - d) * dx;
@@ -179,7 +196,7 @@ export class ArcPointCoincidentConstraint implements Constraint {
             let error = 0;
             for(let p of this.points) {
                 let dist = this.center.toPoint().distTo(p.toPoint());
-                if(dist == 0) continue;
+                if (dist == 0) continue;
                 let dy = this.center.y.value - p.y.value;
                 let d = this.radius.value / dist;
                 error += (1 - d) * dy;
@@ -188,8 +205,9 @@ export class ArcPointCoincidentConstraint implements Constraint {
         }
         return 0;
     }
+
     containsFigure(f: Figure): boolean {
-        if(f.type == "point") {
+        if (f.type == "point") {
             return this.points.indexOf((f as PointFigure).p.variablePoint) != -1;
         } else if (f.type == "circle") {
             //just radius
@@ -229,12 +247,14 @@ export class MidpointConstraint implements Constraint {
     p1: VariablePoint;
     p2: VariablePoint;
     midpoint: VariablePoint;
-    constructor(p1: VariablePoint, p2: VariablePoint, midpoint: VariablePoint, name: string="midpoint") {
+
+    constructor(p1: VariablePoint, p2: VariablePoint, midpoint: VariablePoint, name: string = "midpoint") {
         this.name = name;
         this.p1 = p1;
         this.p2 = p2;
         this.midpoint = midpoint;
     }
+
     getError(): number {
         //distance between midpoint and average of two points
         let avgX = (this.p1.x.value + this.p2.x.value) / 2;
@@ -243,8 +263,9 @@ export class MidpointConstraint implements Constraint {
         let dy = this.midpoint.y.value - avgY;
         return Math.sqrt(dx * dx + dy * dy);
     }
+
     getGradient(v: Variable): number {
-        if(v === this.midpoint.x) {
+        if (v === this.midpoint.x) {
             let avgX = (this.p1.x.value + this.p2.x.value) / 2;
             return avgX - v.value;
         } else if (v === this.midpoint.y) {
@@ -265,17 +286,19 @@ export class MidpointConstraint implements Constraint {
         }
         return 0;
     }
+
     containsFigure(f: Figure): boolean {
-        if(f.type == "point") {
+        if (f.type == "point") {
             return this.p1 == (f as PointFigure).p.variablePoint ||
-                   this.p2 == (f as PointFigure).p.variablePoint ||
-                   this.midpoint == (f as PointFigure).p.variablePoint;
+                this.p2 == (f as PointFigure).p.variablePoint ||
+                this.midpoint == (f as PointFigure).p.variablePoint;
         } else if (f.type == "line") {
             //both points
             return this.p1 == (f as LineFigure).p1.variablePoint && this.p2 == (f as LineFigure).p2.variablePoint;
         }
         return false;
     }
+
     asObject(obj: SketchExport, sketch: Sketch): ConstraintExport {
         return {
             "type": this.type,
@@ -299,10 +322,11 @@ export class ColinearPointsConstraint implements Constraint {
     name = "colinear";
     points: VariablePoint[];
 
-    constructor(points: VariablePoint[], name: string="colinear") {
+    constructor(points: VariablePoint[], name: string = "colinear") {
         this.name = name;
         this.points = points;
     }
+
     getError(): number {
         let regression = leastSquaresRegression(this.points);
         let error = 0;
@@ -313,9 +337,10 @@ export class ColinearPointsConstraint implements Constraint {
         }
         return error;
     }
+
     getGradient(v: Variable): number {
         for(let point of this.points) {
-            if(point.has(v)) {
+            if (point.has(v)) {
                 let regression = leastSquaresRegression(this.points);
                 let p = point.toPoint();
                 let regressed = p.projectBetween(regression[0], regression[1]);
@@ -324,8 +349,9 @@ export class ColinearPointsConstraint implements Constraint {
         }
         return 0;
     }
+
     containsFigure(f: Figure): boolean {
-        if(f.type == "point") {
+        if (f.type == "point") {
             return this.points.indexOf((f as PointFigure).p.variablePoint) != -1;
         } else if (f.type == "line") {
             //both points
@@ -345,6 +371,7 @@ export class ColinearPointsConstraint implements Constraint {
             "points": points
         };
     }
+
     static fromObject(c: ConstraintExport, sketch: Sketch): ColinearPointsConstraint {
         let points = [];
         for(let p of c["points"]) {
@@ -362,20 +389,23 @@ export class TangentLineConstraint implements Constraint {
     radius: Variable;
     p1: VariablePoint;
     p2: VariablePoint;
-    constructor(center: VariablePoint, radius: Variable, p1: VariablePoint, p2: VariablePoint, name: string="tangent line") {
+
+    constructor(center: VariablePoint, radius: Variable, p1: VariablePoint, p2: VariablePoint, name: string = "tangent line") {
         this.name = name;
         this.center = center;
         this.radius = radius;
         this.p1 = p1;
         this.p2 = p2;
     }
+
     getError(): number {
         let c = this.center.toPoint();
         let projection = c.projectBetween(this.p1.toPoint(), this.p2.toPoint());
         return Math.abs(projection.distTo(c) - this.radius.value) * 10;
     }
+
     getGradient(v: Variable): number {
-        if(v == this.radius) {
+        if (v == this.radius) {
             let c = this.center.toPoint();
             let projection = c.projectBetween(this.p1.toPoint(), this.p2.toPoint());
             return projection.distTo(c) - this.radius.value;
@@ -385,24 +415,25 @@ export class TangentLineConstraint implements Constraint {
             let dist = projection.distTo(c) - this.radius.value; // distance from circle to projection
             let coincidentProjection = projection.pointTowards(c, dist); // point on circle closest to line
             let delta = coincidentProjection.sub(projection); // from projection to point on circle
-            if(this.center.x == v) return -delta.x;
-            if(this.center.y == v) return -delta.y;
-            if(this.p1.has(v)) {
+            if (this.center.x == v) return -delta.x;
+            if (this.center.y == v) return -delta.y;
+            if (this.p1.has(v)) {
                 // without also moving points slightly towards projection, there are situations where states cannot be solved...
                 let towardsP = this.p1.deltaVTowards(v, projection) / 5000;
-                if(this.p1.x == v) return delta.x + towardsP;
-                if(this.p1.y == v) return delta.y + towardsP;
+                if (this.p1.x == v) return delta.x + towardsP;
+                if (this.p1.y == v) return delta.y + towardsP;
             }
-            if(this.p2.has(v)) {
+            if (this.p2.has(v)) {
                 let towardsP = this.p2.deltaVTowards(v, projection) / 5000;
-                if(this.p2.x == v) return delta.x + towardsP;
-                if(this.p2.y == v) return delta.y + towardsP;
+                if (this.p2.x == v) return delta.x + towardsP;
+                if (this.p2.y == v) return delta.y + towardsP;
             }
         }
         return 0;
     }
+
     containsFigure(f: Figure): boolean {
-        if(f.type == "point") {
+        if (f.type == "point") {
             return this.p1 == (f as PointFigure).p.variablePoint ||
                 this.p2 == (f as PointFigure).p.variablePoint;
         } else if (f.type == "line") {
@@ -442,25 +473,27 @@ export class TangentCircleConstraint implements Constraint {
     radius1: Variable;
     center2: VariablePoint;
     radius2: Variable;
-    constructor(center1: VariablePoint, radius1: Variable, center2: VariablePoint, radius2: Variable, name: string="tangent circles") {
+
+    constructor(center1: VariablePoint, radius1: Variable, center2: VariablePoint, radius2: Variable, name: string = "tangent circles") {
         this.name = name;
         this.center1 = center1;
         this.radius1 = radius1;
         this.center2 = center2;
         this.radius2 = radius2;
     }
+
     getError(): number {
         let dist = this.center1.toPoint().distTo(this.center2.toPoint());
         let r1 = this.radius1.value;
         let r2 = this.radius2.value;
         let maxR = Math.max(r1, r2);
         let rsum = r1 + r2;
-        if(dist > maxR) {
+        if (dist > maxR) {
             //circles are outside of each other.
             return Math.abs(dist - rsum)
         } else {
             //circle with smaller radius has center within other circle
-            if(r1 < r2) {
+            if (r1 < r2) {
                 //circle 1 is inside circle 2
                 return Math.abs(r2 - (dist + r1));
             } else {
@@ -469,25 +502,26 @@ export class TangentCircleConstraint implements Constraint {
             }
         }
     }
+
     getGradient(v: Variable): number {
-        if(this.radius1 == v || this.radius2 == v) {
+        if (this.radius1 == v || this.radius2 == v) {
             let dist = this.center1.toPoint().distTo(this.center2.toPoint());
             let r1 = this.radius1.value;
             let r2 = this.radius2.value;
             let maxR = Math.max(r1, r2);
             let rsum = r1 + r2;
-            if(dist > maxR) {
+            if (dist > maxR) {
                 //circles are outside of each other.
                 let delta = dist - rsum;
-                if(this.radius1 == v && this.radius1.value + delta <= 0) return 0;
-                if(this.radius2 == v && this.radius2.value + delta <= 0) return 0;
+                if (this.radius1 == v && this.radius1.value + delta <= 0) return 0;
+                if (this.radius2 == v && this.radius2.value + delta <= 0) return 0;
                 return delta;
             } else {
                 //circle with smaller radius has center within other circle
-                if(r1 < r2) {
+                if (r1 < r2) {
                     //circle 1 is inside circle 2
                     let delta = r2 - (dist + r1);
-                    if(this.radius1 == v) {
+                    if (this.radius1 == v) {
                         return delta;
                     } else {
                         return -delta;
@@ -495,7 +529,7 @@ export class TangentCircleConstraint implements Constraint {
                 } else {
                     //circle 2 is inside circle 1
                     let delta = r1 - (dist + r2);
-                    if(this.radius2 == v) {
+                    if (this.radius2 == v) {
                         return delta;
                     } else {
                         return -delta;
@@ -503,16 +537,16 @@ export class TangentCircleConstraint implements Constraint {
                 }
             }
         }
-        if(this.center1.has(v) || this.center2.has(v)) {
+        if (this.center1.has(v) || this.center2.has(v)) {
             let dist = this.center1.toPoint().distTo(this.center2.toPoint());
             let r1 = this.radius1.value;
             let r2 = this.radius2.value;
             let maxR = Math.max(r1, r2);
             let rsum = r1 + r2;
-            if(dist > maxR) {
+            if (dist > maxR) {
                 //circles are outside of each other.
                 let delta = dist - rsum;
-                if(this.center1.has(v)) {
+                if (this.center1.has(v)) {
                     let goal = this.center1.toPoint().pointTowards(this.center2.toPoint(), delta);
                     return this.center1.deltaVTowards(v, goal);
                 } else {
@@ -521,10 +555,10 @@ export class TangentCircleConstraint implements Constraint {
                 }
             } else {
                 //circle with smaller radius has center within other circle
-                if(r1 < r2) {
+                if (r1 < r2) {
                     //circle 1 is inside circle 2
                     let delta = r2 - (dist + r1);
-                    if(this.center1.has(v)) {
+                    if (this.center1.has(v)) {
                         let goal = this.center1.toPoint().pointTowards(this.center2.toPoint(), -delta);
                         return this.center1.deltaVTowards(v, goal);
                     } else {
@@ -534,7 +568,7 @@ export class TangentCircleConstraint implements Constraint {
                 } else {
                     //circle 2 is inside circle 1
                     let delta = r1 - (dist + r2);
-                    if(this.center1.has(v)) {
+                    if (this.center1.has(v)) {
                         let goal = this.center1.toPoint().pointTowards(this.center2.toPoint(), -delta);
                         return this.center1.deltaVTowards(v, goal);
                     } else {
@@ -546,11 +580,12 @@ export class TangentCircleConstraint implements Constraint {
         }
         return 0;
     }
+
     containsFigure(f: Figure): boolean {
         if (f.type == "circle") {
             //just radius
             return this.radius1 == (f as CircleFigure).r ||
-                   this.radius2 == (f as CircleFigure).r;
+                this.radius2 == (f as CircleFigure).r;
         }
         return false;
     }
@@ -565,6 +600,7 @@ export class TangentCircleConstraint implements Constraint {
             "r2": sketch.variables.indexOf(this.radius2),
         };
     }
+
     static fromObject(c: ConstraintExport, sketch: Sketch): TangentCircleConstraint {
         let c1 = sketch.points[c["c1"]];
         let r1 = sketch.variables[c["r1"]];
@@ -578,10 +614,12 @@ export class EqualLengthConstraint implements Constraint {
     type = "equal-length";
     name = "equal length";
     pairs: [VariablePoint, VariablePoint][];
-    constructor(pairs: [VariablePoint, VariablePoint][], name: string="equal length") {
+
+    constructor(pairs: [VariablePoint, VariablePoint][], name: string = "equal length") {
         this.name = name;
         this.pairs = pairs;
     }
+
     getError(): number {
         let goal = this.getGoalLength();
         let error = 0;
@@ -592,31 +630,33 @@ export class EqualLengthConstraint implements Constraint {
         }
         return error;
     }
+
     getGoalLength(): number {
         let sumDist = 0;
         for(let pair of this.pairs) {
             let p1 = pair[0].toPoint();
             let p2 = pair[1].toPoint();
             let dist = p1.distTo(p2);
-            if(pair[0].x.constant && pair[0].y.constant && pair[1].x.constant && pair[1].y.constant) {
+            if (pair[0].x.constant && pair[0].y.constant && pair[1].x.constant && pair[1].y.constant) {
                 return dist;
             }
             sumDist += dist;
         }
         return sumDist / this.pairs.length;
     }
+
     getGradient(v: Variable): number {
         for(let pair of this.pairs) {
-            if(pair[0].has(v) || pair[1].has(v)) {
+            if (pair[0].has(v) || pair[1].has(v)) {
                 let goal = this.getGoalLength();
 
-                if(pair[0].has(v)) {
+                if (pair[0].has(v)) {
                     let p0 = pair[0].toPoint();
                     let goalPoint = pair[1].toPoint().pointTowards(p0, goal);
                     return pair[0].deltaVTowards(v, goalPoint);
                 }
 
-                if(pair[1].has(v)) {
+                if (pair[1].has(v)) {
                     let p1 = pair[1].toPoint();
                     let goalPoint = pair[0].toPoint().pointTowards(p1, goal);
                     return pair[1].deltaVTowards(v, goalPoint);
@@ -625,10 +665,11 @@ export class EqualLengthConstraint implements Constraint {
         }
         return 0;
     }
+
     containsFigure(f: Figure): boolean {
         if (f.type == "line") {
             for(let pair of this.pairs) {
-                if(pair[0] == (f as LineFigure).p1.variablePoint && pair[1] == (f as LineFigure).p2.variablePoint) {
+                if (pair[0] == (f as LineFigure).p1.variablePoint && pair[1] == (f as LineFigure).p2.variablePoint) {
                     return true;
                 }
             }
@@ -647,6 +688,7 @@ export class EqualLengthConstraint implements Constraint {
             "pairs": pairs,
         };
     }
+
     static fromObject(c: ConstraintExport, sketch: Sketch): EqualLengthConstraint {
         let pairs = [];
         for(let pair of c["pairs"]) {
@@ -661,11 +703,11 @@ function leastSquaresRegression(points: VariablePoint[]): [Point, Point] {
     //hacky solution to avoid weird behavior when dragging vertical points
     let constantPoints: Point[] = [];
     for(let p of points) {
-        if(p.x.constant) {
+        if (p.x.constant) {
             constantPoints.push(p.toPoint());
         }
     }
-    if(constantPoints.length > 1) {
+    if (constantPoints.length > 1) {
         return [constantPoints[0], constantPoints[1]];
     }
 
@@ -686,7 +728,7 @@ function leastSquaresRegression(points: VariablePoint[]): [Point, Point] {
     }
     let numerator = (n * xys) - (xs * ys);
     let denominator = n * x2s - (xs * xs);
-    if (denominator == 0 || Math.abs(numerator/denominator) > 1) {
+    if (denominator == 0 || Math.abs(numerator / denominator) > 1) {
         denominator = n * y2s - (ys * ys);
 
         let slope = numerator / denominator;
@@ -728,6 +770,6 @@ export function constraintFromObject(c: ConstraintExport, sketch: Sketch): Const
         case "equal-length":
             cs = EqualLengthConstraint.fromObject(c, sketch);
     }
-    if(c.name) cs.name = c.name;
+    if (c.name) cs.name = c.name;
     return cs;
 }

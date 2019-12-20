@@ -14,7 +14,7 @@ export default class ToolSelect extends Tool {
     down(point: Point) {
         this.pressed = true;
         this.downFigure = this.getFigureNearPoint(point);
-        if(!this.downFigure) {
+        if (!this.downFigure) {
             this.protractr.ui.infoPane.selectedFiguresList.clear();
             this.selectionStart = point;
             this.selectionEnd = point;
@@ -25,15 +25,15 @@ export default class ToolSelect extends Tool {
     }
 
     up(point: Point) {
-        if(this.downFigure) {
+        if (this.downFigure) {
             this.protractr.sketch.solveConstraints();
             this.downFigure.setLocked(false);
             this.protractr.sketch.solveConstraints(true);
             this.protractr.ui.pushState();
         }
-        if(!this.dragging && this.downFigure) {
+        if (!this.dragging && this.downFigure) {
             let list = this.protractr.ui.infoPane.selectedFiguresList;
-            if(list.figureSelected(this.downFigure)) {
+            if (list.figureSelected(this.downFigure)) {
                 list.removeFigure(this.downFigure);
             } else {
                 list.addFigure(this.downFigure);
@@ -43,8 +43,8 @@ export default class ToolSelect extends Tool {
     }
 
     move(point: Point) {
-        if(this.pressed) this.dragging = true;
-        if(this.downFigure && this.dragging) {
+        if (this.pressed) this.dragging = true;
+        if (this.downFigure && this.dragging) {
             this.downFigure.setLocked(false);
             this.downFigure.translate(this.lastDrag, point.copy());
             this.downFigure.setLocked(true);
@@ -54,8 +54,8 @@ export default class ToolSelect extends Tool {
             this.selectionEnd = point;
             if (this.selectionStart) {
                 let selection = [];
-                for (let figure of protractr.sketch.rootFigures) {
-                    for (let relatedFigure of figure.getRelatedFigures()) {
+                for(let figure of protractr.sketch.rootFigures) {
+                    for(let relatedFigure of figure.getRelatedFigures()) {
                         if (this.figureShouldBeSelected(relatedFigure)) {
                             selection.push(relatedFigure);
                         }
@@ -67,7 +67,7 @@ export default class ToolSelect extends Tool {
     }
 
     draw(sketchView: SketchView) {
-        if(!this.selectionStart || !this.selectionEnd) return;
+        if (!this.selectionStart || !this.selectionEnd) return;
         let w = this.selectionEnd.x - this.selectionStart.x;
         let h = this.selectionEnd.y - this.selectionStart.y;
         sketchView.ctx.fillStyle = "green";
@@ -90,15 +90,15 @@ export default class ToolSelect extends Tool {
     }
 
     figureInRectangle(figure: Figure): boolean {
-        if(figure.type == "point") {
+        if (figure.type == "point") {
             let p = (figure as PointFigure).p;
             return (
-                    (this.selectionStart.x > p.x && this.selectionEnd.x < p.x) ||
-                    (this.selectionStart.x < p.x && this.selectionEnd.x > p.x)
-                ) && (
-                    (this.selectionStart.y > p.y && this.selectionEnd.y < p.y) ||
-                    (this.selectionStart.y < p.y && this.selectionEnd.y > p.y)
-                );
+                (this.selectionStart.x > p.x && this.selectionEnd.x < p.x) ||
+                (this.selectionStart.x < p.x && this.selectionEnd.x > p.x)
+            ) && (
+                (this.selectionStart.y > p.y && this.selectionEnd.y < p.y) ||
+                (this.selectionStart.y < p.y && this.selectionEnd.y > p.y)
+            );
         }
 
         let p1 = this.selectionStart;
@@ -106,7 +106,7 @@ export default class ToolSelect extends Tool {
         let p3 = this.selectionEnd;
         let p4 = new Point(this.selectionEnd.x, this.selectionStart.y);
 
-        if(figure.type == "line") {
+        if (figure.type == "line") {
             let line = (figure as LineFigure);
             if (this.figureInRectangle(line.childFigures[0]) || this.figureInRectangle(line.childFigures[1])) {
                 return true;
@@ -128,10 +128,10 @@ export default class ToolSelect extends Tool {
             let p4In = center.distTo(p4) < radius;
 
             let allInside = p1In && p2In && p3In && p4In;
-            if(allInside) return false;
+            if (allInside) return false;
 
             let allOutside = !p1In && !p2In && !p3In && !p4In;
-            if(!allOutside) return true;
+            if (!allOutside) return true;
 
             if (this.figureInRectangle(circle.childFigures[0])) return true;
 

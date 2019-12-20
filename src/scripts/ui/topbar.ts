@@ -15,6 +15,7 @@ import Tool from "./tools/tool";
 export class TopBar {
     menuBar: MenuBar;
     toolGroup: ToolGroup;
+
     constructor(protractr: Protractr, topBarElement: HTMLDivElement) {
         this.menuBar = new MenuBar();
         this.toolGroup = new ToolGroup();
@@ -56,6 +57,7 @@ export class TopBar {
 
         topBarElement.appendChild(this.menuBar.div);
     }
+
     get activeTool(): Tool {
         return this.toolGroup.selectedTool;
     }
