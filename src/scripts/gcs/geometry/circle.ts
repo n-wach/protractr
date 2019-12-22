@@ -14,7 +14,7 @@ export default class Circle extends Figure {
 
     constructor(c: Point, r: number) {
         super();
-        this.c = c;
+        this.c = c.copy();
         this._r = new Variable(r);
     }
 
@@ -41,11 +41,11 @@ export default class Circle extends Figure {
     }
 
     getClosestPoint(point: Point): Point {
-        return Util.projectOntoCircle(point, this);
+        return Util.projectOntoCircle(this, point);
     }
 
     translate(from: Point, to: Point) {
-        this.r = Util.distanceBetween(to, this.c);
+        this.r = Util.distanceBetweenPoints(to, this.c);
     }
 
     copy(): Circle {

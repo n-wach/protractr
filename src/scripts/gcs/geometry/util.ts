@@ -5,6 +5,7 @@
 import Line from "./line";
 import Point from "./point";
 import Circle from "./circle";
+import Variable from "../variable";
 
 export default class Util {
 
@@ -28,7 +29,7 @@ export default class Util {
      * @param line
      */
     static lengthOfLine(line: Line): number {
-        return Util.distanceBetween(line.p0, line.p1);
+        return Util.distanceBetweenPoints(line.p0, line.p1);
     }
 
     /**
@@ -36,10 +37,29 @@ export default class Util {
      * @param p0
      * @param p1
      */
-    static distanceBetween(p0: Point, p1: Point): number {
+    static distanceBetweenPoints(p0: Point, p1: Point): number {
         let dx = p0.x - p1.x;
         let dy = p0.y - p1.y;
         return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    /**
+     * Return the distance from point to its projection onto line
+     * @param line
+     * @param point
+     */
+    static distanceToLine(line: Line, point: Point) {
+        let projection = Util.projectOntoLine(line, point);
+        return Util.distanceBetweenPoints(point, projection);
+    }
+
+    /**
+     * Distance from point to the nearest point on circle
+     * @param circle
+     * @param point
+     */
+    static distanceToCircle(circle: Circle, point: Point) {
+        return Math.abs(Util.distanceBetweenPoints(circle.c, point) - circle.r);
     }
 
     /**
@@ -71,16 +91,8 @@ export default class Util {
      * @param point
      * @param circle
      */
-    static projectOntoCircle(point: Point, circle: Circle) {
-        let r = circle.r;
-        // ray represents the direction from the center of the circle to the point
-        let ray = new Point(circle.c.x - point.x, circle.c.y - point.y);
-        // now we set the magnitude of the ray to the radius
-        let normalized = Util.normalize(ray);
-        normalized.x *= r;
-        normalized.y *= r;
-        // then we translate the point back relative to the center of the circle
-        return new Point(normalized.x + circle.c.x, normalized.y + circle.c.y);
+    static projectOntoCircle(circle: Circle, point: Point) {
+        return Util.pointInDirection(circle.c, point, circle.r);
     }
 
     /**
@@ -88,9 +100,9 @@ export default class Util {
      * @param point
      * @param line
      */
-    static projectOntoLine(point: Point, line: Line): Point {
-        let r = Util.projectionFactorBetween(point, line);
-        return Util.pointAlongLine(r, line);
+    static projectOntoLine(line: Line, point: Point): Point {
+        let r = Util.projectionFactorBetween(line, point);
+        return Util.pointAlongLine(line, r);
     }
 
     /**
@@ -98,11 +110,11 @@ export default class Util {
      * @param point
      * @param line
      */
-    static projectSegment(point: Point, line: Line): Point {
-        let r = Util.projectionFactorBetween(point, line);
+    static projectSegment(line: Line, point: Point): Point {
+        let r = Util.projectionFactorBetween(line, point);
         if (r < 0) r = 0;
         else if (r > 1 || isNaN(r)) r = 1;
-        return Util.pointAlongLine(r, line);
+        return Util.pointAlongLine(line, r);
     }
 
     /**
@@ -113,7 +125,7 @@ export default class Util {
      * @param r
      * @param line
      */
-    static pointAlongLine(r: number, line: Line): Point {
+    static pointAlongLine(line: Line, r: number): Point {
         let px = line.p0.x + r * (line.p1.x - line.p0.x);
         let py = line.p0.y + r * (line.p1.y - line.p0.y);
         return new Point(px, py);
@@ -125,7 +137,7 @@ export default class Util {
      * @param point
      * @param line
      */
-    static projectionFactorBetween(point: Point, line: Line): number {
+    static projectionFactorBetween(line: Line, point: Point): number {
         if (line.p0.equals(point)) return 0;
         if (line.p1.equals(point)) return 1;
         let dx = line.p0.x - line.p1.x;
@@ -154,7 +166,7 @@ export default class Util {
      * @param point
      * @param line
      */
-    static onSegment(point: Point, line: Line): boolean {
+    static onSegment(line: Line, point: Point): boolean {
         return line.p0.x <= Math.max(point.x, line.p1.x) &&
                line.p0.x >= Math.min(point.x, line.p1.x) &&
                line.p0.y <= Math.max(point.y, line.p1.y) &&
@@ -176,11 +188,122 @@ export default class Util {
         if (o0 != o1 && o2 != o3) return true;
 
         // Special Cases
-        if (o0 == 0 && Util.onSegment(line1.p0, line0)) return true;
-        if (o1 == 0 && Util.onSegment(line1.p1, line0)) return true;
-        if (o2 == 0 && Util.onSegment(line0.p0, line1)) return true;
-        if (o3 == 0 && Util.onSegment(line0.p1, line1)) return true;
+        if (o0 == 0 && Util.onSegment(line0, line1.p0)) return true;
+        if (o1 == 0 && Util.onSegment(line0, line1.p1)) return true;
+        if (o2 == 0 && Util.onSegment(line1, line0.p0)) return true;
+        if (o3 == 0 && Util.onSegment(line1, line0.p1)) return true;
 
         return false;
+    }
+
+    /**
+     * Return [variable, delta] pairs corresponding to changing point to goal.
+     * @param point
+     * @param goal
+     */
+    static pointDeltas(point: Point, goal: Point): [Variable, number][] {
+        return [
+            [point._x, goal.x - point.x],
+            [point._y, goal.y - point.y],
+        ];
+    }
+
+    /**
+     * Return a point which is point reflected across pivot
+     * @param point
+     * @param pivot
+     */
+    static reflectOver(point: Point, pivot: Point): Point {
+        let dx = point.x - pivot.x;
+        let dy = point.y - pivot.y;
+        return new Point(point.x - dx * 2, point.y - dy * 2);
+    }
+
+    /**
+     * Check for any forced regression lines.
+     * These can be caused by constant variables or variable links
+     * @param points
+     */
+    static forcedRegressionLine(...points: Point[]): Line {
+        // look for any constants
+        let constantXPoints: Point[] = [];
+        let constantYPoints: Point[] = [];
+        for(let p of points) {
+            if(p._x.constant) constantXPoints.push(p);
+            if(constantXPoints.length >= 2) {
+                return new Line(constantXPoints[0], constantXPoints[1]);
+            }
+            if(p._y.constant) constantYPoints.push(p);
+            if(constantYPoints.length >= 2) {
+                return new Line(constantYPoints[0], constantYPoints[1]);
+            }
+        }
+
+        // we also check for linked variables... this will take care of
+        // points with existing horizontal or vertical relations
+        for(let p0 of points) {
+            for(let p1 of points) {
+                if(p0 === p1) continue;
+                if(p0._x._v === p1._x._v) return new Line(p0, p1);
+                if(p0._y._v === p1._y._v) return new Line(p0, p1);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Return a line representing the least squares regression of points.
+     * This returns the best regression out of x^2 and y^2.
+     * @param points
+     */
+    static leastSquaresRegression(...points: Point[]): Line {
+        let xs = 0;
+        let ys = 0;
+        let x2s = 0;
+        let y2s = 0;
+        let xys = 0;
+        let n = points.length;
+        for(let p of points) {
+            xs += p.x;
+            ys += p.y;
+            x2s += p.x * p.x;
+            y2s += p.y * p.y;
+            xys += p.x * p.y;
+        }
+        let numerator = (n * xys) - (xs * ys);
+        let denominator = n * x2s - (xs * xs);
+        if (denominator === 0 || Math.abs(numerator / denominator) > 1) {
+            denominator = n * y2s - (ys * ys);
+
+            let slope = numerator / denominator;
+            let xintercept = (xs - slope * ys) / n;
+
+            let p0 = new Point(xintercept, 0);
+            let p1 = new Point(xintercept + slope, 1);
+            return new Line(p0, p1);
+        }
+        let slope = numerator / denominator;
+        let yintercept = (ys - slope * xs) / n;
+
+        let p0 = new Point(0, yintercept);
+        let p1 = new Point(1, yintercept + slope);
+        return new Line(p0, p1);
+    }
+
+    /**
+     * Return a point that is `distance` away from `from` in the direction of `to`
+     * @param from
+     * @param to
+     * @param distance
+     */
+    static pointInDirection(from: Point, to: Point, distance: number) {
+        // ray represents the direction from from to to
+        let ray = new Point(to.x - from.x, to.y - from.y);
+        // now we set the magnitude of the ray to the distance
+        let normalized = Util.normalize(ray);
+        normalized.x *= distance;
+        normalized.y *= distance;
+        // then we translate the point back relative to from
+        return new Point(normalized.x + from.x, normalized.y + from.y);
     }
 }

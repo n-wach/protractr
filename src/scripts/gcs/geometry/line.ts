@@ -12,8 +12,8 @@ export default class Line extends Figure {
     _constant: boolean;
     constructor(p0: Point, p1: Point) {
         super();
-        this.p0 = p0;
-        this.p1 = p1;
+        this.p0 = p0.copy();
+        this.p1 = p1.copy();
     }
 
     getChildFigures(): Figure[] {
@@ -21,7 +21,7 @@ export default class Line extends Figure {
     }
 
     getClosestPoint(point) {
-        return Util.projectSegment(point, this);
+        return Util.projectSegment(this, point);
     }
 
     setConstant(c: boolean) {
