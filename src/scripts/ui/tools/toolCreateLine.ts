@@ -4,9 +4,9 @@
 /** */
 
 import ToolCreateFigure from "./toolCreateFigure";
-import {SketchView} from "../sketchview";
-import {LineFigure} from "../../gcs/figures";
 import Protractr from "../../protractr";
+import SketchView from "../sketchview";
+import Line from "../../gcs/geometry/line";
 
 export default class ToolCreateLine extends ToolCreateFigure {
     constructor(protractr: Protractr) {
@@ -14,12 +14,10 @@ export default class ToolCreateLine extends ToolCreateFigure {
     }
 
     addFigure() {
-        let p0 = this.points[0].point;
-        let p1 = this.points[1].point;
-        let lineFigure = new LineFigure(p0, p1);
-        this.constrainBySnap(lineFigure.childFigures[0], this.points[0].snapFigure);
-        this.constrainBySnap(lineFigure.childFigures[1], this.points[1].snapFigure);
-        this.protractr.sketch.addFigure(lineFigure);
+        let line = new Line(this.points[0].point, this.points[1].point);
+        this.addRelationsBySnap(line.p0, this.points[0].snapFigure);
+        this.addRelationsBySnap(line.p1, this.points[1].snapFigure);
+        this.protractr.sketch.addFigure(line);
     }
 
     draw(sketchView: SketchView) {

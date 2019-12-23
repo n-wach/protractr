@@ -54,6 +54,16 @@ export default class Util {
     }
 
     /**
+     * Return the distance from point to the closest point on segment
+     * @param segment
+     * @param point
+     */
+    static distanceToSegment(segment: Line, point: Point) {
+        let projection = Util.projectOntoSegment(segment, point);
+        return Util.distanceBetweenPoints(point, projection);
+    }
+
+    /**
      * Distance from point to the nearest point on circle
      * @param circle
      * @param point
@@ -110,7 +120,7 @@ export default class Util {
      * @param point
      * @param line
      */
-    static projectSegment(line: Line, point: Point): Point {
+    static projectOntoSegment(line: Line, point: Point): Point {
         let r = Util.projectionFactorBetween(line, point);
         if (r < 0) r = 0;
         else if (r > 1 || isNaN(r)) r = 1;
@@ -305,5 +315,37 @@ export default class Util {
         normalized.y *= distance;
         // then we translate the point back relative to from
         return new Point(normalized.x + from.x, normalized.y + from.y);
+    }
+
+    /**
+     * Returns if `point` is within the rectangle created by `corner0` and `corner1`
+     * @param corner0
+     * @param corner1
+     * @param point
+     */
+    static pointWithinRectangle(corner0: Point, corner1: Point, point: Point): boolean {
+        return (
+            (corner0.x > point.x && corner1.x < point.x) ||
+            (corner0.x < point.x && corner1.x > point.x)) && (
+            (corner0.y > point.y && corner1.y < point.y) ||
+            (corner0.y < point.y && corner1.y > point.y));
+    }
+
+    /**
+     * Returns if `point` lies within `circle`
+     * @param circle
+     * @param point
+     */
+    static pointWithinCircle(circle: Circle, point: Point): boolean {
+        return Util.distanceBetweenPoints(circle.c, point) <= circle.r;
+    }
+
+    /**
+     * Returns if line intersects or is contained by circle
+     * @param circle
+     * @param line
+     */
+    static lineIntersectsCircle(circle: Circle, line: Line): boolean {
+        return Util.distanceToSegment(line, circle.c) <= circle.r;
     }
 }

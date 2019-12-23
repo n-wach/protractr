@@ -4,13 +4,13 @@
 /** */
 
 import Tool from "./tool";
-import {CircleFigure, Figure, LineFigure, Point, PointFigure} from "../../gcs/figures";
-import {
-    ArcPointCoincidentConstraint,
-    ColinearPointsConstraint,
-    EqualConstraint,
-    MidpointConstraint
-} from "../../gcs/constraint";
+import Figure from "../../gcs/geometry/figure";
+import Point from "../../gcs/geometry/point";
+import Circle from "../../gcs/geometry/circle";
+import Line from "../../gcs/geometry/line";
+import RelationEqual from "../../gcs/relations/relationEqual";
+import RelationPointsOnCircle from "../../gcs/relations/relationPointsOnCircle";
+import RelationColinearPoints from "../../gcs/relations/relationColinearPoints";
 
 type FigureCreationPoint = { point: Point, snapFigure: Figure };
 
@@ -58,37 +58,22 @@ export default abstract class ToolCreateFigure extends Tool {
         }
     }
 
-    constrainBySnap(figure: Figure, snapFigure: Figure) {
+    addRelationsBySnap(figure: Figure, snapFigure: Figure) {
         if (!snapFigure) return;
-        if (figure.type == "point") {
-            let point = (figure as PointFigure).p;
-            let vp = point.variablePoint;
-            if (snapFigure.type == "point") {
-                let v1 = (snapFigure as PointFigure).p.variablePoint;
-                let ex = new EqualConstraint([v1.x, vp.x], "vertical");
-                let ey = new EqualConstraint([v1.y, vp.y], "horizontal");
-                this.protractr.sketch.addConstraints([ex, ey])
-            } else if (snapFigure.type == "circle") {
-                let r = (snapFigure as CircleFigure).r;
-                let c = (snapFigure as CircleFigure).c.variablePoint;
-                this.protractr.sketch.addConstraints([new ArcPointCoincidentConstraint(c, r, [vp])]);
-            } else if (snapFigure.type == "line") {
-                let p1 = (snapFigure as LineFigure).p1;
-                let p2 = (snapFigure as LineFigure).p2;
-                let midpoint = Point.averagePoint(p1, p2);
-                if (midpoint.distTo(point) < 5 / this.protractr.ui.sketchView.ctxScale) {
-                    this.protractr.sketch.addConstraints([new MidpointConstraint(p1.variablePoint, p2.variablePoint, vp)]);
-                } else {
-                    this.protractr.sketch.addConstraints([new ColinearPointsConstraint([p1.variablePoint, p2.variablePoint, vp])]);
-                }
+        if (figure instanceof Point) {
+            if (snapFigure instanceof Point) {
+                let ex = new RelationEqual(figure._x, snapFigure._x);
+                let ey = new RelationEqual(figure._y, snapFigure._y);
+                this.protractr.sketch.relationManager.addRelations(ex, ey);
+            } else if (snapFigure instanceof Circle) {
+                this.protractr.sketch.relationManager.addRelations(new RelationPointsOnCircle(snapFigure, figure));
+            } else if (snapFigure instanceof Line) {
+                this.protractr.sketch.relationManager.addRelations(new RelationColinearPoints(snapFigure.p0, snapFigure.p1, figure));
+                // TODO midpoint
             }
-        } else if (figure.type == "circle") {
-            let circleFigure = (figure as CircleFigure);
-            if (snapFigure.type == "point") {
-                let r = circleFigure.r;
-                let c = circleFigure.c.variablePoint;
-                let p = (snapFigure as PointFigure).p.variablePoint;
-                this.protractr.sketch.addConstraints([new ArcPointCoincidentConstraint(c, r, [p])]);
+        } else if (figure instanceof Circle) {
+            if (snapFigure instanceof Point) {
+                this.protractr.sketch.relationManager.addRelations(new RelationPointsOnCircle(figure, snapFigure));
             }
         }
     }

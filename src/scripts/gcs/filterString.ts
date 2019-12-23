@@ -3,10 +3,13 @@
  */
 /** */
 
-import {Figure} from "./figures";
+import Figure from "./geometry/figure";
+import Circle from "./geometry/circle";
+import Line from "./geometry/line";
+import Point from "./geometry/point";
 
 type MatchQuantifier = string;
-type FigureType = string;
+type FigureType = "point" | "line" | "circle";
 type TypeMatch = { quantifier: MatchQuantifier, type: FigureType };
 type TypeMatchExpression = TypeMatch[];
 type TypeMatchExpressionList = TypeMatchExpression[];
@@ -62,7 +65,7 @@ export default class FilterString {
         //let as = split[1];
         let toTypeCount = parseInt(split[2]);
         let toType = split[3];
-        return {from: fromType, count: toTypeCount, to: toType};
+        return {from: (fromType as FigureType), count: toTypeCount, to: (toType as FigureType)};
     }
 
     private parseTypeMatchExpressionList(typeMatchExpressionList: string): TypeMatchExpressionList {
@@ -89,7 +92,7 @@ export default class FilterString {
                 if (quantifier == "*") quantifier = "0+";
                 if (quantifier == "" || quantifier == undefined) quantifier = "1";
                 let type = typeMatch.substr(i);
-                return {quantifier: quantifier, type: type};
+                return {quantifier: quantifier, type: (type as FigureType)};
             }
         }
         console.error("Invalid TypeMatch:", typeMatch);
@@ -99,11 +102,12 @@ export default class FilterString {
     satisfiesFilter(figures: Figure[]) {
         let rawTypes = {};
         for(let fig of figures) {
-            if (rawTypes[fig.type] === undefined) {
-                rawTypes[fig.type] = 1;
-                continue;
+            let type = getFigureTypeString(fig);
+            if (rawTypes[type] === undefined) {
+                rawTypes[type] = 1;
+            } else {
+                rawTypes[type] += 1;
             }
-            rawTypes[fig.type] += 1;
         }
         for(let filterCase of this.filter) {
             let typeCopy = {};
@@ -167,4 +171,11 @@ export default class FilterString {
         let exact = parseInt(quantifier);
         return count == exact;
     }
+}
+
+function getFigureTypeString(figure: Figure): FigureType {
+    if(figure instanceof Point) return "point";
+    if(figure instanceof Line) return "line";
+    if(figure instanceof Circle) return "circle";
+    return null;
 }

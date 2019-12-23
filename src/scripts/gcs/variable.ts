@@ -1,4 +1,4 @@
-class Value {
+export class Value {
     private _v: number;
     constant: boolean;
 
@@ -22,7 +22,7 @@ export default class Variable {
     _links: Variable[] = [this];
 
     constructor(v: number) {
-        this.v = v;
+        this._v = new Value(v);
         this._constant = false;
     }
 

@@ -21,7 +21,7 @@ export default class Line extends Figure {
     }
 
     getClosestPoint(point) {
-        return Util.projectSegment(this, point);
+        return Util.projectOntoSegment(this, point);
     }
 
     setConstant(c: boolean) {
@@ -34,8 +34,13 @@ export default class Line extends Figure {
         let dy = to.y - from.y;
         this.p0.x += dx;
         this.p0.y += dy;
-        this.p1.x += dx;
-        this.p1.y += dy;
+        // If the values are linked, we only need to translate one of them
+        if (this.p0._x._v !== this.p1._x._v) {
+            this.p1.x += dx;
+        }
+        if (this.p0._y._v !== this.p1._y._v) {
+            this.p1.y += dy;
+        }
     }
 
     equals(other: Figure) {

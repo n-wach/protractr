@@ -4,7 +4,7 @@
 /** */
 
 import {Sidepane} from "./sidepane";
-import {SketchView} from "./sketchview";
+import SketchView from "./sketchview";
 import Protractr from "../protractr";
 import History from "./history";
 import TopBar from "./topbar";

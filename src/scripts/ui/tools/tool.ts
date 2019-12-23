@@ -5,8 +5,8 @@
 /** */
 
 import Protractr from "../../protractr";
-import {Point} from "../../gcs/figures";
-import {SketchView} from "../sketchview";
+import SketchView from "../sketchview";
+import Point from "../../gcs/geometry/point";
 
 export default abstract class Tool {
     protractr: Protractr;

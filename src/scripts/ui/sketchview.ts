@@ -3,10 +3,13 @@
  */
 /** */
 
-import {CircleFigure, Figure, LineFigure, Point, PointFigure} from "../gcs/figures";
 import {UI} from "./ui";
+import Point from "../gcs/geometry/point";
+import Figure from "../gcs/geometry/figure";
+import Line from "../gcs/geometry/line";
+import Circle from "../gcs/geometry/circle";
 
-export class SketchView {
+export default class SketchView {
     canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
 
@@ -97,7 +100,7 @@ export class SketchView {
 
     updateHover(point: Point) {
         let closest;
-        closest = this.ui.protractr.sketch.getClosestFigure(point, [], 10, this.ctxScale);
+        closest = this.ui.protractr.sketch.getClosestFigure(point, this.ctxScale, 10);
         this.hoveredFigure = closest;
         if (this.hoveredFigure != null) {
             this.setCursor("move");
@@ -153,9 +156,10 @@ export class SketchView {
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
         this.ctx.translate(this.ctxOrigin.x, this.ctxOrigin.y);
         this.ctx.scale(this.ctxScale, this.ctxScale);
-        for(let fig of this.ui.protractr.sketch.rootFigures) {
-            for(let child of fig.getRelatedFigures()) {
-                this.drawFigure(child);
+        for(let fig of this.ui.protractr.sketch.figures) {
+            this.drawFigure(fig);
+            for(let child of fig.getChildFigures()) {
+                this.drawFigure(fig);
             }
         }
         this.ctx.strokeStyle = "black";
