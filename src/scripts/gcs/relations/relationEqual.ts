@@ -1,3 +1,8 @@
+/**
+ * @module gcs/relations
+ */
+/** */
+
 import Relation from "./relation";
 import Variable from "../variable";
 

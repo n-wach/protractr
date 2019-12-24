@@ -1,3 +1,8 @@
+/**
+ * @module gcs/relations
+ */
+/** */
+
 import Relation, {VariableDelta} from "./relation";
 import Variable from "../variable";
 import Point from "../geometry/point";
@@ -50,7 +55,10 @@ export default class RelationPointsOnCircle extends Relation {
         }
 
         let averageRadius = totalDistance / this.points.length;
-        deltas.push([this.circle._r, averageRadius - this.circle.r]);
+
+        let dr = averageRadius - this.circle.r;
+
+        deltas.push([this.circle._r, dr]);
 
         deltas.push([this.circle.c._x, centerXDelta]);
         deltas.push([this.circle.c._y, centerYDelta]);

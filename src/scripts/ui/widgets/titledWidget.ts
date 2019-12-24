@@ -1,3 +1,7 @@
+/**
+ * @module ui/widgets
+ */
+/** */
 import Widget from "./widget";
 import UI from "../ui";
 

@@ -11,6 +11,7 @@ import TopBar from "./topbar";
 import Figure from "../gcs/geometry/figure";
 import Relation from "../gcs/relations/relation";
 import Container from "./container";
+import IO from "./io/io";
 
 export default class UI {
     protractr: Protractr;
@@ -24,7 +25,7 @@ export default class UI {
 
     constructor(protractr: Protractr, canvas: HTMLCanvasElement, sidePane: HTMLDivElement, topBar: HTMLDivElement) {
         this.protractr = protractr;
-        this.history = new History(protractr.exportSketch());
+        this.history = new History(IO.HISTORY_EXPORT.sketchToString(protractr.sketch));
         this.sketchView = new SketchView(this, canvas);
         this.sidePanel = new SidePanel(this, sidePane);
         this.topBar = new TopBar(protractr, topBar);
@@ -35,7 +36,13 @@ export default class UI {
     }
 
     pushState() {
-        this.history.recordStateChange(this.protractr.exportSketch());
+        let e = IO.HISTORY_EXPORT.sketchToString(this.protractr.sketch);
+        this.history.recordStateChange(e);
+    }
+
+    restoreState(state: string) {
+        this.protractr.sketch = IO.DEFAULT_IMPORT.stringToSketch(state);
+        this.update();
     }
 
     update() {

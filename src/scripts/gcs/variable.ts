@@ -1,3 +1,8 @@
+/**
+ * @module gcs/variable
+ */
+/** */
+
 export class Value {
     private _v: number;
     constant: boolean;

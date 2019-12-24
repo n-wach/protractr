@@ -1,5 +1,5 @@
 /**
- * @module ui/sidepane
+ * @module ui/widgets
  */
 /** */
 

@@ -1,0 +1,383 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>RelationCreator | protractr</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.js" data-base="..">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="../index.html" class="title">protractr</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="../globals.html">Globals</a>
+				</li>
+				<li>
+					<a href="../modules/gcs_relations.html">gcs/relations</a>
+				</li>
+				<li>
+					<a href="gcs_relations.relationcreator.html">RelationCreator</a>
+				</li>
+			</ul>
+			<h1>Class RelationCreator</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-hierarchy">
+				<h3>Hierarchy</h3>
+				<ul class="tsd-hierarchy">
+					<li>
+						<span class="target">RelationCreator</span>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>Properties</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><a href="gcs_relations.relationcreator.html#environments" class="tsd-kind-icon">environments</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Methods</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="gcs_relations.relationcreator.html#createrelations" class="tsd-kind-icon">create<wbr>Relations</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="gcs_relations.relationcreator.html#getsatisfiedenvironments" class="tsd-kind-icon">get<wbr>Satisfied<wbr>Environments</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="gcs_relations.relationcreator.html#sortfigureselection" class="tsd-kind-icon">sort<wbr>Figure<wbr>Selection</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-static">
+					<a name="environments" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> environments</h3>
+					<div class="tsd-signature tsd-kind-icon">environments<span class="tsd-signature-symbol">:</span> <a href="../modules/gcs_relations.html#relationenvironment" class="tsd-signature-type">RelationEnvironment</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[{ //Horizontal pointsname: &quot;horizontal&quot;,filter: new FilterString(&quot;:2+point&quot;),create: function(figures) {let ys: Variable[] &#x3D; [];for(let point of figures.point) {ys.push(point._y);}return [new RelationEqual(...ys)];}},{ //Vertical pointsname: &quot;vertical&quot;,filter: new FilterString(&quot;:2+point&quot;),create: function(figures) {let xs: Variable[] &#x3D; [];for(let point of figures.point) {xs.push(point._x);}return [new RelationEqual(...xs)];}},{ //Horizontal linesname: &quot;horizontal&quot;,filter: new FilterString(&quot;:1+line&quot;),create: function(figures) {let relations: RelationEqual[] &#x3D; [];for(let line of figures.line) {relations.push(new RelationEqual(line.p0._y, line.p1._y));}return relations;}},{ //Vertical linesname: &quot;vertical&quot;,filter: new FilterString(&quot;:1+line&quot;),create: function(figures) {let relations: RelationEqual[] &#x3D; [];for(let line of figures.line) {relations.push(new RelationEqual(line.p0._x, line.p1._x));}return relations;}},{ //Coincident pointname: &quot;coincident&quot;,filter: new FilterString(&quot;:2+point&quot;),create: function(figures) {let xs: Variable[] &#x3D; [];let ys: Variable[] &#x3D; [];for(let point of figures.point) {xs.push(point._x);ys.push(point._y);}return [new RelationEqual(...xs),new RelationEqual(...ys)];}},{ //Equal radiusname: &quot;equal radius&quot;,filter: new FilterString(&quot;:2+circle&quot;),create: function(figures) {let rs: Variable[] &#x3D; [];for(let circle of figures.circle) {rs.push(circle._r);}return [new RelationEqual(...rs)];}},{ //Concentricname: &quot;concentric&quot;,filter: new FilterString(&quot;:2+circle,1+circle&amp;*point&quot;),create: function(figures) {let xs: Variable[] &#x3D; [];let ys: Variable[] &#x3D; [];for(let circle of figures.circle) {xs.push(circle.c._x);ys.push(circle.c._y);}for(let point of figures.point) {xs.push(point._x);ys.push(point._y);}return [new RelationEqual(...xs),new RelationEqual(...ys)];}},{ //Point on circlename: &quot;point on circle&quot;,filter: new FilterString(&quot;:circle&amp;1+point&quot;),create: function(figures) {return [new RelationPointsOnCircle(figures.circle[0], ...figures.point)];}},{ //Intersection between circlesname: &quot;circle intersection&quot;,filter: new FilterString(&quot;:point&amp;2+circle&quot;),create: function(figures) {let p &#x3D; figures.point[0];let relations &#x3D; [];for(let circle of figures.circle) {relations.push(new RelationPointsOnCircle(circle, p));}return relations;}},{ //Co-linear pointsname: &quot;colinear&quot;,filter: new FilterString(&quot;line as 2 point:3+point&quot;),create: function(figures) {let points &#x3D; figures.point;for(let line of figures.line) {points.push(line.p0);points.push(line.p1);}return [new RelationColinearPoints(...points)];}},{ //Midpointname: &quot;midpoint&quot;,filter: new FilterString(&quot;:point&amp;line&quot;),create: function(figures) {return [new RelationMidpoint(figures.point[0], figures.line[0])];}},{ //Intersection between linesname: &quot;line intersection&quot;,filter: new FilterString(&quot;:point&amp;2+line&quot;),create: function(figures) {let p &#x3D; figures.point[0];let relations &#x3D; [];for(let line of figures.line) {relations.push(new RelationColinearPoints(p, line.p0, line.p1));}return relations;}},{ //Equal length linesname: &quot;equal length&quot;,filter: new FilterString(&quot;:2+line&quot;),create: function(figures) {return [new RelationEqualLength(...figures.line)];}},{ //Tangent Circlesname: &quot;tangent circles&quot;,filter: new FilterString(&quot;:2circle&quot;),create: function(figures) {return [new RelationTangentCircle(figures.circle[0], figures.circle[1])];}},{ //Tangent Linename: &quot;tangent line&quot;,filter: new FilterString(&quot;:1circle&amp;1line&quot;),create: function(figures) {return [new RelationTangentLine(figures.line[0], figures.circle[0])];}},]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/n-wach/protractr/blob/6078b41/src/scripts/gcs/relations/creator.ts#L34">gcs/relations/creator.ts:34</a></li>
+						</ul>
+					</aside>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="createrelations" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> create<wbr>Relations</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">create<wbr>Relations<span class="tsd-signature-symbol">(</span>figures<span class="tsd-signature-symbol">: </span><a href="gcs_geometry.figure.html" class="tsd-signature-type">Figure</a><span class="tsd-signature-symbol">[]</span>, relenv<span class="tsd-signature-symbol">: </span><a href="../modules/gcs_relations.html#relationenvironment" class="tsd-signature-type">RelationEnvironment</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="gcs_relations.relation.html" class="tsd-signature-type">Relation</a><span class="tsd-signature-symbol">[]</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/n-wach/protractr/blob/6078b41/src/scripts/gcs/relations/creator.ts#L209">gcs/relations/creator.ts:209</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>figures: <a href="gcs_geometry.figure.html" class="tsd-signature-type">Figure</a><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+								<li>
+									<h5>relenv: <a href="../modules/gcs_relations.html#relationenvironment" class="tsd-signature-type">RelationEnvironment</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="gcs_relations.relation.html" class="tsd-signature-type">Relation</a><span class="tsd-signature-symbol">[]</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="getsatisfiedenvironments" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> get<wbr>Satisfied<wbr>Environments</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Satisfied<wbr>Environments<span class="tsd-signature-symbol">(</span>figures<span class="tsd-signature-symbol">: </span><a href="gcs_geometry.figure.html" class="tsd-signature-type">Figure</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../modules/gcs_relations.html#relationenvironment" class="tsd-signature-type">RelationEnvironment</a><span class="tsd-signature-symbol">[]</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/n-wach/protractr/blob/6078b41/src/scripts/gcs/relations/creator.ts#L199">gcs/relations/creator.ts:199</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>figures: <a href="gcs_geometry.figure.html" class="tsd-signature-type">Figure</a><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../modules/gcs_relations.html#relationenvironment" class="tsd-signature-type">RelationEnvironment</a><span class="tsd-signature-symbol">[]</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="sortfigureselection" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> sort<wbr>Figure<wbr>Selection</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">sort<wbr>Figure<wbr>Selection<span class="tsd-signature-symbol">(</span>figures<span class="tsd-signature-symbol">: </span><a href="gcs_geometry.figure.html" class="tsd-signature-type">Figure</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../modules/gcs_relations.html#sortedfigureselection" class="tsd-signature-type">SortedFigureSelection</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/n-wach/protractr/blob/6078b41/src/scripts/gcs/relations/creator.ts#L219">gcs/relations/creator.ts:219</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>figures: <a href="gcs_geometry.figure.html" class="tsd-signature-type">Figure</a><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../modules/gcs_relations.html#sortedfigureselection" class="tsd-signature-type">SortedFigureSelection</a></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="../globals.html"><em>Globals</em></a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/gcs_filterstring.html">gcs/filter<wbr>String</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/gcs_geometry.html">gcs/geometry</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/gcs_io.html">gcs/io</a>
+					</li>
+					<li class="current tsd-kind-external-module">
+						<a href="../modules/gcs_relations.html">gcs/relations</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/gcs_sketch.html">gcs/sketch</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/gcs_variable.html">gcs/variable</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/main.html">main</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/protractr.html">protractr</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/ui.html">ui</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/ui_actions.html">ui/actions</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/ui_container.html">ui/container</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/ui_history.html">ui/history</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/ui_menubar.html">ui/menubar</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/ui_sketchview.html">ui/sketchview</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/ui_tools.html">ui/tools</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/ui_topbar.html">ui/topbar</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/ui_util.html">ui/util</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/ui_widgets.html">ui/widgets</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="gcs_relations.relation.html" class="tsd-kind-icon">Relation</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="gcs_relations.relationcolinearpoints.html" class="tsd-kind-icon">Relation<wbr>Colinear<wbr>Points</a>
+					</li>
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-class tsd-parent-kind-external-module">
+						<a href="gcs_relations.relationcreator.html" class="tsd-kind-icon">Relation<wbr>Creator</a>
+						<ul>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-static">
+								<a href="gcs_relations.relationcreator.html#environments" class="tsd-kind-icon">environments</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+								<a href="gcs_relations.relationcreator.html#createrelations" class="tsd-kind-icon">create<wbr>Relations</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+								<a href="gcs_relations.relationcreator.html#getsatisfiedenvironments" class="tsd-kind-icon">get<wbr>Satisfied<wbr>Environments</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+								<a href="gcs_relations.relationcreator.html#sortfigureselection" class="tsd-kind-icon">sort<wbr>Figure<wbr>Selection</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<ul class="after-current">
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="gcs_relations.relationequal.html" class="tsd-kind-icon">Relation<wbr>Equal</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="gcs_relations.relationequallength.html" class="tsd-kind-icon">Relation<wbr>Equal<wbr>Length</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="gcs_relations.relationmanager.html" class="tsd-kind-icon">Relation<wbr>Manager</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="gcs_relations.relationmidpoint.html" class="tsd-kind-icon">Relation<wbr>Midpoint</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="gcs_relations.relationpointsoncircle.html" class="tsd-kind-icon">Relation<wbr>Points<wbr>OnCircle</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="gcs_relations.relationtangentcircle.html" class="tsd-kind-icon">Relation<wbr>Tangent<wbr>Circle</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="gcs_relations.relationtangentline.html" class="tsd-kind-icon">Relation<wbr>Tangent<wbr>Line</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
+						<a href="../modules/gcs_relations.html#relationenvironment" class="tsd-kind-icon">Relation<wbr>Environment</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../modules/gcs_relations.html#sortedfigureselection" class="tsd-kind-icon">Sorted<wbr>Figure<wbr>Selection</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
+						<a href="../modules/gcs_relations.html#variabledelta" class="tsd-kind-icon">Variable<wbr>Delta</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-module"><span class="tsd-kind-icon">Module</span></li>
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+				<li class="tsd-kind-enum-member"><span class="tsd-kind-icon">Enumeration member</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-enum"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-enum"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-interface"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-interface"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-class"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
+				<li class="tsd-kind-call-signature tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="../assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="../assets/js/search.js"><' + '/script>');</script>
+</body>
+</html>

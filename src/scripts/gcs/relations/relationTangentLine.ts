@@ -1,3 +1,8 @@
+/**
+ * @module gcs/relations
+ */
+/** */
+
 import Relation, {VariableDelta} from "./relation";
 import Variable from "../variable";
 import Point from "../geometry/point";

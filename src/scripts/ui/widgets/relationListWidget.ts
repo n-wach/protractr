@@ -1,6 +1,9 @@
+/**
+ * @module ui/widgets
+ */
+/** */
 import ListWidget, {ListElement} from "./listWidget";
 import Relation from "../../gcs/relations/relation";
-import UI from "../ui";
 
 export default class RelationListWidget extends ListWidget<Relation> {
     update() {

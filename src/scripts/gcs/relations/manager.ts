@@ -1,3 +1,8 @@
+/**
+ * @module gcs/relations
+ */
+/** */
+
 import Variable, {Value} from "../variable";
 import Relation, {VariableDelta} from "./relation";
 import RelationEqual from "./relationEqual";
@@ -58,12 +63,8 @@ export default class RelationManager {
             }
 
             values.forEach(((valueDelta, value) => {
-                if(valueDelta.contributorCount == 1) {
-                    value.v += valueDelta.totalDelta;
-                } else {
-                    let scaledDelta = valueDelta.totalDelta / (2 + valueDelta.contributorCount);
-                    value.v += scaledDelta;
-                }
+                let scaledDelta = valueDelta.totalDelta / (2 + valueDelta.contributorCount);
+                value.v += scaledDelta;
             }));
 
             count += 1;

@@ -1,8 +1,10 @@
+/**
+ * @module gcs/relations
+ */
+/** */
+
 import Relation, {VariableDelta} from "./relation";
 import Variable from "../variable";
-import Point from "../geometry/point";
-import Circle from "../geometry/circle";
-import Figure from "../geometry/figure";
 import Line from "../geometry/line";
 import Util from "../geometry/util";
 

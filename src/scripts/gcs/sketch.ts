@@ -3,13 +3,11 @@
  */
 /** */
 import Point from "./geometry/point";
-import Line from "./geometry/line";
-import Circle from "./geometry/circle";
 import RelationManager from "./relations/manager";
 import Figure from "./geometry/figure";
 import Util from "./geometry/util";
 
-export class Sketch {
+export default class Sketch {
     figures: Figure[];
     relationManager: RelationManager;
 

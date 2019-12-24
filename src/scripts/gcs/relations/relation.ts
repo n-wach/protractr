@@ -1,3 +1,8 @@
+/**
+ * @module gcs/relations
+ */
+/** */
+
 import Variable from "../variable";
 import Figure from "../geometry/figure";
 import Point from "../geometry/point";

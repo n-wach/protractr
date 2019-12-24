@@ -1,3 +1,8 @@
+/**
+ * @module gcs/relations
+ */
+/** */
+
 import FilterString from "../filterString";
 import Relation from "./relation";
 import Point from "../geometry/point";
@@ -11,6 +16,7 @@ import RelationColinearPoints from "./relationColinearPoints";
 import RelationEqualLength from "./relationEqualLength";
 import RelationTangentCircle from "./relationTangentCircle";
 import RelationTangentLine from "./relationTangentLine";
+import RelationMidpoint from "./relationMidpoint";
 
 type SortedFigureSelection = {
     point: Point[],
@@ -148,6 +154,13 @@ export default class RelationCreator {
                 return [new RelationColinearPoints(...points)];
             }
         },
+        { //Midpoint
+            name: "midpoint",
+            filter: new FilterString(":point&line"),
+            create: function(figures) {
+                return [new RelationMidpoint(figures.point[0], figures.line[0])];
+            }
+        },
         { //Intersection between lines
             name: "line intersection",
             filter: new FilterString(":point&2+line"),
@@ -168,14 +181,14 @@ export default class RelationCreator {
             }
         },
         { //Tangent Circles
-            name: "equal length",
+            name: "tangent circles",
             filter: new FilterString(":2circle"),
             create: function(figures) {
                 return [new RelationTangentCircle(figures.circle[0], figures.circle[1])];
             }
         },
         { //Tangent Line
-            name: "equal length",
+            name: "tangent line",
             filter: new FilterString(":1circle&1line"),
             create: function(figures) {
                 return [new RelationTangentLine(figures.line[0], figures.circle[0])];

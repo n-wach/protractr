@@ -1,4 +1,8 @@
-import Widget from "./widget";
+/**
+ * @module ui/widgets
+ */
+/** */
+
 import UI from "../ui";
 import RelationCreator, {RelationEnvironment} from "../../gcs/relations/creator";
 import TitledWidget from "./titledWidget";

@@ -1,8 +1,10 @@
-import Widget from "./widget";
+/**
+ * @module ui/widgets
+ */
+/** */
+
 import Figure from "../../gcs/geometry/figure";
-import UI from "../ui";
 import ListWidget, {ListElement} from "./listWidget";
-import Relation from "../../gcs/relations/relation";
 import {getFigureTypeString} from "../../gcs/filterString";
 
 export default class SelectedFigureListWidget extends ListWidget<Figure> {

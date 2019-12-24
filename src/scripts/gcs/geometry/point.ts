@@ -1,3 +1,8 @@
+/**
+ * @module gcs/geometry
+ */
+/** */
+
 import Variable from "../variable";
 import Figure from "./figure";
 

@@ -1,3 +1,7 @@
+/**
+ * @module ui/widgets
+ */
+/** */
 import UI from "../ui";
 
 export default class Widget {

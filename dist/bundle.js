@@ -239,7 +239,7 @@ var Circle = /** @class */ (function (_super) {
 }(figure_1.default));
 exports.default = Circle;
 
-},{"../variable":17,"./figure":3,"./util":6}],3:[function(require,module,exports){
+},{"../variable":18,"./figure":3,"./util":6}],3:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Figure = /** @class */ (function () {
@@ -397,7 +397,7 @@ var Point = /** @class */ (function (_super) {
 }(figure_1.default));
 exports.default = Point;
 
-},{"../variable":17,"./figure":3}],6:[function(require,module,exports){
+},{"../variable":18,"./figure":3}],6:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
@@ -772,6 +772,7 @@ var relationColinearPoints_1 = require("./relationColinearPoints");
 var relationEqualLength_1 = require("./relationEqualLength");
 var relationTangentCircle_1 = require("./relationTangentCircle");
 var relationTangentLine_1 = require("./relationTangentLine");
+var relationMidpoint_1 = require("./relationMidpoint");
 var RelationCreator = /** @class */ (function () {
     function RelationCreator() {
     }
@@ -949,6 +950,13 @@ var RelationCreator = /** @class */ (function () {
             }
         },
         {
+            name: "midpoint",
+            filter: new filterString_1.default(":point&line"),
+            create: function (figures) {
+                return [new relationMidpoint_1.default(figures.point[0], figures.line[0])];
+            }
+        },
+        {
             name: "line intersection",
             filter: new filterString_1.default(":point&2+line"),
             create: function (figures) {
@@ -969,14 +977,14 @@ var RelationCreator = /** @class */ (function () {
             }
         },
         {
-            name: "equal length",
+            name: "tangent circles",
             filter: new filterString_1.default(":2circle"),
             create: function (figures) {
                 return [new relationTangentCircle_1.default(figures.circle[0], figures.circle[1])];
             }
         },
         {
-            name: "equal length",
+            name: "tangent line",
             filter: new filterString_1.default(":1circle&1line"),
             create: function (figures) {
                 return [new relationTangentLine_1.default(figures.line[0], figures.circle[0])];
@@ -987,7 +995,7 @@ var RelationCreator = /** @class */ (function () {
 }());
 exports.default = RelationCreator;
 
-},{"../filterString":1,"../geometry/circle":2,"../geometry/line":4,"../geometry/point":5,"./relationColinearPoints":10,"./relationEqual":11,"./relationEqualLength":12,"./relationPointsOnCircle":13,"./relationTangentCircle":14,"./relationTangentLine":15}],8:[function(require,module,exports){
+},{"../filterString":1,"../geometry/circle":2,"../geometry/line":4,"../geometry/point":5,"./relationColinearPoints":10,"./relationEqual":11,"./relationEqualLength":12,"./relationMidpoint":13,"./relationPointsOnCircle":14,"./relationTangentCircle":15,"./relationTangentLine":16}],8:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var relationEqual_1 = require("./relationEqual");
@@ -1048,13 +1056,8 @@ var RelationManager = /** @class */ (function () {
                 }
             }
             values.forEach((function (valueDelta, value) {
-                if (valueDelta.contributorCount == 1) {
-                    value.v += valueDelta.totalDelta;
-                }
-                else {
-                    var scaledDelta = valueDelta.totalDelta / (2 + valueDelta.contributorCount);
-                    value.v += scaledDelta;
-                }
+                var scaledDelta = valueDelta.totalDelta / (2 + valueDelta.contributorCount);
+                value.v += scaledDelta;
             }));
             count += 1;
         }
@@ -1212,7 +1215,7 @@ var RelationManager = /** @class */ (function () {
 }());
 exports.default = RelationManager;
 
-},{"./relationColinearPoints":10,"./relationEqual":11,"./relationEqualLength":12,"./relationPointsOnCircle":13}],9:[function(require,module,exports){
+},{"./relationColinearPoints":10,"./relationEqual":11,"./relationEqualLength":12,"./relationPointsOnCircle":14}],9:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var point_1 = require("../geometry/point");
@@ -1471,6 +1474,61 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var relation_1 = require("./relation");
+var util_1 = require("../geometry/util");
+var RelationMidpoint = /** @class */ (function (_super) {
+    __extends(RelationMidpoint, _super);
+    function RelationMidpoint(point, line) {
+        var _this = _super.call(this) || this;
+        _this.variables = [
+            point._x,
+            point._y,
+            line.p0._x,
+            line.p0._y,
+            line.p1._x,
+            line.p1._y,
+        ];
+        _this.midpoint = point;
+        _this.line = line;
+        return _this;
+    }
+    RelationMidpoint.prototype.getDeltas = function () {
+        var deltas = [];
+        var midpoint = util_1.default.averageOfPoints(this.line.p0, this.line.p1);
+        deltas.push.apply(deltas, util_1.default.pointDeltas(this.midpoint, midpoint));
+        var reflectP0 = util_1.default.reflectOver(this.line.p0, this.midpoint);
+        deltas.push.apply(deltas, util_1.default.pointDeltas(this.line.p1, reflectP0));
+        var reflectP1 = util_1.default.reflectOver(this.line.p1, this.midpoint);
+        deltas.push.apply(deltas, util_1.default.pointDeltas(this.line.p0, reflectP1));
+        return deltas;
+    };
+    RelationMidpoint.prototype.getError = function () {
+        var midpoint = util_1.default.averageOfPoints(this.line.p0, this.line.p1);
+        return util_1.default.distanceBetweenPoints(this.midpoint, midpoint);
+    };
+    RelationMidpoint.prototype.getVariables = function () {
+        return this.variables;
+    };
+    return RelationMidpoint;
+}(relation_1.default));
+exports.default = RelationMidpoint;
+
+},{"../geometry/util":6,"./relation":9}],14:[function(require,module,exports){
+"use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var relation_1 = require("./relation");
 var line_1 = require("../geometry/line");
 var util_1 = require("../geometry/util");
 var RelationPointsOnCircle = /** @class */ (function (_super) {
@@ -1515,7 +1573,8 @@ var RelationPointsOnCircle = /** @class */ (function (_super) {
             centerYDelta += (1 - d) * dy;
         }
         var averageRadius = totalDistance / this.points.length;
-        deltas.push([this.circle._r, averageRadius - this.circle.r]);
+        var dr = averageRadius - this.circle.r;
+        deltas.push([this.circle._r, dr]);
         deltas.push([this.circle.c._x, centerXDelta]);
         deltas.push([this.circle.c._y, centerYDelta]);
         return deltas;
@@ -1540,7 +1599,7 @@ var RelationPointsOnCircle = /** @class */ (function (_super) {
 }(relation_1.default));
 exports.default = RelationPointsOnCircle;
 
-},{"../geometry/line":4,"../geometry/util":6,"./relation":9}],14:[function(require,module,exports){
+},{"../geometry/line":4,"../geometry/util":6,"./relation":9}],15:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -1641,7 +1700,7 @@ var RelationTangentCircle = /** @class */ (function (_super) {
 }(relation_1.default));
 exports.default = RelationTangentCircle;
 
-},{"../geometry/line":4,"../geometry/point":5,"../geometry/util":6,"./relation":9}],15:[function(require,module,exports){
+},{"../geometry/line":4,"../geometry/point":5,"../geometry/util":6,"./relation":9}],16:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -1707,7 +1766,7 @@ var RelationTangentLine = /** @class */ (function (_super) {
 }(relation_1.default));
 exports.default = RelationTangentLine;
 
-},{"../geometry/point":5,"../geometry/util":6,"./relation":9}],16:[function(require,module,exports){
+},{"../geometry/point":5,"../geometry/util":6,"./relation":9}],17:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
@@ -1781,9 +1840,9 @@ var Sketch = /** @class */ (function () {
     };
     return Sketch;
 }());
-exports.Sketch = Sketch;
+exports.default = Sketch;
 
-},{"./geometry/point":5,"./geometry/util":6,"./relations/manager":8}],17:[function(require,module,exports){
+},{"./geometry/point":5,"./geometry/util":6,"./relations/manager":8}],18:[function(require,module,exports){
 "use strict";
 var __spreadArrays = (this && this.__spreadArrays) || function () {
     for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
@@ -1878,7 +1937,7 @@ var Variable = /** @class */ (function () {
 }());
 exports.default = Variable;
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 "use strict";
 /**
  * @module main
@@ -1919,7 +1978,7 @@ window.addEventListener("load", function () {
     }
 });
 
-},{"./protractr":19}],19:[function(require,module,exports){
+},{"./protractr":20}],20:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
@@ -1928,33 +1987,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /** */
 var sketch_1 = require("./gcs/sketch");
 var ui_1 = require("./ui/ui");
+var io_1 = require("./ui/io/io");
 var Protractr = /** @class */ (function () {
     function Protractr(canvas, sidePane, topBar) {
-        this.sketch = new sketch_1.Sketch();
+        this.sketch = new sketch_1.default();
         this.ui = new ui_1.default(this, canvas, sidePane, topBar);
     }
-    Protractr.prototype.loadSketch = function (json, push) {
-        if (push === void 0) { push = true; }
-        if (json == undefined) {
-            this.resetSketch();
-            return;
-        }
-        //this.sketch = Sketch.fromObject(JSON.parse(json));
-        this.ui.update();
-    };
-    Protractr.prototype.exportSketch = function () {
-        return ""; //JSON.stringify(this.sketch.asObject());
-    };
-    Protractr.prototype.resetSketch = function () {
-        this.sketch = new sketch_1.Sketch();
-        this.ui.update();
-    };
     Protractr.prototype.loadFromURL = function (url) {
         var request = new XMLHttpRequest();
         var _this = this;
         request.addEventListener("load", function () {
             if (this.status == 200) {
-                _this.loadSketch(this.responseText);
+                _this.sketch = io_1.default.DEFAULT_IMPORT.stringToSketch(this.responseText);
+                _this.ui.update();
             }
             else {
                 console.log("Failed to load sketch, response code != 200: ", this);
@@ -1967,7 +2012,7 @@ var Protractr = /** @class */ (function () {
 }());
 exports.default = Protractr;
 
-},{"./gcs/sketch":16,"./ui/ui":38}],20:[function(require,module,exports){
+},{"./gcs/sketch":17,"./ui/io/io":28,"./ui/ui":41}],21:[function(require,module,exports){
 "use strict";
 /**
  * @module ui/actions
@@ -1983,7 +2028,7 @@ var Action = /** @class */ (function () {
 }());
 exports.default = Action;
 
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 "use strict";
 /**
  * @module ui/actions
@@ -2005,19 +2050,20 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var action_1 = require("./action");
 var util_1 = require("../util");
+var io_1 = require("../io/io");
 var ActionExport = /** @class */ (function (_super) {
     __extends(ActionExport, _super);
     function ActionExport() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     ActionExport.prototype.use = function () {
-        util_1.saveAs(this.protractr.exportSketch(), "sketch.json");
+        util_1.saveAs(io_1.default.DEFAULT_EXPORT.sketchToString(this.protractr.sketch), io_1.default.DEFAULT_EXPORT.getFilename());
     };
     return ActionExport;
 }(action_1.default));
 exports.default = ActionExport;
 
-},{"../util":39,"./action":20}],22:[function(require,module,exports){
+},{"../io/io":28,"../util":42,"./action":21}],23:[function(require,module,exports){
 "use strict";
 /**
  * @module ui/actions
@@ -2038,6 +2084,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var action_1 = require("./action");
+var io_1 = require("../io/io");
 var ActionImport = /** @class */ (function (_super) {
     __extends(ActionImport, _super);
     function ActionImport() {
@@ -2046,7 +2093,8 @@ var ActionImport = /** @class */ (function (_super) {
     ActionImport.prototype.use = function () {
         var input = prompt("JSON or URL to import");
         if (input[0] == "{") {
-            this.protractr.loadSketch(input);
+            this.protractr.sketch = io_1.default.DEFAULT_IMPORT.stringToSketch(input);
+            this.protractr.ui.update();
         }
         else {
             this.protractr.loadFromURL(input);
@@ -2056,7 +2104,7 @@ var ActionImport = /** @class */ (function (_super) {
 }(action_1.default));
 exports.default = ActionImport;
 
-},{"./action":20}],23:[function(require,module,exports){
+},{"../io/io":28,"./action":21}],24:[function(require,module,exports){
 "use strict";
 /**
  * @module ui/actions
@@ -2083,13 +2131,13 @@ var ActionRedo = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     ActionRedo.prototype.use = function () {
-        this.protractr.loadSketch(this.protractr.ui.history.redo());
+        this.protractr.ui.restoreState(this.protractr.ui.history.redo());
     };
     return ActionRedo;
 }(action_1.default));
 exports.default = ActionRedo;
 
-},{"./action":20}],24:[function(require,module,exports){
+},{"./action":21}],25:[function(require,module,exports){
 "use strict";
 /**
  * @module ui/actions
@@ -2116,13 +2164,13 @@ var ActionUndo = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     ActionUndo.prototype.use = function () {
-        this.protractr.loadSketch(this.protractr.ui.history.undo());
+        this.protractr.ui.restoreState(this.protractr.ui.history.undo());
     };
     return ActionUndo;
 }(action_1.default));
 exports.default = ActionUndo;
 
-},{"./action":20}],25:[function(require,module,exports){
+},{"./action":21}],26:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Container = /** @class */ (function () {
@@ -2184,7 +2232,7 @@ var Container = /** @class */ (function () {
 }());
 exports.default = Container;
 
-},{}],26:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
@@ -2271,7 +2319,343 @@ var HistoryStack = /** @class */ (function () {
     return HistoryStack;
 }());
 
-},{}],27:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var json_1 = require("./json");
+var IO = /** @class */ (function () {
+    function IO() {
+    }
+    // for history
+    IO.HISTORY_IMPORT = new json_1.JSONImporter();
+    IO.HISTORY_EXPORT = new json_1.JSONExporter();
+    // for actions
+    IO.DEFAULT_IMPORT = new json_1.JSONImporter();
+    IO.DEFAULT_EXPORT = new json_1.JSONExporter();
+    return IO;
+}());
+exports.default = IO;
+
+},{"./json":29}],29:[function(require,module,exports){
+"use strict";
+var __spreadArrays = (this && this.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var sketch_1 = require("../../gcs/sketch");
+var variable_1 = require("../../gcs/variable");
+var point_1 = require("../../gcs/geometry/point");
+var line_1 = require("../../gcs/geometry/line");
+var circle_1 = require("../../gcs/geometry/circle");
+var relationEqual_1 = require("../../gcs/relations/relationEqual");
+var relationColinearPoints_1 = require("../../gcs/relations/relationColinearPoints");
+var relationEqualLength_1 = require("../../gcs/relations/relationEqualLength");
+var relationMidpoint_1 = require("../../gcs/relations/relationMidpoint");
+var relationTangentCircle_1 = require("../../gcs/relations/relationTangentCircle");
+var relationTangentLine_1 = require("../../gcs/relations/relationTangentLine");
+var relationPointsOnCircle_1 = require("../../gcs/relations/relationPointsOnCircle");
+var JSONImporter = /** @class */ (function () {
+    function JSONImporter() {
+    }
+    JSONImporter.prototype.stringToSketch = function (str) {
+        var obj = JSON.parse(str);
+        this.variables = [];
+        for (var _i = 0, _a = obj.variables; _i < _a.length; _i++) {
+            var v = _a[_i];
+            this.variables.push(new variable_1.default(v));
+        }
+        this.points = [];
+        for (var _b = 0, _c = obj.points; _b < _c.length; _b++) {
+            var v = _c[_b];
+            var point = new point_1.default(0, 0);
+            point._x = this.variables[v[0]];
+            point._y = this.variables[v[1]];
+            this.points.push(point);
+        }
+        this.figures = [];
+        for (var _d = 0, _e = obj.figures; _d < _e.length; _d++) {
+            var f = _e[_d];
+            this.figures.push(this.decodeF(f));
+        }
+        this.relations = [];
+        for (var _f = 0, _g = obj.relations; _f < _g.length; _f++) {
+            var r = _g[_f];
+            this.relations.push(this.decodeR(r));
+        }
+        var sketch = new sketch_1.default();
+        sketch.figures = this.figures;
+        sketch.relationManager.relations = this.relations;
+        return sketch;
+    };
+    JSONImporter.prototype.decodeF = function (obj) {
+        if (obj.type == "point") {
+            return this.points[obj.p];
+        }
+        else if (obj.type == "line") {
+            var line = new line_1.default(new point_1.default(0, 0), new point_1.default(0, 0));
+            line.p0 = this.points[obj.p0];
+            line.p1 = this.points[obj.p1];
+            return line;
+        }
+        else if (obj.type == "circle") {
+            var circle = new circle_1.default(new point_1.default(0, 0), 0);
+            circle.c = this.points[obj.c];
+            circle._r = this.variables[obj.r];
+            return circle;
+        }
+    };
+    JSONImporter.prototype.decodeR = function (obj) {
+        if (obj.type == "equal") {
+            var variables = [];
+            for (var _i = 0, _a = obj.variables; _i < _a.length; _i++) {
+                var v = _a[_i];
+                variables.push(this.variables[v]);
+            }
+            var relation = new (relationEqual_1.default.bind.apply(relationEqual_1.default, __spreadArrays([void 0], variables)))();
+            relation.name = obj.name;
+            return relation;
+        }
+        else if (obj.type == "colinear points") {
+            var points = [];
+            for (var _b = 0, _c = obj.points; _b < _c.length; _b++) {
+                var p = _c[_b];
+                points.push(this.points[p]);
+            }
+            var relation = new (relationColinearPoints_1.default.bind.apply(relationColinearPoints_1.default, __spreadArrays([void 0], points)))();
+            relation.name = obj.name;
+            return relation;
+        }
+        else if (obj.type == "equal length") {
+            var lines = [];
+            for (var _d = 0, _e = obj.lines; _d < _e.length; _d++) {
+                var l = _e[_d];
+                lines.push(this.figures[l]);
+            }
+            var relation = new (relationEqualLength_1.default.bind.apply(relationEqualLength_1.default, __spreadArrays([void 0], lines)))();
+            relation.name = obj.name;
+            return relation;
+        }
+        else if (obj.type == "midpoint") {
+            var line = this.figures[obj.line];
+            var midpoint = this.points[obj.midpoint];
+            var relation = new relationMidpoint_1.default(midpoint, line);
+            relation.name = obj.name;
+            return relation;
+        }
+        else if (obj.type == "points on circle") {
+            var points = [];
+            for (var _f = 0, _g = obj.points; _f < _g.length; _f++) {
+                var p = _g[_f];
+                points.push(this.points[p]);
+            }
+            var circle = this.figures[obj.circle];
+            var relation = new (relationPointsOnCircle_1.default.bind.apply(relationPointsOnCircle_1.default, __spreadArrays([void 0, circle], points)))();
+            relation.name = obj.name;
+            return relation;
+        }
+        else if (obj.type == "tangent circle") {
+            var circle0 = this.figures[obj.circle0];
+            var circle1 = this.figures[obj.circle1];
+            var relation = new relationTangentCircle_1.default(circle0, circle1);
+            relation.name = obj.name;
+            return relation;
+        }
+        else if (obj.type == "tangent line") {
+            var circle = this.figures[obj.circle];
+            var line = this.figures[obj.line];
+            var relation = new relationTangentLine_1.default(line, circle);
+            relation.name = obj.name;
+            return relation;
+        }
+    };
+    return JSONImporter;
+}());
+exports.JSONImporter = JSONImporter;
+var JSONExporter = /** @class */ (function () {
+    function JSONExporter() {
+    }
+    JSONExporter.prototype.getFilename = function () {
+        return "sketch.json";
+    };
+    JSONExporter.prototype.sketchToString = function (sketch) {
+        var _a, _b;
+        var obj = {
+            variables: [],
+            points: [],
+            figures: [],
+            relations: [] // relations made out of figures, points, and values
+        };
+        this.variables = [];
+        this.figures = [];
+        this.points = [];
+        // save values
+        for (var _i = 0, _c = sketch.figures; _i < _c.length; _i++) {
+            var figure = _c[_i];
+            (_a = this.variables).push.apply(_a, this.getFigureVariables(figure));
+        }
+        for (var _d = 0, _e = this.variables; _d < _e.length; _d++) {
+            var variable = _e[_d];
+            obj.variables.push(variable.v);
+        }
+        // save points
+        for (var _f = 0, _g = sketch.figures; _f < _g.length; _f++) {
+            var figure = _g[_f];
+            (_b = this.points).push.apply(_b, this.getPoints(figure));
+        }
+        for (var _h = 0, _j = this.points; _h < _j.length; _h++) {
+            var point = _j[_h];
+            obj.points.push([this.encodeV(point._x), this.encodeV(point._y)]);
+        }
+        // save figures
+        this.figures = sketch.figures;
+        for (var _k = 0, _l = this.figures; _k < _l.length; _k++) {
+            var figure = _l[_k];
+            obj.figures.push(this.encodeFigure(figure));
+        }
+        // save relations
+        for (var _m = 0, _o = sketch.relationManager.relations; _m < _o.length; _m++) {
+            var relation = _o[_m];
+            obj.relations.push(this.encodeRelation(relation));
+        }
+        return JSON.stringify(obj);
+    };
+    JSONExporter.prototype.encodeRelation = function (relation) {
+        if (relation instanceof relationEqual_1.default) {
+            var variables = [];
+            for (var _i = 0, _a = relation.variables; _i < _a.length; _i++) {
+                var v = _a[_i];
+                variables.push(this.encodeV(v));
+            }
+            return {
+                type: "equal",
+                name: relation.name,
+                variables: variables,
+            };
+        }
+        else if (relation instanceof relationColinearPoints_1.default) {
+            var points = [];
+            for (var _b = 0, _c = relation.points; _b < _c.length; _b++) {
+                var p = _c[_b];
+                points.push(this.encodeP(p));
+            }
+            return {
+                type: "colinear points",
+                name: relation.name,
+                points: points,
+            };
+        }
+        else if (relation instanceof relationEqualLength_1.default) {
+            var lines = [];
+            for (var _d = 0, _e = relation.lines; _d < _e.length; _d++) {
+                var l = _e[_d];
+                lines.push(this.encodeF(l));
+            }
+            return {
+                type: "equal length",
+                name: relation.name,
+                lines: lines,
+            };
+        }
+        else if (relation instanceof relationMidpoint_1.default) {
+            return {
+                type: "midpoint",
+                name: relation.name,
+                line: this.encodeF(relation.line),
+                midpoint: this.encodeF(relation.midpoint),
+            };
+        }
+        else if (relation instanceof relationPointsOnCircle_1.default) {
+            var points = [];
+            for (var _f = 0, _g = relation.points; _f < _g.length; _f++) {
+                var p = _g[_f];
+                points.push(this.encodeP(p));
+            }
+            return {
+                type: "points on circle",
+                name: relation.name,
+                points: points,
+                circle: this.encodeF(relation.circle),
+            };
+        }
+        else if (relation instanceof relationTangentCircle_1.default) {
+            return {
+                type: "tangent circle",
+                name: relation.name,
+                circle0: this.encodeF(relation.circle0),
+                circle1: this.encodeF(relation.circle1),
+            };
+        }
+        else if (relation instanceof relationTangentLine_1.default) {
+            return {
+                type: "tangent line",
+                name: relation.name,
+                line: this.encodeF(relation.line),
+                circle: this.encodeF(relation.circle),
+            };
+        }
+    };
+    JSONExporter.prototype.getPoints = function (figure) {
+        if (figure instanceof point_1.default) {
+            return [figure];
+        }
+        else if (figure instanceof line_1.default) {
+            return [figure.p0, figure.p1];
+        }
+        else if (figure instanceof circle_1.default) {
+            return [figure.c];
+        }
+    };
+    JSONExporter.prototype.encodeFigure = function (figure) {
+        if (figure instanceof point_1.default) {
+            return {
+                type: "point",
+                p: this.encodeP(figure),
+            };
+        }
+        else if (figure instanceof line_1.default) {
+            return {
+                type: "line",
+                p0: this.encodeP(figure.p0),
+                p1: this.encodeP(figure.p1),
+            };
+        }
+        else if (figure instanceof circle_1.default) {
+            return {
+                type: "circle",
+                c: this.encodeP(figure.c),
+                r: this.encodeV(figure._r),
+            };
+        }
+    };
+    JSONExporter.prototype.getFigureVariables = function (figure) {
+        if (figure instanceof point_1.default) {
+            return [figure._x, figure._y];
+        }
+        else if (figure instanceof line_1.default) {
+            return [figure.p0._x, figure.p0._y, figure.p1._x, figure.p1._y];
+        }
+        else if (figure instanceof circle_1.default) {
+            return [figure.c._x, figure.c._y, figure._r];
+        }
+    };
+    JSONExporter.prototype.encodeV = function (variable) {
+        return this.variables.indexOf(variable);
+    };
+    JSONExporter.prototype.encodeF = function (figure) {
+        return this.figures.indexOf(figure);
+    };
+    JSONExporter.prototype.encodeP = function (point) {
+        return this.points.indexOf(point);
+    };
+    return JSONExporter;
+}());
+exports.JSONExporter = JSONExporter;
+
+},{"../../gcs/geometry/circle":2,"../../gcs/geometry/line":4,"../../gcs/geometry/point":5,"../../gcs/relations/relationColinearPoints":10,"../../gcs/relations/relationEqual":11,"../../gcs/relations/relationEqualLength":12,"../../gcs/relations/relationMidpoint":13,"../../gcs/relations/relationPointsOnCircle":14,"../../gcs/relations/relationTangentCircle":15,"../../gcs/relations/relationTangentLine":16,"../../gcs/sketch":17,"../../gcs/variable":18}],30:[function(require,module,exports){
 "use strict";
 /**
  * @module ui/menubar
@@ -2393,7 +2777,7 @@ var ToolGroup = /** @class */ (function () {
 }());
 exports.ToolGroup = ToolGroup;
 
-},{}],28:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 "use strict";
 /**
  * @module ui/sketchview
@@ -2566,7 +2950,7 @@ var SketchView = /** @class */ (function () {
 }());
 exports.default = SketchView;
 
-},{"../gcs/geometry/circle":2,"../gcs/geometry/line":4,"../gcs/geometry/point":5}],29:[function(require,module,exports){
+},{"../gcs/geometry/circle":2,"../gcs/geometry/line":4,"../gcs/geometry/point":5}],32:[function(require,module,exports){
 "use strict";
 /**
  * @module ui/tools
@@ -2583,7 +2967,7 @@ var Tool = /** @class */ (function () {
 }());
 exports.default = Tool;
 
-},{}],30:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 "use strict";
 /**
  * @module ui/tools
@@ -2634,7 +3018,7 @@ var ToolCreateCircle = /** @class */ (function (_super) {
 }(toolCreateFigure_1.default));
 exports.default = ToolCreateCircle;
 
-},{"../../gcs/geometry/circle":2,"../../gcs/geometry/util":6,"./toolCreateFigure":31}],31:[function(require,module,exports){
+},{"../../gcs/geometry/circle":2,"../../gcs/geometry/util":6,"./toolCreateFigure":34}],34:[function(require,module,exports){
 "use strict";
 /**
  * @module ui/tools
@@ -2725,7 +3109,7 @@ var ToolCreateFigure = /** @class */ (function (_super) {
 }(tool_1.default));
 exports.default = ToolCreateFigure;
 
-},{"../../gcs/geometry/circle":2,"../../gcs/geometry/line":4,"../../gcs/geometry/point":5,"../../gcs/relations/relationColinearPoints":10,"../../gcs/relations/relationEqual":11,"../../gcs/relations/relationPointsOnCircle":13,"./tool":29}],32:[function(require,module,exports){
+},{"../../gcs/geometry/circle":2,"../../gcs/geometry/line":4,"../../gcs/geometry/point":5,"../../gcs/relations/relationColinearPoints":10,"../../gcs/relations/relationEqual":11,"../../gcs/relations/relationPointsOnCircle":14,"./tool":32}],35:[function(require,module,exports){
 "use strict";
 /**
  * @module ui/tools
@@ -2774,7 +3158,7 @@ var ToolCreateLine = /** @class */ (function (_super) {
 }(toolCreateFigure_1.default));
 exports.default = ToolCreateLine;
 
-},{"../../gcs/geometry/line":4,"./toolCreateFigure":31}],33:[function(require,module,exports){
+},{"../../gcs/geometry/line":4,"./toolCreateFigure":34}],36:[function(require,module,exports){
 "use strict";
 /**
  * @module ui/tools
@@ -2814,7 +3198,7 @@ var ToolCreatePoint = /** @class */ (function (_super) {
 }(toolCreateFigure_1.default));
 exports.default = ToolCreatePoint;
 
-},{"./toolCreateFigure":31}],34:[function(require,module,exports){
+},{"./toolCreateFigure":34}],37:[function(require,module,exports){
 "use strict";
 /**
  * @module ui/tools
@@ -2886,7 +3270,7 @@ var ToolCreateRect = /** @class */ (function (_super) {
 }(toolCreateFigure_1.default));
 exports.default = ToolCreateRect;
 
-},{"../../gcs/geometry/line":4,"../../gcs/geometry/point":5,"../../gcs/relations/relationEqual":11,"./toolCreateFigure":31}],35:[function(require,module,exports){
+},{"../../gcs/geometry/line":4,"../../gcs/geometry/point":5,"../../gcs/relations/relationEqual":11,"./toolCreateFigure":34}],38:[function(require,module,exports){
 "use strict";
 /**
  * @module ui/tools
@@ -2922,7 +3306,7 @@ var ToolFilterSelect = /** @class */ (function (_super) {
 }(toolSelect_1.default));
 exports.default = ToolFilterSelect;
 
-},{"../../gcs/filterString":1,"./toolSelect":36}],36:[function(require,module,exports){
+},{"../../gcs/filterString":1,"./toolSelect":39}],39:[function(require,module,exports){
 "use strict";
 /**
  * @module ui/tools
@@ -3086,7 +3470,7 @@ var ToolSelect = /** @class */ (function (_super) {
 }(tool_1.default));
 exports.default = ToolSelect;
 
-},{"../../gcs/geometry/circle":2,"../../gcs/geometry/line":4,"../../gcs/geometry/point":5,"../../gcs/geometry/util":6,"./tool":29}],37:[function(require,module,exports){
+},{"../../gcs/geometry/circle":2,"../../gcs/geometry/line":4,"../../gcs/geometry/point":5,"../../gcs/geometry/util":6,"./tool":32}],40:[function(require,module,exports){
 "use strict";
 /**
  * @module ui/topbar
@@ -3136,7 +3520,7 @@ var TopBar = /** @class */ (function () {
 }());
 exports.default = TopBar;
 
-},{"./actions/actionExport":21,"./actions/actionImport":22,"./actions/actionRedo":23,"./actions/actionUndo":24,"./menubar":27,"./tools/toolCreateCircle":30,"./tools/toolCreateLine":32,"./tools/toolCreatePoint":33,"./tools/toolCreateRect":34,"./tools/toolFilterSelect":35,"./tools/toolSelect":36}],38:[function(require,module,exports){
+},{"./actions/actionExport":22,"./actions/actionImport":23,"./actions/actionRedo":24,"./actions/actionUndo":25,"./menubar":30,"./tools/toolCreateCircle":33,"./tools/toolCreateLine":35,"./tools/toolCreatePoint":36,"./tools/toolCreateRect":37,"./tools/toolFilterSelect":38,"./tools/toolSelect":39}],41:[function(require,module,exports){
 "use strict";
 /**
  * @module ui
@@ -3148,10 +3532,11 @@ var sketchview_1 = require("./sketchview");
 var history_1 = require("./history");
 var topbar_1 = require("./topbar");
 var container_1 = require("./container");
+var io_1 = require("./io/io");
 var UI = /** @class */ (function () {
     function UI(protractr, canvas, sidePane, topBar) {
         this.protractr = protractr;
-        this.history = new history_1.default(protractr.exportSketch());
+        this.history = new history_1.default(io_1.default.HISTORY_EXPORT.sketchToString(protractr.sketch));
         this.sketchView = new sketchview_1.default(this, canvas);
         this.sidePanel = new sidePanel_1.default(this, sidePane);
         this.topBar = new topbar_1.default(protractr, topBar);
@@ -3161,7 +3546,12 @@ var UI = /** @class */ (function () {
         this.update();
     }
     UI.prototype.pushState = function () {
-        this.history.recordStateChange(this.protractr.exportSketch());
+        var e = io_1.default.HISTORY_EXPORT.sketchToString(this.protractr.sketch);
+        this.history.recordStateChange(e);
+    };
+    UI.prototype.restoreState = function (state) {
+        this.protractr.sketch = io_1.default.DEFAULT_IMPORT.stringToSketch(state);
+        this.update();
     };
     UI.prototype.update = function () {
         this.sidePanel.update();
@@ -3171,7 +3561,7 @@ var UI = /** @class */ (function () {
 }());
 exports.default = UI;
 
-},{"./container":25,"./history":26,"./sketchview":28,"./topbar":37,"./widgets/sidePanel":45}],39:[function(require,module,exports){
+},{"./container":26,"./history":27,"./io/io":28,"./sketchview":31,"./topbar":40,"./widgets/sidePanel":48}],42:[function(require,module,exports){
 "use strict";
 /**
  * @module ui/util
@@ -3187,7 +3577,7 @@ function saveAs(string, filename) {
 }
 exports.saveAs = saveAs;
 
-},{}],40:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -3304,7 +3694,7 @@ var ListElement = /** @class */ (function (_super) {
 }(widget_1.default));
 exports.ListElement = ListElement;
 
-},{"./titledWidget":46,"./widget":47}],41:[function(require,module,exports){
+},{"./titledWidget":49,"./widget":50}],44:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -3370,7 +3760,7 @@ var NewRelationsWidget = /** @class */ (function (_super) {
 }(titledWidget_1.default));
 exports.default = NewRelationsWidget;
 
-},{"../../gcs/relations/creator":7,"./titledWidget":46}],42:[function(require,module,exports){
+},{"../../gcs/relations/creator":7,"./titledWidget":49}],45:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -3475,7 +3865,7 @@ var RelationElement = /** @class */ (function (_super) {
     return RelationElement;
 }(listWidget_1.ListElement));
 
-},{"./listWidget":40}],43:[function(require,module,exports){
+},{"./listWidget":43}],46:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -3546,7 +3936,7 @@ var SelectedFigureElement = /** @class */ (function (_super) {
     return SelectedFigureElement;
 }(listWidget_1.ListElement));
 
-},{"../../gcs/filterString":1,"./listWidget":40}],44:[function(require,module,exports){
+},{"../../gcs/filterString":1,"./listWidget":43}],47:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -3645,7 +4035,7 @@ var SelectedFigureWidget = /** @class */ (function (_super) {
 }(widget_1.default));
 exports.default = SelectedFigureWidget;
 
-},{"../../gcs/geometry/circle":2,"../../gcs/geometry/line":4,"../../gcs/geometry/point":5,"./widget":47}],45:[function(require,module,exports){
+},{"../../gcs/geometry/circle":2,"../../gcs/geometry/line":4,"../../gcs/geometry/point":5,"./widget":50}],48:[function(require,module,exports){
 "use strict";
 /**
  * @module ui/sidepane
@@ -3684,7 +4074,7 @@ var SidePanel = /** @class */ (function (_super) {
 }(widget_1.default));
 exports.default = SidePanel;
 
-},{"./newRelationsWidget":41,"./relationListWidget":42,"./selectedFigureListWidget":43,"./selectedFigureWidget":44,"./widget":47}],46:[function(require,module,exports){
+},{"./newRelationsWidget":44,"./relationListWidget":45,"./selectedFigureListWidget":46,"./selectedFigureWidget":47,"./widget":50}],49:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -3716,7 +4106,7 @@ var TitledWidget = /** @class */ (function (_super) {
 }(widget_1.default));
 exports.default = TitledWidget;
 
-},{"./widget":47}],47:[function(require,module,exports){
+},{"./widget":50}],50:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Widget = /** @class */ (function () {
@@ -3747,4 +4137,4 @@ var Widget = /** @class */ (function () {
 }());
 exports.default = Widget;
 
-},{}]},{},[18]);
+},{}]},{},[19]);

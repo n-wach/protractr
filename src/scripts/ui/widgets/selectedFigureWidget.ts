@@ -1,3 +1,7 @@
+/**
+ * @module ui/widgets
+ */
+/** */
 import Widget from "./widget";
 import Figure from "../../gcs/geometry/figure";
 import Variable from "../../gcs/variable";

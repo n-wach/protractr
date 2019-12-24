@@ -1,3 +1,7 @@
+/**
+ * @module ui/container
+ */
+/** */
 export default class Container<T> {
     elements: T[];
     updateCallback: Function;
