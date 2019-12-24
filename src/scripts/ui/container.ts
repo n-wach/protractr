@@ -10,7 +10,7 @@ export default class Container<T> {
         if(this.updateCallback) this.updateCallback();
     }
     add(...elements: T[]) {
-        elements.push(...elements);
+        this.elements.push(...elements);
         this.update();
     }
     remove(...elements: T[]) {

@@ -43,24 +43,29 @@ export default class RelationListWidget extends ListWidget<Relation> {
     }
 
     getElementFromItem(item: Relation): ListElement<Relation> {
-        return new class extends ListElement<Relation> {
-            actionIconClicked(event) {
-                this.ui.protractr.sketch.relationManager.removeRelations(this.value);
-                this.ui.update();
-            }
-
-            onmousedown(event) {
-            }
-
-            onmouseenter(event) {
-                this.ui.selectedRelations.add(this.value);
-                this.ui.update();
-            }
-            onmouseleave(event) {
-                this.ui.selectedRelations.remove(this.value);
-                this.ui.update();
-            }
-        }(this.ui, item, item.name, "delete.png", "Delete relation");
+        return new RelationElement(this.ui, item, item.name, "delete.png", "Delete relation");
     }
 
+}
+
+class RelationElement extends ListElement<Relation> {
+    actionIconClicked(event) {
+        this.ui.protractr.sketch.relationManager.removeRelations(this.value);
+        this.ui.selectedRelations.remove(this.value);
+        this.ui.update();
+        event.stopPropagation();
+        return false;
+    }
+
+    onmousedown(event) {
+    }
+
+    onmouseenter(event) {
+        this.ui.selectedRelations.add(this.value);
+        this.ui.update();
+    }
+    onmouseleave(event) {
+        this.ui.selectedRelations.remove(this.value);
+        this.ui.update();
+    }
 }

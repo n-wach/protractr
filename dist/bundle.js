@@ -571,10 +571,10 @@ var Util = /** @class */ (function () {
      * @param line
      */
     Util.onSegment = function (line, point) {
-        return line.p0.x <= Math.max(point.x, line.p1.x) &&
-            line.p0.x >= Math.min(point.x, line.p1.x) &&
-            line.p0.y <= Math.max(point.y, line.p1.y) &&
-            line.p0.y >= Math.min(point.y, line.p1.y);
+        return point.x <= Math.max(line.p0.x, line.p1.x) &&
+            point.x >= Math.min(line.p0.x, line.p1.x) &&
+            point.y <= Math.max(line.p0.y, line.p1.y) &&
+            point.y >= Math.min(line.p0.y, line.p1.y);
     };
     /**
      * Returns true if line0 intersects line1
@@ -582,6 +582,8 @@ var Util = /** @class */ (function () {
      * @param line1
      */
     Util.segmentsIntersect = function (line0, line1) {
+        if (Util.lengthOfLine(line0) == 0 || Util.lengthOfLine(line1) == 0)
+            return false;
         var o0 = Util.orientation(line0.p0, line0.p1, line1.p0);
         var o1 = Util.orientation(line0.p0, line0.p1, line1.p1);
         var o2 = Util.orientation(line1.p0, line1.p1, line0.p0);
@@ -2133,11 +2135,12 @@ var Container = /** @class */ (function () {
             this.updateCallback();
     };
     Container.prototype.add = function () {
+        var _a;
         var elements = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             elements[_i] = arguments[_i];
         }
-        elements.push.apply(elements, elements);
+        (_a = this.elements).push.apply(_a, elements);
         this.update();
     };
     Container.prototype.remove = function () {
@@ -2526,7 +2529,7 @@ var SketchView = /** @class */ (function () {
             this.drawFigure(fig);
             for (var _b = 0, _c = fig.getChildFigures(); _b < _c.length; _b++) {
                 var child = _c[_b];
-                this.drawFigure(fig);
+                this.drawFigure(child);
             }
         }
         this.ctx.strokeStyle = "black";
@@ -3206,33 +3209,69 @@ var ListWidget = /** @class */ (function (_super) {
     __extends(ListWidget, _super);
     function ListWidget(ui) {
         var _this = _super.call(this, ui) || this;
+        _this.values = [];
+        _this.elements = [];
         _this.list = document.createElement("div");
         _this.list.classList.add("interactive-list");
         _this.div.appendChild(_this.list);
         return _this;
     }
     ListWidget.prototype.setItems = function (items) {
-        this.clear();
-        this.addItem.apply(this, items);
+        if (items.length == 0) {
+            this.clear();
+            return;
+        }
+        for (var _i = 0, _a = this.values; _i < _a.length; _i++) {
+            var value = _a[_i];
+            if (items.indexOf(value) === -1) {
+                this.removeItem(value);
+            }
+        }
+        for (var _b = 0, items_1 = items; _b < items_1.length; _b++) {
+            var item = items_1[_b];
+            if (this.values.indexOf(item) === -1) {
+                this.addItem(item);
+            }
+        }
     };
     ListWidget.prototype.clear = function () {
         while (this.list.lastChild) {
             this.list.removeChild(this.list.lastChild);
         }
         this.list.style.display = "none";
+        this.elements = [];
+        this.values = [];
     };
     ListWidget.prototype.addItem = function () {
+        var _a;
         var items = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             items[_i] = arguments[_i];
         }
-        for (var _a = 0, items_1 = items; _a < items_1.length; _a++) {
-            var item = items_1[_a];
+        for (var _b = 0, items_2 = items; _b < items_2.length; _b++) {
+            var item = items_2[_b];
             var element = this.getElementFromItem(item);
             this.list.appendChild(element.div);
+            this.elements.push(element);
         }
+        (_a = this.values).push.apply(_a, items);
         if (items.length > 0)
             this.list.style.display = "block";
+    };
+    ListWidget.prototype.removeItem = function () {
+        var items = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            items[_i] = arguments[_i];
+        }
+        for (var _a = 0, items_3 = items; _a < items_3.length; _a++) {
+            var item = items_3[_a];
+            var i = this.values.indexOf(item);
+            if (i == -1)
+                continue;
+            this.list.removeChild(this.elements[i].div);
+            this.elements.splice(i, 1);
+            this.values.splice(i, 1);
+        }
     };
     return ListWidget;
 }(titledWidget_1.default));
@@ -3253,7 +3292,7 @@ var ListElement = /** @class */ (function (_super) {
         if (actionIcon) {
             _this.actionButton = document.createElement("span");
             _this.actionButton.classList.add("action-button");
-            _this.actionButton.style.backgroundImage = "url('../../image/" + actionIcon + "')";
+            _this.actionButton.style.backgroundImage = "url('../image/" + actionIcon + "')";
             _this.actionButton.addEventListener("mousedown", _this.actionIconClicked.bind(_this));
             if (actionTitle)
                 _this.actionButton.title = actionTitle;
@@ -3301,6 +3340,7 @@ var NewRelationsWidget = /** @class */ (function (_super) {
             this.setVisible(false);
             return;
         }
+        this.setVisible(true);
         var environments = creator_1.default.getSatisfiedEnvironments(figures);
         if (environments.length == 0) {
             this.setTitle("No possible relations");
@@ -3405,31 +3445,35 @@ var RelationListWidget = /** @class */ (function (_super) {
         }
     };
     RelationListWidget.prototype.getElementFromItem = function (item) {
-        return new /** @class */ (function (_super) {
-            __extends(class_1, _super);
-            function class_1() {
-                return _super !== null && _super.apply(this, arguments) || this;
-            }
-            class_1.prototype.actionIconClicked = function (event) {
-                this.ui.protractr.sketch.relationManager.removeRelations(this.value);
-                this.ui.update();
-            };
-            class_1.prototype.onmousedown = function (event) {
-            };
-            class_1.prototype.onmouseenter = function (event) {
-                this.ui.selectedRelations.add(this.value);
-                this.ui.update();
-            };
-            class_1.prototype.onmouseleave = function (event) {
-                this.ui.selectedRelations.remove(this.value);
-                this.ui.update();
-            };
-            return class_1;
-        }(listWidget_1.ListElement))(this.ui, item, item.name, "delete.png", "Delete relation");
+        return new RelationElement(this.ui, item, item.name, "delete.png", "Delete relation");
     };
     return RelationListWidget;
 }(listWidget_1.default));
 exports.default = RelationListWidget;
+var RelationElement = /** @class */ (function (_super) {
+    __extends(RelationElement, _super);
+    function RelationElement() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    RelationElement.prototype.actionIconClicked = function (event) {
+        this.ui.protractr.sketch.relationManager.removeRelations(this.value);
+        this.ui.selectedRelations.remove(this.value);
+        this.ui.update();
+        event.stopPropagation();
+        return false;
+    };
+    RelationElement.prototype.onmousedown = function (event) {
+    };
+    RelationElement.prototype.onmouseenter = function (event) {
+        this.ui.selectedRelations.add(this.value);
+        this.ui.update();
+    };
+    RelationElement.prototype.onmouseleave = function (event) {
+        this.ui.selectedRelations.remove(this.value);
+        this.ui.update();
+    };
+    return RelationElement;
+}(listWidget_1.ListElement));
 
 },{"./listWidget":40}],43:[function(require,module,exports){
 "use strict";
@@ -3470,33 +3514,37 @@ var SelectedFigureListWidget = /** @class */ (function (_super) {
         this.setItems(figures);
     };
     SelectedFigureListWidget.prototype.getElementFromItem = function (item) {
-        return new /** @class */ (function (_super) {
-            __extends(class_1, _super);
-            function class_1() {
-                return _super !== null && _super.apply(this, arguments) || this;
-            }
-            class_1.prototype.actionIconClicked = function (event) {
-                this.ui.selectedFigures.remove(this.value);
-                this.ui.update();
-            };
-            class_1.prototype.onmousedown = function (event) {
-                this.ui.selectedFigures.set(this.value);
-                this.ui.update();
-            };
-            class_1.prototype.onmouseenter = function (event) {
-                this.ui.boldFigures.add(this.value);
-                this.ui.update();
-            };
-            class_1.prototype.onmouseleave = function (event) {
-                this.ui.boldFigures.remove(this.value);
-                this.ui.update();
-            };
-            return class_1;
-        }(listWidget_1.ListElement))(this.ui, item, filterString_1.getFigureTypeString(item), "delete.png", "Remove from selection");
+        return new SelectedFigureElement(this.ui, item, filterString_1.getFigureTypeString(item), "delete.png", "Remove from selection");
     };
     return SelectedFigureListWidget;
 }(listWidget_1.default));
 exports.default = SelectedFigureListWidget;
+var SelectedFigureElement = /** @class */ (function (_super) {
+    __extends(SelectedFigureElement, _super);
+    function SelectedFigureElement() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    SelectedFigureElement.prototype.actionIconClicked = function (event) {
+        this.ui.selectedFigures.remove(this.value);
+        this.ui.boldFigures.remove(this.value);
+        this.ui.update();
+        event.stopPropagation();
+        return false;
+    };
+    SelectedFigureElement.prototype.onmousedown = function (event) {
+        this.ui.selectedFigures.set(this.value);
+        this.ui.update();
+    };
+    SelectedFigureElement.prototype.onmouseenter = function (event) {
+        this.ui.boldFigures.add(this.value);
+        this.ui.update();
+    };
+    SelectedFigureElement.prototype.onmouseleave = function (event) {
+        this.ui.boldFigures.remove(this.value);
+        this.ui.update();
+    };
+    return SelectedFigureElement;
+}(listWidget_1.ListElement));
 
 },{"../../gcs/filterString":1,"./listWidget":40}],44:[function(require,module,exports){
 "use strict";

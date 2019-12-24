@@ -22,6 +22,7 @@ export default class NewRelationsWidget extends TitledWidget {
             this.setVisible(false);
             return;
         }
+        this.setVisible(true);
         let environments: RelationEnvironment[] = RelationCreator.getSatisfiedEnvironments(figures);
         if(environments.length == 0) {
             this.setTitle("No possible relations");

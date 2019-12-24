@@ -177,10 +177,10 @@ export default class Util {
      * @param line
      */
     static onSegment(line: Line, point: Point): boolean {
-        return line.p0.x <= Math.max(point.x, line.p1.x) &&
-               line.p0.x >= Math.min(point.x, line.p1.x) &&
-               line.p0.y <= Math.max(point.y, line.p1.y) &&
-               line.p0.y >= Math.min(point.y, line.p1.y);
+        return point.x <= Math.max(line.p0.x, line.p1.x) &&
+               point.x >= Math.min(line.p0.x, line.p1.x) &&
+               point.y <= Math.max(line.p0.y, line.p1.y) &&
+               point.y >= Math.min(line.p0.y, line.p1.y);
     }
 
     /**
@@ -189,6 +189,8 @@ export default class Util {
      * @param line1
      */
     static segmentsIntersect(line0: Line, line1: Line) {
+        if(Util.lengthOfLine(line0) == 0 || Util.lengthOfLine(line1) == 0) return false;
+
         let o0 = Util.orientation(line0.p0, line0.p1, line1.p0);
         let o1 = Util.orientation(line0.p0, line0.p1, line1.p1);
         let o2 = Util.orientation(line1.p0, line1.p1, line0.p0);

@@ -146,7 +146,7 @@ export default class SketchView {
         for(let fig of this.ui.protractr.sketch.figures) {
             this.drawFigure(fig);
             for(let child of fig.getChildFigures()) {
-                this.drawFigure(fig);
+                this.drawFigure(child);
             }
         }
         this.ctx.strokeStyle = "black";

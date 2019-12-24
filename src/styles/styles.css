@@ -77,7 +77,7 @@ table, tbody, tr, td {
 .interactive-list {
     width: 100%;
     max-height: 404px;
-    overflow: auto;
+    overflow-y: scroll;
 }
 
 .interactive-list-element {

@@ -21,23 +21,28 @@ export default class SelectedFigureListWidget extends ListWidget<Figure> {
     }
 
     getElementFromItem(item: Figure): ListElement<Figure> {
-        return new class extends ListElement<Figure> {
-            actionIconClicked(event) {
-                this.ui.selectedFigures.remove(this.value);
-                this.ui.update();
-            }
-            onmousedown(event) {
-                this.ui.selectedFigures.set(this.value);
-                this.ui.update();
-            }
-            onmouseenter(event) {
-                this.ui.boldFigures.add(this.value);
-                this.ui.update();
-            }
-            onmouseleave(event) {
-                this.ui.boldFigures.remove(this.value);
-                this.ui.update();
-            }
-        }(this.ui, item, getFigureTypeString(item), "delete.png", "Remove from selection");
+        return new SelectedFigureElement(this.ui, item, getFigureTypeString(item), "delete.png", "Remove from selection");
+    }
+}
+
+class SelectedFigureElement extends ListElement<Figure> {
+    actionIconClicked(event) {
+        this.ui.selectedFigures.remove(this.value);
+        this.ui.boldFigures.remove(this.value);
+        this.ui.update();
+        event.stopPropagation();
+        return false;
+    }
+    onmousedown(event) {
+        this.ui.selectedFigures.set(this.value);
+        this.ui.update();
+    }
+    onmouseenter(event) {
+        this.ui.boldFigures.add(this.value);
+        this.ui.update();
+    }
+    onmouseleave(event) {
+        this.ui.boldFigures.remove(this.value);
+        this.ui.update();
     }
 }

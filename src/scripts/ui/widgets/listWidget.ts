@@ -4,6 +4,8 @@ import Widget from "./widget";
 
 export default abstract class ListWidget<T> extends TitledWidget {
     list: HTMLDivElement;
+    values: T[] = [];
+    elements: ListElement<T>[] = [];
 
     constructor(ui: UI) {
         super(ui);
@@ -16,8 +18,20 @@ export default abstract class ListWidget<T> extends TitledWidget {
     abstract getElementFromItem(item: T): ListElement<T>;
 
     setItems(items: T[]) {
-        this.clear();
-        this.addItem(...items);
+        if(items.length == 0) {
+            this.clear();
+            return;
+        }
+        for(let value of this.values) {
+            if(items.indexOf(value) === -1) {
+                this.removeItem(value);
+            }
+        }
+        for(let item of items) {
+            if(this.values.indexOf(item) === -1) {
+                this.addItem(item);
+            }
+        }
     }
 
     clear() {
@@ -25,14 +39,28 @@ export default abstract class ListWidget<T> extends TitledWidget {
             this.list.removeChild(this.list.lastChild);
         }
         this.list.style.display = "none";
+        this.elements = [];
+        this.values = [];
     }
 
     addItem(...items: T[]) {
         for(let item of items) {
             let element = this.getElementFromItem(item);
             this.list.appendChild(element.div);
+            this.elements.push(element);
         }
+        this.values.push(...items);
         if(items.length > 0) this.list.style.display = "block";
+    }
+
+    removeItem(...items: T[]) {
+        for(let item of items) {
+            let i = this.values.indexOf(item);
+            if(i == -1) continue;
+            this.list.removeChild(this.elements[i].div);
+            this.elements.splice(i, 1);
+            this.values.splice(i, 1);
+        }
     }
 }
 
@@ -58,7 +86,7 @@ export abstract class ListElement<T> extends Widget {
         if (actionIcon) {
             this.actionButton = document.createElement("span");
             this.actionButton.classList.add("action-button");
-            this.actionButton.style.backgroundImage = "url('../../image/" + actionIcon + "')";
+            this.actionButton.style.backgroundImage = "url('../image/" + actionIcon + "')";
             this.actionButton.addEventListener("mousedown", this.actionIconClicked.bind(this));
             if(actionTitle) this.actionButton.title = actionTitle;
             this.div.appendChild(this.actionButton);
