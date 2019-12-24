@@ -31,7 +31,7 @@ export default abstract class ToolCreateFigure extends Tool {
     up(point: Point) {
         if (this.points.length >= this.pointsPerFigure) {
             this.addFigure();
-            this.protractr.ui.refresh();
+            this.protractr.ui.update();
             this.protractr.ui.pushState();
             this.points = [];
         }

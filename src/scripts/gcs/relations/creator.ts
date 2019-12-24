@@ -18,7 +18,7 @@ type SortedFigureSelection = {
     circle: Circle[],
 };
 
-type RelationEnvironment = {
+export type RelationEnvironment = {
     name: string,
     filter: FilterString,
     create: (figures: SortedFigureSelection) => Relation[],
@@ -183,7 +183,7 @@ export default class RelationCreator {
         },
     ];
 
-    static getSatisfiedEnvironments(figures: Figure[]) {
+    static getSatisfiedEnvironments(figures: Figure[]): RelationEnvironment[] {
         let satisfied = [];
         for(let env of this.environments) {
             if(env.filter.satisfiesFilter(figures)) {

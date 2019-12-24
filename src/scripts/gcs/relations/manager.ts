@@ -180,6 +180,7 @@ export default class RelationManager {
         for(let relation of relations) {
             this.addRelationAndMerge(relation);
         }
+        this.solveRelations(true);
     }
 
     private removeRelation(relation: Relation) {

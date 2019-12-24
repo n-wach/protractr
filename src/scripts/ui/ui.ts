@@ -3,49 +3,43 @@
  */
 /** */
 
-import {Sidepane} from "./sidepane";
+import SidePanel from "./widgets/sidePanel";
 import SketchView from "./sketchview";
 import Protractr from "../protractr";
 import History from "./history";
 import TopBar from "./topbar";
+import Figure from "../gcs/geometry/figure";
+import Relation from "../gcs/relations/relation";
+import Container from "./container";
 
-export class UI {
+export default class UI {
     protractr: Protractr;
     topBar: TopBar;
-    infoPane: Sidepane;
+    sidePanel: SidePanel;
     sketchView: SketchView;
     history: History;
+    selectedFigures: Container<Figure>;
+    boldFigures: Container<Figure>;
+    selectedRelations: Container<Relation>;
 
     constructor(protractr: Protractr, canvas: HTMLCanvasElement, sidePane: HTMLDivElement, topBar: HTMLDivElement) {
         this.protractr = protractr;
         this.history = new History(protractr.exportSketch());
         this.sketchView = new SketchView(this, canvas);
-        this.infoPane = new Sidepane(this, sidePane);
+        this.sidePanel = new SidePanel(this, sidePane);
         this.topBar = new TopBar(protractr, topBar);
-    }
-
-    reload() {
-        this.sketchView.draw();
-        this.infoPane.existingConstraintsList.setUnfilteredConstraints(this.protractr.sketch.constraints);
-        this.infoPane.selectedFiguresList.clear();
-        this.infoPane.possibleNewConstraintsList.update();
-        this.infoPane.selectedFigureView.setFigure(null);
-    }
-
-    refresh() {
-        this.sketchView.draw();
-        this.infoPane.existingConstraintsList.setUnfilteredConstraints(this.protractr.sketch.constraints);
-        this.infoPane.possibleNewConstraintsList.update();
-        this.infoPane.selectedFiguresList.updateTitle();
-        if (this.infoPane.selectedFiguresList.list.values.length == 1) {
-            let fig = this.infoPane.selectedFiguresList.list.values[0];
-            this.infoPane.selectedFigureView.setFigure(fig);
-        } else {
-            this.infoPane.selectedFigureView.setFigure(null);
-        }
+        this.selectedFigures = new Container<Figure>([], this.update.bind(this));
+        this.boldFigures = new Container<Figure>([], this.update.bind(this));
+        this.selectedRelations = new Container<Relation>([], this.update.bind(this));
+        this.update();
     }
 
     pushState() {
         this.history.recordStateChange(this.protractr.exportSketch());
+    }
+
+    update() {
+        this.sidePanel.update();
+        this.sketchView.draw();
     }
 }

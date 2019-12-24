@@ -10,7 +10,6 @@ import SketchView from "../sketchview";
 import Util from "../../gcs/geometry/util";
 import Line from "../../gcs/geometry/line";
 import Circle from "../../gcs/geometry/circle";
-import circle from "../../gcs/geometry/circle";
 
 export default class ToolSelect extends Tool {
     selectionStart: Point;
@@ -24,7 +23,7 @@ export default class ToolSelect extends Tool {
         this.pressed = true;
         this.downFigure = this.getFigureNearPoint(point);
         if (!this.downFigure) {
-            this.protractr.ui.infoPane.selectedFiguresList.clear();
+            this.protractr.ui.selectedFigures.clear();
             this.selectionStart = point;
             this.selectionEnd = point;
         } else {
@@ -38,12 +37,7 @@ export default class ToolSelect extends Tool {
             this.protractr.ui.pushState();
         }
         if (!this.dragging && this.downFigure) {
-            let list = this.protractr.ui.infoPane.selectedFiguresList;
-            if (list.figureSelected(this.downFigure)) {
-                list.removeFigure(this.downFigure);
-            } else {
-                list.addFigure(this.downFigure);
-            }
+            this.protractr.ui.selectedFigures.togglePresence(this.downFigure);
         }
         this.reset();
     }
@@ -68,7 +62,7 @@ export default class ToolSelect extends Tool {
                         }
                     }
                 }
-                this.protractr.ui.infoPane.selectedFiguresList.setFigures(selection);
+                this.protractr.ui.selectedFigures.set(...selection);
             }
         }
     }
@@ -136,6 +130,8 @@ export default class ToolSelect extends Tool {
             // shortcut!
             if (this.figureInRectangle(figure.c)) return true;
 
+            // technically, because the rectangle is axis-bounded, we could just check 4 points on the circle
+            // but this is more intuitive
             if (Util.lineIntersectsCircle(figure, l0)) return true;
             if (Util.lineIntersectsCircle(figure, l1)) return true;
             if (Util.lineIntersectsCircle(figure, l2)) return true;

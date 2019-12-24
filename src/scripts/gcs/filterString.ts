@@ -173,7 +173,7 @@ export default class FilterString {
     }
 }
 
-function getFigureTypeString(figure: Figure): FigureType {
+export function getFigureTypeString(figure: Figure): FigureType {
     if(figure instanceof Point) return "point";
     if(figure instanceof Line) return "line";
     if(figure instanceof Circle) return "circle";

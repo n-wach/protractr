@@ -1,0 +1,43 @@
+import Widget from "./widget";
+import Figure from "../../gcs/geometry/figure";
+import UI from "../ui";
+import ListWidget, {ListElement} from "./listWidget";
+import Relation from "../../gcs/relations/relation";
+import {getFigureTypeString} from "../../gcs/filterString";
+
+export default class SelectedFigureListWidget extends ListWidget<Figure> {
+    update() {
+        let figures = this.ui.selectedFigures.elements;
+        if (figures.length == 0) {
+            this.setVisible(false);
+        } else if (figures.length == 1) {
+            this.setVisible(true);
+            this.setTitle("Selected Figure:");
+        } else {
+            this.setVisible(true);
+            this.setTitle("Selected Figures:");
+        }
+        this.setItems(figures);
+    }
+
+    getElementFromItem(item: Figure): ListElement<Figure> {
+        return new class extends ListElement<Figure> {
+            actionIconClicked(event) {
+                this.ui.selectedFigures.remove(this.value);
+                this.ui.update();
+            }
+            onmousedown(event) {
+                this.ui.selectedFigures.set(this.value);
+                this.ui.update();
+            }
+            onmouseenter(event) {
+                this.ui.boldFigures.add(this.value);
+                this.ui.update();
+            }
+            onmouseleave(event) {
+                this.ui.boldFigures.remove(this.value);
+                this.ui.update();
+            }
+        }(this.ui, item, getFigureTypeString(item), "delete.png", "Remove from selection");
+    }
+}

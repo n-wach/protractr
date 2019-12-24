@@ -3,7 +3,7 @@
  */
 /** */
 import {Sketch} from "./gcs/sketch";
-import {UI} from "./ui/ui";
+import UI from "./ui/ui";
 
 export default class Protractr {
     sketch: Sketch;
@@ -19,17 +19,17 @@ export default class Protractr {
             this.resetSketch();
             return;
         }
-        this.sketch = Sketch.fromObject(JSON.parse(json));
-        this.ui.reload();
+        //this.sketch = Sketch.fromObject(JSON.parse(json));
+        this.ui.update();
     }
 
     exportSketch(): string {
-        return JSON.stringify(this.sketch.asObject());
+        return ""; //JSON.stringify(this.sketch.asObject());
     }
 
     resetSketch() {
         this.sketch = new Sketch();
-        this.ui.reload();
+        this.ui.update();
     }
 
     loadFromURL(url: string) {
