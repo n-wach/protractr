@@ -1,23 +1,34 @@
 # protractr
 A constraint-based 2D Sketching tool - [Hosted on Github Pages](https://n-wach.github.io/protractr/src/)
 
-Functionality is planned to match basic Solidworks sketches containing Points, Lines, and Circles.  Most of Solidworks' constraints are currently supported, with the remaining to be implemented soon.
+Functionality is planned to match basic Solidworks sketches containing Points, Lines, and Circles.  Most of Solidworks' relations are currently supported, with the remaining to be implemented soon.
 
-## Examples:
-- [pyramid](https://n-wach.github.io/protractr/src/?pyramid.json)
-- [car](https://n-wach.github.io/protractr/src/?car.json)
-- [beach](https://n-wach.github.io/protractr/src/?beach.json)
-- [shield](https://n-wach.github.io/protractr/src/?shield.json)
-- [aww_man](https://n-wach.github.io/protractr/src/?aww_man.json)
-- [diagram](https://n-wach.github.io/protractr/src/?diagram.json)
+Supported relations:
+- [x] Horizontal
+- [x] Vertical
+- [x] Colinear
+- [x] Tangent Line
+- [x] Tangent Circle
+- [x] Concentric
+- [x] Midpoint
+- [x] Intersection
+- [x] Coincident on Point
+- [x] Coincident on Line
+- [x] Coincident on Circle
+- [x] Radius Equal
+- [x] Line Length Equal
+- [ ] Perpendicular
+- [ ] Parallel
+- [ ] Fix / Lock Entity
 
 ## Structure and Documenation
 
 [View the docs!](https://n-wach.github.io/protractr/docs)
 
 Protractr is composed of two main modules:
- - `gcs` is used to describe and solve geometric sketches, which are composed of figures and constraints.
+ - `gcs` is used to describe and solve geometric sketches, which are composed of figures and relations.
  - `ui` displays the current sketch and allows a user to modify it
+
 
 ## Contributing
 

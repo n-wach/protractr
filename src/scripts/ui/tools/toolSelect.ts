@@ -4,8 +4,12 @@
 /** */
 
 import Tool from "./tool";
-import {CircleFigure, Figure, LineFigure, Point, PointFigure} from "../../gcs/figures";
-import {SketchView} from "../sketchview";
+import Point from "../../gcs/geometry/point";
+import Figure from "../../gcs/geometry/figure";
+import SketchView from "../sketchview";
+import Util from "../../gcs/geometry/util";
+import Line from "../../gcs/geometry/line";
+import Circle from "../../gcs/geometry/circle";
 
 export default class ToolSelect extends Tool {
     selectionStart: Point;
@@ -19,29 +23,22 @@ export default class ToolSelect extends Tool {
         this.pressed = true;
         this.downFigure = this.getFigureNearPoint(point);
         if (!this.downFigure) {
-            this.protractr.ui.infoPane.selectedFiguresList.clear();
+            this.protractr.ui.selectedFigures.clear();
             this.selectionStart = point;
             this.selectionEnd = point;
         } else {
-            this.downFigure.setLocked(true);
             this.lastDrag = point.copy();
         }
     }
 
     up(point: Point) {
         if (this.downFigure) {
-            this.protractr.sketch.solveConstraints();
-            this.downFigure.setLocked(false);
-            this.protractr.sketch.solveConstraints(true);
+            this.protractr.sketch.solveWithConstantFigures([this.downFigure], true);
             this.protractr.ui.pushState();
+            this.protractr.ui.update();
         }
         if (!this.dragging && this.downFigure) {
-            let list = this.protractr.ui.infoPane.selectedFiguresList;
-            if (list.figureSelected(this.downFigure)) {
-                list.removeFigure(this.downFigure);
-            } else {
-                list.addFigure(this.downFigure);
-            }
+            this.protractr.ui.selectedFigures.togglePresence(this.downFigure);
         }
         this.reset();
     }
@@ -49,23 +46,25 @@ export default class ToolSelect extends Tool {
     move(point: Point) {
         if (this.pressed) this.dragging = true;
         if (this.downFigure && this.dragging) {
-            this.downFigure.setLocked(false);
             this.downFigure.translate(this.lastDrag, point.copy());
-            this.downFigure.setLocked(true);
-            this.protractr.sketch.solveConstraints();
+            this.protractr.sketch.solveWithConstantFigures([this.downFigure]);
             this.lastDrag = point.copy();
+            this.protractr.ui.update();
         } else {
             this.selectionEnd = point;
             if (this.selectionStart) {
                 let selection = [];
-                for(let figure of this.protractr.sketch.rootFigures) {
-                    for(let relatedFigure of figure.getRelatedFigures()) {
+                for(let figure of this.protractr.sketch.figures) {
+                    if (this.figureShouldBeSelected(figure)) {
+                        selection.push(figure);
+                    }
+                    for(let relatedFigure of figure.getChildFigures()) {
                         if (this.figureShouldBeSelected(relatedFigure)) {
                             selection.push(relatedFigure);
                         }
                     }
                 }
-                this.protractr.ui.infoPane.selectedFiguresList.setFigures(selection);
+                this.protractr.ui.selectedFigures.set(...selection);
             }
         }
     }
@@ -94,55 +93,51 @@ export default class ToolSelect extends Tool {
     }
 
     figureInRectangle(figure: Figure): boolean {
-        if (figure.type == "point") {
-            let p = (figure as PointFigure).p;
-            return (
-                (this.selectionStart.x > p.x && this.selectionEnd.x < p.x) ||
-                (this.selectionStart.x < p.x && this.selectionEnd.x > p.x)
-            ) && (
-                (this.selectionStart.y > p.y && this.selectionEnd.y < p.y) ||
-                (this.selectionStart.y < p.y && this.selectionEnd.y > p.y)
-            );
+        if (figure instanceof Point) {
+            return Util.pointWithinRectangle(this.selectionStart, this.selectionEnd, figure);
         }
 
-        let p1 = this.selectionStart;
-        let p2 = new Point(this.selectionStart.x, this.selectionEnd.y);
-        let p3 = this.selectionEnd;
-        let p4 = new Point(this.selectionEnd.x, this.selectionStart.y);
+        let p0 = this.selectionStart;
+        let p1 = new Point(this.selectionStart.x, this.selectionEnd.y);
+        let p2 = this.selectionEnd;
+        let p3 = new Point(this.selectionEnd.x, this.selectionStart.y);
 
-        if (figure.type == "line") {
-            let line = (figure as LineFigure);
-            if (this.figureInRectangle(line.childFigures[0]) || this.figureInRectangle(line.childFigures[1])) {
+        let l0 = new Line(p0, p1);
+        let l1 = new Line(p1, p2);
+        let l2 = new Line(p2, p3);
+        let l3 = new Line(p3, p0);
+
+        if (figure instanceof Line) {
+            if (this.figureInRectangle(figure.p0) || this.figureInRectangle(figure.p1)) {
                 return true;
             }
             //test if line intersects any of the edges
-            if (Point.doIntersect(p1, p2, line.p1, line.p2)) return true;
-            if (Point.doIntersect(p2, p3, line.p1, line.p2)) return true;
-            if (Point.doIntersect(p3, p4, line.p1, line.p2)) return true;
-            if (Point.doIntersect(p4, p1, line.p1, line.p2)) return true;
+            if(Util.segmentsIntersect(l0, figure)) return true;
+            if(Util.segmentsIntersect(l1, figure)) return true;
+            if(Util.segmentsIntersect(l2, figure)) return true;
+            if(Util.segmentsIntersect(l3, figure)) return true;
             return false;
-        } else if (figure.type == "circle") {
-            let circle = (figure as CircleFigure);
-            let center = circle.c;
-            let radius = circle.r.value;
+        } else if (figure instanceof Circle) {
+            let p0In = Util.pointWithinCircle(figure, p0);
+            let p1In = Util.pointWithinCircle(figure, p1);
+            let p2In = Util.pointWithinCircle(figure, p2);
+            let p3In = Util.pointWithinCircle(figure, p3);
 
-            let p1In = center.distTo(p1) < radius;
-            let p2In = center.distTo(p2) < radius;
-            let p3In = center.distTo(p3) < radius;
-            let p4In = center.distTo(p4) < radius;
-
-            let allInside = p1In && p2In && p3In && p4In;
+            let allInside = p0In && p1In && p2In && p3In;
             if (allInside) return false;
 
-            let allOutside = !p1In && !p2In && !p3In && !p4In;
+            let allOutside = !p0In && !p1In && !p2In && !p3In;
             if (!allOutside) return true;
 
-            if (this.figureInRectangle(circle.childFigures[0])) return true;
+            // shortcut!
+            if (this.figureInRectangle(figure.c)) return true;
 
-            if (Point.distToLine(p1, p2, center, true) < radius) return true;
-            if (Point.distToLine(p2, p3, center, true) < radius) return true;
-            if (Point.distToLine(p3, p4, center, true) < radius) return true;
-            if (Point.distToLine(p4, p1, center, true) < radius) return true;
+            // technically, because the rectangle is axis-bounded, we could just check 4 points on the circle
+            // but this is more intuitive
+            if (Util.lineIntersectsCircle(figure, l0)) return true;
+            if (Util.lineIntersectsCircle(figure, l1)) return true;
+            if (Util.lineIntersectsCircle(figure, l2)) return true;
+            if (Util.lineIntersectsCircle(figure, l3)) return true;
 
             return false;
         }

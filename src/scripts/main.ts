@@ -24,7 +24,8 @@ window.addEventListener("load", function() {
     topBar = document.getElementById("tools") as HTMLDivElement;
     protractr = new Protractr(canvas, sidePane, topBar);
     adjustCanvasResolution(null);
-    console.log("________                __                        __                   " + "\n" +
+    console.log(
+        "________                __                        __                   " + "\n" +
         "\\_____  \\_______  _____/  |_____________    _____/  |________        " + "\n" +
         "|    ___/\\_  __ \\/  _ \\   __\\_  __ \\__  \\ _/ ___\\   __\\_  __ \\" + "\n" +
         "|   |     |  | \\(  <_> )  |  |  | \\// __ \\\\  \\___|  |  |  | \\/   " + "\n" +

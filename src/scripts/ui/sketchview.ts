@@ -3,10 +3,13 @@
  */
 /** */
 
-import {CircleFigure, Figure, LineFigure, Point, PointFigure} from "../gcs/figures";
-import {UI} from "./ui";
+import UI from "./ui";
+import Point from "../gcs/geometry/point";
+import Figure from "../gcs/geometry/figure";
+import Line from "../gcs/geometry/line";
+import Circle from "../gcs/geometry/circle";
 
-export class SketchView {
+export default class SketchView {
     canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
 
@@ -97,7 +100,7 @@ export class SketchView {
 
     updateHover(point: Point) {
         let closest;
-        closest = this.ui.protractr.sketch.getClosestFigure(point, [], 10, this.ctxScale);
+        closest = this.ui.protractr.sketch.getClosestFigure(point, this.ctxScale, 10);
         this.hoveredFigure = closest;
         if (this.hoveredFigure != null) {
             this.setCursor("move");
@@ -114,37 +117,24 @@ export class SketchView {
         this.ctx.strokeStyle = "black";
         this.ctx.lineWidth = 2 / this.ctxScale;
         let pointSize = 3;
-        if (this.ui.infoPane.selectedFiguresList.figureSelected(fig)) {
+        if (this.ui.selectedFigures.contains(fig)) {
             this.ctx.strokeStyle = "#5e9cff";
         }
-        if (this.hoveredFigure == fig || this.ui.infoPane.selectedFiguresList.figureHovered(fig)) {
+        if (this.hoveredFigure == fig || this.ui.boldFigures.contains(fig)) {
             pointSize = 7;
             this.ctx.lineWidth = 5 / this.ctxScale;
         }
-        if (this.ui.infoPane.existingConstraintsList.figureInHovered(fig)) {
+        if (this.ui.selectedRelations.elements.some((r) => r.containsFigure(fig))) {
             this.ctx.strokeStyle = "purple";
             pointSize = 7;
             this.ctx.lineWidth = 5 / this.ctxScale;
         }
-        switch(fig.type) {
-            case "line":
-                let line = (fig as LineFigure);
-                this.drawLine(line.p1, line.p2);
-                if (this.hoveredFigure == fig) {
-                    let midpoint = Point.averagePoint(line.p1, line.p2);
-                    this.drawPoint(midpoint, pointSize, this.ctx.strokeStyle);
-                    this.drawPoint(line.p1, pointSize, this.ctx.strokeStyle);
-                    this.drawPoint(line.p2, pointSize, this.ctx.strokeStyle);
-                }
-                break;
-            case "point":
-                let point = (fig as PointFigure);
-                this.drawPoint(point.p, pointSize, this.ctx.strokeStyle);
-                break;
-            case "circle":
-                let circle = (fig as CircleFigure);
-                this.drawCircle(circle.c, circle.r.value);
-                break;
+        if(fig instanceof Point) {
+            this.drawPoint(fig, pointSize, this.ctx.strokeStyle);
+        } else if (fig instanceof Line) {
+            this.drawLine(fig.p0, fig.p1);
+        } else if (fig instanceof Circle) {
+            this.drawCircle(fig.c, fig.r);
         }
     }
 
@@ -153,15 +143,15 @@ export class SketchView {
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
         this.ctx.translate(this.ctxOrigin.x, this.ctxOrigin.y);
         this.ctx.scale(this.ctxScale, this.ctxScale);
-        for(let fig of this.ui.protractr.sketch.rootFigures) {
-            for(let child of fig.getRelatedFigures()) {
+        for(let fig of this.ui.protractr.sketch.figures) {
+            this.drawFigure(fig);
+            for(let child of fig.getChildFigures()) {
                 this.drawFigure(child);
             }
         }
         this.ctx.strokeStyle = "black";
         this.ctx.lineWidth = 2 / this.ctxScale;
         this.ui.topBar.activeTool.draw(this);
-        this.ui.infoPane.selectedFigureView.refresh();
     }
 
     drawPoint(point: Point, size: number = 3, color: string = "black") {

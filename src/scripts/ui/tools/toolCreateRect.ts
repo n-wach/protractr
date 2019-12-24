@@ -4,10 +4,11 @@
 /** */
 
 import ToolCreateFigure from "./toolCreateFigure";
-import {SketchView} from "../sketchview";
-import {LineFigure, Point} from "../../gcs/figures";
-import {EqualConstraint} from "../../gcs/constraint";
 import Protractr from "../../protractr";
+import Point from "../../gcs/geometry/point";
+import Line from "../../gcs/geometry/line";
+import RelationEqual from "../../gcs/relations/relationEqual";
+import SketchView from "../sketchview";
 
 export default class ToolCreateRect extends ToolCreateFigure {
     constructor(protractr: Protractr) {
@@ -20,30 +21,25 @@ export default class ToolCreateRect extends ToolCreateFigure {
         let p1 = new Point(p2.x, p0.y);
         let p3 = new Point(p0.x, p2.y);
 
-        let h0 = new LineFigure(p0.copy(), p1.copy());
-        let v0 = new LineFigure(p1.copy(), p2.copy());
-        let h1 = new LineFigure(p2.copy(), p3.copy());
-        let v1 = new LineFigure(p3.copy(), p0.copy());
+        let h0 = new Line(p0, p1);
+        let v0 = new Line(p1, p2);
+        let h1 = new Line(p2, p3);
+        let v1 = new Line(p3, p0);
 
-        this.protractr.sketch.rootFigures.push(h0, h1, v0, v1);
+        let hc0 = new RelationEqual("horizontal", h0.p0._y, h0.p1._y, v0.p0._y, v1.p1._y);
+        let hc1 = new RelationEqual("horizontal", h1.p0._y, h1.p1._y, v0.p1._y, v1.p0._y);
+        let vc0 = new RelationEqual("vertical", v0.p0._x, v0.p1._x, h0.p1._x, h1.p0._x);
+        let vc1 = new RelationEqual("vertical", v1.p0._x, v1.p1._x, h0.p0._x, h1.p1._x);
 
-        let hc0 = new EqualConstraint([h0.p1.variablePoint.y, h0.p2.variablePoint.y, v0.p1.variablePoint.y, v1.p2.variablePoint.y], "horizontal");
-        let hc1 = new EqualConstraint([h1.p1.variablePoint.y, h1.p2.variablePoint.y, v1.p1.variablePoint.y, v0.p2.variablePoint.y], "horizontal");
-        let vc0 = new EqualConstraint([v0.p1.variablePoint.x, v0.p2.variablePoint.x, h0.p2.variablePoint.x, h1.p1.variablePoint.x], "vertical");
-        let vc1 = new EqualConstraint([v1.p1.variablePoint.x, v1.p2.variablePoint.x, h0.p1.variablePoint.x, h1.p2.variablePoint.x], "vertical");
+        this.protractr.sketch.relationManager.addRelations(hc0, hc1, vc0, vc1);
 
-        this.protractr.sketch.addConstraints([hc0, hc1, vc0, vc1]);
+        this.addRelationsBySnap(h0.p0, this.points[0].snapFigure);
+        this.addRelationsBySnap(v1.p1, this.points[0].snapFigure);
 
-        this.constrainBySnap(h0.childFigures[0], this.points[0].snapFigure);
-        this.constrainBySnap(v1.childFigures[1], this.points[0].snapFigure);
+        this.addRelationsBySnap(h1.p0, this.points[1].snapFigure);
+        this.addRelationsBySnap(v0.p1, this.points[1].snapFigure);
 
-        this.constrainBySnap(h1.childFigures[0], this.points[1].snapFigure);
-        this.constrainBySnap(v0.childFigures[1], this.points[1].snapFigure);
-
-        this.protractr.sketch.addFigure(h0);
-        this.protractr.sketch.addFigure(h1);
-        this.protractr.sketch.addFigure(v0);
-        this.protractr.sketch.addFigure(v1);
+        this.protractr.sketch.addFigures(h0, h1, v0, v1);
     }
 
     draw(sketchView: SketchView) {

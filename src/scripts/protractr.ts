@@ -2,8 +2,9 @@
  * @module protractr
  */
 /** */
-import {Sketch} from "./gcs/sketch";
-import {UI} from "./ui/ui";
+import Sketch from "./gcs/sketch";
+import UI from "./ui/ui";
+import IO from "./ui/io/io";
 
 export default class Protractr {
     sketch: Sketch;
@@ -14,22 +15,12 @@ export default class Protractr {
         this.ui = new UI(this, canvas, sidePane, topBar);
     }
 
-    loadSketch(json: string, push: boolean = true) {
-        if (json == undefined) {
-            this.resetSketch();
-            return;
-        }
-        this.sketch = Sketch.fromObject(JSON.parse(json));
-        this.ui.reload();
-    }
-
-    exportSketch(): string {
-        return JSON.stringify(this.sketch.asObject());
-    }
-
-    resetSketch() {
-        this.sketch = new Sketch();
-        this.ui.reload();
+    setSketch(sketch: Sketch) {
+        this.sketch = sketch;
+        this.ui.selectedFigures.clear();
+        this.ui.boldFigures.clear();
+        this.ui.selectedRelations.clear();
+        this.ui.update();
     }
 
     loadFromURL(url: string) {
@@ -37,7 +28,7 @@ export default class Protractr {
         let _this = this;
         request.addEventListener("load", function() {
             if (this.status == 200) {
-                _this.loadSketch(this.responseText);
+                _this.setSketch(IO.DEFAULT_IMPORT.stringToSketch(this.responseText));
             } else {
                 console.log("Failed to load sketch, response code != 200: ", this);
             }

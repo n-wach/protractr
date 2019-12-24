@@ -68,17 +68,25 @@
 					<h1>protractr</h1>
 				</a>
 				<p>A constraint-based 2D Sketching tool - <a href="https://n-wach.github.io/protractr/src/">Hosted on Github Pages</a></p>
-				<p>Functionality is planned to match basic Solidworks sketches containing Points, Lines, and Circles.  Most of Solidworks&#39; constraints are currently supported, with the remaining to be implemented soon.</p>
-				<a href="#examples" id="examples" style="color: inherit; text-decoration: none;">
-					<h2>Examples:</h2>
-				</a>
+				<p>Functionality is planned to match basic Solidworks sketches containing Points, Lines, and Circles.  Most of Solidworks&#39; relations are currently supported, with the remaining to be implemented soon.</p>
+				<p>Supported relations:</p>
 				<ul>
-					<li><a href="https://n-wach.github.io/protractr/src/?pyramid.json">pyramid</a></li>
-					<li><a href="https://n-wach.github.io/protractr/src/?car.json">car</a></li>
-					<li><a href="https://n-wach.github.io/protractr/src/?beach.json">beach</a></li>
-					<li><a href="https://n-wach.github.io/protractr/src/?shield.json">shield</a></li>
-					<li><a href="https://n-wach.github.io/protractr/src/?aww_man.json">aww_man</a></li>
-					<li><a href="https://n-wach.github.io/protractr/src/?diagram.json">diagram</a></li>
+					<li><input checked="" disabled="" type="checkbox"> Horizontal</li>
+					<li><input checked="" disabled="" type="checkbox"> Vertical</li>
+					<li><input checked="" disabled="" type="checkbox"> Colinear</li>
+					<li><input checked="" disabled="" type="checkbox"> Tangent Line</li>
+					<li><input checked="" disabled="" type="checkbox"> Tangent Circle</li>
+					<li><input checked="" disabled="" type="checkbox"> Concentric</li>
+					<li><input checked="" disabled="" type="checkbox"> Midpoint</li>
+					<li><input checked="" disabled="" type="checkbox"> Intersection</li>
+					<li><input checked="" disabled="" type="checkbox"> Coincident on Point</li>
+					<li><input checked="" disabled="" type="checkbox"> Coincident on Line</li>
+					<li><input checked="" disabled="" type="checkbox"> Coincident on Circle</li>
+					<li><input checked="" disabled="" type="checkbox"> Radius Equal</li>
+					<li><input checked="" disabled="" type="checkbox"> Line Length Equal</li>
+					<li><input disabled="" type="checkbox"> Perpendicular</li>
+					<li><input disabled="" type="checkbox"> Parallel</li>
+					<li><input disabled="" type="checkbox"> Fix / Lock Entity</li>
 				</ul>
 				<a href="#structure-and-documenation" id="structure-and-documenation" style="color: inherit; text-decoration: none;">
 					<h2>Structure and Documenation</h2>
@@ -86,7 +94,7 @@
 				<p><a href="https://n-wach.github.io/protractr/docs">View the docs!</a></p>
 				<p>Protractr is composed of two main modules:</p>
 				<ul>
-					<li><code>gcs</code> is used to describe and solve geometric sketches, which are composed of figures and constraints.</li>
+					<li><code>gcs</code> is used to describe and solve geometric sketches, which are composed of figures and relations.</li>
 					<li><code>ui</code> displays the current sketch and allows a user to modify it</li>
 				</ul>
 				<a href="#contributing" id="contributing" style="color: inherit; text-decoration: none;">
@@ -117,19 +125,22 @@ npm run browserify</code></pre><p>You should then see that the file <code>dist/b
 						<a href="globals.html"><em>Globals</em></a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/gcs_constraintfilters.html">gcs/constraint<wbr>Filters</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="modules/gcs_constraints.html">gcs/constraints</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="modules/gcs_figures.html">gcs/figures</a>
-					</li>
-					<li class=" tsd-kind-external-module">
 						<a href="modules/gcs_filterstring.html">gcs/filter<wbr>String</a>
 					</li>
 					<li class=" tsd-kind-external-module">
+						<a href="modules/gcs_geometry.html">gcs/geometry</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/gcs_io.html">gcs/io</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/gcs_relations.html">gcs/relations</a>
+					</li>
+					<li class=" tsd-kind-external-module">
 						<a href="modules/gcs_sketch.html">gcs/sketch</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/gcs_variable.html">gcs/variable</a>
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="modules/main.html">main</a>
@@ -144,13 +155,13 @@ npm run browserify</code></pre><p>You should then see that the file <code>dist/b
 						<a href="modules/ui_actions.html">ui/actions</a>
 					</li>
 					<li class=" tsd-kind-external-module">
+						<a href="modules/ui_container.html">ui/container</a>
+					</li>
+					<li class=" tsd-kind-external-module">
 						<a href="modules/ui_history.html">ui/history</a>
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="modules/ui_menubar.html">ui/menubar</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="modules/ui_sidepane.html">ui/sidepane</a>
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="modules/ui_sketchview.html">ui/sketchview</a>
@@ -163,6 +174,9 @@ npm run browserify</code></pre><p>You should then see that the file <code>dist/b
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="modules/ui_util.html">ui/util</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/ui_widgets.html">ui/widgets</a>
 					</li>
 				</ul>
 			</nav>

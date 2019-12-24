@@ -7,6 +7,6 @@ import Action from "./action";
 
 export default class ActionRedo extends Action {
     use() {
-        this.protractr.loadSketch(this.protractr.ui.history.redo())
+        this.protractr.ui.restoreState(this.protractr.ui.history.redo())
     }
 }
