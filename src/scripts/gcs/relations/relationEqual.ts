@@ -16,8 +16,8 @@ import Variable from "../variable";
 export default class RelationEqual extends Relation {
     variables: Variable[];
 
-    constructor(...variables: Variable[]) {
-        super();
+    constructor(name: string, ...variables: Variable[]) {
+        super(name);
         this.variables = variables;
         let root = this.variables[0];
         for(let i = 1; i < this.variables.length; i++) {

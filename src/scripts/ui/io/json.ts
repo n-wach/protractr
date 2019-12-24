@@ -26,7 +26,6 @@ type JSONFigure = {
 
 type JSONRelation = {
     type: string,
-    name: string,
     [a: string]: any,
 }
 
@@ -97,52 +96,38 @@ export class JSONImporter implements Importer {
             for(let v of obj.variables) {
                 variables.push(this.variables[v]);
             }
-            let relation = new RelationEqual(...variables);
-            relation.name = obj.name;
-            return relation;
+            return new RelationEqual(obj.name, ...variables);
         } else if (obj.type == "colinear points") {
             let points = [];
             for(let p of obj.points) {
                 points.push(this.points[p]);
             }
-            let relation = new RelationColinearPoints(...points);
-            relation.name = obj.name;
-            return relation;
+            return new RelationColinearPoints(...points);
         } else if (obj.type == "equal length") {
             let lines = [];
             for(let l of obj.lines) {
                 lines.push(this.figures[l]);
             }
-            let relation = new RelationEqualLength(...lines);
-            relation.name = obj.name;
-            return relation;
+            return new RelationEqualLength(...lines);
         } else if (obj.type == "midpoint") {
             let line = (this.figures[obj.line] as Line);
             let midpoint = this.points[obj.midpoint];
-            let relation = new RelationMidpoint(midpoint, line);
-            relation.name = obj.name;
-            return relation;
+            return new RelationMidpoint(midpoint, line);
         } else if (obj.type == "points on circle") {
             let points = [];
             for(let p of obj.points) {
                 points.push(this.points[p]);
             }
             let circle = (this.figures[obj.circle] as Circle);
-            let relation = new RelationPointsOnCircle(circle, ...points);
-            relation.name = obj.name;
-            return relation;
+            return new RelationPointsOnCircle(circle, ...points);
         } else if (obj.type == "tangent circle") {
             let circle0 = (this.figures[obj.circle0] as Circle);
             let circle1 = (this.figures[obj.circle1] as Circle);
-            let relation = new RelationTangentCircle(circle0, circle1);
-            relation.name = obj.name;
-            return relation;
+            return new RelationTangentCircle(circle0, circle1);
         } else if (obj.type == "tangent line") {
             let circle = (this.figures[obj.circle] as Circle);
             let line = (this.figures[obj.line] as Line);
-            let relation = new RelationTangentLine(line, circle);
-            relation.name = obj.name;
-            return relation;
+            return new RelationTangentLine(line, circle);
         }
     }
 }
@@ -214,7 +199,6 @@ export class JSONExporter implements Exporter {
             }
             return {
                 type: "colinear points",
-                name: relation.name,
                 points: points,
             }
         } else if (relation instanceof RelationEqualLength) {
@@ -224,13 +208,11 @@ export class JSONExporter implements Exporter {
             }
             return {
                 type: "equal length",
-                name: relation.name,
                 lines: lines,
             }
         } else if (relation instanceof RelationMidpoint) {
             return {
                 type: "midpoint",
-                name: relation.name,
                 line: this.encodeF(relation.line),
                 midpoint: this.encodeF(relation.midpoint),
             }
@@ -241,21 +223,18 @@ export class JSONExporter implements Exporter {
             }
             return {
                 type: "points on circle",
-                name: relation.name,
                 points: points,
                 circle: this.encodeF(relation.circle),
             }
         } else if (relation instanceof RelationTangentCircle) {
             return {
                 type: "tangent circle",
-                name: relation.name,
                 circle0: this.encodeF(relation.circle0),
                 circle1: this.encodeF(relation.circle1),
             }
         } else if (relation instanceof RelationTangentLine) {
             return {
                 type: "tangent line",
-                name: relation.name,
                 line: this.encodeF(relation.line),
                 circle: this.encodeF(relation.circle),
             }

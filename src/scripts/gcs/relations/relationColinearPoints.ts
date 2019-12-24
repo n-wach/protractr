@@ -16,7 +16,7 @@ export default class RelationColinearPoints extends Relation {
     points: Point[];
 
     constructor(...points: Point[]) {
-        super();
+        super("colinear points");
         this.variables = [];
         for(let point of points) {
             this.variables.push(point._x);

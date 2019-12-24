@@ -16,7 +16,7 @@ export default class RelationMidpoint extends Relation {
     line: Line;
 
     constructor(point: Point, line: Line) {
-        super();
+        super("midpoint");
         this.variables = [
             point._x,
             point._y,

@@ -40,7 +40,7 @@ export default class RelationCreator {
                 for(let point of figures.point) {
                     ys.push(point._y);
                 }
-                return [new RelationEqual(...ys)];
+                return [new RelationEqual("horizontal", ...ys)];
             }
         },
         { //Vertical points
@@ -51,7 +51,7 @@ export default class RelationCreator {
                 for(let point of figures.point) {
                     xs.push(point._x);
                 }
-                return [new RelationEqual(...xs)];
+                return [new RelationEqual("vertical", ...xs)];
             }
         },
         { //Horizontal lines
@@ -60,7 +60,7 @@ export default class RelationCreator {
             create: function(figures) {
                 let relations: RelationEqual[] = [];
                 for(let line of figures.line) {
-                    relations.push(new RelationEqual(line.p0._y, line.p1._y));
+                    relations.push(new RelationEqual("horizontal", line.p0._y, line.p1._y));
                 }
                 return relations;
             }
@@ -71,7 +71,7 @@ export default class RelationCreator {
             create: function(figures) {
                 let relations: RelationEqual[] = [];
                 for(let line of figures.line) {
-                    relations.push(new RelationEqual(line.p0._x, line.p1._x));
+                    relations.push(new RelationEqual("vertical", line.p0._x, line.p1._x));
                 }
                 return relations;
             }
@@ -87,8 +87,8 @@ export default class RelationCreator {
                     ys.push(point._y);
                 }
                 return [
-                    new RelationEqual(...xs),
-                    new RelationEqual(...ys)
+                    new RelationEqual("vertical", ...xs),
+                    new RelationEqual("horizontal", ...ys),
                 ];
             }
         },
@@ -100,7 +100,7 @@ export default class RelationCreator {
                 for(let circle of figures.circle) {
                     rs.push(circle._r);
                 }
-                return [new RelationEqual(...rs)];
+                return [new RelationEqual("equal radius", ...rs)];
             }
         },
         { //Concentric
@@ -118,8 +118,8 @@ export default class RelationCreator {
                     ys.push(point._y);
                 }
                 return [
-                    new RelationEqual(...xs),
-                    new RelationEqual(...ys)
+                    new RelationEqual("vertical", ...xs),
+                    new RelationEqual("horizontal", ...ys)
                 ];
             }
         },
@@ -208,12 +208,7 @@ export default class RelationCreator {
 
     static createRelations(figures: Figure[], relenv: RelationEnvironment) {
         let sorted = RelationCreator.sortFigureSelection(figures);
-        let relations = relenv.create(sorted);
-        for(let relation of relations) {
-            // name the relation according to its env
-            relation.name = relenv.name;
-        }
-        return relations;
+        return relenv.create(sorted);
     }
 
     static sortFigureSelection(figures: Figure[]): SortedFigureSelection {

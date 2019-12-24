@@ -17,7 +17,7 @@ export default class RelationTangentLine extends Relation {
     circle: Circle;
 
     constructor(line: Line, circle: Circle) {
-        super();
+        super("tangent line");
         this.variables = [
             circle._r,
             circle.c._x,

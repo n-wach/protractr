@@ -62,8 +62,8 @@ export default abstract class ToolCreateFigure extends Tool {
         if (!snapFigure) return;
         if (figure instanceof Point) {
             if (snapFigure instanceof Point) {
-                let ex = new RelationEqual(figure._x, snapFigure._x);
-                let ey = new RelationEqual(figure._y, snapFigure._y);
+                let ex = new RelationEqual("vertical", figure._x, snapFigure._x);
+                let ey = new RelationEqual("horizontal", figure._y, snapFigure._y);
                 this.protractr.sketch.relationManager.addRelations(ex, ey);
             } else if (snapFigure instanceof Circle) {
                 this.protractr.sketch.relationManager.addRelations(new RelationPointsOnCircle(snapFigure, figure));

@@ -35,6 +35,7 @@ export default class ToolSelect extends Tool {
         if (this.downFigure) {
             this.protractr.sketch.solveWithConstantFigures([this.downFigure], true);
             this.protractr.ui.pushState();
+            this.protractr.ui.update();
         }
         if (!this.dragging && this.downFigure) {
             this.protractr.ui.selectedFigures.togglePresence(this.downFigure);
@@ -48,6 +49,7 @@ export default class ToolSelect extends Tool {
             this.downFigure.translate(this.lastDrag, point.copy());
             this.protractr.sketch.solveWithConstantFigures([this.downFigure]);
             this.lastDrag = point.copy();
+            this.protractr.ui.update();
         } else {
             this.selectionEnd = point;
             if (this.selectionStart) {

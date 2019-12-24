@@ -13,7 +13,7 @@ export default class RelationEqualLength extends Relation {
     lines: Line[];
 
     constructor(...lines: Line[]) {
-        super();
+        super("equal length");
         this.variables = [];
         for(let line of lines) {
             this.variables.push(line.p0._x);

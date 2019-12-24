@@ -17,7 +17,7 @@ export default class RelationPointsOnCircle extends Relation {
     circle: Circle;
 
     constructor(circle: Circle, ...points: Point[]) {
-        super();
+        super("points on circle");
         this.variables = [
             circle._r,
             circle.c._x,

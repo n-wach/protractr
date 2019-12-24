@@ -41,8 +41,7 @@ export default class UI {
     }
 
     restoreState(state: string) {
-        this.protractr.sketch = IO.DEFAULT_IMPORT.stringToSketch(state);
-        this.update();
+        this.protractr.setSketch(IO.DEFAULT_IMPORT.stringToSketch(state));
     }
 
     update() {

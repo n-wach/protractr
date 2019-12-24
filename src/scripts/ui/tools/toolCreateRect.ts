@@ -26,10 +26,10 @@ export default class ToolCreateRect extends ToolCreateFigure {
         let h1 = new Line(p2, p3);
         let v1 = new Line(p3, p0);
 
-        let hc0 = new RelationEqual(h0.p0._y, h0.p1._y, v0.p0._y, v1.p1._y);
-        let hc1 = new RelationEqual(h1.p0._y, h1.p1._y, v0.p1._y, v1.p0._y);
-        let vc0 = new RelationEqual(v0.p0._x, v0.p1._x, h0.p1._x, h1.p0._x);
-        let vc1 = new RelationEqual(v1.p0._x, v1.p1._x, h0.p0._x, h1.p1._x);
+        let hc0 = new RelationEqual("horizontal", h0.p0._y, h0.p1._y, v0.p0._y, v1.p1._y);
+        let hc1 = new RelationEqual("horizontal", h1.p0._y, h1.p1._y, v0.p1._y, v1.p0._y);
+        let vc0 = new RelationEqual("vertical", v0.p0._x, v0.p1._x, h0.p1._x, h1.p0._x);
+        let vc1 = new RelationEqual("vertical", v1.p0._x, v1.p1._x, h0.p0._x, h1.p1._x);
 
         this.protractr.sketch.relationManager.addRelations(hc0, hc1, vc0, vc1);
 

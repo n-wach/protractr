@@ -15,13 +15,20 @@ export default class Protractr {
         this.ui = new UI(this, canvas, sidePane, topBar);
     }
 
+    setSketch(sketch: Sketch) {
+        this.sketch = sketch;
+        this.ui.selectedFigures.clear();
+        this.ui.boldFigures.clear();
+        this.ui.selectedRelations.clear();
+        this.ui.update();
+    }
+
     loadFromURL(url: string) {
         let request = new XMLHttpRequest();
         let _this = this;
         request.addEventListener("load", function() {
             if (this.status == 200) {
-                _this.sketch = IO.DEFAULT_IMPORT.stringToSketch(this.responseText);
-                _this.ui.update();
+                _this.setSketch(IO.DEFAULT_IMPORT.stringToSketch(this.responseText));
             } else {
                 console.log("Failed to load sketch, response code != 200: ", this);
             }

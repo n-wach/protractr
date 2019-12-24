@@ -10,8 +10,7 @@ export default class ActionImport extends Action {
     use() {
         let input = prompt("JSON or URL to import");
         if (input[0] == "{") {
-            this.protractr.sketch = IO.DEFAULT_IMPORT.stringToSketch(input);
-            this.protractr.ui.update();
+            this.protractr.setSketch(IO.DEFAULT_IMPORT.stringToSketch(input));
         } else {
             this.protractr.loadFromURL(input);
         }

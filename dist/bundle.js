@@ -213,7 +213,7 @@ var Circle = /** @class */ (function (_super) {
             return this._r.v;
         },
         set: function (v) {
-            this._r.v = v;
+            this._r.v = Math.max(v, 0);
         },
         enumerable: true,
         configurable: true
@@ -327,6 +327,10 @@ exports.default = Line;
 
 },{"./figure":3,"./util":6}],5:[function(require,module,exports){
 "use strict";
+/**
+ * @module gcs/geometry
+ */
+/** */
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -754,6 +758,10 @@ exports.default = Util;
 
 },{"./line":4,"./point":5}],7:[function(require,module,exports){
 "use strict";
+/**
+ * @module gcs/relations
+ */
+/** */
 var __spreadArrays = (this && this.__spreadArrays) || function () {
     for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
     for (var r = Array(s), k = 0, i = 0; i < il; i++)
@@ -788,13 +796,7 @@ var RelationCreator = /** @class */ (function () {
     };
     RelationCreator.createRelations = function (figures, relenv) {
         var sorted = RelationCreator.sortFigureSelection(figures);
-        var relations = relenv.create(sorted);
-        for (var _i = 0, relations_1 = relations; _i < relations_1.length; _i++) {
-            var relation = relations_1[_i];
-            // name the relation according to its env
-            relation.name = relenv.name;
-        }
-        return relations;
+        return relenv.create(sorted);
     };
     RelationCreator.sortFigureSelection = function (figures) {
         var sortedFigures = {
@@ -826,7 +828,7 @@ var RelationCreator = /** @class */ (function () {
                     var point = _a[_i];
                     ys.push(point._y);
                 }
-                return [new (relationEqual_1.default.bind.apply(relationEqual_1.default, __spreadArrays([void 0], ys)))()];
+                return [new (relationEqual_1.default.bind.apply(relationEqual_1.default, __spreadArrays([void 0, "horizontal"], ys)))()];
             }
         },
         {
@@ -838,7 +840,7 @@ var RelationCreator = /** @class */ (function () {
                     var point = _a[_i];
                     xs.push(point._x);
                 }
-                return [new (relationEqual_1.default.bind.apply(relationEqual_1.default, __spreadArrays([void 0], xs)))()];
+                return [new (relationEqual_1.default.bind.apply(relationEqual_1.default, __spreadArrays([void 0, "vertical"], xs)))()];
             }
         },
         {
@@ -848,7 +850,7 @@ var RelationCreator = /** @class */ (function () {
                 var relations = [];
                 for (var _i = 0, _a = figures.line; _i < _a.length; _i++) {
                     var line = _a[_i];
-                    relations.push(new relationEqual_1.default(line.p0._y, line.p1._y));
+                    relations.push(new relationEqual_1.default("horizontal", line.p0._y, line.p1._y));
                 }
                 return relations;
             }
@@ -860,7 +862,7 @@ var RelationCreator = /** @class */ (function () {
                 var relations = [];
                 for (var _i = 0, _a = figures.line; _i < _a.length; _i++) {
                     var line = _a[_i];
-                    relations.push(new relationEqual_1.default(line.p0._x, line.p1._x));
+                    relations.push(new relationEqual_1.default("vertical", line.p0._x, line.p1._x));
                 }
                 return relations;
             }
@@ -877,8 +879,8 @@ var RelationCreator = /** @class */ (function () {
                     ys.push(point._y);
                 }
                 return [
-                    new (relationEqual_1.default.bind.apply(relationEqual_1.default, __spreadArrays([void 0], xs)))(),
-                    new (relationEqual_1.default.bind.apply(relationEqual_1.default, __spreadArrays([void 0], ys)))()
+                    new (relationEqual_1.default.bind.apply(relationEqual_1.default, __spreadArrays([void 0, "vertical"], xs)))(),
+                    new (relationEqual_1.default.bind.apply(relationEqual_1.default, __spreadArrays([void 0, "horizontal"], ys)))(),
                 ];
             }
         },
@@ -891,7 +893,7 @@ var RelationCreator = /** @class */ (function () {
                     var circle = _a[_i];
                     rs.push(circle._r);
                 }
-                return [new (relationEqual_1.default.bind.apply(relationEqual_1.default, __spreadArrays([void 0], rs)))()];
+                return [new (relationEqual_1.default.bind.apply(relationEqual_1.default, __spreadArrays([void 0, "equal radius"], rs)))()];
             }
         },
         {
@@ -911,8 +913,8 @@ var RelationCreator = /** @class */ (function () {
                     ys.push(point._y);
                 }
                 return [
-                    new (relationEqual_1.default.bind.apply(relationEqual_1.default, __spreadArrays([void 0], xs)))(),
-                    new (relationEqual_1.default.bind.apply(relationEqual_1.default, __spreadArrays([void 0], ys)))()
+                    new (relationEqual_1.default.bind.apply(relationEqual_1.default, __spreadArrays([void 0, "vertical"], xs)))(),
+                    new (relationEqual_1.default.bind.apply(relationEqual_1.default, __spreadArrays([void 0, "horizontal"], ys)))()
                 ];
             }
         },
@@ -997,6 +999,10 @@ exports.default = RelationCreator;
 
 },{"../filterString":1,"../geometry/circle":2,"../geometry/line":4,"../geometry/point":5,"./relationColinearPoints":10,"./relationEqual":11,"./relationEqualLength":12,"./relationMidpoint":13,"./relationPointsOnCircle":14,"./relationTangentCircle":15,"./relationTangentLine":16}],8:[function(require,module,exports){
 "use strict";
+/**
+ * @module gcs/relations
+ */
+/** */
 Object.defineProperty(exports, "__esModule", { value: true });
 var relationEqual_1 = require("./relationEqual");
 var relationColinearPoints_1 = require("./relationColinearPoints");
@@ -1217,13 +1223,18 @@ exports.default = RelationManager;
 
 },{"./relationColinearPoints":10,"./relationEqual":11,"./relationEqualLength":12,"./relationPointsOnCircle":14}],9:[function(require,module,exports){
 "use strict";
+/**
+ * @module gcs/relations
+ */
+/** */
 Object.defineProperty(exports, "__esModule", { value: true });
 var point_1 = require("../geometry/point");
 var line_1 = require("../geometry/line");
 var circle_1 = require("../geometry/circle");
 var Relation = /** @class */ (function () {
-    function Relation() {
+    function Relation(name) {
         this.name = "abstract relation";
+        this.name = name;
     }
     Relation.prototype.containsVariable = function (variable) {
         return this.getVariables().indexOf(variable) !== -1;
@@ -1233,7 +1244,7 @@ var Relation = /** @class */ (function () {
             return this.containsVariable(figure._x) || this.containsVariable(figure._y);
         }
         else if (figure instanceof line_1.default) {
-            return this.containsFigure(figure.p0) && this.containsFigure(figure.p0);
+            return this.containsFigure(figure.p0) && this.containsFigure(figure.p1);
         }
         else if (figure instanceof circle_1.default) {
             return this.containsVariable(figure._r);
@@ -1249,6 +1260,10 @@ exports.default = Relation;
 
 },{"../geometry/circle":2,"../geometry/line":4,"../geometry/point":5}],10:[function(require,module,exports){
 "use strict";
+/**
+ * @module gcs/relations
+ */
+/** */
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -1273,7 +1288,7 @@ var RelationColinearPoints = /** @class */ (function (_super) {
         for (var _i = 0; _i < arguments.length; _i++) {
             points[_i] = arguments[_i];
         }
-        var _this = _super.call(this) || this;
+        var _this = _super.call(this, "colinear points") || this;
         _this.variables = [];
         for (var _a = 0, points_1 = points; _a < points_1.length; _a++) {
             var point = points_1[_a];
@@ -1320,6 +1335,10 @@ exports.default = RelationColinearPoints;
 
 },{"../geometry/line":4,"../geometry/util":6,"./relation":9}],11:[function(require,module,exports){
 "use strict";
+/**
+ * @module gcs/relations
+ */
+/** */
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -1344,12 +1363,12 @@ var relation_1 = require("./relation");
  */
 var RelationEqual = /** @class */ (function (_super) {
     __extends(RelationEqual, _super);
-    function RelationEqual() {
+    function RelationEqual(name) {
         var variables = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            variables[_i] = arguments[_i];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            variables[_i - 1] = arguments[_i];
         }
-        var _this = _super.call(this) || this;
+        var _this = _super.call(this, name) || this;
         _this.variables = variables;
         var root = _this.variables[0];
         for (var i = 1; i < _this.variables.length; i++) {
@@ -1378,6 +1397,10 @@ exports.default = RelationEqual;
 
 },{"./relation":9}],12:[function(require,module,exports){
 "use strict";
+/**
+ * @module gcs/relations
+ */
+/** */
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -1401,7 +1424,7 @@ var RelationEqualLength = /** @class */ (function (_super) {
         for (var _i = 0; _i < arguments.length; _i++) {
             lines[_i] = arguments[_i];
         }
-        var _this = _super.call(this) || this;
+        var _this = _super.call(this, "equal length") || this;
         _this.variables = [];
         for (var _a = 0, lines_1 = lines; _a < lines_1.length; _a++) {
             var line = lines_1[_a];
@@ -1459,6 +1482,10 @@ exports.default = RelationEqualLength;
 
 },{"../geometry/util":6,"./relation":9}],13:[function(require,module,exports){
 "use strict";
+/**
+ * @module gcs/relations
+ */
+/** */
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -1478,7 +1505,7 @@ var util_1 = require("../geometry/util");
 var RelationMidpoint = /** @class */ (function (_super) {
     __extends(RelationMidpoint, _super);
     function RelationMidpoint(point, line) {
-        var _this = _super.call(this) || this;
+        var _this = _super.call(this, "midpoint") || this;
         _this.variables = [
             point._x,
             point._y,
@@ -1514,6 +1541,10 @@ exports.default = RelationMidpoint;
 
 },{"../geometry/util":6,"./relation":9}],14:[function(require,module,exports){
 "use strict";
+/**
+ * @module gcs/relations
+ */
+/** */
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -1538,7 +1569,7 @@ var RelationPointsOnCircle = /** @class */ (function (_super) {
         for (var _i = 1; _i < arguments.length; _i++) {
             points[_i - 1] = arguments[_i];
         }
-        var _this = _super.call(this) || this;
+        var _this = _super.call(this, "points on circle") || this;
         _this.variables = [
             circle._r,
             circle.c._x,
@@ -1601,6 +1632,10 @@ exports.default = RelationPointsOnCircle;
 
 },{"../geometry/line":4,"../geometry/util":6,"./relation":9}],15:[function(require,module,exports){
 "use strict";
+/**
+ * @module gcs/relations
+ */
+/** */
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -1622,7 +1657,7 @@ var util_1 = require("../geometry/util");
 var RelationTangentCircle = /** @class */ (function (_super) {
     __extends(RelationTangentCircle, _super);
     function RelationTangentCircle(circle0, circle1) {
-        var _this = _super.call(this) || this;
+        var _this = _super.call(this, "tangent circle") || this;
         _this.variables = [
             circle0._r,
             circle0.c._x,
@@ -1638,31 +1673,39 @@ var RelationTangentCircle = /** @class */ (function (_super) {
     RelationTangentCircle.prototype.getDeltas = function () {
         var deltas = [];
         var delta = 0;
+        var c0Goal = null;
+        var c1Goal = null;
         var dist = util_1.default.distanceBetweenPoints(this.circle0.c, this.circle1.c);
-        if (dist > Math.max(this.circle0.r, this.circle1.r)) {
+        if (dist >= Math.max(this.circle0.r, this.circle1.r)) {
             // circle centers are outside of each other
             var radiusSum = this.circle0.r + this.circle1.r;
             delta = dist - radiusSum;
             deltas.push([this.circle0._r, delta]);
             deltas.push([this.circle1._r, delta]);
+            c0Goal = util_1.default.pointInDirection(this.circle0.c, this.circle1.c, delta);
+            c1Goal = util_1.default.pointInDirection(this.circle1.c, this.circle0.c, delta);
         }
         else {
             // the circle with the smaller radius is inside the other circle
             if (this.circle0.r < this.circle1.r) {
-                //circle0 inside circle1
+                // circle0 inside circle1
+                // delta is how to change r0
                 delta = this.circle1.r - (dist - this.circle0.r);
-                deltas.push([this.circle0._r, -delta]);
-                deltas.push([this.circle1._r, delta]);
-            }
-            else {
-                //circle1 inside circle0
-                delta = this.circle0.r - (dist - this.circle1.r);
                 deltas.push([this.circle0._r, delta]);
                 deltas.push([this.circle1._r, -delta]);
+                c0Goal = util_1.default.pointInDirection(this.circle0.c, this.circle1.c, delta);
+                c1Goal = util_1.default.pointInDirection(this.circle1.c, this.circle0.c, -delta);
+            }
+            else {
+                // circle1 inside circle0
+                // delta is how to change r1
+                delta = this.circle0.r - (dist + this.circle1.r);
+                deltas.push([this.circle0._r, -delta]);
+                deltas.push([this.circle1._r, delta]);
+                c0Goal = util_1.default.pointInDirection(this.circle0.c, this.circle1.c, -delta);
+                c1Goal = util_1.default.pointInDirection(this.circle1.c, this.circle0.c, delta);
             }
         }
-        var c0Goal = util_1.default.pointInDirection(this.circle0.c, this.circle1.c, delta);
-        var c1Goal = util_1.default.pointInDirection(this.circle1.c, this.circle0.c, delta);
         deltas.push.apply(deltas, util_1.default.pointDeltas(this.circle0.c, c0Goal));
         deltas.push.apply(deltas, util_1.default.pointDeltas(this.circle1.c, c1Goal));
         return deltas;
@@ -1678,11 +1721,11 @@ var RelationTangentCircle = /** @class */ (function (_super) {
             // the circle with the smaller radius is inside the other circle
             if (this.circle0.r < this.circle1.r) {
                 //circle0 inside circle1
-                return Math.abs(this.circle1.r - (dist - this.circle0.r));
+                return Math.abs(this.circle1.r - (dist + this.circle0.r));
             }
             else {
                 //circle1 inside circle0
-                return Math.abs(this.circle0.r - (dist - this.circle1.r));
+                return Math.abs(this.circle0.r - (dist + this.circle1.r));
             }
         }
     };
@@ -1702,6 +1745,10 @@ exports.default = RelationTangentCircle;
 
 },{"../geometry/line":4,"../geometry/point":5,"../geometry/util":6,"./relation":9}],16:[function(require,module,exports){
 "use strict";
+/**
+ * @module gcs/relations
+ */
+/** */
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -1722,7 +1769,7 @@ var util_1 = require("../geometry/util");
 var RelationTangentLine = /** @class */ (function (_super) {
     __extends(RelationTangentLine, _super);
     function RelationTangentLine(line, circle) {
-        var _this = _super.call(this) || this;
+        var _this = _super.call(this, "tangent line") || this;
         _this.variables = [
             circle._r,
             circle.c._x,
@@ -1844,6 +1891,10 @@ exports.default = Sketch;
 
 },{"./geometry/point":5,"./geometry/util":6,"./relations/manager":8}],18:[function(require,module,exports){
 "use strict";
+/**
+ * @module gcs/variable
+ */
+/** */
 var __spreadArrays = (this && this.__spreadArrays) || function () {
     for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
     for (var r = Array(s), k = 0, i = 0; i < il; i++)
@@ -1993,13 +2044,19 @@ var Protractr = /** @class */ (function () {
         this.sketch = new sketch_1.default();
         this.ui = new ui_1.default(this, canvas, sidePane, topBar);
     }
+    Protractr.prototype.setSketch = function (sketch) {
+        this.sketch = sketch;
+        this.ui.selectedFigures.clear();
+        this.ui.boldFigures.clear();
+        this.ui.selectedRelations.clear();
+        this.ui.update();
+    };
     Protractr.prototype.loadFromURL = function (url) {
         var request = new XMLHttpRequest();
         var _this = this;
         request.addEventListener("load", function () {
             if (this.status == 200) {
-                _this.sketch = io_1.default.DEFAULT_IMPORT.stringToSketch(this.responseText);
-                _this.ui.update();
+                _this.setSketch(io_1.default.DEFAULT_IMPORT.stringToSketch(this.responseText));
             }
             else {
                 console.log("Failed to load sketch, response code != 200: ", this);
@@ -2093,8 +2150,7 @@ var ActionImport = /** @class */ (function (_super) {
     ActionImport.prototype.use = function () {
         var input = prompt("JSON or URL to import");
         if (input[0] == "{") {
-            this.protractr.sketch = io_1.default.DEFAULT_IMPORT.stringToSketch(input);
-            this.protractr.ui.update();
+            this.protractr.setSketch(io_1.default.DEFAULT_IMPORT.stringToSketch(input));
         }
         else {
             this.protractr.loadFromURL(input);
@@ -2173,6 +2229,10 @@ exports.default = ActionUndo;
 },{"./action":21}],26:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @module ui/container
+ */
+/** */
 var Container = /** @class */ (function () {
     function Container(elements, updateCallback) {
         this.elements = elements;
@@ -2321,6 +2381,10 @@ var HistoryStack = /** @class */ (function () {
 
 },{}],28:[function(require,module,exports){
 "use strict";
+/**
+ * @module gcs/io
+ */
+/** */
 Object.defineProperty(exports, "__esModule", { value: true });
 var json_1 = require("./json");
 var IO = /** @class */ (function () {
@@ -2338,6 +2402,10 @@ exports.default = IO;
 
 },{"./json":29}],29:[function(require,module,exports){
 "use strict";
+/**
+ * @module gcs/io
+ */
+/** */
 var __spreadArrays = (this && this.__spreadArrays) || function () {
     for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
     for (var r = Array(s), k = 0, i = 0; i < il; i++)
@@ -2415,9 +2483,7 @@ var JSONImporter = /** @class */ (function () {
                 var v = _a[_i];
                 variables.push(this.variables[v]);
             }
-            var relation = new (relationEqual_1.default.bind.apply(relationEqual_1.default, __spreadArrays([void 0], variables)))();
-            relation.name = obj.name;
-            return relation;
+            return new (relationEqual_1.default.bind.apply(relationEqual_1.default, __spreadArrays([void 0, obj.name], variables)))();
         }
         else if (obj.type == "colinear points") {
             var points = [];
@@ -2425,9 +2491,7 @@ var JSONImporter = /** @class */ (function () {
                 var p = _c[_b];
                 points.push(this.points[p]);
             }
-            var relation = new (relationColinearPoints_1.default.bind.apply(relationColinearPoints_1.default, __spreadArrays([void 0], points)))();
-            relation.name = obj.name;
-            return relation;
+            return new (relationColinearPoints_1.default.bind.apply(relationColinearPoints_1.default, __spreadArrays([void 0], points)))();
         }
         else if (obj.type == "equal length") {
             var lines = [];
@@ -2435,16 +2499,12 @@ var JSONImporter = /** @class */ (function () {
                 var l = _e[_d];
                 lines.push(this.figures[l]);
             }
-            var relation = new (relationEqualLength_1.default.bind.apply(relationEqualLength_1.default, __spreadArrays([void 0], lines)))();
-            relation.name = obj.name;
-            return relation;
+            return new (relationEqualLength_1.default.bind.apply(relationEqualLength_1.default, __spreadArrays([void 0], lines)))();
         }
         else if (obj.type == "midpoint") {
             var line = this.figures[obj.line];
             var midpoint = this.points[obj.midpoint];
-            var relation = new relationMidpoint_1.default(midpoint, line);
-            relation.name = obj.name;
-            return relation;
+            return new relationMidpoint_1.default(midpoint, line);
         }
         else if (obj.type == "points on circle") {
             var points = [];
@@ -2453,23 +2513,17 @@ var JSONImporter = /** @class */ (function () {
                 points.push(this.points[p]);
             }
             var circle = this.figures[obj.circle];
-            var relation = new (relationPointsOnCircle_1.default.bind.apply(relationPointsOnCircle_1.default, __spreadArrays([void 0, circle], points)))();
-            relation.name = obj.name;
-            return relation;
+            return new (relationPointsOnCircle_1.default.bind.apply(relationPointsOnCircle_1.default, __spreadArrays([void 0, circle], points)))();
         }
         else if (obj.type == "tangent circle") {
             var circle0 = this.figures[obj.circle0];
             var circle1 = this.figures[obj.circle1];
-            var relation = new relationTangentCircle_1.default(circle0, circle1);
-            relation.name = obj.name;
-            return relation;
+            return new relationTangentCircle_1.default(circle0, circle1);
         }
         else if (obj.type == "tangent line") {
             var circle = this.figures[obj.circle];
             var line = this.figures[obj.line];
-            var relation = new relationTangentLine_1.default(line, circle);
-            relation.name = obj.name;
-            return relation;
+            return new relationTangentLine_1.default(line, circle);
         }
     };
     return JSONImporter;
@@ -2544,7 +2598,6 @@ var JSONExporter = /** @class */ (function () {
             }
             return {
                 type: "colinear points",
-                name: relation.name,
                 points: points,
             };
         }
@@ -2556,14 +2609,12 @@ var JSONExporter = /** @class */ (function () {
             }
             return {
                 type: "equal length",
-                name: relation.name,
                 lines: lines,
             };
         }
         else if (relation instanceof relationMidpoint_1.default) {
             return {
                 type: "midpoint",
-                name: relation.name,
                 line: this.encodeF(relation.line),
                 midpoint: this.encodeF(relation.midpoint),
             };
@@ -2576,7 +2627,6 @@ var JSONExporter = /** @class */ (function () {
             }
             return {
                 type: "points on circle",
-                name: relation.name,
                 points: points,
                 circle: this.encodeF(relation.circle),
             };
@@ -2584,7 +2634,6 @@ var JSONExporter = /** @class */ (function () {
         else if (relation instanceof relationTangentCircle_1.default) {
             return {
                 type: "tangent circle",
-                name: relation.name,
                 circle0: this.encodeF(relation.circle0),
                 circle1: this.encodeF(relation.circle1),
             };
@@ -2592,7 +2641,6 @@ var JSONExporter = /** @class */ (function () {
         else if (relation instanceof relationTangentLine_1.default) {
             return {
                 type: "tangent line",
-                name: relation.name,
                 line: this.encodeF(relation.line),
                 circle: this.encodeF(relation.circle),
             };
@@ -3087,8 +3135,8 @@ var ToolCreateFigure = /** @class */ (function (_super) {
             return;
         if (figure instanceof point_1.default) {
             if (snapFigure instanceof point_1.default) {
-                var ex = new relationEqual_1.default(figure._x, snapFigure._x);
-                var ey = new relationEqual_1.default(figure._y, snapFigure._y);
+                var ex = new relationEqual_1.default("vertical", figure._x, snapFigure._x);
+                var ey = new relationEqual_1.default("horizontal", figure._y, snapFigure._y);
                 this.protractr.sketch.relationManager.addRelations(ex, ey);
             }
             else if (snapFigure instanceof circle_1.default) {
@@ -3236,10 +3284,10 @@ var ToolCreateRect = /** @class */ (function (_super) {
         var v0 = new line_1.default(p1, p2);
         var h1 = new line_1.default(p2, p3);
         var v1 = new line_1.default(p3, p0);
-        var hc0 = new relationEqual_1.default(h0.p0._y, h0.p1._y, v0.p0._y, v1.p1._y);
-        var hc1 = new relationEqual_1.default(h1.p0._y, h1.p1._y, v0.p1._y, v1.p0._y);
-        var vc0 = new relationEqual_1.default(v0.p0._x, v0.p1._x, h0.p1._x, h1.p0._x);
-        var vc1 = new relationEqual_1.default(v1.p0._x, v1.p1._x, h0.p0._x, h1.p1._x);
+        var hc0 = new relationEqual_1.default("horizontal", h0.p0._y, h0.p1._y, v0.p0._y, v1.p1._y);
+        var hc1 = new relationEqual_1.default("horizontal", h1.p0._y, h1.p1._y, v0.p1._y, v1.p0._y);
+        var vc0 = new relationEqual_1.default("vertical", v0.p0._x, v0.p1._x, h0.p1._x, h1.p0._x);
+        var vc1 = new relationEqual_1.default("vertical", v1.p0._x, v1.p1._x, h0.p0._x, h1.p1._x);
         this.protractr.sketch.relationManager.addRelations(hc0, hc1, vc0, vc1);
         this.addRelationsBySnap(h0.p0, this.points[0].snapFigure);
         this.addRelationsBySnap(v1.p1, this.points[0].snapFigure);
@@ -3352,6 +3400,7 @@ var ToolSelect = /** @class */ (function (_super) {
         if (this.downFigure) {
             this.protractr.sketch.solveWithConstantFigures([this.downFigure], true);
             this.protractr.ui.pushState();
+            this.protractr.ui.update();
         }
         if (!this.dragging && this.downFigure) {
             this.protractr.ui.selectedFigures.togglePresence(this.downFigure);
@@ -3366,6 +3415,7 @@ var ToolSelect = /** @class */ (function (_super) {
             this.downFigure.translate(this.lastDrag, point.copy());
             this.protractr.sketch.solveWithConstantFigures([this.downFigure]);
             this.lastDrag = point.copy();
+            this.protractr.ui.update();
         }
         else {
             this.selectionEnd = point;
@@ -3550,8 +3600,7 @@ var UI = /** @class */ (function () {
         this.history.recordStateChange(e);
     };
     UI.prototype.restoreState = function (state) {
-        this.protractr.sketch = io_1.default.DEFAULT_IMPORT.stringToSketch(state);
-        this.update();
+        this.protractr.setSketch(io_1.default.DEFAULT_IMPORT.stringToSketch(state));
     };
     UI.prototype.update = function () {
         this.sidePanel.update();
@@ -3696,6 +3745,10 @@ exports.ListElement = ListElement;
 
 },{"./titledWidget":49,"./widget":50}],44:[function(require,module,exports){
 "use strict";
+/**
+ * @module ui/widgets
+ */
+/** */
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -3783,6 +3836,10 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
     return r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @module ui/widgets
+ */
+/** */
 var listWidget_1 = require("./listWidget");
 var RelationListWidget = /** @class */ (function (_super) {
     __extends(RelationListWidget, _super);
@@ -3867,6 +3924,10 @@ var RelationElement = /** @class */ (function (_super) {
 
 },{"./listWidget":43}],46:[function(require,module,exports){
 "use strict";
+/**
+ * @module ui/widgets
+ */
+/** */
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -3952,6 +4013,10 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @module ui/widgets
+ */
+/** */
 var widget_1 = require("./widget");
 var point_1 = require("../../gcs/geometry/point");
 var line_1 = require("../../gcs/geometry/line");
@@ -4038,7 +4103,7 @@ exports.default = SelectedFigureWidget;
 },{"../../gcs/geometry/circle":2,"../../gcs/geometry/line":4,"../../gcs/geometry/point":5,"./widget":50}],48:[function(require,module,exports){
 "use strict";
 /**
- * @module ui/sidepane
+ * @module ui/widgets
  */
 /** */
 var __extends = (this && this.__extends) || (function () {
@@ -4090,6 +4155,10 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @module ui/widgets
+ */
+/** */
 var widget_1 = require("./widget");
 var TitledWidget = /** @class */ (function (_super) {
     __extends(TitledWidget, _super);

@@ -28,7 +28,7 @@ export default class Circle extends Figure {
     }
 
     set r(v: number) {
-        this._r.v = v;
+        this._r.v = Math.max(v, 0);
     }
 
     equals(other: Figure) {

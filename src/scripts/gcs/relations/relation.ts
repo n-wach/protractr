@@ -13,6 +13,9 @@ export type VariableDelta = [Variable, number];
 
 export default abstract class Relation {
     name: string = "abstract relation";
+    protected constructor(name?: string) {
+        this.name = name;
+    }
     abstract getError(): number;
     abstract getDeltas(): VariableDelta[];
     abstract getVariables(): Variable[];
@@ -23,7 +26,7 @@ export default abstract class Relation {
         if(figure instanceof Point) {
             return this.containsVariable(figure._x) || this.containsVariable(figure._y);
         } else if(figure instanceof Line) {
-            return this.containsFigure(figure.p0) && this.containsFigure(figure.p0);
+            return this.containsFigure(figure.p0) && this.containsFigure(figure.p1);
         } else if(figure instanceof Circle) {
             return this.containsVariable(figure._r);
         }

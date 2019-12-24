@@ -17,7 +17,7 @@ export default class RelationTangentCircle extends Relation {
     circle1: Circle;
 
     constructor(circle0: Circle, circle1: Circle) {
-        super();
+        super("tangent circle");
         this.variables = [
             circle0._r,
             circle0.c._x,
@@ -34,30 +34,41 @@ export default class RelationTangentCircle extends Relation {
         let deltas: VariableDelta[] = [];
         let delta = 0;
 
+        let c0Goal = null;
+        let c1Goal = null;
+
         let dist = Util.distanceBetweenPoints(this.circle0.c, this.circle1.c);
-        if(dist > Math.max(this.circle0.r, this.circle1.r)) {
+        if(dist >= Math.max(this.circle0.r, this.circle1.r)) {
             // circle centers are outside of each other
             let radiusSum = this.circle0.r + this.circle1.r;
             delta = dist - radiusSum;
             deltas.push([this.circle0._r, delta]);
             deltas.push([this.circle1._r, delta]);
+
+            c0Goal = Util.pointInDirection(this.circle0.c, this.circle1.c, delta);
+            c1Goal = Util.pointInDirection(this.circle1.c, this.circle0.c, delta);
         } else {
             // the circle with the smaller radius is inside the other circle
             if(this.circle0.r < this.circle1.r) {
-                //circle0 inside circle1
+                // circle0 inside circle1
+                // delta is how to change r0
                 delta = this.circle1.r - (dist - this.circle0.r);
-                deltas.push([this.circle0._r, -delta]);
-                deltas.push([this.circle1._r, delta]);
-            } else {
-                //circle1 inside circle0
-                delta = this.circle0.r - (dist - this.circle1.r);
                 deltas.push([this.circle0._r, delta]);
                 deltas.push([this.circle1._r, -delta]);
+
+                c0Goal = Util.pointInDirection(this.circle0.c, this.circle1.c, delta);
+                c1Goal = Util.pointInDirection(this.circle1.c, this.circle0.c, -delta);
+            } else {
+                // circle1 inside circle0
+                // delta is how to change r1
+                delta = this.circle0.r - (dist + this.circle1.r);
+                deltas.push([this.circle0._r, -delta]);
+                deltas.push([this.circle1._r, delta]);
+
+                c0Goal = Util.pointInDirection(this.circle0.c, this.circle1.c, -delta);
+                c1Goal = Util.pointInDirection(this.circle1.c, this.circle0.c, delta);
             }
         }
-
-        let c0Goal = Util.pointInDirection(this.circle0.c, this.circle1.c, delta);
-        let c1Goal = Util.pointInDirection(this.circle1.c, this.circle0.c, delta);
 
         deltas.push(...Util.pointDeltas(this.circle0.c, c0Goal));
         deltas.push(...Util.pointDeltas(this.circle1.c, c1Goal));
@@ -75,10 +86,10 @@ export default class RelationTangentCircle extends Relation {
             // the circle with the smaller radius is inside the other circle
             if(this.circle0.r < this.circle1.r) {
                 //circle0 inside circle1
-                return Math.abs(this.circle1.r - (dist - this.circle0.r));
+                return Math.abs(this.circle1.r - (dist + this.circle0.r));
             } else {
                 //circle1 inside circle0
-                return Math.abs(this.circle0.r - (dist - this.circle1.r));
+                return Math.abs(this.circle0.r - (dist + this.circle1.r));
             }
         }
     }
