@@ -52,22 +52,18 @@ export default class RelationTangentCircle extends Relation {
             if(this.circle0.r < this.circle1.r) {
                 // circle0 inside circle1
                 // delta is how to change r0
-                delta = this.circle1.r - (dist - this.circle0.r);
+                delta = this.circle1.r - (dist + this.circle0.r);
                 deltas.push([this.circle0._r, delta]);
                 deltas.push([this.circle1._r, -delta]);
-
-                c0Goal = Util.pointInDirection(this.circle0.c, this.circle1.c, delta);
-                c1Goal = Util.pointInDirection(this.circle1.c, this.circle0.c, -delta);
             } else {
                 // circle1 inside circle0
                 // delta is how to change r1
                 delta = this.circle0.r - (dist + this.circle1.r);
                 deltas.push([this.circle0._r, -delta]);
                 deltas.push([this.circle1._r, delta]);
-
-                c0Goal = Util.pointInDirection(this.circle0.c, this.circle1.c, -delta);
-                c1Goal = Util.pointInDirection(this.circle1.c, this.circle0.c, delta);
             }
+            c0Goal = Util.pointInDirection(this.circle0.c, this.circle1.c, -delta);
+            c1Goal = Util.pointInDirection(this.circle1.c, this.circle0.c, -delta);
         }
 
         deltas.push(...Util.pointDeltas(this.circle0.c, c0Goal));

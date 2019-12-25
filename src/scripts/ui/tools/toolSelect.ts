@@ -88,10 +88,6 @@ export default class ToolSelect extends Tool {
         this.pressed = false;
     }
 
-    getFigureNearPoint(point: Point): Figure {
-        return this.protractr.sketch.getClosestFigure(point);
-    }
-
     figureInRectangle(figure: Figure): boolean {
         if (figure instanceof Point) {
             return Util.pointWithinRectangle(this.selectionStart, this.selectionEnd, figure);

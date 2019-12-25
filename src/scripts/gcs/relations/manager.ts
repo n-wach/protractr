@@ -13,7 +13,8 @@ import RelationEqualLength from "./relationEqualLength";
 export default class RelationManager {
     relations: Relation[] = [];
 
-    static SOLVE_TOLERANCE = 1;
+    static DEBUG_SOLVE: boolean = false;
+    static SOLVE_TOLERANCE: number = 1;
 
     getTotalError(): number {
         let error = 0;
@@ -31,6 +32,7 @@ export default class RelationManager {
         let startTime = new Date().getTime();
         let count = 1;
         while(true) {
+            if(RelationManager.DEBUG_SOLVE && count >= 2) return; // debug shows only one iteration
             if(this.isSolved() && count > 10) return; // solved, still do a few iterations for fun though...
             if(!tireless && count > 150) return; // not tireless so we can give up quickly
 
@@ -96,7 +98,7 @@ export default class RelationManager {
 
         for(let relation of this.relations) {
             if(relation instanceof RelationColinearPoints) {
-                if(RelationManager.doArraysIntersect(relation.points, newRelation.points)) {
+                if(RelationManager.doArraysIntersect(relation.points, newRelation.points, 2)) {
                     for(let p of relation.points) {
                         if(mergedPoints.indexOf(p) == -1) {
                             mergedPoints.push(p);
@@ -198,14 +200,17 @@ export default class RelationManager {
     }
 
     /**
-     * Are there any values in both array0 and array1
+     * Are there at least minCount values in both array0 and array1
      * @param array0
      * @param array1
+     * @param minCount
      */
-    static doArraysIntersect(array0: any[], array1: any[]) {
+    static doArraysIntersect(array0: any[], array1: any[], minCount: number=1) {
         if(array0.length == 0 || array1.length == 0) return false;
+        let count = 0;
         for(let v0 of array0) {
-            if(array1.indexOf(v0) != -1) return true;
+            if(array1.indexOf(v0) != -1) count++;
+            if(count >= minCount) return true;
         }
         return false;
     }

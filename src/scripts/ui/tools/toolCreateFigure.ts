@@ -50,7 +50,7 @@ export default abstract class ToolCreateFigure extends Tool {
     }
 
     updateFigureCreationPoint(figureCreationPoint: FigureCreationPoint, newPoint: Point) {
-        figureCreationPoint.snapFigure = this.protractr.sketch.getClosestFigure(newPoint);
+        figureCreationPoint.snapFigure = this.getFigureNearPoint(newPoint);
         if (figureCreationPoint.snapFigure) {
             figureCreationPoint.point = figureCreationPoint.snapFigure.getClosestPoint(newPoint);
         } else {

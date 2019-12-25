@@ -7,6 +7,7 @@
 import Protractr from "../../protractr";
 import SketchView from "../sketchview";
 import Point from "../../gcs/geometry/point";
+import Figure from "../../gcs/geometry/figure";
 
 export default abstract class Tool {
     protractr: Protractr;
@@ -14,6 +15,10 @@ export default abstract class Tool {
     constructor(protractr: Protractr) {
         this.protractr = protractr;
         this.reset();
+    }
+
+    getFigureNearPoint(point: Point): Figure {
+        return this.protractr.sketch.getClosestFigure(point, this.protractr.ui.sketchView.ctxScale, 10);
     }
 
     abstract down(point: Point);

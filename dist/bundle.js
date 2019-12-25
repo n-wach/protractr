@@ -640,8 +640,12 @@ var Util = /** @class */ (function () {
         // look for any constants
         var constantXPoints = [];
         var constantYPoints = [];
+        var avgX = 0;
+        var avgY = 0;
         for (var _a = 0, points_2 = points; _a < points_2.length; _a++) {
             var p = points_2[_a];
+            avgX += p.x;
+            avgY += p.y;
             if (p._x.constant)
                 constantXPoints.push(p);
             if (constantXPoints.length >= 2) {
@@ -653,6 +657,8 @@ var Util = /** @class */ (function () {
                 return new line_1.default(constantYPoints[0], constantYPoints[1]);
             }
         }
+        avgX /= points.length;
+        avgY /= points.length;
         // we also check for linked variables... this will take care of
         // points with existing horizontal or vertical relations
         for (var _b = 0, points_3 = points; _b < points_3.length; _b++) {
@@ -662,9 +668,9 @@ var Util = /** @class */ (function () {
                 if (p0 === p1)
                     continue;
                 if (p0._x._v === p1._x._v)
-                    return new line_1.default(p0, p1);
+                    return new line_1.default(new point_1.default(avgX, p0.y), new point_1.default(avgX, p1.y));
                 if (p0._y._v === p1._y._v)
-                    return new line_1.default(p0, p1);
+                    return new line_1.default(new point_1.default(p0.x, avgY), new point_1.default(p1.x, avgY));
             }
         }
         return null;
@@ -1028,6 +1034,8 @@ var RelationManager = /** @class */ (function () {
         var startTime = new Date().getTime();
         var count = 1;
         while (true) {
+            if (RelationManager.DEBUG_SOLVE && count >= 2)
+                return; // debug shows only one iteration
             if (this.isSolved() && count > 10)
                 return; // solved, still do a few iterations for fun though...
             if (!tireless && count > 150)
@@ -1092,7 +1100,7 @@ var RelationManager = /** @class */ (function () {
         for (var _i = 0, _a = this.relations; _i < _a.length; _i++) {
             var relation = _a[_i];
             if (relation instanceof relationColinearPoints_1.default) {
-                if (RelationManager.doArraysIntersect(relation.points, newRelation.points)) {
+                if (RelationManager.doArraysIntersect(relation.points, newRelation.points, 2)) {
                     for (var _b = 0, _c = relation.points; _b < _c.length; _b++) {
                         var p = _c[_b];
                         if (mergedPoints.indexOf(p) == -1) {
@@ -1202,20 +1210,26 @@ var RelationManager = /** @class */ (function () {
         }
     };
     /**
-     * Are there any values in both array0 and array1
+     * Are there at least minCount values in both array0 and array1
      * @param array0
      * @param array1
+     * @param minCount
      */
-    RelationManager.doArraysIntersect = function (array0, array1) {
+    RelationManager.doArraysIntersect = function (array0, array1, minCount) {
+        if (minCount === void 0) { minCount = 1; }
         if (array0.length == 0 || array1.length == 0)
             return false;
+        var count = 0;
         for (var _i = 0, array0_1 = array0; _i < array0_1.length; _i++) {
             var v0 = array0_1[_i];
             if (array1.indexOf(v0) != -1)
+                count++;
+            if (count >= minCount)
                 return true;
         }
         return false;
     };
+    RelationManager.DEBUG_SOLVE = false;
     RelationManager.SOLVE_TOLERANCE = 1;
     return RelationManager;
 }());
@@ -1690,11 +1704,9 @@ var RelationTangentCircle = /** @class */ (function (_super) {
             if (this.circle0.r < this.circle1.r) {
                 // circle0 inside circle1
                 // delta is how to change r0
-                delta = this.circle1.r - (dist - this.circle0.r);
+                delta = this.circle1.r - (dist + this.circle0.r);
                 deltas.push([this.circle0._r, delta]);
                 deltas.push([this.circle1._r, -delta]);
-                c0Goal = util_1.default.pointInDirection(this.circle0.c, this.circle1.c, delta);
-                c1Goal = util_1.default.pointInDirection(this.circle1.c, this.circle0.c, -delta);
             }
             else {
                 // circle1 inside circle0
@@ -1702,9 +1714,9 @@ var RelationTangentCircle = /** @class */ (function (_super) {
                 delta = this.circle0.r - (dist + this.circle1.r);
                 deltas.push([this.circle0._r, -delta]);
                 deltas.push([this.circle1._r, delta]);
-                c0Goal = util_1.default.pointInDirection(this.circle0.c, this.circle1.c, -delta);
-                c1Goal = util_1.default.pointInDirection(this.circle1.c, this.circle0.c, delta);
             }
+            c0Goal = util_1.default.pointInDirection(this.circle0.c, this.circle1.c, -delta);
+            c1Goal = util_1.default.pointInDirection(this.circle1.c, this.circle0.c, -delta);
         }
         deltas.push.apply(deltas, util_1.default.pointDeltas(this.circle0.c, c0Goal));
         deltas.push.apply(deltas, util_1.default.pointDeltas(this.circle1.c, c1Goal));
@@ -3011,6 +3023,9 @@ var Tool = /** @class */ (function () {
         this.protractr = protractr;
         this.reset();
     }
+    Tool.prototype.getFigureNearPoint = function (point) {
+        return this.protractr.sketch.getClosestFigure(point, this.protractr.ui.sketchView.ctxScale, 10);
+    };
     return Tool;
 }());
 exports.default = Tool;
@@ -3122,7 +3137,7 @@ var ToolCreateFigure = /** @class */ (function (_super) {
         this.points = [this.currentPoint];
     };
     ToolCreateFigure.prototype.updateFigureCreationPoint = function (figureCreationPoint, newPoint) {
-        figureCreationPoint.snapFigure = this.protractr.sketch.getClosestFigure(newPoint);
+        figureCreationPoint.snapFigure = this.getFigureNearPoint(newPoint);
         if (figureCreationPoint.snapFigure) {
             figureCreationPoint.point = figureCreationPoint.snapFigure.getClosestPoint(newPoint);
         }
@@ -3454,9 +3469,6 @@ var ToolSelect = /** @class */ (function (_super) {
         this.selectionStart = null;
         this.dragging = false;
         this.pressed = false;
-    };
-    ToolSelect.prototype.getFigureNearPoint = function (point) {
-        return this.protractr.sketch.getClosestFigure(point);
     };
     ToolSelect.prototype.figureInRectangle = function (figure) {
         if (figure instanceof point_1.default) {

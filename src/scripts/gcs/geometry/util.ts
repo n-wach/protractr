@@ -240,7 +240,13 @@ export default class Util {
         // look for any constants
         let constantXPoints: Point[] = [];
         let constantYPoints: Point[] = [];
+
+        let avgX: number = 0;
+        let avgY: number = 0;
+
         for(let p of points) {
+            avgX += p.x;
+            avgY += p.y;
             if(p._x.constant) constantXPoints.push(p);
             if(constantXPoints.length >= 2) {
                 return new Line(constantXPoints[0], constantXPoints[1]);
@@ -250,14 +256,16 @@ export default class Util {
                 return new Line(constantYPoints[0], constantYPoints[1]);
             }
         }
+        avgX /= points.length;
+        avgY /= points.length;
 
         // we also check for linked variables... this will take care of
         // points with existing horizontal or vertical relations
         for(let p0 of points) {
             for(let p1 of points) {
                 if(p0 === p1) continue;
-                if(p0._x._v === p1._x._v) return new Line(p0, p1);
-                if(p0._y._v === p1._y._v) return new Line(p0, p1);
+                if(p0._x._v === p1._x._v) return new Line(new Point(avgX, p0.y), new Point(avgX, p1.y));
+                if(p0._y._v === p1._y._v) return new Line(new Point(p0.x, avgY), new Point(p1.x, avgY));
             }
         }
         return null;
