@@ -18,6 +18,7 @@ import RelationMidpoint from "../../gcs/relations/relationMidpoint";
 import RelationTangentCircle from "../../gcs/relations/relationTangentCircle";
 import RelationTangentLine from "../../gcs/relations/relationTangentLine";
 import RelationPointsOnCircle from "../../gcs/relations/relationPointsOnCircle";
+import Arc, {ArcPoint} from "../../gcs/geometry/arc";
 
 type JSONFigure = {
     type: string,
@@ -82,6 +83,24 @@ export class JSONImporter implements Importer {
             line.p0 = this.points[obj.p0];
             line.p1 = this.points[obj.p1];
             return line;
+        } else if (obj.type == "arc")  {
+            let arc = new Arc(new Point(0, 0), 0, 0, 0);
+            arc.c = this.points[obj.c];
+            arc._r = this.variables[obj.r];
+
+            let p0 = new ArcPoint(arc, 0, 0);
+            p0._x = this.points[obj.p0]._x;
+            p0._y = this.points[obj.p0]._y;
+            this.points[obj.p0] = p0;
+            arc.p0 = p0;
+
+            let p1 = new ArcPoint(arc, 0, 0);
+            p1._x = this.points[obj.p1]._x;
+            p1._y = this.points[obj.p1]._y;
+            this.points[obj.p1] = p1;
+            arc.p1 = p1;
+
+            return arc;
         } else if (obj.type == "circle")  {
             let circle = new Circle(new Point(0, 0), 0);
             circle.c = this.points[obj.c];
@@ -214,7 +233,7 @@ export class JSONExporter implements Exporter {
             return {
                 type: "midpoint",
                 line: this.encodeF(relation.line),
-                midpoint: this.encodeF(relation.midpoint),
+                midpoint: this.encodeP(relation.midpoint),
             }
         } else if (relation instanceof RelationPointsOnCircle) {
             let points = [];
@@ -246,6 +265,8 @@ export class JSONExporter implements Exporter {
             return [figure];
         } else if (figure instanceof Line) {
             return [figure.p0, figure.p1];
+        } else if (figure instanceof Arc) {
+            return [figure.c, figure.p0, figure.p1];
         } else if (figure instanceof Circle) {
             return [figure.c];
         }
@@ -263,6 +284,14 @@ export class JSONExporter implements Exporter {
                 p0: this.encodeP(figure.p0),
                 p1: this.encodeP(figure.p1),
             };
+        } else if (figure instanceof Arc) {
+            return {
+                type: "arc",
+                c: this.encodeP(figure.c),
+                r: this.encodeV(figure._r),
+                p0: this.encodeP(figure.p0),
+                p1: this.encodeP(figure.p1),
+            };
         } else if (figure instanceof Circle) {
             return {
                 type: "circle",
@@ -277,6 +306,8 @@ export class JSONExporter implements Exporter {
             return [figure._x, figure._y];
         } else if (figure instanceof Line) {
             return [figure.p0._x, figure.p0._y, figure.p1._x, figure.p1._y];
+        } else if (figure instanceof Arc) {
+            return [figure.c._x, figure.c._y, figure._r, figure.p0._x, figure.p0._y, figure.p1._x, figure.p1._y];
         } else if (figure instanceof Circle) {
             return [figure.c._x, figure.c._y, figure._r];
         }

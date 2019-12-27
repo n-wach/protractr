@@ -8,6 +8,7 @@ import Point from "../gcs/geometry/point";
 import Figure from "../gcs/geometry/figure";
 import Line from "../gcs/geometry/line";
 import Circle from "../gcs/geometry/circle";
+import Arc from "../gcs/geometry/arc";
 
 export default class SketchView {
     canvas: HTMLCanvasElement;
@@ -133,6 +134,8 @@ export default class SketchView {
             this.drawPoint(fig, pointSize, this.ctx.strokeStyle);
         } else if (fig instanceof Line) {
             this.drawLine(fig.p0, fig.p1);
+        }else if (fig instanceof Arc) {
+            this.drawArc(fig.c, fig.r, fig.angle0, fig.angle1);
         } else if (fig instanceof Circle) {
             this.drawCircle(fig.c, fig.r);
         }
@@ -175,6 +178,13 @@ export default class SketchView {
         if (!center) return;
         this.ctx.beginPath();
         this.ctx.arc(center.x, center.y, radius, 0, Math.PI * 2);
+        this.ctx.stroke();
+    }
+
+    drawArc(center: Point, radius: number, a0: number, a1: number) {
+        if (!center) return;
+        this.ctx.beginPath();
+        this.ctx.arc(center.x, center.y, radius, a0, a1);
         this.ctx.stroke();
     }
 }

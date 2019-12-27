@@ -16,6 +16,7 @@ import ActionRedo from "./actions/actionRedo";
 import ActionImport from "./actions/actionImport";
 import ActionExport from "./actions/actionExport";
 import Tool from "./tools/tool";
+import ToolCreateArc from "./tools/toolCreateArc";
 
 export default class TopBar {
     menuBar: MenuBar;
@@ -51,6 +52,9 @@ export default class TopBar {
         this.menuBar.addItem(new ToolMenuItem(this.toolGroup,
             new ToolCreateCircle(protractr),
             "Create a circle", "circle.png"));
+        this.menuBar.addItem(new ToolMenuItem(this.toolGroup,
+            new ToolCreateArc(protractr),
+            "Create an arc", "arc.png"));
         this.menuBar.addDivider();
 
         this.menuBar.addItem(new ActionMenuItem(new ActionUndo(protractr), "Undo an action", "undo.png"));

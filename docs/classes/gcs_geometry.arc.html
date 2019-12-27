@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Point | protractr</title>
+	<title>Arc | protractr</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -59,10 +59,10 @@
 					<a href="../modules/gcs_geometry.html">gcs/geometry</a>
 				</li>
 				<li>
-					<a href="gcs_geometry.point.html">Point</a>
+					<a href="gcs_geometry.arc.html">Arc</a>
 				</li>
 			</ul>
-			<h1>Class Point</h1>
+			<h1>Class Arc</h1>
 		</div>
 	</div>
 </header>
@@ -73,15 +73,10 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<a href="gcs_geometry.figure.html" class="tsd-signature-type">Figure</a>
+						<a href="gcs_geometry.circle.html" class="tsd-signature-type">Circle</a>
 						<ul class="tsd-hierarchy">
 							<li>
-								<span class="target">Point</span>
-								<ul class="tsd-hierarchy">
-									<li>
-										<a href="gcs_geometry.arcpoint.html" class="tsd-signature-type">ArcPoint</a>
-									</li>
-								</ul>
+								<span class="target">Arc</span>
 							</li>
 						</ul>
 					</li>
@@ -94,34 +89,37 @@
 						<section class="tsd-index-section ">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="gcs_geometry.point.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite"><a href="gcs_geometry.arc.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="gcs_geometry.point.html#_constant" class="tsd-kind-icon">_constant</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="gcs_geometry.point.html#_x" class="tsd-kind-icon">_x</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="gcs_geometry.point.html#_y" class="tsd-kind-icon">_y</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite"><a href="gcs_geometry.arc.html#_constant" class="tsd-kind-icon">_constant</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="gcs_geometry.arc.html#_r" class="tsd-kind-icon">_r</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="gcs_geometry.arc.html#c" class="tsd-kind-icon">c</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="gcs_geometry.arc.html#p0" class="tsd-kind-icon">p0</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="gcs_geometry.arc.html#p1" class="tsd-kind-icon">p1</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Accessors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><a href="gcs_geometry.point.html#constant" class="tsd-kind-icon">constant</a></li>
-								<li class="tsd-kind-accessor tsd-parent-kind-class"><a href="gcs_geometry.point.html#x" class="tsd-kind-icon">x</a></li>
-								<li class="tsd-kind-accessor tsd-parent-kind-class"><a href="gcs_geometry.point.html#y" class="tsd-kind-icon">y</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="gcs_geometry.arc.html#angle0" class="tsd-kind-icon">angle0</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="gcs_geometry.arc.html#angle1" class="tsd-kind-icon">angle1</a></li>
+								<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><a href="gcs_geometry.arc.html#constant" class="tsd-kind-icon">constant</a></li>
+								<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-overwrite"><a href="gcs_geometry.arc.html#r" class="tsd-kind-icon">r</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="gcs_geometry.point.html#copy" class="tsd-kind-icon">copy</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="gcs_geometry.point.html#equals" class="tsd-kind-icon">equals</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="gcs_geometry.point.html#getchildfigures" class="tsd-kind-icon">get<wbr>Child<wbr>Figures</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="gcs_geometry.point.html#getclosestpoint" class="tsd-kind-icon">get<wbr>Closest<wbr>Point</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="gcs_geometry.point.html#setconstant" class="tsd-kind-icon">set<wbr>Constant</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="gcs_geometry.point.html#translate" class="tsd-kind-icon">translate</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="gcs_geometry.arc.html#copy" class="tsd-kind-icon">copy</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="gcs_geometry.arc.html#equals" class="tsd-kind-icon">equals</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="gcs_geometry.arc.html#getchildfigures" class="tsd-kind-icon">get<wbr>Child<wbr>Figures</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="gcs_geometry.arc.html#getclosestpoint" class="tsd-kind-icon">get<wbr>Closest<wbr>Point</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="gcs_geometry.arc.html#setconstant" class="tsd-kind-icon">set<wbr>Constant</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="gcs_geometry.arc.html#translate" class="tsd-kind-icon">translate</a></li>
 							</ul>
 						</section>
 					</div>
@@ -129,69 +127,132 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Constructors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
-					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Point<span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, y<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="gcs_geometry.point.html" class="tsd-signature-type">Point</a></li>
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Arc<span class="tsd-signature-symbol">(</span>c<span class="tsd-signature-symbol">: </span><a href="gcs_geometry.point.html" class="tsd-signature-type">Point</a>, r<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, a0<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, a1<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="gcs_geometry.arc.html" class="tsd-signature-type">Arc</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Overrides <a href="gcs_geometry.circle.html">Circle</a>.<a href="gcs_geometry.circle.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/n-wach/protractr/blob/7d38e91/src/scripts/gcs/geometry/point.ts#L11">gcs/geometry/point.ts:11</a></li>
+									<li>Defined in <a href="https://github.com/n-wach/protractr/blob/7d38e91/src/scripts/gcs/geometry/arc.ts#L13">gcs/geometry/arc.ts:13</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>x: <span class="tsd-signature-type">number</span></h5>
+									<h5>c: <a href="gcs_geometry.point.html" class="tsd-signature-type">Point</a></h5>
 								</li>
 								<li>
-									<h5>y: <span class="tsd-signature-type">number</span></h5>
+									<h5>r: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>a0: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>a1: <span class="tsd-signature-type">number</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="gcs_geometry.point.html" class="tsd-signature-type">Point</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="gcs_geometry.arc.html" class="tsd-signature-type">Arc</a></h4>
 						</li>
 					</ul>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-overwrite">
 					<a name="_constant" class="tsd-anchor"></a>
 					<h3>_constant</h3>
 					<div class="tsd-signature tsd-kind-icon">_constant<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
-						<p>Inherited from <a href="gcs_geometry.figure.html">Figure</a>.<a href="gcs_geometry.figure.html#_constant">_constant</a></p>
+						<p>Overrides <a href="gcs_geometry.circle.html">Circle</a>.<a href="gcs_geometry.circle.html#_constant">_constant</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/n-wach/protractr/blob/7d38e91/src/scripts/gcs/geometry/figure.ts#L8">gcs/geometry/figure.ts:8</a></li>
+							<li>Defined in <a href="https://github.com/n-wach/protractr/blob/7d38e91/src/scripts/gcs/geometry/arc.ts#L11">gcs/geometry/arc.ts:11</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+					<a name="_r" class="tsd-anchor"></a>
+					<h3>_r</h3>
+					<div class="tsd-signature tsd-kind-icon">_r<span class="tsd-signature-symbol">:</span> <a href="gcs_variable.variable.html" class="tsd-signature-type">Variable</a></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="gcs_geometry.circle.html">Circle</a>.<a href="gcs_geometry.circle.html#_r">_r</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/n-wach/protractr/blob/7d38e91/src/scripts/gcs/geometry/circle.ts#L12">gcs/geometry/circle.ts:12</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+					<a name="c" class="tsd-anchor"></a>
+					<h3>c</h3>
+					<div class="tsd-signature tsd-kind-icon">c<span class="tsd-signature-symbol">:</span> <a href="gcs_geometry.point.html" class="tsd-signature-type">Point</a></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="gcs_geometry.circle.html">Circle</a>.<a href="gcs_geometry.circle.html#c">c</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/n-wach/protractr/blob/7d38e91/src/scripts/gcs/geometry/circle.ts#L11">gcs/geometry/circle.ts:11</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="_x" class="tsd-anchor"></a>
-					<h3>_x</h3>
-					<div class="tsd-signature tsd-kind-icon">_x<span class="tsd-signature-symbol">:</span> <a href="gcs_variable.variable.html" class="tsd-signature-type">Variable</a></div>
+					<a name="p0" class="tsd-anchor"></a>
+					<h3>p0</h3>
+					<div class="tsd-signature tsd-kind-icon">p0<span class="tsd-signature-symbol">:</span> <a href="gcs_geometry.arcpoint.html" class="tsd-signature-type">ArcPoint</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/n-wach/protractr/blob/7d38e91/src/scripts/gcs/geometry/point.ts#L10">gcs/geometry/point.ts:10</a></li>
+							<li>Defined in <a href="https://github.com/n-wach/protractr/blob/7d38e91/src/scripts/gcs/geometry/arc.ts#L12">gcs/geometry/arc.ts:12</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="_y" class="tsd-anchor"></a>
-					<h3>_y</h3>
-					<div class="tsd-signature tsd-kind-icon">_y<span class="tsd-signature-symbol">:</span> <a href="gcs_variable.variable.html" class="tsd-signature-type">Variable</a></div>
+					<a name="p1" class="tsd-anchor"></a>
+					<h3>p1</h3>
+					<div class="tsd-signature tsd-kind-icon">p1<span class="tsd-signature-symbol">:</span> <a href="gcs_geometry.arcpoint.html" class="tsd-signature-type">ArcPoint</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/n-wach/protractr/blob/7d38e91/src/scripts/gcs/geometry/point.ts#L11">gcs/geometry/point.ts:11</a></li>
+							<li>Defined in <a href="https://github.com/n-wach/protractr/blob/7d38e91/src/scripts/gcs/geometry/arc.ts#L13">gcs/geometry/arc.ts:13</a></li>
 						</ul>
 					</aside>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Accessors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="angle0" class="tsd-anchor"></a>
+					<h3>angle0</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> angle0<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/n-wach/protractr/blob/7d38e91/src/scripts/gcs/geometry/arc.ts#L45">gcs/geometry/arc.ts:45</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="angle1" class="tsd-anchor"></a>
+					<h3>angle1</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> angle1<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/n-wach/protractr/blob/7d38e91/src/scripts/gcs/geometry/arc.ts#L49">gcs/geometry/arc.ts:49</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited">
 					<a name="constant" class="tsd-anchor"></a>
 					<h3>constant</h3>
@@ -226,58 +287,28 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-accessor tsd-parent-kind-class">
-					<a name="x" class="tsd-anchor"></a>
-					<h3>x</h3>
-					<ul class="tsd-signatures tsd-kind-accessor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> x<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">set</span> x<span class="tsd-signature-symbol">(</span>v<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+				<section class="tsd-panel tsd-member tsd-kind-accessor tsd-parent-kind-class tsd-is-overwrite">
+					<a name="r" class="tsd-anchor"></a>
+					<h3>r</h3>
+					<ul class="tsd-signatures tsd-kind-accessor tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> r<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">set</span> r<span class="tsd-signature-symbol">(</span>v<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Overrides <a href="gcs_geometry.circle.html">Circle</a>.<a href="gcs_geometry.circle.html#r">r</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/n-wach/protractr/blob/7d38e91/src/scripts/gcs/geometry/point.ts#L18">gcs/geometry/point.ts:18</a></li>
+									<li>Defined in <a href="https://github.com/n-wach/protractr/blob/7d38e91/src/scripts/gcs/geometry/arc.ts#L29">gcs/geometry/arc.ts:29</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
 						</li>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Overrides <a href="gcs_geometry.circle.html">Circle</a>.<a href="gcs_geometry.circle.html#r">r</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/n-wach/protractr/blob/7d38e91/src/scripts/gcs/geometry/point.ts#L22">gcs/geometry/point.ts:22</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>v: <span class="tsd-signature-type">number</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-accessor tsd-parent-kind-class">
-					<a name="y" class="tsd-anchor"></a>
-					<h3>y</h3>
-					<ul class="tsd-signatures tsd-kind-accessor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> y<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">set</span> y<span class="tsd-signature-symbol">(</span>v<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/n-wach/protractr/blob/7d38e91/src/scripts/gcs/geometry/point.ts#L26">gcs/geometry/point.ts:26</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
-						</li>
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/n-wach/protractr/blob/7d38e91/src/scripts/gcs/geometry/point.ts#L30">gcs/geometry/point.ts:30</a></li>
+									<li>Defined in <a href="https://github.com/n-wach/protractr/blob/7d38e91/src/scripts/gcs/geometry/arc.ts#L33">gcs/geometry/arc.ts:33</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -297,17 +328,17 @@
 					<a name="copy" class="tsd-anchor"></a>
 					<h3>copy</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">copy<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="gcs_geometry.point.html" class="tsd-signature-type">Point</a></li>
+						<li class="tsd-signature tsd-kind-icon">copy<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="gcs_geometry.arc.html" class="tsd-signature-type">Arc</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Overrides <a href="gcs_geometry.figure.html">Figure</a>.<a href="gcs_geometry.figure.html#copy">copy</a></p>
+								<p>Overrides <a href="gcs_geometry.circle.html">Circle</a>.<a href="gcs_geometry.circle.html#copy">copy</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/n-wach/protractr/blob/7d38e91/src/scripts/gcs/geometry/point.ts#L57">gcs/geometry/point.ts:57</a></li>
+									<li>Defined in <a href="https://github.com/n-wach/protractr/blob/7d38e91/src/scripts/gcs/geometry/arc.ts#L71">gcs/geometry/arc.ts:71</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-returns-title">Returns <a href="gcs_geometry.point.html" class="tsd-signature-type">Point</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="gcs_geometry.arc.html" class="tsd-signature-type">Arc</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -320,9 +351,9 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Overrides <a href="gcs_geometry.figure.html">Figure</a>.<a href="gcs_geometry.figure.html#equals">equals</a></p>
+								<p>Overrides <a href="gcs_geometry.circle.html">Circle</a>.<a href="gcs_geometry.circle.html#equals">equals</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/n-wach/protractr/blob/7d38e91/src/scripts/gcs/geometry/point.ts#L52">gcs/geometry/point.ts:52</a></li>
+									<li>Defined in <a href="https://github.com/n-wach/protractr/blob/7d38e91/src/scripts/gcs/geometry/arc.ts#L53">gcs/geometry/arc.ts:53</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -344,9 +375,9 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Overrides <a href="gcs_geometry.figure.html">Figure</a>.<a href="gcs_geometry.figure.html#getchildfigures">getChildFigures</a></p>
+								<p>Overrides <a href="gcs_geometry.circle.html">Circle</a>.<a href="gcs_geometry.circle.html#getchildfigures">getChildFigures</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/n-wach/protractr/blob/7d38e91/src/scripts/gcs/geometry/point.ts#L34">gcs/geometry/point.ts:34</a></li>
+									<li>Defined in <a href="https://github.com/n-wach/protractr/blob/7d38e91/src/scripts/gcs/geometry/arc.ts#L59">gcs/geometry/arc.ts:59</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="gcs_geometry.figure.html" class="tsd-signature-type">Figure</a><span class="tsd-signature-symbol">[]</span></h4>
@@ -362,9 +393,9 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Overrides <a href="gcs_geometry.figure.html">Figure</a>.<a href="gcs_geometry.figure.html#getclosestpoint">getClosestPoint</a></p>
+								<p>Overrides <a href="gcs_geometry.circle.html">Circle</a>.<a href="gcs_geometry.circle.html#getclosestpoint">getClosestPoint</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/n-wach/protractr/blob/7d38e91/src/scripts/gcs/geometry/point.ts#L38">gcs/geometry/point.ts:38</a></li>
+									<li>Defined in <a href="https://github.com/n-wach/protractr/blob/7d38e91/src/scripts/gcs/geometry/arc.ts#L63">gcs/geometry/arc.ts:63</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -386,9 +417,9 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Overrides <a href="gcs_geometry.figure.html">Figure</a>.<a href="gcs_geometry.figure.html#setconstant">setConstant</a></p>
+								<p>Overrides <a href="gcs_geometry.circle.html">Circle</a>.<a href="gcs_geometry.circle.html#setconstant">setConstant</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/n-wach/protractr/blob/7d38e91/src/scripts/gcs/geometry/point.ts#L42">gcs/geometry/point.ts:42</a></li>
+									<li>Defined in <a href="https://github.com/n-wach/protractr/blob/7d38e91/src/scripts/gcs/geometry/arc.ts#L24">gcs/geometry/arc.ts:24</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -410,9 +441,9 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Overrides <a href="gcs_geometry.figure.html">Figure</a>.<a href="gcs_geometry.figure.html#translate">translate</a></p>
+								<p>Overrides <a href="gcs_geometry.circle.html">Circle</a>.<a href="gcs_geometry.circle.html#translate">translate</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/n-wach/protractr/blob/7d38e91/src/scripts/gcs/geometry/point.ts#L47">gcs/geometry/point.ts:47</a></li>
+									<li>Defined in <a href="https://github.com/n-wach/protractr/blob/7d38e91/src/scripts/gcs/geometry/arc.ts#L67">gcs/geometry/arc.ts:67</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -494,9 +525,63 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-class tsd-parent-kind-external-module">
 						<a href="gcs_geometry.arc.html" class="tsd-kind-icon">Arc</a>
+						<ul>
+							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
+								<a href="gcs_geometry.arc.html#constructor" class="tsd-kind-icon">constructor</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-overwrite">
+								<a href="gcs_geometry.arc.html#_constant" class="tsd-kind-icon">_constant</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="gcs_geometry.arc.html#_r" class="tsd-kind-icon">_r</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="gcs_geometry.arc.html#c" class="tsd-kind-icon">c</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="gcs_geometry.arc.html#p0" class="tsd-kind-icon">p0</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="gcs_geometry.arc.html#p1" class="tsd-kind-icon">p1</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="gcs_geometry.arc.html#angle0" class="tsd-kind-icon">angle0</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="gcs_geometry.arc.html#angle1" class="tsd-kind-icon">angle1</a>
+							</li>
+							<li class=" tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited">
+								<a href="gcs_geometry.arc.html#constant" class="tsd-kind-icon">constant</a>
+							</li>
+							<li class=" tsd-kind-accessor tsd-parent-kind-class tsd-is-overwrite">
+								<a href="gcs_geometry.arc.html#r" class="tsd-kind-icon">r</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+								<a href="gcs_geometry.arc.html#copy" class="tsd-kind-icon">copy</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+								<a href="gcs_geometry.arc.html#equals" class="tsd-kind-icon">equals</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+								<a href="gcs_geometry.arc.html#getchildfigures" class="tsd-kind-icon">get<wbr>Child<wbr>Figures</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+								<a href="gcs_geometry.arc.html#getclosestpoint" class="tsd-kind-icon">get<wbr>Closest<wbr>Point</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+								<a href="gcs_geometry.arc.html#setconstant" class="tsd-kind-icon">set<wbr>Constant</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+								<a href="gcs_geometry.arc.html#translate" class="tsd-kind-icon">translate</a>
+							</li>
+						</ul>
 					</li>
+				</ul>
+				<ul class="after-current">
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
 						<a href="gcs_geometry.arcpoint.html" class="tsd-kind-icon">Arc<wbr>Point</a>
 					</li>
@@ -509,54 +594,9 @@
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
 						<a href="gcs_geometry.line.html" class="tsd-kind-icon">Line</a>
 					</li>
-				</ul>
-				<ul class="current">
-					<li class="current tsd-kind-class tsd-parent-kind-external-module">
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
 						<a href="gcs_geometry.point.html" class="tsd-kind-icon">Point</a>
-						<ul>
-							<li class=" tsd-kind-constructor tsd-parent-kind-class">
-								<a href="gcs_geometry.point.html#constructor" class="tsd-kind-icon">constructor</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="gcs_geometry.point.html#_constant" class="tsd-kind-icon">_constant</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="gcs_geometry.point.html#_x" class="tsd-kind-icon">_x</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="gcs_geometry.point.html#_y" class="tsd-kind-icon">_y</a>
-							</li>
-							<li class=" tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited">
-								<a href="gcs_geometry.point.html#constant" class="tsd-kind-icon">constant</a>
-							</li>
-							<li class=" tsd-kind-accessor tsd-parent-kind-class">
-								<a href="gcs_geometry.point.html#x" class="tsd-kind-icon">x</a>
-							</li>
-							<li class=" tsd-kind-accessor tsd-parent-kind-class">
-								<a href="gcs_geometry.point.html#y" class="tsd-kind-icon">y</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-								<a href="gcs_geometry.point.html#copy" class="tsd-kind-icon">copy</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-								<a href="gcs_geometry.point.html#equals" class="tsd-kind-icon">equals</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-								<a href="gcs_geometry.point.html#getchildfigures" class="tsd-kind-icon">get<wbr>Child<wbr>Figures</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-								<a href="gcs_geometry.point.html#getclosestpoint" class="tsd-kind-icon">get<wbr>Closest<wbr>Point</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-								<a href="gcs_geometry.point.html#setconstant" class="tsd-kind-icon">set<wbr>Constant</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-								<a href="gcs_geometry.point.html#translate" class="tsd-kind-icon">translate</a>
-							</li>
-						</ul>
 					</li>
-				</ul>
-				<ul class="after-current">
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
 						<a href="gcs_geometry.util.html" class="tsd-kind-icon">Util</a>
 					</li>

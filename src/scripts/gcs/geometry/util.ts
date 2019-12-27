@@ -6,6 +6,7 @@ import Line from "./line";
 import Point from "./point";
 import Circle from "./circle";
 import Variable from "../variable";
+import Arc from "./arc";
 
 export default class Util {
 
@@ -103,6 +104,32 @@ export default class Util {
      */
     static projectOntoCircle(circle: Circle, point: Point) {
         return Util.pointInDirection(circle.c, point, circle.r);
+    }
+
+    /**
+     * Projects point onto arc
+     * @param arc
+     * @param point
+     */
+    static projectOntoArc(arc: Arc, point: Point) {
+        let angle = Util.getAngleBetween(arc.c, point);
+        if(Util.isAngleBetween(arc.angle0, arc.angle1, angle)) {
+            return Util.projectOntoCircle(arc, point);
+        }
+
+        let d0 = Util.distanceBetweenPoints(point, arc.p0);
+        let d1 = Util.distanceBetweenPoints(point, arc.p1);
+        if(d0 < d1) {
+            return arc.p0.copy();
+        } else {
+            return arc.p1.copy();
+        }
+    }
+
+    static isAngleBetween(startAngle: number, endAngle: number, angle: number): boolean {
+        endAngle = (endAngle - startAngle) < 0 ? endAngle - startAngle + Math.PI * 2 : endAngle - startAngle;
+        angle = (angle - startAngle) < 0 ? angle - startAngle + Math.PI * 2 : angle - startAngle;
+        return (angle < endAngle);
     }
 
     /**
@@ -357,5 +384,29 @@ export default class Util {
      */
     static lineIntersectsCircle(circle: Circle, line: Line): boolean {
         return Util.distanceToSegment(line, circle.c) <= circle.r;
+    }
+
+
+    /**
+     * Angle of the line from pivot to point in radians
+     * @param pivot
+     * @param point
+     */
+    static getAngleBetween(pivot: Point, point: Point): number {
+        let dx = point.x - pivot.x;
+        let dy = point.y - pivot.y;
+        return Math.atan2(dy, dx);
+    }
+
+    /**
+     * Return a point `radius` away from `pivot` at the specified `angle`.
+     * @param pivot
+     * @param radius
+     * @param angle
+     */
+    static pointAtAngle(pivot: Point, radius: number, angle: number): Point {
+        let x = Math.cos(angle) * radius;
+        let y = Math.sin(angle) * radius;
+        return new Point(pivot.x + x, pivot.y + y);
     }
 }

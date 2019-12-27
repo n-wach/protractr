@@ -68,33 +68,49 @@
 					<h1>protractr</h1>
 				</a>
 				<p>A constraint-based 2D Sketching tool - <a href="https://n-wach.github.io/protractr/src/">Hosted on Github Pages</a></p>
-				<p>Functionality is planned to match basic Solidworks sketches containing Points, Lines, and Circles.  Most of Solidworks&#39; relations are currently supported, with the remaining to be implemented soon.</p>
-				<p>Supported relations:</p>
+				<p>Functionality is planned to match basic Solidworks sketches containing Points,
+					Lines, Circles, and Arcs.  Most of Solidworks&#39; relations are currently supported,
+				with the remaining to be implemented soon.</p>
+				<p>Examples:</p>
 				<ul>
-					<li><input checked="" disabled="" type="checkbox"> Horizontal</li>
-					<li><input checked="" disabled="" type="checkbox"> Vertical</li>
-					<li><input checked="" disabled="" type="checkbox"> Colinear</li>
-					<li><input checked="" disabled="" type="checkbox"> Tangent Line</li>
-					<li><input checked="" disabled="" type="checkbox"> Tangent Circle</li>
-					<li><input checked="" disabled="" type="checkbox"> Concentric</li>
-					<li><input checked="" disabled="" type="checkbox"> Midpoint</li>
-					<li><input checked="" disabled="" type="checkbox"> Intersection</li>
-					<li><input checked="" disabled="" type="checkbox"> Coincident on Point</li>
-					<li><input checked="" disabled="" type="checkbox"> Coincident on Line</li>
-					<li><input checked="" disabled="" type="checkbox"> Coincident on Circle</li>
-					<li><input checked="" disabled="" type="checkbox"> Radius Equal</li>
-					<li><input checked="" disabled="" type="checkbox"> Line Length Equal</li>
-					<li><input disabled="" type="checkbox"> Perpendicular</li>
-					<li><input disabled="" type="checkbox"> Parallel</li>
-					<li><input disabled="" type="checkbox"> Fix / Lock Entity</li>
+					<li><a href="ttps://n-wach.github.io/protractr/src/?arcs.json">Arcs</a></li>
+					<li><a href="ttps://n-wach.github.io/protractr/src/?pyramid.json">Pyramid</a></li>
+					<li><a href="ttps://n-wach.github.io/protractr/src/?kite.json">Kite</a></li>
 				</ul>
+				<details>
+					<summary>Supported relations</summary>
+					<ul>
+						<li>Horizontal</li>
+						<li>Vertical</li>
+						<li>Colinear</li>
+						<li>Tangent Line</li>
+						<li>Tangent Circle</li>
+						<li>Concentric</li>
+						<li>Midpoint</li>
+						<li>Intersection</li>
+						<li>Coincident on Point</li>
+						<li>Coincident on Line</li>
+						<li>Coincident on Circle</li>
+						<li>Radius Equal</li>
+						<li>Line Length Equal</li>
+					</ul>
+				</details>
+				<details>
+					<summary>Missing relations</summary>
+					<ul>
+						<li>Perpendicular</li>
+						<li>Parallel</li>
+						<li>Fix / Lock Entity</li>
+					</ul>
+				</details>
 				<a href="#structure-and-documenation" id="structure-and-documenation" style="color: inherit; text-decoration: none;">
 					<h2>Structure and Documenation</h2>
 				</a>
 				<p><a href="https://n-wach.github.io/protractr/docs">View the docs!</a></p>
 				<p>Protractr is composed of two main modules:</p>
 				<ul>
-					<li><code>gcs</code> is used to describe and solve geometric sketches, which are composed of figures and relations.</li>
+					<li><code>gcs</code> is used to describe and solve geometric sketches, which are
+					composed of figures and relations.</li>
 					<li><code>ui</code> displays the current sketch and allows a user to modify it</li>
 				</ul>
 				<a href="#contributing" id="contributing" style="color: inherit; text-decoration: none;">
@@ -102,18 +118,24 @@
 				</a>
 				<p>To get started:</p>
 				<ol>
-					<li><p>clone this repo, and cd into it</p>
+					<li><p>Clone this repo, and <code>cd</code> into it</p>
 					</li>
-					<li><p><code>npm install</code></p>
+					<li><p>Run <code>npm install</code></p>
 					</li>
-					<li><p>Make changes to typescript source.  This should be done under the <code>src</code> directory.  Note that the <code>dist</code> directory is the product of <code>browserify</code> and <code>tsc</code>, and you should not directly edit files there.</p>
+					<li><p>Make changes to the TypeScript source.  This should be done under the <code>src</code>
+							directory.  Note that the <code>dist</code> directory is the product of <code>browserify</code> and
+						<code>tsc</code>, and you should not directly edit files there.</p>
 					</li>
 					<li><p>To test your changes, run:</p>
-						<pre><code>.<span class="hljs-regexp">/node_modules/</span>typescript<span class="hljs-regexp">/bin/</span>tsc
-npm run browserify</code></pre><p>You should then see that the file <code>dist/bundle.js</code> has been modified.  This is the final JavaScript file that the running application actually uses: a combination of all the JavaScript in the application, together with the node modules on which the application depends.</p>
+						<pre><code>npm <span class="hljs-keyword">run</span><span class="bash"> recompile-typescript</span>
+npm <span class="hljs-keyword">run</span><span class="bash"> browserify</span></code></pre><p>You should then see that the file <code>dist/bundle.js</code> has been modified.<br>This is the final JavaScript file that the running application actually 
+							uses: a combination of all the JavaScript in the application, together with
+						the node modules on which the application depends.</p>
 					</li>
 					<li><p>When you are ready to commit a change, regenerate the docs:</p>
-						<pre><code> npm <span class="hljs-keyword">run</span><span class="bash"> gen-docs</span></code></pre><p> Then, commit the changes under <code>src</code> and <code>docs</code>, and plus the changes to <code>dist/bundle.js</code>.  We commit <code>docs</code> and <code>dist/bundle.js</code> because they are used by the GitHub Pages hosted production version of the site.</p>
+						<pre><code> npm <span class="hljs-keyword">run</span><span class="bash"> gen-docs</span></code></pre><p> Then, commit the changes under <code>src</code> and <code>docs</code>, and plus the changes to
+							<code>dist/bundle.js</code>.  We commit <code>docs</code> and <code>dist/bundle.js</code> because they are used by
+						the GitHub Pages hosted production version of the site.</p>
 					</li>
 				</ol>
 			</div>

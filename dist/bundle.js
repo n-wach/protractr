@@ -177,7 +177,110 @@ function getFigureTypeString(figure) {
 }
 exports.getFigureTypeString = getFigureTypeString;
 
-},{"./geometry/circle":2,"./geometry/line":4,"./geometry/point":5}],2:[function(require,module,exports){
+},{"./geometry/circle":3,"./geometry/line":5,"./geometry/point":6}],2:[function(require,module,exports){
+"use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @module gcs/geometry
+ */
+/** */
+var point_1 = require("./point");
+var util_1 = require("./util");
+var circle_1 = require("./circle");
+var Arc = /** @class */ (function (_super) {
+    __extends(Arc, _super);
+    function Arc(c, r, a0, a1) {
+        var _this = _super.call(this, c, r) || this;
+        var p0 = util_1.default.pointAtAngle(c, r, a0);
+        _this.p0 = new ArcPoint(_this, p0.x, p0.y);
+        var p1 = util_1.default.pointAtAngle(c, r, a1);
+        _this.p1 = new ArcPoint(_this, p1.x, p1.y);
+        return _this;
+    }
+    Arc.prototype.setConstant = function (c) {
+        this.c.constant = c;
+        this._r.constant = c;
+    };
+    Object.defineProperty(Arc.prototype, "r", {
+        get: function () {
+            return this._r.v;
+        },
+        set: function (v) {
+            this._r.v = Math.max(v, 0);
+            var p0 = util_1.default.pointInDirection(this.c, this.p0, this.r);
+            this.p0.x = p0.x;
+            this.p0.y = p0.y;
+            var p1 = util_1.default.pointInDirection(this.c, this.p1, this.r);
+            this.p1.x = p1.x;
+            this.p1.y = p1.y;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Arc.prototype, "angle0", {
+        get: function () {
+            return util_1.default.getAngleBetween(this.c, this.p0);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Arc.prototype, "angle1", {
+        get: function () {
+            return util_1.default.getAngleBetween(this.c, this.p1);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Arc.prototype.equals = function (other) {
+        if (!(other instanceof Arc))
+            return false;
+        return other.c.equals(this.c) && other.r == this.r &&
+            other.angle0 == this.angle0 && other.angle1 == this.angle1;
+    };
+    Arc.prototype.getChildFigures = function () {
+        return [this.c, this.p0, this.p1];
+    };
+    Arc.prototype.getClosestPoint = function (point) {
+        return util_1.default.projectOntoArc(this, point);
+    };
+    Arc.prototype.translate = function (from, to) {
+        this.r = util_1.default.distanceBetweenPoints(to, this.c);
+    };
+    Arc.prototype.copy = function () {
+        return new Arc(this.c.copy(), this.r, this.angle0, this.angle1);
+    };
+    return Arc;
+}(circle_1.default));
+exports.default = Arc;
+var ArcPoint = /** @class */ (function (_super) {
+    __extends(ArcPoint, _super);
+    function ArcPoint(arc, x, y) {
+        var _this = _super.call(this, x, y) || this;
+        _this.arc = arc;
+        return _this;
+    }
+    ArcPoint.prototype.translate = function (from, to) {
+        _super.prototype.translate.call(this, from, to);
+        this.arc.r = util_1.default.distanceBetweenPoints(this.arc.c, this);
+    };
+    return ArcPoint;
+}(point_1.default));
+exports.ArcPoint = ArcPoint;
+
+},{"./circle":3,"./point":6,"./util":7}],3:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -239,7 +342,7 @@ var Circle = /** @class */ (function (_super) {
 }(figure_1.default));
 exports.default = Circle;
 
-},{"../variable":18,"./figure":3,"./util":6}],3:[function(require,module,exports){
+},{"../variable":19,"./figure":4,"./util":7}],4:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Figure = /** @class */ (function () {
@@ -260,7 +363,7 @@ var Figure = /** @class */ (function () {
 }());
 exports.default = Figure;
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -325,7 +428,7 @@ var Line = /** @class */ (function (_super) {
 }(figure_1.default));
 exports.default = Line;
 
-},{"./figure":3,"./util":6}],5:[function(require,module,exports){
+},{"./figure":4,"./util":7}],6:[function(require,module,exports){
 "use strict";
 /**
  * @module gcs/geometry
@@ -401,7 +504,7 @@ var Point = /** @class */ (function (_super) {
 }(figure_1.default));
 exports.default = Point;
 
-},{"../variable":18,"./figure":3}],6:[function(require,module,exports){
+},{"../variable":19,"./figure":4}],7:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
@@ -504,6 +607,30 @@ var Util = /** @class */ (function () {
      */
     Util.projectOntoCircle = function (circle, point) {
         return Util.pointInDirection(circle.c, point, circle.r);
+    };
+    /**
+     * Projects point onto arc
+     * @param arc
+     * @param point
+     */
+    Util.projectOntoArc = function (arc, point) {
+        var angle = Util.getAngleBetween(arc.c, point);
+        if (Util.isAngleBetween(arc.angle0, arc.angle1, angle)) {
+            return Util.projectOntoCircle(arc, point);
+        }
+        var d0 = Util.distanceBetweenPoints(point, arc.p0);
+        var d1 = Util.distanceBetweenPoints(point, arc.p1);
+        if (d0 < d1) {
+            return arc.p0.copy();
+        }
+        else {
+            return arc.p1.copy();
+        }
+    };
+    Util.isAngleBetween = function (startAngle, endAngle, angle) {
+        endAngle = (endAngle - startAngle) < 0 ? endAngle - startAngle + Math.PI * 2 : endAngle - startAngle;
+        angle = (angle - startAngle) < 0 ? angle - startAngle + Math.PI * 2 : angle - startAngle;
+        return (angle < endAngle);
     };
     /**
      * Project point onto line. Point may not be on the line, but it will be co-linear.
@@ -758,11 +885,32 @@ var Util = /** @class */ (function () {
     Util.lineIntersectsCircle = function (circle, line) {
         return Util.distanceToSegment(line, circle.c) <= circle.r;
     };
+    /**
+     * Angle of the line from pivot to point in radians
+     * @param pivot
+     * @param point
+     */
+    Util.getAngleBetween = function (pivot, point) {
+        var dx = point.x - pivot.x;
+        var dy = point.y - pivot.y;
+        return Math.atan2(dy, dx);
+    };
+    /**
+     * Return a point `radius` away from `pivot` at the specified `angle`.
+     * @param pivot
+     * @param radius
+     * @param angle
+     */
+    Util.pointAtAngle = function (pivot, radius, angle) {
+        var x = Math.cos(angle) * radius;
+        var y = Math.sin(angle) * radius;
+        return new point_1.default(pivot.x + x, pivot.y + y);
+    };
     return Util;
 }());
 exports.default = Util;
 
-},{"./line":4,"./point":5}],7:[function(require,module,exports){
+},{"./line":5,"./point":6}],8:[function(require,module,exports){
 "use strict";
 /**
  * @module gcs/relations
@@ -1003,7 +1151,7 @@ var RelationCreator = /** @class */ (function () {
 }());
 exports.default = RelationCreator;
 
-},{"../filterString":1,"../geometry/circle":2,"../geometry/line":4,"../geometry/point":5,"./relationColinearPoints":10,"./relationEqual":11,"./relationEqualLength":12,"./relationMidpoint":13,"./relationPointsOnCircle":14,"./relationTangentCircle":15,"./relationTangentLine":16}],8:[function(require,module,exports){
+},{"../filterString":1,"../geometry/circle":3,"../geometry/line":5,"../geometry/point":6,"./relationColinearPoints":11,"./relationEqual":12,"./relationEqualLength":13,"./relationMidpoint":14,"./relationPointsOnCircle":15,"./relationTangentCircle":16,"./relationTangentLine":17}],9:[function(require,module,exports){
 "use strict";
 /**
  * @module gcs/relations
@@ -1235,7 +1383,7 @@ var RelationManager = /** @class */ (function () {
 }());
 exports.default = RelationManager;
 
-},{"./relationColinearPoints":10,"./relationEqual":11,"./relationEqualLength":12,"./relationPointsOnCircle":14}],9:[function(require,module,exports){
+},{"./relationColinearPoints":11,"./relationEqual":12,"./relationEqualLength":13,"./relationPointsOnCircle":15}],10:[function(require,module,exports){
 "use strict";
 /**
  * @module gcs/relations
@@ -1272,7 +1420,7 @@ var Relation = /** @class */ (function () {
 }());
 exports.default = Relation;
 
-},{"../geometry/circle":2,"../geometry/line":4,"../geometry/point":5}],10:[function(require,module,exports){
+},{"../geometry/circle":3,"../geometry/line":5,"../geometry/point":6}],11:[function(require,module,exports){
 "use strict";
 /**
  * @module gcs/relations
@@ -1347,7 +1495,7 @@ var RelationColinearPoints = /** @class */ (function (_super) {
 }(relation_1.default));
 exports.default = RelationColinearPoints;
 
-},{"../geometry/line":4,"../geometry/util":6,"./relation":9}],11:[function(require,module,exports){
+},{"../geometry/line":5,"../geometry/util":7,"./relation":10}],12:[function(require,module,exports){
 "use strict";
 /**
  * @module gcs/relations
@@ -1409,7 +1557,7 @@ var RelationEqual = /** @class */ (function (_super) {
 }(relation_1.default));
 exports.default = RelationEqual;
 
-},{"./relation":9}],12:[function(require,module,exports){
+},{"./relation":10}],13:[function(require,module,exports){
 "use strict";
 /**
  * @module gcs/relations
@@ -1494,7 +1642,7 @@ var RelationEqualLength = /** @class */ (function (_super) {
 }(relation_1.default));
 exports.default = RelationEqualLength;
 
-},{"../geometry/util":6,"./relation":9}],13:[function(require,module,exports){
+},{"../geometry/util":7,"./relation":10}],14:[function(require,module,exports){
 "use strict";
 /**
  * @module gcs/relations
@@ -1553,7 +1701,7 @@ var RelationMidpoint = /** @class */ (function (_super) {
 }(relation_1.default));
 exports.default = RelationMidpoint;
 
-},{"../geometry/util":6,"./relation":9}],14:[function(require,module,exports){
+},{"../geometry/util":7,"./relation":10}],15:[function(require,module,exports){
 "use strict";
 /**
  * @module gcs/relations
@@ -1644,7 +1792,7 @@ var RelationPointsOnCircle = /** @class */ (function (_super) {
 }(relation_1.default));
 exports.default = RelationPointsOnCircle;
 
-},{"../geometry/line":4,"../geometry/util":6,"./relation":9}],15:[function(require,module,exports){
+},{"../geometry/line":5,"../geometry/util":7,"./relation":10}],16:[function(require,module,exports){
 "use strict";
 /**
  * @module gcs/relations
@@ -1755,7 +1903,7 @@ var RelationTangentCircle = /** @class */ (function (_super) {
 }(relation_1.default));
 exports.default = RelationTangentCircle;
 
-},{"../geometry/line":4,"../geometry/point":5,"../geometry/util":6,"./relation":9}],16:[function(require,module,exports){
+},{"../geometry/line":5,"../geometry/point":6,"../geometry/util":7,"./relation":10}],17:[function(require,module,exports){
 "use strict";
 /**
  * @module gcs/relations
@@ -1825,7 +1973,7 @@ var RelationTangentLine = /** @class */ (function (_super) {
 }(relation_1.default));
 exports.default = RelationTangentLine;
 
-},{"../geometry/point":5,"../geometry/util":6,"./relation":9}],17:[function(require,module,exports){
+},{"../geometry/point":6,"../geometry/util":7,"./relation":10}],18:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
@@ -1835,6 +1983,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var point_1 = require("./geometry/point");
 var manager_1 = require("./relations/manager");
 var util_1 = require("./geometry/util");
+var relationPointsOnCircle_1 = require("./relations/relationPointsOnCircle");
+var arc_1 = require("./geometry/arc");
 var Sketch = /** @class */ (function () {
     function Sketch() {
         this.figures = [];
@@ -1885,6 +2035,10 @@ var Sketch = /** @class */ (function () {
     Sketch.prototype.addFigure = function (figure) {
         if (this.figures.indexOf(figure) != -1)
             return;
+        if (figure instanceof arc_1.default) {
+            var relation = new relationPointsOnCircle_1.default(figure, figure.p0, figure.p1);
+            this.relationManager.addRelations(relation);
+        }
         this.figures.push(figure);
     };
     Sketch.prototype.addFigures = function () {
@@ -1901,7 +2055,7 @@ var Sketch = /** @class */ (function () {
 }());
 exports.default = Sketch;
 
-},{"./geometry/point":5,"./geometry/util":6,"./relations/manager":8}],18:[function(require,module,exports){
+},{"./geometry/arc":2,"./geometry/point":6,"./geometry/util":7,"./relations/manager":9,"./relations/relationPointsOnCircle":15}],19:[function(require,module,exports){
 "use strict";
 /**
  * @module gcs/variable
@@ -2000,7 +2154,7 @@ var Variable = /** @class */ (function () {
 }());
 exports.default = Variable;
 
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 "use strict";
 /**
  * @module main
@@ -2041,7 +2195,7 @@ window.addEventListener("load", function () {
     }
 });
 
-},{"./protractr":20}],20:[function(require,module,exports){
+},{"./protractr":21}],21:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
@@ -2081,7 +2235,7 @@ var Protractr = /** @class */ (function () {
 }());
 exports.default = Protractr;
 
-},{"./gcs/sketch":17,"./ui/io/io":28,"./ui/ui":41}],21:[function(require,module,exports){
+},{"./gcs/sketch":18,"./ui/io/io":29,"./ui/ui":43}],22:[function(require,module,exports){
 "use strict";
 /**
  * @module ui/actions
@@ -2097,7 +2251,7 @@ var Action = /** @class */ (function () {
 }());
 exports.default = Action;
 
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 "use strict";
 /**
  * @module ui/actions
@@ -2132,7 +2286,7 @@ var ActionExport = /** @class */ (function (_super) {
 }(action_1.default));
 exports.default = ActionExport;
 
-},{"../io/io":28,"../util":42,"./action":21}],23:[function(require,module,exports){
+},{"../io/io":29,"../util":44,"./action":22}],24:[function(require,module,exports){
 "use strict";
 /**
  * @module ui/actions
@@ -2172,7 +2326,7 @@ var ActionImport = /** @class */ (function (_super) {
 }(action_1.default));
 exports.default = ActionImport;
 
-},{"../io/io":28,"./action":21}],24:[function(require,module,exports){
+},{"../io/io":29,"./action":22}],25:[function(require,module,exports){
 "use strict";
 /**
  * @module ui/actions
@@ -2205,7 +2359,7 @@ var ActionRedo = /** @class */ (function (_super) {
 }(action_1.default));
 exports.default = ActionRedo;
 
-},{"./action":21}],25:[function(require,module,exports){
+},{"./action":22}],26:[function(require,module,exports){
 "use strict";
 /**
  * @module ui/actions
@@ -2238,7 +2392,7 @@ var ActionUndo = /** @class */ (function (_super) {
 }(action_1.default));
 exports.default = ActionUndo;
 
-},{"./action":21}],26:[function(require,module,exports){
+},{"./action":22}],27:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
@@ -2304,7 +2458,7 @@ var Container = /** @class */ (function () {
 }());
 exports.default = Container;
 
-},{}],27:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
@@ -2391,7 +2545,7 @@ var HistoryStack = /** @class */ (function () {
     return HistoryStack;
 }());
 
-},{}],28:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 "use strict";
 /**
  * @module gcs/io
@@ -2412,7 +2566,7 @@ var IO = /** @class */ (function () {
 }());
 exports.default = IO;
 
-},{"./json":29}],29:[function(require,module,exports){
+},{"./json":30}],30:[function(require,module,exports){
 "use strict";
 /**
  * @module gcs/io
@@ -2438,6 +2592,7 @@ var relationMidpoint_1 = require("../../gcs/relations/relationMidpoint");
 var relationTangentCircle_1 = require("../../gcs/relations/relationTangentCircle");
 var relationTangentLine_1 = require("../../gcs/relations/relationTangentLine");
 var relationPointsOnCircle_1 = require("../../gcs/relations/relationPointsOnCircle");
+var arc_1 = require("../../gcs/geometry/arc");
 var JSONImporter = /** @class */ (function () {
     function JSONImporter() {
     }
@@ -2480,6 +2635,22 @@ var JSONImporter = /** @class */ (function () {
             line.p0 = this.points[obj.p0];
             line.p1 = this.points[obj.p1];
             return line;
+        }
+        else if (obj.type == "arc") {
+            var arc = new arc_1.default(new point_1.default(0, 0), 0, 0, 0);
+            arc.c = this.points[obj.c];
+            arc._r = this.variables[obj.r];
+            var p0 = new arc_1.ArcPoint(arc, 0, 0);
+            p0._x = this.points[obj.p0]._x;
+            p0._y = this.points[obj.p0]._y;
+            this.points[obj.p0] = p0;
+            arc.p0 = p0;
+            var p1 = new arc_1.ArcPoint(arc, 0, 0);
+            p1._x = this.points[obj.p1]._x;
+            p1._y = this.points[obj.p1]._y;
+            this.points[obj.p1] = p1;
+            arc.p1 = p1;
+            return arc;
         }
         else if (obj.type == "circle") {
             var circle = new circle_1.default(new point_1.default(0, 0), 0);
@@ -2628,7 +2799,7 @@ var JSONExporter = /** @class */ (function () {
             return {
                 type: "midpoint",
                 line: this.encodeF(relation.line),
-                midpoint: this.encodeF(relation.midpoint),
+                midpoint: this.encodeP(relation.midpoint),
             };
         }
         else if (relation instanceof relationPointsOnCircle_1.default) {
@@ -2665,6 +2836,9 @@ var JSONExporter = /** @class */ (function () {
         else if (figure instanceof line_1.default) {
             return [figure.p0, figure.p1];
         }
+        else if (figure instanceof arc_1.default) {
+            return [figure.c, figure.p0, figure.p1];
+        }
         else if (figure instanceof circle_1.default) {
             return [figure.c];
         }
@@ -2679,6 +2853,15 @@ var JSONExporter = /** @class */ (function () {
         else if (figure instanceof line_1.default) {
             return {
                 type: "line",
+                p0: this.encodeP(figure.p0),
+                p1: this.encodeP(figure.p1),
+            };
+        }
+        else if (figure instanceof arc_1.default) {
+            return {
+                type: "arc",
+                c: this.encodeP(figure.c),
+                r: this.encodeV(figure._r),
                 p0: this.encodeP(figure.p0),
                 p1: this.encodeP(figure.p1),
             };
@@ -2698,6 +2881,9 @@ var JSONExporter = /** @class */ (function () {
         else if (figure instanceof line_1.default) {
             return [figure.p0._x, figure.p0._y, figure.p1._x, figure.p1._y];
         }
+        else if (figure instanceof arc_1.default) {
+            return [figure.c._x, figure.c._y, figure._r, figure.p0._x, figure.p0._y, figure.p1._x, figure.p1._y];
+        }
         else if (figure instanceof circle_1.default) {
             return [figure.c._x, figure.c._y, figure._r];
         }
@@ -2715,7 +2901,7 @@ var JSONExporter = /** @class */ (function () {
 }());
 exports.JSONExporter = JSONExporter;
 
-},{"../../gcs/geometry/circle":2,"../../gcs/geometry/line":4,"../../gcs/geometry/point":5,"../../gcs/relations/relationColinearPoints":10,"../../gcs/relations/relationEqual":11,"../../gcs/relations/relationEqualLength":12,"../../gcs/relations/relationMidpoint":13,"../../gcs/relations/relationPointsOnCircle":14,"../../gcs/relations/relationTangentCircle":15,"../../gcs/relations/relationTangentLine":16,"../../gcs/sketch":17,"../../gcs/variable":18}],30:[function(require,module,exports){
+},{"../../gcs/geometry/arc":2,"../../gcs/geometry/circle":3,"../../gcs/geometry/line":5,"../../gcs/geometry/point":6,"../../gcs/relations/relationColinearPoints":11,"../../gcs/relations/relationEqual":12,"../../gcs/relations/relationEqualLength":13,"../../gcs/relations/relationMidpoint":14,"../../gcs/relations/relationPointsOnCircle":15,"../../gcs/relations/relationTangentCircle":16,"../../gcs/relations/relationTangentLine":17,"../../gcs/sketch":18,"../../gcs/variable":19}],31:[function(require,module,exports){
 "use strict";
 /**
  * @module ui/menubar
@@ -2837,7 +3023,7 @@ var ToolGroup = /** @class */ (function () {
 }());
 exports.ToolGroup = ToolGroup;
 
-},{}],31:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 "use strict";
 /**
  * @module ui/sketchview
@@ -2847,6 +3033,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var point_1 = require("../gcs/geometry/point");
 var line_1 = require("../gcs/geometry/line");
 var circle_1 = require("../gcs/geometry/circle");
+var arc_1 = require("../gcs/geometry/arc");
 var SketchView = /** @class */ (function () {
     function SketchView(ui, canvas) {
         this.lastPanPoint = null;
@@ -2959,6 +3146,9 @@ var SketchView = /** @class */ (function () {
         else if (fig instanceof line_1.default) {
             this.drawLine(fig.p0, fig.p1);
         }
+        else if (fig instanceof arc_1.default) {
+            this.drawArc(fig.c, fig.r, fig.angle0, fig.angle1);
+        }
         else if (fig instanceof circle_1.default) {
             this.drawCircle(fig.c, fig.r);
         }
@@ -3006,11 +3196,18 @@ var SketchView = /** @class */ (function () {
         this.ctx.arc(center.x, center.y, radius, 0, Math.PI * 2);
         this.ctx.stroke();
     };
+    SketchView.prototype.drawArc = function (center, radius, a0, a1) {
+        if (!center)
+            return;
+        this.ctx.beginPath();
+        this.ctx.arc(center.x, center.y, radius, a0, a1);
+        this.ctx.stroke();
+    };
     return SketchView;
 }());
 exports.default = SketchView;
 
-},{"../gcs/geometry/circle":2,"../gcs/geometry/line":4,"../gcs/geometry/point":5}],32:[function(require,module,exports){
+},{"../gcs/geometry/arc":2,"../gcs/geometry/circle":3,"../gcs/geometry/line":5,"../gcs/geometry/point":6}],33:[function(require,module,exports){
 "use strict";
 /**
  * @module ui/tools
@@ -3030,7 +3227,74 @@ var Tool = /** @class */ (function () {
 }());
 exports.default = Tool;
 
-},{}],33:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
+"use strict";
+/**
+ * @module ui/tools
+ */
+/** */
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var toolCreateFigure_1 = require("./toolCreateFigure");
+var util_1 = require("../../gcs/geometry/util");
+var arc_1 = require("../../gcs/geometry/arc");
+var ToolCreateArc = /** @class */ (function (_super) {
+    __extends(ToolCreateArc, _super);
+    function ToolCreateArc(protractr) {
+        return _super.call(this, protractr, 3) || this;
+    }
+    ToolCreateArc.prototype.addFigure = function () {
+        var center = this.points[0].point;
+        var radius = util_1.default.distanceBetweenPoints(center, this.points[1].point);
+        var a0 = util_1.default.getAngleBetween(center, this.points[1].point);
+        var a1 = util_1.default.getAngleBetween(center, this.points[2].point);
+        var arc = new arc_1.default(center, radius, a0, a1);
+        this.addRelationsBySnap(arc.c, this.points[0].snapFigure);
+        this.addRelationsBySnap(arc.p0, this.points[1].snapFigure);
+        this.addRelationsBySnap(arc.p1, this.points[2].snapFigure);
+        this.protractr.sketch.addFigure(arc);
+    };
+    ToolCreateArc.prototype.draw = function (sketchView) {
+        if (this.points.length == 1) {
+            sketchView.drawPoint(this.currentPoint.point);
+        }
+        else if (this.points.length == 2) {
+            var center = this.points[0].point;
+            sketchView.drawPoint(center);
+            var radius = util_1.default.distanceBetweenPoints(center, this.currentPoint.point);
+            sketchView.drawCircle(center, radius);
+            sketchView.drawPoint(this.currentPoint.point);
+        }
+        else {
+            var center = this.points[0].point;
+            var p0 = this.points[1].point;
+            var radius = util_1.default.distanceBetweenPoints(center, p0);
+            var p1 = util_1.default.pointInDirection(center, this.currentPoint.point, radius);
+            sketchView.drawPoint(center);
+            sketchView.drawPoint(p0);
+            sketchView.drawPoint(p1);
+            var a0 = util_1.default.getAngleBetween(center, p0);
+            var a1 = util_1.default.getAngleBetween(center, p1);
+            sketchView.drawArc(center, radius, a0, a1);
+        }
+    };
+    return ToolCreateArc;
+}(toolCreateFigure_1.default));
+exports.default = ToolCreateArc;
+
+},{"../../gcs/geometry/arc":2,"../../gcs/geometry/util":7,"./toolCreateFigure":36}],35:[function(require,module,exports){
 "use strict";
 /**
  * @module ui/tools
@@ -3081,7 +3345,7 @@ var ToolCreateCircle = /** @class */ (function (_super) {
 }(toolCreateFigure_1.default));
 exports.default = ToolCreateCircle;
 
-},{"../../gcs/geometry/circle":2,"../../gcs/geometry/util":6,"./toolCreateFigure":34}],34:[function(require,module,exports){
+},{"../../gcs/geometry/circle":3,"../../gcs/geometry/util":7,"./toolCreateFigure":36}],36:[function(require,module,exports){
 "use strict";
 /**
  * @module ui/tools
@@ -3172,7 +3436,7 @@ var ToolCreateFigure = /** @class */ (function (_super) {
 }(tool_1.default));
 exports.default = ToolCreateFigure;
 
-},{"../../gcs/geometry/circle":2,"../../gcs/geometry/line":4,"../../gcs/geometry/point":5,"../../gcs/relations/relationColinearPoints":10,"../../gcs/relations/relationEqual":11,"../../gcs/relations/relationPointsOnCircle":14,"./tool":32}],35:[function(require,module,exports){
+},{"../../gcs/geometry/circle":3,"../../gcs/geometry/line":5,"../../gcs/geometry/point":6,"../../gcs/relations/relationColinearPoints":11,"../../gcs/relations/relationEqual":12,"../../gcs/relations/relationPointsOnCircle":15,"./tool":33}],37:[function(require,module,exports){
 "use strict";
 /**
  * @module ui/tools
@@ -3221,7 +3485,7 @@ var ToolCreateLine = /** @class */ (function (_super) {
 }(toolCreateFigure_1.default));
 exports.default = ToolCreateLine;
 
-},{"../../gcs/geometry/line":4,"./toolCreateFigure":34}],36:[function(require,module,exports){
+},{"../../gcs/geometry/line":5,"./toolCreateFigure":36}],38:[function(require,module,exports){
 "use strict";
 /**
  * @module ui/tools
@@ -3261,7 +3525,7 @@ var ToolCreatePoint = /** @class */ (function (_super) {
 }(toolCreateFigure_1.default));
 exports.default = ToolCreatePoint;
 
-},{"./toolCreateFigure":34}],37:[function(require,module,exports){
+},{"./toolCreateFigure":36}],39:[function(require,module,exports){
 "use strict";
 /**
  * @module ui/tools
@@ -3333,7 +3597,7 @@ var ToolCreateRect = /** @class */ (function (_super) {
 }(toolCreateFigure_1.default));
 exports.default = ToolCreateRect;
 
-},{"../../gcs/geometry/line":4,"../../gcs/geometry/point":5,"../../gcs/relations/relationEqual":11,"./toolCreateFigure":34}],38:[function(require,module,exports){
+},{"../../gcs/geometry/line":5,"../../gcs/geometry/point":6,"../../gcs/relations/relationEqual":12,"./toolCreateFigure":36}],40:[function(require,module,exports){
 "use strict";
 /**
  * @module ui/tools
@@ -3369,7 +3633,7 @@ var ToolFilterSelect = /** @class */ (function (_super) {
 }(toolSelect_1.default));
 exports.default = ToolFilterSelect;
 
-},{"../../gcs/filterString":1,"./toolSelect":39}],39:[function(require,module,exports){
+},{"../../gcs/filterString":1,"./toolSelect":41}],41:[function(require,module,exports){
 "use strict";
 /**
  * @module ui/tools
@@ -3532,7 +3796,7 @@ var ToolSelect = /** @class */ (function (_super) {
 }(tool_1.default));
 exports.default = ToolSelect;
 
-},{"../../gcs/geometry/circle":2,"../../gcs/geometry/line":4,"../../gcs/geometry/point":5,"../../gcs/geometry/util":6,"./tool":32}],40:[function(require,module,exports){
+},{"../../gcs/geometry/circle":3,"../../gcs/geometry/line":5,"../../gcs/geometry/point":6,"../../gcs/geometry/util":7,"./tool":33}],42:[function(require,module,exports){
 "use strict";
 /**
  * @module ui/topbar
@@ -3550,6 +3814,7 @@ var actionUndo_1 = require("./actions/actionUndo");
 var actionRedo_1 = require("./actions/actionRedo");
 var actionImport_1 = require("./actions/actionImport");
 var actionExport_1 = require("./actions/actionExport");
+var toolCreateArc_1 = require("./tools/toolCreateArc");
 var TopBar = /** @class */ (function () {
     function TopBar(protractr, topBarElement) {
         this.menuBar = new menubar_1.MenuBar();
@@ -3563,6 +3828,7 @@ var TopBar = /** @class */ (function () {
         this.menuBar.addItem(new menubar_1.ToolMenuItem(this.toolGroup, new toolCreateLine_1.default(protractr), "Create a line", "line.png"));
         this.menuBar.addItem(new menubar_1.ToolMenuItem(this.toolGroup, new toolCreateRect_1.default(protractr), "Create a rectangle", "rect.png"));
         this.menuBar.addItem(new menubar_1.ToolMenuItem(this.toolGroup, new toolCreateCircle_1.default(protractr), "Create a circle", "circle.png"));
+        this.menuBar.addItem(new menubar_1.ToolMenuItem(this.toolGroup, new toolCreateArc_1.default(protractr), "Create an arc", "arc.png"));
         this.menuBar.addDivider();
         this.menuBar.addItem(new menubar_1.ActionMenuItem(new actionUndo_1.default(protractr), "Undo an action", "undo.png"));
         this.menuBar.addItem(new menubar_1.ActionMenuItem(new actionRedo_1.default(protractr), "Redo an action", "redo.png"));
@@ -3582,7 +3848,7 @@ var TopBar = /** @class */ (function () {
 }());
 exports.default = TopBar;
 
-},{"./actions/actionExport":22,"./actions/actionImport":23,"./actions/actionRedo":24,"./actions/actionUndo":25,"./menubar":30,"./tools/toolCreateCircle":33,"./tools/toolCreateLine":35,"./tools/toolCreatePoint":36,"./tools/toolCreateRect":37,"./tools/toolFilterSelect":38,"./tools/toolSelect":39}],41:[function(require,module,exports){
+},{"./actions/actionExport":23,"./actions/actionImport":24,"./actions/actionRedo":25,"./actions/actionUndo":26,"./menubar":31,"./tools/toolCreateArc":34,"./tools/toolCreateCircle":35,"./tools/toolCreateLine":37,"./tools/toolCreatePoint":38,"./tools/toolCreateRect":39,"./tools/toolFilterSelect":40,"./tools/toolSelect":41}],43:[function(require,module,exports){
 "use strict";
 /**
  * @module ui
@@ -3622,7 +3888,7 @@ var UI = /** @class */ (function () {
 }());
 exports.default = UI;
 
-},{"./container":26,"./history":27,"./io/io":28,"./sketchview":31,"./topbar":40,"./widgets/sidePanel":48}],42:[function(require,module,exports){
+},{"./container":27,"./history":28,"./io/io":29,"./sketchview":32,"./topbar":42,"./widgets/sidePanel":50}],44:[function(require,module,exports){
 "use strict";
 /**
  * @module ui/util
@@ -3638,7 +3904,7 @@ function saveAs(string, filename) {
 }
 exports.saveAs = saveAs;
 
-},{}],43:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -3755,7 +4021,7 @@ var ListElement = /** @class */ (function (_super) {
 }(widget_1.default));
 exports.ListElement = ListElement;
 
-},{"./titledWidget":49,"./widget":50}],44:[function(require,module,exports){
+},{"./titledWidget":51,"./widget":52}],46:[function(require,module,exports){
 "use strict";
 /**
  * @module ui/widgets
@@ -3825,7 +4091,7 @@ var NewRelationsWidget = /** @class */ (function (_super) {
 }(titledWidget_1.default));
 exports.default = NewRelationsWidget;
 
-},{"../../gcs/relations/creator":7,"./titledWidget":49}],45:[function(require,module,exports){
+},{"../../gcs/relations/creator":8,"./titledWidget":51}],47:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -3934,7 +4200,7 @@ var RelationElement = /** @class */ (function (_super) {
     return RelationElement;
 }(listWidget_1.ListElement));
 
-},{"./listWidget":43}],46:[function(require,module,exports){
+},{"./listWidget":45}],48:[function(require,module,exports){
 "use strict";
 /**
  * @module ui/widgets
@@ -4009,7 +4275,7 @@ var SelectedFigureElement = /** @class */ (function (_super) {
     return SelectedFigureElement;
 }(listWidget_1.ListElement));
 
-},{"../../gcs/filterString":1,"./listWidget":43}],47:[function(require,module,exports){
+},{"../../gcs/filterString":1,"./listWidget":45}],49:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -4112,7 +4378,7 @@ var SelectedFigureWidget = /** @class */ (function (_super) {
 }(widget_1.default));
 exports.default = SelectedFigureWidget;
 
-},{"../../gcs/geometry/circle":2,"../../gcs/geometry/line":4,"../../gcs/geometry/point":5,"./widget":50}],48:[function(require,module,exports){
+},{"../../gcs/geometry/circle":3,"../../gcs/geometry/line":5,"../../gcs/geometry/point":6,"./widget":52}],50:[function(require,module,exports){
 "use strict";
 /**
  * @module ui/widgets
@@ -4151,7 +4417,7 @@ var SidePanel = /** @class */ (function (_super) {
 }(widget_1.default));
 exports.default = SidePanel;
 
-},{"./newRelationsWidget":44,"./relationListWidget":45,"./selectedFigureListWidget":46,"./selectedFigureWidget":47,"./widget":50}],49:[function(require,module,exports){
+},{"./newRelationsWidget":46,"./relationListWidget":47,"./selectedFigureListWidget":48,"./selectedFigureWidget":49,"./widget":52}],51:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -4187,7 +4453,7 @@ var TitledWidget = /** @class */ (function (_super) {
 }(widget_1.default));
 exports.default = TitledWidget;
 
-},{"./widget":50}],50:[function(require,module,exports){
+},{"./widget":52}],52:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Widget = /** @class */ (function () {
@@ -4218,4 +4484,4 @@ var Widget = /** @class */ (function () {
 }());
 exports.default = Widget;
 
-},{}]},{},[19]);
+},{}]},{},[20]);

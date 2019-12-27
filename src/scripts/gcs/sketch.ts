@@ -6,6 +6,8 @@ import Point from "./geometry/point";
 import RelationManager from "./relations/manager";
 import Figure from "./geometry/figure";
 import Util from "./geometry/util";
+import RelationPointsOnCircle from "./relations/relationPointsOnCircle";
+import Arc from "./geometry/arc";
 
 export default class Sketch {
     figures: Figure[];
@@ -57,6 +59,10 @@ export default class Sketch {
 
     addFigure(figure: Figure) {
         if(this.figures.indexOf(figure) != -1) return;
+        if(figure instanceof Arc) {
+            let relation = new RelationPointsOnCircle(figure, figure.p0, figure.p1);
+            this.relationManager.addRelations(relation);
+        }
         this.figures.push(figure);
     }
 
