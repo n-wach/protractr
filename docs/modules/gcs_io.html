@@ -92,9 +92,20 @@
 						<section class="tsd-index-section tsd-is-not-exported">
 							<h3>Type aliases</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported"><a href="gcs_io.html#jsonarc" class="tsd-kind-icon">JSONArc</a></li>
+								<li class="tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported"><a href="gcs_io.html#jsoncircle" class="tsd-kind-icon">JSONCircle</a></li>
+								<li class="tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported"><a href="gcs_io.html#jsoncolinearpoints" class="tsd-kind-icon">JSONColinear<wbr>Points</a></li>
+								<li class="tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported"><a href="gcs_io.html#jsonequal" class="tsd-kind-icon">JSONEqual</a></li>
+								<li class="tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported"><a href="gcs_io.html#jsonequallength" class="tsd-kind-icon">JSONEqual<wbr>Length</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported"><a href="gcs_io.html#jsonfigure" class="tsd-kind-icon">JSONFigure</a></li>
+								<li class="tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported"><a href="gcs_io.html#jsonline" class="tsd-kind-icon">JSONLine</a></li>
+								<li class="tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported"><a href="gcs_io.html#jsonmidpoint" class="tsd-kind-icon">JSONMidpoint</a></li>
+								<li class="tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported"><a href="gcs_io.html#jsonpoint" class="tsd-kind-icon">JSONPoint</a></li>
+								<li class="tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported"><a href="gcs_io.html#jsonpointsoncircle" class="tsd-kind-icon">JSONPoints<wbr>OnCircle</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported"><a href="gcs_io.html#jsonrelation" class="tsd-kind-icon">JSONRelation</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported"><a href="gcs_io.html#jsonsketch" class="tsd-kind-icon">JSONSketch</a></li>
+								<li class="tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported"><a href="gcs_io.html#jsontangentcircle" class="tsd-kind-icon">JSONTangent<wbr>Circle</a></li>
+								<li class="tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported"><a href="gcs_io.html#jsontangentline" class="tsd-kind-icon">JSONTangent<wbr>Line</a></li>
 							</ul>
 						</section>
 					</div>
@@ -103,22 +114,224 @@
 			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
 				<h2>Type aliases</h2>
 				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
-					<a name="jsonfigure" class="tsd-anchor"></a>
-					<h3>JSONFigure</h3>
-					<div class="tsd-signature tsd-kind-icon">JSONFigure<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<a name="jsonarc" class="tsd-anchor"></a>
+					<h3>JSONArc</h3>
+					<div class="tsd-signature tsd-kind-icon">JSONArc<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/n-wach/protractr/blob/7d38e91/src/scripts/ui/io/json.ts#L23">ui/io/json.ts:23</a></li>
+							<li>Defined in <a href="https://github.com/n-wach/protractr/blob/2f3e7ae/src/scripts/ui/io/json.ts#L34">ui/io/json.ts:34</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
 						<h4>Type declaration</h4>
 						<ul class="tsd-parameters">
-							<li class="tsd-parameter-index-signature">
-								<h5><span class="tsd-signature-symbol">[</span>a: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">any</span></h5>
+							<li class="tsd-parameter">
+								<h5>c<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
 							</li>
 							<li class="tsd-parameter">
-								<h5>type<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
+								<h5>p0<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
+							</li>
+							<li class="tsd-parameter">
+								<h5>p1<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
+							</li>
+							<li class="tsd-parameter">
+								<h5>r<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
+							</li>
+							<li class="tsd-parameter">
+								<h5>type<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">"arc"</span></h5>
+							</li>
+						</ul>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="jsoncircle" class="tsd-anchor"></a>
+					<h3>JSONCircle</h3>
+					<div class="tsd-signature tsd-kind-icon">JSONCircle<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/n-wach/protractr/blob/2f3e7ae/src/scripts/ui/io/json.ts#L42">ui/io/json.ts:42</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter">
+								<h5>c<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
+							</li>
+							<li class="tsd-parameter">
+								<h5>r<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
+							</li>
+							<li class="tsd-parameter">
+								<h5>type<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">"circle"</span></h5>
+							</li>
+						</ul>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="jsoncolinearpoints" class="tsd-anchor"></a>
+					<h3>JSONColinear<wbr>Points</h3>
+					<div class="tsd-signature tsd-kind-icon">JSONColinear<wbr>Points<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/n-wach/protractr/blob/2f3e7ae/src/scripts/ui/io/json.ts#L56">ui/io/json.ts:56</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter">
+								<h5>points<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h5>
+							</li>
+							<li class="tsd-parameter">
+								<h5>type<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">"colinear points"</span></h5>
+							</li>
+						</ul>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="jsonequal" class="tsd-anchor"></a>
+					<h3>JSONEqual</h3>
+					<div class="tsd-signature tsd-kind-icon">JSONEqual<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/n-wach/protractr/blob/2f3e7ae/src/scripts/ui/io/json.ts#L50">ui/io/json.ts:50</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter">
+								<h5>name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
+							</li>
+							<li class="tsd-parameter">
+								<h5>type<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">"equal"</span></h5>
+							</li>
+							<li class="tsd-parameter">
+								<h5>variables<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h5>
+							</li>
+						</ul>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="jsonequallength" class="tsd-anchor"></a>
+					<h3>JSONEqual<wbr>Length</h3>
+					<div class="tsd-signature tsd-kind-icon">JSONEqual<wbr>Length<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/n-wach/protractr/blob/2f3e7ae/src/scripts/ui/io/json.ts#L61">ui/io/json.ts:61</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter">
+								<h5>lines<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h5>
+							</li>
+							<li class="tsd-parameter">
+								<h5>type<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">"equal length"</span></h5>
+							</li>
+						</ul>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="jsonfigure" class="tsd-anchor"></a>
+					<h3>JSONFigure</h3>
+					<div class="tsd-signature tsd-kind-icon">JSONFigure<span class="tsd-signature-symbol">:</span> <a href="gcs_io.html#jsonpoint" class="tsd-signature-type">JSONPoint</a><span class="tsd-signature-symbol"> | </span><a href="gcs_io.html#jsonline" class="tsd-signature-type">JSONLine</a><span class="tsd-signature-symbol"> | </span><a href="gcs_io.html#jsonarc" class="tsd-signature-type">JSONArc</a><span class="tsd-signature-symbol"> | </span><a href="gcs_io.html#jsoncircle" class="tsd-signature-type">JSONCircle</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/n-wach/protractr/blob/2f3e7ae/src/scripts/ui/io/json.ts#L48">ui/io/json.ts:48</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="jsonline" class="tsd-anchor"></a>
+					<h3>JSONLine</h3>
+					<div class="tsd-signature tsd-kind-icon">JSONLine<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/n-wach/protractr/blob/2f3e7ae/src/scripts/ui/io/json.ts#L28">ui/io/json.ts:28</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter">
+								<h5>p0<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
+							</li>
+							<li class="tsd-parameter">
+								<h5>p1<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
+							</li>
+							<li class="tsd-parameter">
+								<h5>type<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">"line"</span></h5>
+							</li>
+						</ul>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="jsonmidpoint" class="tsd-anchor"></a>
+					<h3>JSONMidpoint</h3>
+					<div class="tsd-signature tsd-kind-icon">JSONMidpoint<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/n-wach/protractr/blob/2f3e7ae/src/scripts/ui/io/json.ts#L66">ui/io/json.ts:66</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter">
+								<h5>line<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
+							</li>
+							<li class="tsd-parameter">
+								<h5>midpoint<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
+							</li>
+							<li class="tsd-parameter">
+								<h5>type<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">"midpoint"</span></h5>
+							</li>
+						</ul>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="jsonpoint" class="tsd-anchor"></a>
+					<h3>JSONPoint</h3>
+					<div class="tsd-signature tsd-kind-icon">JSONPoint<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/n-wach/protractr/blob/2f3e7ae/src/scripts/ui/io/json.ts#L23">ui/io/json.ts:23</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter">
+								<h5>p<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
+							</li>
+							<li class="tsd-parameter">
+								<h5>type<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">"point"</span></h5>
+							</li>
+						</ul>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="jsonpointsoncircle" class="tsd-anchor"></a>
+					<h3>JSONPoints<wbr>OnCircle</h3>
+					<div class="tsd-signature tsd-kind-icon">JSONPoints<wbr>OnCircle<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/n-wach/protractr/blob/2f3e7ae/src/scripts/ui/io/json.ts#L72">ui/io/json.ts:72</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter">
+								<h5>circle<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
+							</li>
+							<li class="tsd-parameter">
+								<h5>points<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h5>
+							</li>
+							<li class="tsd-parameter">
+								<h5>type<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">"points on circle"</span></h5>
 							</li>
 						</ul>
 					</div>
@@ -126,23 +339,12 @@
 				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
 					<a name="jsonrelation" class="tsd-anchor"></a>
 					<h3>JSONRelation</h3>
-					<div class="tsd-signature tsd-kind-icon">JSONRelation<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<div class="tsd-signature tsd-kind-icon">JSONRelation<span class="tsd-signature-symbol">:</span> <a href="gcs_io.html#jsonequal" class="tsd-signature-type">JSONEqual</a><span class="tsd-signature-symbol"> | </span><a href="gcs_io.html#jsoncolinearpoints" class="tsd-signature-type">JSONColinearPoints</a><span class="tsd-signature-symbol"> | </span><a href="gcs_io.html#jsonequallength" class="tsd-signature-type">JSONEqualLength</a><span class="tsd-signature-symbol"> | </span><a href="gcs_io.html#jsonmidpoint" class="tsd-signature-type">JSONMidpoint</a><span class="tsd-signature-symbol"> | </span><a href="gcs_io.html#jsonpointsoncircle" class="tsd-signature-type">JSONPointsOnCircle</a><span class="tsd-signature-symbol"> | </span><a href="gcs_io.html#jsontangentcircle" class="tsd-signature-type">JSONTangentCircle</a><span class="tsd-signature-symbol"> | </span><a href="gcs_io.html#jsontangentline" class="tsd-signature-type">JSONTangentLine</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/n-wach/protractr/blob/7d38e91/src/scripts/ui/io/json.ts#L28">ui/io/json.ts:28</a></li>
+							<li>Defined in <a href="https://github.com/n-wach/protractr/blob/2f3e7ae/src/scripts/ui/io/json.ts#L90">ui/io/json.ts:90</a></li>
 						</ul>
 					</aside>
-					<div class="tsd-type-declaration">
-						<h4>Type declaration</h4>
-						<ul class="tsd-parameters">
-							<li class="tsd-parameter-index-signature">
-								<h5><span class="tsd-signature-symbol">[</span>a: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">any</span></h5>
-							</li>
-							<li class="tsd-parameter">
-								<h5>type<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
-							</li>
-						</ul>
-					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
 					<a name="jsonsketch" class="tsd-anchor"></a>
@@ -150,7 +352,7 @@
 					<div class="tsd-signature tsd-kind-icon">JSONSketch<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/n-wach/protractr/blob/7d38e91/src/scripts/ui/io/json.ts#L33">ui/io/json.ts:33</a></li>
+							<li>Defined in <a href="https://github.com/n-wach/protractr/blob/2f3e7ae/src/scripts/ui/io/json.ts#L94">ui/io/json.ts:94</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -167,6 +369,54 @@
 							</li>
 							<li class="tsd-parameter">
 								<h5>variables<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h5>
+							</li>
+						</ul>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="jsontangentcircle" class="tsd-anchor"></a>
+					<h3>JSONTangent<wbr>Circle</h3>
+					<div class="tsd-signature tsd-kind-icon">JSONTangent<wbr>Circle<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/n-wach/protractr/blob/2f3e7ae/src/scripts/ui/io/json.ts#L78">ui/io/json.ts:78</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter">
+								<h5>circle0<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
+							</li>
+							<li class="tsd-parameter">
+								<h5>circle1<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
+							</li>
+							<li class="tsd-parameter">
+								<h5>type<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">"tangent circle"</span></h5>
+							</li>
+						</ul>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="jsontangentline" class="tsd-anchor"></a>
+					<h3>JSONTangent<wbr>Line</h3>
+					<div class="tsd-signature tsd-kind-icon">JSONTangent<wbr>Line<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/n-wach/protractr/blob/2f3e7ae/src/scripts/ui/io/json.ts#L84">ui/io/json.ts:84</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter">
+								<h5>circle<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
+							</li>
+							<li class="tsd-parameter">
+								<h5>line<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
+							</li>
+							<li class="tsd-parameter">
+								<h5>type<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">"tangent line"</span></h5>
 							</li>
 						</ul>
 					</div>
@@ -253,13 +503,46 @@
 						<a href="../interfaces/gcs_io.importer.html" class="tsd-kind-icon">Importer</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="gcs_io.html#jsonarc" class="tsd-kind-icon">JSONArc</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="gcs_io.html#jsoncircle" class="tsd-kind-icon">JSONCircle</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="gcs_io.html#jsoncolinearpoints" class="tsd-kind-icon">JSONColinear<wbr>Points</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="gcs_io.html#jsonequal" class="tsd-kind-icon">JSONEqual</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="gcs_io.html#jsonequallength" class="tsd-kind-icon">JSONEqual<wbr>Length</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="gcs_io.html#jsonfigure" class="tsd-kind-icon">JSONFigure</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="gcs_io.html#jsonline" class="tsd-kind-icon">JSONLine</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="gcs_io.html#jsonmidpoint" class="tsd-kind-icon">JSONMidpoint</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="gcs_io.html#jsonpoint" class="tsd-kind-icon">JSONPoint</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="gcs_io.html#jsonpointsoncircle" class="tsd-kind-icon">JSONPoints<wbr>OnCircle</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="gcs_io.html#jsonrelation" class="tsd-kind-icon">JSONRelation</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="gcs_io.html#jsonsketch" class="tsd-kind-icon">JSONSketch</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="gcs_io.html#jsontangentcircle" class="tsd-kind-icon">JSONTangent<wbr>Circle</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="gcs_io.html#jsontangentline" class="tsd-kind-icon">JSONTangent<wbr>Line</a>
 					</li>
 				</ul>
 			</nav>

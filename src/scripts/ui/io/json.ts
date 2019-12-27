@@ -20,15 +20,76 @@ import RelationTangentLine from "../../gcs/relations/relationTangentLine";
 import RelationPointsOnCircle from "../../gcs/relations/relationPointsOnCircle";
 import Arc, {ArcPoint} from "../../gcs/geometry/arc";
 
-type JSONFigure = {
-    type: string,
-    [a: string]: any,
+type JSONPoint = {
+    type: "point",
+    p: number,
 }
 
-type JSONRelation = {
-    type: string,
-    [a: string]: any,
+type JSONLine = {
+    type: "line",
+    p0: number,
+    p1: number,
 }
+
+type JSONArc = {
+    type: "arc",
+    c: number,
+    r: number,
+    p0: number,
+    p1: number,
+}
+
+type JSONCircle = {
+    type: "circle",
+    c: number,
+    r: number,
+}
+
+type JSONFigure = JSONPoint | JSONLine | JSONArc | JSONCircle;
+
+type JSONEqual = {
+    type: "equal",
+    name: string,
+    variables: number[],
+}
+
+type JSONColinearPoints = {
+    type: "colinear points",
+    points: number[],
+}
+
+type JSONEqualLength = {
+    type: "equal length",
+    lines: number[],
+}
+
+type JSONMidpoint = {
+    type: "midpoint",
+    line: number,
+    midpoint: number,
+}
+
+type JSONPointsOnCircle = {
+    type: "points on circle",
+    points: number[],
+    circle: number,
+}
+
+type JSONTangentCircle = {
+    type: "tangent circle",
+    circle0: number,
+    circle1: number,
+}
+
+type JSONTangentLine = {
+    type: "tangent line",
+    circle: number,
+    line: number,
+}
+
+type JSONRelation = JSONEqual | JSONColinearPoints |
+    JSONEqualLength | JSONMidpoint | JSONPointsOnCircle |
+    JSONTangentCircle | JSONTangentLine;
 
 type JSONSketch = {
     variables: number[], // values
@@ -200,7 +261,7 @@ export class JSONExporter implements Exporter {
         return JSON.stringify(obj);
     }
 
-    private encodeRelation(relation: Relation) {
+    private encodeRelation(relation: Relation): JSONRelation {
         if(relation instanceof RelationEqual) {
             let variables = [];
             for(let v of relation.variables) {
@@ -272,7 +333,7 @@ export class JSONExporter implements Exporter {
         }
     }
 
-    private encodeFigure(figure: Figure) {
+    private encodeFigure(figure: Figure): JSONFigure {
         if(figure instanceof Point) {
             return {
                 type: "point",
