@@ -7,9 +7,9 @@ with the remaining to be implemented soon.
 
 
 Examples:
-- [Arcs](ttps://n-wach.github.io/protractr/src/?arcs.json)
-- [Pyramid](ttps://n-wach.github.io/protractr/src/?pyramid.json)
-- [Kite](ttps://n-wach.github.io/protractr/src/?kite.json)
+- [Arcs](https://n-wach.github.io/protractr/src/?arcs.json)
+- [Pyramid](https://n-wach.github.io/protractr/src/?pyramid.json)
+- [Kite](https://n-wach.github.io/protractr/src/?kite.json)
 
 <details>
     <summary>Supported relations</summary>
