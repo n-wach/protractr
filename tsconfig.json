@@ -16,7 +16,6 @@
   ],
   "include": [
     "src/scripts/**/*",
-    "src/scripts/*",
-    "../../.WebStorm2019.2/config/javascript/nodejs/10.16.0/node-typings/node_modules/@types/node/globals.d.ts"
+    "src/scripts/*"
   ]
 }
