@@ -17,15 +17,19 @@ export default class RelationListWidget extends ListWidget<Relation> {
             }
             this.setItems(relations);
         } else {
-            let relations = [...this.ui.protractr.sketch.relationManager.relations];
-            for(let figure of figures) {
-                for(let relation of relations) {
+            let relations = [];
+            for(let relation of this.ui.protractr.sketch.relationManager.relations) {
+                let add = true;
+                for(let figure of figures) {
                     // only display relations that contain all selected figures...
                     // that means remove any relation that doesn't contain any 1 selected figure
                     if(!relation.containsFigure(figure)) {
-                        let i = relations.indexOf(relation);
-                        relations.splice(i, 1);
+                        add = false;
+                        break;
                     }
+                }
+                if(add) {
+                    relations.push(relation);
                 }
             }
             if(relations.length == 0) {

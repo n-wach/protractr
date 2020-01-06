@@ -3940,12 +3940,14 @@ var ListWidget = /** @class */ (function (_super) {
         }
         for (var _i = 0, _a = this.values; _i < _a.length; _i++) {
             var value = _a[_i];
+            // if any existing value isn't in the new values, remove it
             if (items.indexOf(value) === -1) {
                 this.removeItem(value);
             }
         }
         for (var _b = 0, items_1 = items; _b < items_1.length; _b++) {
             var item = items_1[_b];
+            // if any new value isn't in existing values, add it
             if (this.values.indexOf(item) === -1) {
                 this.addItem(item);
             }
@@ -3960,18 +3962,17 @@ var ListWidget = /** @class */ (function (_super) {
         this.values = [];
     };
     ListWidget.prototype.addItem = function () {
-        var _a;
         var items = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             items[_i] = arguments[_i];
         }
-        for (var _b = 0, items_2 = items; _b < items_2.length; _b++) {
-            var item = items_2[_b];
+        for (var _a = 0, items_2 = items; _a < items_2.length; _a++) {
+            var item = items_2[_a];
             var element = this.getElementFromItem(item);
             this.list.appendChild(element.div);
+            this.values.push(item);
             this.elements.push(element);
         }
-        (_a = this.values).push.apply(_a, items);
         if (items.length > 0)
             this.list.style.display = "block";
     };
@@ -4106,13 +4107,6 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __spreadArrays = (this && this.__spreadArrays) || function () {
-    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-    for (var r = Array(s), k = 0, i = 0; i < il; i++)
-        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
-            r[k] = a[j];
-    return r;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @module ui/widgets
@@ -4137,17 +4131,21 @@ var RelationListWidget = /** @class */ (function (_super) {
             this.setItems(relations);
         }
         else {
-            var relations = __spreadArrays(this.ui.protractr.sketch.relationManager.relations);
-            for (var _i = 0, figures_1 = figures; _i < figures_1.length; _i++) {
-                var figure = figures_1[_i];
-                for (var _a = 0, relations_1 = relations; _a < relations_1.length; _a++) {
-                    var relation = relations_1[_a];
+            var relations = [];
+            for (var _i = 0, _a = this.ui.protractr.sketch.relationManager.relations; _i < _a.length; _i++) {
+                var relation = _a[_i];
+                var add = true;
+                for (var _b = 0, figures_1 = figures; _b < figures_1.length; _b++) {
+                    var figure = figures_1[_b];
                     // only display relations that contain all selected figures...
                     // that means remove any relation that doesn't contain any 1 selected figure
                     if (!relation.containsFigure(figure)) {
-                        var i = relations.indexOf(relation);
-                        relations.splice(i, 1);
+                        add = false;
+                        break;
                     }
+                }
+                if (add) {
+                    relations.push(relation);
                 }
             }
             if (relations.length == 0) {

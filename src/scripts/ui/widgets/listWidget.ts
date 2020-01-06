@@ -27,11 +27,13 @@ export default abstract class ListWidget<T> extends TitledWidget {
             return;
         }
         for(let value of this.values) {
+            // if any existing value isn't in the new values, remove it
             if(items.indexOf(value) === -1) {
                 this.removeItem(value);
             }
         }
         for(let item of items) {
+            // if any new value isn't in existing values, add it
             if(this.values.indexOf(item) === -1) {
                 this.addItem(item);
             }
@@ -51,9 +53,9 @@ export default abstract class ListWidget<T> extends TitledWidget {
         for(let item of items) {
             let element = this.getElementFromItem(item);
             this.list.appendChild(element.div);
+            this.values.push(item);
             this.elements.push(element);
         }
-        this.values.push(...items);
         if(items.length > 0) this.list.style.display = "block";
     }
 
