@@ -2189,8 +2189,7 @@ window.addEventListener("load", function () {
     if (example.length > 0 && example.indexOf(".json") != -1) {
         console.log("Loading ", example);
         var path = document.location.pathname;
-        var origin_1 = path.substr(0, path.indexOf("/src/"));
-        var url = origin_1 + "/examples/" + example;
+        var url = "examples/" + example;
         protractr.loadFromURL(url);
     }
 });
@@ -2959,7 +2958,7 @@ var MenuItem = /** @class */ (function () {
         this.div = document.createElement("div");
         this.div.classList.add("menu-item");
         this.div.title = tooltip;
-        this.div.style.backgroundImage = "url('../image/" + icon + "')";
+        this.div.style.backgroundImage = "url('image/" + icon + "')";
         this.div.addEventListener("click", this.click.bind(this));
     }
     MenuItem.prototype.setSelected = function (selected) {

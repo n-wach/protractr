@@ -1,5 +1,5 @@
 # protractr
-A constraint-based 2D Sketching tool - [Hosted on Github Pages](https://n-wach.github.io/protractr/src/)
+A constraint-based 2D Sketching tool - [Hosted on Github Pages](https://n-wach.github.io/protractr)
 
 Functionality is planned to match basic Solidworks sketches containing Points, 
 Lines, Circles, and Arcs.  Most of Solidworks' relations are currently supported, 
@@ -7,9 +7,9 @@ with the remaining to be implemented soon.
 
 
 Examples:
-- [Arcs](https://n-wach.github.io/protractr/src/?arcs.json)
-- [Pyramid](https://n-wach.github.io/protractr/src/?pyramid.json)
-- [Kite](https://n-wach.github.io/protractr/src/?kite.json)
+- [Arcs](https://n-wach.github.io/protractr?arcs.json)
+- [Pyramid](https://n-wach.github.io/protractr?pyramid.json)
+- [Kite](https://n-wach.github.io/protractr?kite.json)
 
 <details>
     <summary>Supported relations</summary>
@@ -56,7 +56,7 @@ To get started:
 
 2.  Run `npm install`
 
-3.  Make changes to the TypeScript source.  This should be done under the `src` 
+3.  Make changes to the TypeScript source.  This should be done under `scripts` 
     directory.  Note that the `dist` directory is the product of `browserify` and 
     `tsc`, and you should not directly edit files there.
     

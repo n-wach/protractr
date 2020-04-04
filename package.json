@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "browserify": "browserify dist/main.js -o dist/bundle.js",
-    "gen-docs": "typedoc --out docs src",
+    "gen-docs": "typedoc --out docs",
     "recompile-typescript": "tsc"
   },
   "keywords": [],

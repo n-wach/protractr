@@ -49,7 +49,7 @@ export abstract class MenuItem {
         this.div = document.createElement("div");
         this.div.classList.add("menu-item");
         this.div.title = tooltip;
-        this.div.style.backgroundImage = "url('../image/" + icon + "')";
+        this.div.style.backgroundImage = "url('image/" + icon + "')";
         this.div.addEventListener("click", this.click.bind(this))
     }
 

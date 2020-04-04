@@ -15,7 +15,7 @@
     "node_modules"
   ],
   "include": [
-    "src/scripts/**/*",
-    "src/scripts/*"
+    "scripts/**/*",
+    "scripts/*"
   ]
 }
