@@ -92,7 +92,7 @@ export abstract class ListElement<T> extends Widget {
         if (actionIcon) {
             this.actionButton = document.createElement("span");
             this.actionButton.classList.add("action-button");
-            this.actionButton.style.backgroundImage = "url('../image/" + actionIcon + "')";
+            this.actionButton.style.backgroundImage = "url('image/" + actionIcon + "')";
             this.actionButton.addEventListener("mousedown", this.actionIconClicked.bind(this));
             if(actionTitle) this.actionButton.title = actionTitle;
             this.div.appendChild(this.actionButton);

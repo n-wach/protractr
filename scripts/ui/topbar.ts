@@ -17,6 +17,7 @@ import ActionImport from "./actions/actionImport";
 import ActionExport from "./actions/actionExport";
 import Tool from "./tools/tool";
 import ToolCreateArc from "./tools/toolCreateArc";
+import ActionLatex from "./actions/actionLatex";
 
 export default class TopBar {
     menuBar: MenuBar;
@@ -63,6 +64,7 @@ export default class TopBar {
 
         this.menuBar.addItem(new ActionMenuItem(new ActionImport(protractr), "Import a sketch", "import.png"));
         this.menuBar.addItem(new ActionMenuItem(new ActionExport(protractr), "Export a sketch", "export.png"));
+        this.menuBar.addItem(new ActionMenuItem(new ActionLatex(protractr), "Export to LaTeX", "latex.png"));
 
         topBarElement.appendChild(this.menuBar.div);
     }
