@@ -454,6 +454,7 @@ var Point = /** @class */ (function (_super) {
     __extends(Point, _super);
     function Point(x, y) {
         var _this = _super.call(this) || this;
+        _this.labelPosition = "center";
         _this._x = new variable_1.default(x);
         _this._y = new variable_1.default(y);
         return _this;
@@ -2653,6 +2654,8 @@ var JSONImporter = /** @class */ (function () {
             var point = new point_1.default(0, 0);
             point._x = this.variables[v[0]];
             point._y = this.variables[v[1]];
+            point.label = v[2];
+            point.labelPosition = v[3];
             this.points.push(point);
         }
         this.figures = [];
@@ -2789,7 +2792,7 @@ var JSONExporter = /** @class */ (function () {
         }
         for (var _h = 0, _j = this.points; _h < _j.length; _h++) {
             var point = _j[_h];
-            obj.points.push([this.encodeV(point._x), this.encodeV(point._y)]);
+            obj.points.push([this.encodeV(point._x), this.encodeV(point._y), point.label, point.labelPosition]);
         }
         // save figures
         this.figures = sketch.figures;
@@ -2889,10 +2892,15 @@ var JSONExporter = /** @class */ (function () {
     };
     JSONExporter.prototype.encodeFigure = function (figure) {
         if (figure instanceof point_1.default) {
-            return {
+            var d = {
                 type: "point",
-                p: this.encodeP(figure),
+                p: this.encodeP(figure)
             };
+            if (figure.label && figure.labelPosition) {
+                d["label"] = figure.label;
+                d["labelPosition"] = figure.labelPosition;
+            }
+            return d;
         }
         else if (figure instanceof line_1.default) {
             return {
@@ -3020,17 +3028,17 @@ var LatexExporter = /** @class */ (function () {
         for (var _d = 0, _e = sketch.figures; _d < _e.length; _d++) {
             var figure = _e[_d];
             if (figure instanceof point_1.default) {
-                latex += "\t\\node[point] at " + this.ePnt(figure) + " (P" + pointCount++ + ") {};\n";
+                latex += this.lp(figure, pointCount++);
             }
             else if (figure instanceof line_1.default) {
-                latex += "\t\\node[point] at " + this.ePnt(figure.p0) + " (P" + pointCount++ + ") {};\n";
-                latex += "\t\\node[point] at " + this.ePnt(figure.p1) + " (P" + pointCount++ + ") {};\n";
+                latex += this.lp(figure.p0, pointCount++);
+                latex += this.lp(figure.p1, pointCount++);
                 latex += "\t\\draw (P" + (pointCount - 2) + ") -- (P" + (pointCount - 1) + ");\n";
             }
             else if (figure instanceof arc_1.default) {
             }
             else if (figure instanceof circle_1.default) {
-                latex += "\t\\node[point] at " + this.ePnt(figure.c) + " (P" + pointCount++ + ") {};\n";
+                latex += this.lp(figure.c, pointCount++);
                 latex += "\t\\draw (P" + (pointCount - 1) + ") circle (" + figure.r * this.scale + ");\n";
             }
             latex += "\n";
@@ -3039,10 +3047,19 @@ var LatexExporter = /** @class */ (function () {
             + latex
             + "\\end{tikzpicture}\n";
     };
-    LatexExporter.prototype.ePnt = function (point) {
+    LatexExporter.prototype.lp = function (point, num) {
         var x = Math.round((point.x - this.minX) * this.scale);
         var y = Math.round((this.maxY - point.y) * this.scale);
-        return "(" + x + ", " + y + ")";
+        var latex = "\t\\node[point] at (" + x + ", " + y + ") (P" + num + ") {};\n";
+        if (point.label && point.labelPosition) {
+            if (point.labelPosition == "center") {
+                latex = "\t\\node at (" + x + ", " + y + ") (P" + num + ") {" + point.label + "};\n";
+            }
+            else {
+                latex += "\t\\node[" + point.labelPosition + "] at (P" + num + ") {" + point.label + "};\n";
+            }
+        }
+        return latex;
     };
     return LatexExporter;
 }());
@@ -3323,10 +3340,43 @@ var SketchView = /** @class */ (function () {
         if (!point)
             return;
         this.ctx.fillStyle = color;
-        this.ctx.beginPath();
-        this.ctx.moveTo(point.x, point.y);
-        this.ctx.arc(point.x, point.y, size / this.ctxScale, 0, Math.PI * 2);
-        this.ctx.fill();
+        if (point.label && point.labelPosition == "center") {
+            this.ctx.textAlign = "center";
+            this.ctx.textBaseline = "middle";
+            this.ctx.font = 20 / this.ctxScale + "px serif";
+            this.ctx.fillText(point.label, point.x, point.y);
+        }
+        else {
+            this.ctx.beginPath();
+            this.ctx.moveTo(point.x, point.y);
+            this.ctx.arc(point.x, point.y, size / this.ctxScale, 0, Math.PI * 2);
+            this.ctx.fill();
+            if (point.label && point.labelPosition) {
+                this.ctx.font = 20 / this.ctxScale + "px serif";
+                switch (point.labelPosition) {
+                    case "below":
+                        this.ctx.textAlign = "center";
+                        this.ctx.textBaseline = "top";
+                        this.ctx.fillText(point.label, point.x, point.y + 3 / this.ctxScale);
+                        break;
+                    case "above":
+                        this.ctx.textAlign = "center";
+                        this.ctx.textBaseline = "bottom";
+                        this.ctx.fillText(point.label, point.x, point.y - 3 / this.ctxScale);
+                        break;
+                    case "left":
+                        this.ctx.textAlign = "right";
+                        this.ctx.textBaseline = "middle";
+                        this.ctx.fillText(point.label, point.x - 10 / this.ctxScale, point.y);
+                        break;
+                    case "right":
+                        this.ctx.textAlign = "left";
+                        this.ctx.textBaseline = "middle";
+                        this.ctx.fillText(point.label, point.x + 10 / this.ctxScale, point.y);
+                        break;
+                }
+            }
+        }
     };
     SketchView.prototype.drawLine = function (p1, p2) {
         if (!p1 || !p2)
@@ -4485,6 +4535,7 @@ var SelectedFigureWidget = /** @class */ (function (_super) {
         if (figure instanceof point_1.default) {
             this.addVariable(figure._x, "x");
             this.addVariable(figure._y, "y");
+            this.addLabelFields(figure);
         }
         else if (figure instanceof line_1.default) {
             this.addVariable(figure.p0._x, "x1");
@@ -4497,6 +4548,43 @@ var SelectedFigureWidget = /** @class */ (function (_super) {
             this.addVariable(figure.c._y, "center y");
             this.addVariable(figure._r, "radius");
         }
+    };
+    SelectedFigureWidget.prototype.addLabelFields = function (point) {
+        var div = document.createElement("div");
+        var label = document.createElement("span");
+        label.innerText = "Label:";
+        div.appendChild(label);
+        var field = document.createElement("input");
+        field.type = "text";
+        field.value = point.label ? point.label : "";
+        var _this = this;
+        field.onchange = function () {
+            point.label = field.value;
+            _this.ui.update();
+            _this.ui.pushState();
+        };
+        div.appendChild(field);
+        this.div.appendChild(div);
+        var pdiv = document.createElement("div");
+        var labelPosition = document.createElement("span");
+        labelPosition.innerText = "LabelPosition:";
+        pdiv.appendChild(labelPosition);
+        var pfield = document.createElement("select");
+        for (var _i = 0, _a = ["center", "below", "above", "left", "right"]; _i < _a.length; _i++) {
+            var t = _a[_i];
+            var po = document.createElement("option");
+            po.value = t;
+            po.innerText = t;
+            pfield.appendChild(po);
+        }
+        pfield.value = point.labelPosition ? point.labelPosition : "";
+        pfield.onchange = function () {
+            point.labelPosition = pfield.value;
+            _this.ui.pushState();
+            _this.ui.update();
+        };
+        pdiv.appendChild(pfield);
+        this.div.appendChild(pdiv);
     };
     SelectedFigureWidget.prototype.addVariable = function (variable, name) {
         var div = document.createElement("div");

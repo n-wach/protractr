@@ -80,15 +80,15 @@ export class LatexExporter implements Exporter {
 
         for(let figure of sketch.figures) {
             if(figure instanceof Point) {
-                latex += `\t\\node[point] at ${this.ePnt(figure)} (P${pointCount++}) {};\n`;
+                latex += this.lp(figure, pointCount++);
             } else if (figure instanceof Line) {
-                latex += `\t\\node[point] at ${this.ePnt(figure.p0)} (P${pointCount++}) {};\n`;
-                latex += `\t\\node[point] at ${this.ePnt(figure.p1)} (P${pointCount++}) {};\n`;
+                latex += this.lp(figure.p0, pointCount++);
+                latex += this.lp(figure.p1, pointCount++);
                 latex += `\t\\draw (P${pointCount - 2}) -- (P${pointCount - 1});\n`;
             } else if (figure instanceof Arc) {
 
             } else if (figure instanceof Circle) {
-                latex += `\t\\node[point] at ${this.ePnt(figure.c)} (P${pointCount++}) {};\n`;
+                latex += this.lp(figure.c, pointCount++);
                 latex += `\t\\draw (P${pointCount - 1}) circle (${figure.r * this.scale});\n`;
             }
             latex += "\n";
@@ -99,9 +99,17 @@ export class LatexExporter implements Exporter {
             + "\\end{tikzpicture}\n";
     }
 
-    ePnt(point: Point) {
+    lp(point: Point, num: number): string {
         let x = Math.round((point.x - this.minX) * this.scale);
         let y = Math.round((this.maxY - point.y) * this.scale);
-        return `(${x}, ${y})`;
+        let latex = `\t\\node[point] at (${x}, ${y}) (P${num}) {};\n`;
+        if(point.label && point.labelPosition) {
+            if(point.labelPosition == "center") {
+                latex = `\t\\node at (${x}, ${y}) (P${num}) {${point.label}};\n`;
+            } else {
+                latex += `\t\\node[${point.labelPosition}] at (P${num}) {${point.label}};\n`;
+            }
+        }
+        return latex;
     }
 }

@@ -160,10 +160,42 @@ export default class SketchView {
     drawPoint(point: Point, size: number = 3, color: string = "black") {
         if (!point) return;
         this.ctx.fillStyle = color;
-        this.ctx.beginPath();
-        this.ctx.moveTo(point.x, point.y);
-        this.ctx.arc(point.x, point.y, size / this.ctxScale, 0, Math.PI * 2);
-        this.ctx.fill();
+        if(point.label && point.labelPosition == "center") {
+            this.ctx.textAlign = "center";
+            this.ctx.textBaseline = "middle";
+            this.ctx.font = `${20 / this.ctxScale}px serif`;
+            this.ctx.fillText(point.label, point.x, point.y);
+        } else {
+            this.ctx.beginPath();
+            this.ctx.moveTo(point.x, point.y);
+            this.ctx.arc(point.x, point.y, size / this.ctxScale, 0, Math.PI * 2);
+            this.ctx.fill();
+            if(point.label && point.labelPosition) {
+                this.ctx.font = `${20 / this.ctxScale}px serif`;
+                switch(point.labelPosition) {
+                    case "below":
+                        this.ctx.textAlign = "center";
+                        this.ctx.textBaseline = "top";
+                        this.ctx.fillText(point.label, point.x, point.y + 3 / this.ctxScale);
+                        break;
+                    case "above":
+                        this.ctx.textAlign = "center";
+                        this.ctx.textBaseline = "bottom";
+                        this.ctx.fillText(point.label, point.x, point.y - 3 / this.ctxScale);
+                        break;
+                    case "left":
+                        this.ctx.textAlign = "right";
+                        this.ctx.textBaseline = "middle";
+                        this.ctx.fillText(point.label, point.x - 10 / this.ctxScale, point.y);
+                        break;
+                    case "right":
+                        this.ctx.textAlign = "left";
+                        this.ctx.textBaseline = "middle";
+                        this.ctx.fillText(point.label, point.x + 10 / this.ctxScale, point.y);
+                        break;
+                }
+            }
+        }
     }
 
     drawLine(p1: Point, p2: Point) {

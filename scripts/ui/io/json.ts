@@ -6,7 +6,7 @@
 import {Exporter, Importer} from "./io";
 import Sketch from "../../gcs/sketch";
 import Variable from "../../gcs/variable";
-import Point from "../../gcs/geometry/point";
+import Point, {LabelPosition} from "../../gcs/geometry/point";
 import Line from "../../gcs/geometry/line";
 import Circle from "../../gcs/geometry/circle";
 import Figure from "../../gcs/geometry/figure";
@@ -93,7 +93,7 @@ type JSONRelation = JSONEqual | JSONColinearPoints |
 
 type JSONSketch = {
     variables: number[], // values
-    points: [number, number][], // points made out of values
+    points: [number, number, string, LabelPosition][], // points made out of values, with labels
     figures: JSONFigure[], // figures made out of points and values
     relations: JSONRelation[] // relations made out of figures, points, and values
 };
@@ -117,6 +117,8 @@ export class JSONImporter implements Importer {
             let point = new Point(0, 0);
             point._x = this.variables[v[0]];
             point._y = this.variables[v[1]];
+            point.label = v[2];
+            point.labelPosition = v[3];
             this.points.push(point);
         }
 
@@ -244,7 +246,7 @@ export class JSONExporter implements Exporter {
             this.points.push(...this.getPoints(figure));
         }
         for(let point of this.points) {
-            obj.points.push([this.encodeV(point._x), this.encodeV(point._y)]);
+            obj.points.push([this.encodeV(point._x), this.encodeV(point._y), point.label, point.labelPosition]);
         }
 
         // save figures
@@ -335,10 +337,15 @@ export class JSONExporter implements Exporter {
 
     private encodeFigure(figure: Figure): JSONFigure {
         if(figure instanceof Point) {
-            return {
+            let d: JSONPoint = {
                 type: "point",
-                p: this.encodeP(figure),
+                p: this.encodeP(figure)
             };
+            if(figure.label && figure.labelPosition) {
+                d["label"] = figure.label;
+                d["labelPosition"] = figure.labelPosition;
+            }
+            return d;
         } else if (figure instanceof Line) {
             return {
                 type: "line",

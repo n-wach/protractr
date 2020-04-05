@@ -6,9 +6,15 @@
 import Variable from "../variable";
 import Figure from "./figure";
 
+export type LabelPosition = "center" | "below" | "above" | "left" | "right";
+
 export default class Point extends Figure {
     _x: Variable;
     _y: Variable;
+
+    label: string;
+    labelPosition: LabelPosition = "center";
+
     constructor(x: number, y: number) {
         super();
         this._x = new Variable(x);
