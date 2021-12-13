@@ -70,4 +70,4 @@ To get started:
 
 6. To make a new release on Github Pages, run `release.sh`. This will
    recompile `dist/bundle.js`, as well as generate the docs. Then, the
-   changes will be moved to the `/gh-pages` branch and pushed to Github.
+   changes will be moved to the `gh-pages` branch and pushed to Github.
