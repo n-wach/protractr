@@ -72,8 +72,9 @@ var Variable = /** @class */ (function () {
         // this could be sped up by modify existing arrays instead of creating new ones
         // however, this is much more clear and this functionality is not used very often
         var merged = [];
-        merged.push.apply(merged, this._links);
-        merged.push.apply(merged, other._links);
+        merged.push.apply(merged, this._links); // these lists are disjoint
+        merged.push.apply(// these lists are disjoint
+        merged, other._links);
         for (var _b = 0, merged_1 = merged; _b < merged_1.length; _b++) {
             var linked = merged_1[_b];
             // reminder: this._linked includes this
@@ -81,8 +82,6 @@ var Variable = /** @class */ (function () {
         }
     };
     Variable.prototype.unlink = function () {
-        if (this._links.length == 1)
-            return;
         for (var _i = 0, _a = this._links; _i < _a.length; _i++) {
             var linked = _a[_i];
             if (linked === this)
@@ -90,6 +89,7 @@ var Variable = /** @class */ (function () {
             var index = linked._links.indexOf(this);
             linked._links.splice(index, 1);
         }
+        this._links = [this];
         this._v = new Value(this.v);
     };
     return Variable;
