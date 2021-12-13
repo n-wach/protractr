@@ -2,6 +2,6 @@ node_modules/
 .idea/
 *.js.map
 *.js
-!dist/bundle.js
-!docs/assets/js/*
+dist/
+docs/
 
