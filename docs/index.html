@@ -67,7 +67,7 @@
 				<a href="#protractr" id="protractr" style="color: inherit; text-decoration: none;">
 					<h1>protractr</h1>
 				</a>
-				<p>A constraint-based 2D Sketching tool - <a href="https://n-wach.github.io/protractr">Hosted on Github Pages</a></p>
+				<p>A constraint-based 2D Sketching tool - <a href="https://n-wach.github.io/protractr">View on Github Pages</a></p>
 				<p>Functionality is planned to match basic Solidworks sketches containing Points,
 					Lines, Circles, and Arcs.  Most of Solidworks&#39; relations are currently supported,
 				with the remaining to be implemented soon.</p>
@@ -109,8 +109,8 @@
 				<p><a href="https://n-wach.github.io/protractr/docs">View the docs!</a></p>
 				<p>Protractr is composed of two main modules:</p>
 				<ul>
-					<li><code>gcs</code> is used to describe and solve geometric sketches, which are
-					composed of figures and relations.</li>
+					<li><code>gcs</code> is used to describe and solve geometric sketches, which are composed
+					of figures and relations.</li>
 					<li><code>ui</code> displays the current sketch and allows a user to modify it</li>
 				</ul>
 				<a href="#contributing" id="contributing" style="color: inherit; text-decoration: none;">
@@ -123,19 +123,19 @@
 					<li><p>Run <code>npm install</code></p>
 					</li>
 					<li><p>Make changes to the TypeScript source.  This should be done under <code>scripts</code>
-							directory.  Note that the <code>dist</code> directory is the product of <code>browserify</code> and
-						<code>tsc</code>, and you should not directly edit files there.</p>
+						directory.</p>
 					</li>
 					<li><p>To test your changes, run:</p>
 						<pre><code>npm <span class="hljs-keyword">run</span><span class="bash"> recompile-typescript</span>
-npm <span class="hljs-keyword">run</span><span class="bash"> browserify</span></code></pre><p>You should then see that the file <code>dist/bundle.js</code> has been modified.<br>This is the final JavaScript file that the running application actually 
-							uses: a combination of all the JavaScript in the application, together with
-						the node modules on which the application depends.</p>
+npm <span class="hljs-keyword">run</span><span class="bash"> browserify</span></code></pre><p>You should then see that the file <code>dist/bundle.js</code> has been created/updated.
+							This is a single JavaScript combining all of the compiled TypeScript.
+						To view your changes, open <code>index.html</code> in a browser.</p>
 					</li>
-					<li><p>When you are ready to commit a change, regenerate the docs:</p>
-						<pre><code> npm <span class="hljs-keyword">run</span><span class="bash"> gen-docs</span></code></pre><p> Then, commit the changes under <code>src</code> and <code>docs</code>, and plus the changes to
-							<code>dist/bundle.js</code>.  We commit <code>docs</code> and <code>dist/bundle.js</code> because they are used by
-						the GitHub Pages hosted production version of the site.</p>
+					<li><p>Ignore changes to <code>dist</code> and <code>docs</code> when committing changes.</p>
+					</li>
+					<li><p>To make a new release on Github Pages, run <code>release.sh</code>. This will
+							recompile <code>dist/bundle.js</code>, as well as generate the docs. Then, the
+						changes will be moved to the <code>/gh-pages</code> branch and pushed to Github.</p>
 					</li>
 				</ol>
 			</div>
