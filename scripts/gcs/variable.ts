@@ -62,7 +62,7 @@ export default class Variable {
         // this could be sped up by modify existing arrays instead of creating new ones
         // however, this is much more clear and this functionality is not used very often
         let merged: Variable[] = [];
-        merged.push(...this._links);
+        merged.push(...this._links); // these lists are disjoint
         merged.push(...other._links);
 
         for(let linked of merged) {
@@ -72,12 +72,12 @@ export default class Variable {
     }
 
     unlink() {
-        if(this._links.length == 1) return;
         for(let linked of this._links) {
             if(linked === this) continue;
             let index = linked._links.indexOf(this);
             linked._links.splice(index, 1);
         }
+        this._links = [this];
         this._v = new Value(this.v);
     }
 }
