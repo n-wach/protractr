@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 rm -rf dist
 rm -rf docs
 
