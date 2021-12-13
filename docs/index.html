@@ -122,19 +122,18 @@
 					</li>
 					<li><p>Run <code>npm install</code></p>
 					</li>
-					<li><p>Make changes to the TypeScript source.  This should be done under <code>scripts</code>
+					<li><p>Make changes to the TypeScript source.  This should be done under the <code>scripts</code>
 						directory.</p>
 					</li>
 					<li><p>To test your changes, run:</p>
 						<pre><code>npm <span class="hljs-keyword">run</span><span class="bash"> build</span></code></pre><p>You should then see that the file <code>dist/bundle.js</code> has been created/updated.
-							This is a single JavaScript combining all of the compiled TypeScript.
+							This is a single JavaScript file combining all the compiled TypeScript.
 						To view your changes, open <code>index.html</code> in a browser.</p>
 					</li>
-					<li><p>Ignore changes to <code>dist</code> and <code>docs</code> when committing changes.</p>
-					</li>
-					<li><p>To make a new release on Github Pages, run <code>release.sh</code>. This will
-							recompile <code>dist/bundle.js</code>, as well as generate the docs. Then, the
-						changes will be moved to the <code>gh-pages</code> branch and pushed to Github.</p>
+					<li><p>To make a new release on Github Pages, first commit all local changes. Then
+							run <code>release.sh</code>. This will recompile <code>dist/bundle.js</code>, as well as generate
+							the docs. Then, the changes will be moved to the <code>gh-pages</code> branch and pushed
+						to Github.</p>
 					</li>
 				</ol>
 			</div>
