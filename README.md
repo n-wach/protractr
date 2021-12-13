@@ -59,8 +59,7 @@ To get started:
 
 4. To test your changes, run:
    ```
-   npm run recompile-typescript
-   npm run browserify
+   npm run build
    ```
    You should then see that the file `dist/bundle.js` has been created/updated.
    This is a single JavaScript combining all of the compiled TypeScript. 
