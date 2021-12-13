@@ -54,7 +54,7 @@ To get started:
 
 2. Run `npm install`
 
-3. Make changes to the TypeScript source.  This should be done under `scripts` 
+3. Make changes to the TypeScript source.  This should be done under the `scripts` 
    directory.
 
 4. To test your changes, run:
@@ -62,11 +62,10 @@ To get started:
    npm run build
    ```
    You should then see that the file `dist/bundle.js` has been created/updated.
-   This is a single JavaScript combining all of the compiled TypeScript. 
+   This is a single JavaScript file combining all the compiled TypeScript. 
    To view your changes, open `index.html` in a browser.
 
-5. Ignore changes to `dist` and `docs` when committing changes.
-
-6. To make a new release on Github Pages, run `release.sh`. This will
-   recompile `dist/bundle.js`, as well as generate the docs. Then, the
-   changes will be moved to the `gh-pages` branch and pushed to Github.
+5. To make a new release on Github Pages, first commit all local changes. Then 
+   run `release.sh`. This will recompile `dist/bundle.js`, as well as generate
+   the docs. Then, the changes will be moved to the `gh-pages` branch and pushed
+   to Github.
